@@ -332,12 +332,12 @@ if (isset($error) || isset($preview)) {
 
   require("mailfrom.inc");
 
-#  $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and tid = '" . addslashes($tid) . "' and options = 'SendEmail' and aid != " . $user->aid;
-  $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and tid = '" . addslashes($tid) . "' and options = 'SendEmail'";
+  $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and tid = '" . addslashes($tid) . "' and options = 'SendEmail' and aid != " . $user->aid;
   $result = mysql_query($sql) or sql_error($sql);
 
   if (mysql_num_rows($result) > 0) {
-    $index = find_thread_index($tid);
+#    $index = find_thread_index($tid);
+    $index = $index['iid'];
     $sql = "select * from f_threads$index where tid = '" . addslashes($tid) . "'";
     $res2 = mysql_query($sql) or sql_error($sql);
 
