@@ -155,4 +155,14 @@ $create_global_messages_table = "
     date datetime not null default '0000-00-00 00:00:00',
     primary key (gid)
   )";
+
+$create_offtopic_table = "
+  create table f_offtopic (
+    fid int not null,
+    mid int not null,
+    aid int not null,
+    tstamp timestamp,
+    key (fid)
+  )";
+
 ?>
