@@ -300,7 +300,7 @@ if (isset($error) || isset($preview)) {
   $sql = "insert into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($mid) . "' )";
   mysql_query($sql);
 
-  if (!empty($TrackThread)) {
+  if (!empty($TrackThread) && isset($newmessage)) {
     $options = "";
 
     if (isset($EmailFollowup))
