@@ -48,9 +48,9 @@ class ForumUser {
 
   function find_by_cookie()
   {
-    global $Account;
+    global $KawfAccount;
 
-    ForumUser::find("cookie = '" . addslashes($Account) . "'");
+    ForumUser::find("cookie = '" . addslashes($KawfAccount) . "'");
   }
 
   /* Returns true if this variable is a valid user */
