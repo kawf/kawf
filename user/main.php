@@ -258,13 +258,14 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
   if ($index >= 0) {
     $sql = "select mid from f_messages$index where mid = '" . addslashes($mid) . "'";
     if (!$user->capable($forum['fid'], 'Delete')) {
-      $qual[] .= "state != 'Deleted'";
+      $qual[] = "( state != 'Deleted' and state != 'UserDeleted' )";
       if ($user->valid())
-        $qual[] .= "aid = " . $user->aid;
+        $qual[] = "aid = " . $user->aid;
     }
 
     if (isset($qual))
       $sql .= " and ( " . implode(" or ", $qual) . " )";
+
     $result = mysql_query($sql) or sql_error($sql);
   }
 
