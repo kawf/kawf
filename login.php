@@ -1,14 +1,27 @@
 <?php
-require('../sql.inc');
-require('../account.inc');
+require('sql.inc');
+require('account.inc');
 
 require('config.inc');
+
+require('class.FastTemplate.php3');
+
+$tpl = new FastTemplate('templates');
+$tpl->define(array(
+  header => 'header.tpl',
+  footer => 'footer.tpl',
+  login => 'login.tpl'
+));
+
+$tpl->assign(BODYTAGS, ' bgcolor="#ffffff"');
 
 if (!isset($page))
   $page = $furlroot;
 
+$tpl->assign(PAGE, $page);
+
 if (isset($email) && isset($password)) {
-  require('../account/checkpassword.inc');
+  require('checkpassword.inc');
 
   sql_open_readonly();
 
@@ -45,71 +58,14 @@ if (isset($email) && isset($password)) {
     exit;
   }
 }
+
+if (!isset($error))
+  $error = "";
+
+$tpl->assign(ERROR, $error);
+
+$tpl->parse(HEADER, 'header');
+$tpl->parse(FOOTER, 'footer');
+$tpl->parse(CONTENT, 'login');
+$tpl->FastPrint(CONTENT);
 ?>
-<html>
-<head>
-<title>Log In</title>
-</head>
-
-<body bgcolor="#ffffff">
-
-<img src="<?php echo $furlroot; ?>/pix/login.gif"><br>
-
-<?php
-if (isset($error))
-  echo "<font size=\"#ff0000\">$error</font><br>\n";
-?>
-
-<form action="<?php echo $urlroot; ?>/login.phtml?page=<?php echo $page; ?>" method="post" name="f">
-
-  <table width="600" border="0" cellpadding="5" cellspacing="2">
-
-    <tr bgcolor="#cccccc">
-      <td colspan="2"><font face="Verdana, Arial, Geneva" size="-1">
- 
-        <p>If you have already registered please enter your email address and password below.
-
-      </td>
-    </tr>
-
-    <tr bgcolor="#cccccc">
-      <td width="120" align="right"><font face="Verdana, Arial, Geneva" size="-1"><b>Email Address:</b></td>
-      <td width="480"><input type="text" name="email" value="" size="40" maxlength="40"></td>
-    </tr>
-			
-    <tr bgcolor="#cccccc">
-      <td align="right"><font face="Verdana, Arial, Geneva" size="-1"><b>Password:</b></td>
-      <td><input type="password" name="password" value="" size="40" maxlength="40"></td>
-    </tr>
-
-    <tr bgcolor="#cccccc">
-      <td colspan="2" align="center"><input type="submit" value="Login"></td>
-    </tr>
-
-    <tr bgcolor="#cccccc">
-      <td colspan="2"><font face="Verdana, Arial, Geneva" size="-1">
-
-        <p><a href="<?php echo $urlroot; ?>/createaccount.phtml?page=<?php echo $furlroot; ?>">Click here if you need to register a new account.</a>
-        <p>Perhaps you <a href="<?php echo $urlroot; ?>/forgotpassword.phtml?page=<?php echo $furlroot; ?>">forgot your password?</a>
-      </td>
-    </tr>
-
-<tr><td colspan="2" align="center"><font size="1" face="arial,geneva"><a href="/copyright/">Terms of Use</a> | Copyright © 1996-2000 by AudiWorld. All rights reserved.</font>
-
-</td></tr>
-  </table>
-
-</form>
-
-<SCRIPT LANGUAGE="JavaScript">
-
-<!--
-// Thanks to the guys at www.google.com for this one :)
-document.f.email.focus();
-// -->
-
-</SCRIPT>
-
-</body>
-</html>
-
