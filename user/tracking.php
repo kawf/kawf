@@ -82,8 +82,12 @@ function print_collapsed($thread, $msg, $count)
 
   $string .= "</font>";
 
-  if (isset($thread['flag.Locked']))
-    $string .= " (locked)";
+  if (isset($thread['flag.Locked'])) {
+    if (!isset($user->pref['SimpleHTML']))
+      $string .= " <img src=\"/pics/lock.gif\">";
+    else
+      $string .= " (locked)";
+  }
 
   if ($msg['state'] != "Active")
     $string .= " (" . $msg['state'] . ")";
@@ -171,8 +175,12 @@ function print_subject($thread, $msg)
 
   $string .= "</font>";
 
-  if (isset($thread['flag.Locked']))
-    $string .= " (locked)";
+  if (isset($thread['flag.Locked'])) {
+    if (!isset($user->pref['SimpleHTML']))
+      $string .= " <img src=\"/pics/lock.gif\">";
+    else
+      $string .= " (locked)";
+  }
 
   if ($msg['state'] != "Active")
     $string .= " (" . $msg['state'] . ")";
