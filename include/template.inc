@@ -97,7 +97,7 @@ class Template {
    */
   function set_block($parent, $handle, $name = "") {
     if (!$this->loadfile($parent)) {
-      $this->halt("subst: unable to load $parent.");
+      $this->halt("set_block: unable to load $parent.");
       return false;
     }
     if ($name == "")
@@ -107,8 +107,8 @@ class Template {
     $reg = "/<!--\s+BEGIN $handle\s+-->(.*)\n\s*<!--\s+END $handle\s+-->/sm";
     preg_match_all($reg, $str, $m);
     $str = preg_replace($reg, "{" . "$name}", $str);
-    $this->set_var($handle, $m[1][0]);
-    $this->set_var($parent, $str);
+    $this->_set_var($handle, $m[1][0]);
+    $this->_set_var($parent, $str);
   }
   
   /* public: set_var(array $values)
@@ -118,7 +118,7 @@ class Template {
    * varname: name of a variable that is to be defined
    * value:   value of that variable
    */
-  function set_var($varname, $value = "") {
+  function _set_var($varname, $value = "") {
     if (!is_array($varname)) {
       if (!empty($varname))
         if ($this->debug) print "scalar: set *$varname* to *$value*<br>\n";
@@ -131,6 +131,22 @@ class Template {
           if ($this->debug) print "array: set *$k* to *$v*<br>\n";
           $this->varkeys[$k] = "/".$this->varname($k)."/";
           $this->varvals[$k] = $v;
+      }
+    }
+  }
+  function set_var($varname, $value = "") {
+    if (!is_array($varname)) {
+      if (!empty($varname))
+        if ($this->debug) print "scalar: set *$varname* to *$value*<br>\n";
+      $this->varkeys[$varname] = "/".$this->varname($varname)."/";
+      $this->varvals[$varname] = preg_replace(array("/\{([A-Za-z_]+)\}/", "/\\\$/", "/\\\\/"), array("&#" . ord('{') . ";\\1}", "&#" . ord('$') . ";", "&#" . ord('\\') . ";"), $value);
+    } else {
+      reset($varname);
+      while(list($k, $v) = each($varname)) {
+        if (!empty($k))
+          if ($this->debug) print "array: set *$k* to *$v*<br>\n";
+        $this->varkeys[$k] = "/".$this->varname($k)."/";
+        $this->varvals[$k] = preg_replace(array("/\{([A-Za-z_]+)\}/", "/\\\$/", "/\\\\/"), array("&#" . ord('{') . ";\\1}", "&#" . ord('$') . ";", "&#" . ord('\\') . ";"), $v);
       }
     }
   }
@@ -168,15 +184,15 @@ class Template {
     if (!is_array($handle)) {
       $str = $this->subst($handle);
       if ($append) {
-        $this->set_var($target, $this->get_var($target) . $str);
+        $this->_set_var($target, $this->get_var($target) . $str);
       } else {
-        $this->set_var($target, $str);
+        $this->_set_var($target, $str);
       }
     } else {
       reset($handle);
       while(list($i, $h) = each($handle)) {
         $str = $this->subst($h);
-        $this->set_var($target, $str);
+        $this->_set_var($target, $str);
       }
     }
     
@@ -316,7 +332,7 @@ class Template {
       return false;
     }
 
-    $this->set_var($handle, $str);
+    $this->_set_var($handle, $str);
     
     return true;
   }
