@@ -63,14 +63,16 @@ $create_index_table =
   "  key (fid)\n" .
   ")";
 
-$create_dupposts_table =
-  "create table f_dupposts (\n" .
-  "  fid int not null,\n" .
-  "  cookie varchar(40) not null,\n" .
-  "  mid int not null,\n" .
-  "  tstamp datetime not null,\n" .
-  "  primary key (cookie)\n" .
-  ")";
+$create_dupposts_table = "
+  create table f_dupposts (
+    fid int not null,
+    cookie varchar(40) not null,
+    mid int not null,
+    aid int not null,
+    tstamp datetime not null,
+    primary key (cookie),
+    key (aid)
+  )";
 
 $create_unique_table =
   "create table f_unique (\n" .

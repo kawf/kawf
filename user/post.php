@@ -203,7 +203,7 @@ if (isset($error) || isset($preview)) {
 
   /* Add it into the database */
   /* Check to make sure this isn't a duplicate */
-  $sql = "insert into f_dupposts ( cookie, fid, tstamp ) values ('" . addslashes($postcookie) . "', " . $forum['fid'] . ", NOW() )";
+  $sql = "insert into f_dupposts ( cookie, fid, aid, tstamp ) values ('" . addslashes($postcookie) . "', $user->aid . ", " . $forum['fid'] . ", NOW() )";
   $result = mysql_query($sql);
 
   if (!$result) {
@@ -299,7 +299,7 @@ if (isset($error) || isset($preview)) {
   } else
     echo "<font color=#ff0000>Duplicate message detected, overwriting</font>";
 
-  $sql = "insert into f_updates ( fid, mid, aid ) values ( " . $forum['fid'] . ", '" . addslashes($mid) . "', " . $user->aid . " )";
+  $sql = "insert into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($mid) . "' )";
   mysql_query($sql);
 
   if (!empty($TrackThread) && isset($newmessage)) {
