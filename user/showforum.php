@@ -333,7 +333,7 @@ function print_subjects($msg)
 
 function display_thread($thread)
 {
-  global $user, $forum;
+  global $user, $forum, $ulkludge;
 
   $messagestr = "<ul>\n";
   if (isset($user['prefs.Collapsed'])) {

@@ -14,7 +14,7 @@ $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql
 
 list($pid, $oldstate) = mysql_fetch_row($result);
 
-$sql = "update messages$index set state = $state where mid = '" . addslashes($mid) . "'";
+$sql = "update messages$index set state = '$state' where mid = '" . addslashes($mid) . "'";
 mysql_query($sql) or sql_error($sql);
 
 if (!$pid) {

@@ -78,7 +78,7 @@ if ($forum['shortname'] == "wheel")
 */
 
 if (isset($user['cap.Moderate']))
-  $tpl->assign(POSTING_IP, $msg['ip']);
+  $tpl->assign(MSG_IP, $msg['ip']);
 else
   $tpl->clear_dynamic('posting_ip');
 

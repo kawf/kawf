@@ -186,13 +186,25 @@ if (isset($error) || isset($preview)) {
   if (mysql_num_rows($result))
     list ($mid) = mysql_fetch_row($result);
 
+  if (!isset($mid)) {
+    $sql = "insert into umessage ( mid ) values ( NULL )";
+    mysql_query($sql) or sql_error($sql);
+
+    $sql = "select last_insert_id()";
+    $result = mysql_query($sql) or sql_error($sql);
+
+    list ($mid) = mysql_fetch_row($result);
+
+    $newmessage = 1;
+  }
+
   /* Add the message to the last index */
   $index = end($indexes);
 
   $mtable = "messages" . $index['iid'];
   $ttable = "threads" . $index['iid'];
 
-  if (isset($mid))
+  if (!isset($newmessage))
     $sql = "update $mtable set " .
 	"name = '" . addslashes($name) . "', " .
 	"email = '" . addslashes($email) . "', " .
@@ -206,21 +218,16 @@ if (isset($error) || isset($preview)) {
 	"where mid = '" . addslashes($mid) . "'";
   else
     $sql = "insert into $mtable " .
-	"(aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext) values ( '".addslashes($user['aid'])."', '".addslashes($pid)."', '".addslashes($tid)."', '".addslashes($name)."', '".addslashes($email)."', NOW(), '$REMOTE_ADDR', '$flagset', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($url)."', '".addslashes($urltext)."');";
+	"(mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext) values ( '" . addslashes($mid) . "', '".addslashes($user['aid'])."', '".addslashes($pid)."', '".addslashes($tid)."', '".addslashes($name)."', '".addslashes($email)."', NOW(), '$REMOTE_ADDR', '$flagset', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($url)."', '".addslashes($urltext)."');";
 
   $result = mysql_db_query($forumdb, $sql) or sql_error($sql);
 
-  if (!isset($mid)) {
-    $sql = "select last_insert_id()";
-    $result = mysql_query($sql) or sql_error($sql);
-
-    list ($mid) = mysql_fetch_row($result);
-
+  if (isset($newmessage)) {
     $sql = "insert into dupposts (cookie, mid, tstamp) values ('" . addslashes($postcookie) . "', '" . addslashes($mid) . "', NOW() );";
     mysql_db_query($forumdb, $sql) or sql_error($sql);
 
     if (!$pid) {
-      $sql = "insert into uthread ( tstamp ) values ( NULL )";
+      $sql = "insert into uthread ( tid ) values ( NULL )";
       mysql_db_query($forumdb, $sql) or sql_error($sql);
 
       $sql = "select last_insert_id()";
@@ -228,7 +235,7 @@ if (isset($error) || isset($preview)) {
 
       list ($tid) = mysql_fetch_row($result);
 
-      $sql = "insert into $ttable ( tid, mid ) values ( $tid, '".addslashes($mid)."' )";
+      $sql = "insert into $ttable ( tid, mid ) values ( $tid, '" . addslashes($mid) . "' )";
       mysql_db_query($forumdb, $sql) or sql_error($sql);
 
       $sql = "update indexes set maxtid = $tid where iid = " . $index['iid'] . " and maxtid < $tid";

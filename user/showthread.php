@@ -6,13 +6,9 @@ $tpl->define(array(
   header => 'header.tpl',
   footer => 'footer.tpl',
   showthread => 'showthread.tpl',
-  showthread_row => 'showthread_row.tpl',
   message => 'message.tpl',
   forum_header => 'forum/' . $forum['shortname'] . '.tpl'
 ));
-
-$tpl->define_dynamic('posting_ip', 'message');
-$tpl->define_dynamic('parent', 'message');
 
 $tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
 
@@ -73,29 +69,33 @@ $thread = mysql_fetch_array($result);
 
 $index = find_msg_index($thread['mid']);
 
-$sql = "select mid, tid, pid, aid, state, date, subject, message, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid desc";
+$sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid desc";
 $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 while ($message = mysql_fetch_array($result))
   $messages[] = $message;
 
 $index++;
 if (isset($indexes[$index])) {
-  $sql = "select mid, tid, pid, aid, state, date, subject, message, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid desc";
+  $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid desc";
   $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
   while ($message = mysql_fetch_array($result))
     $messages[] = $message;
 }
 
-function print_messages($msg)
+function print_message($msg)
 {
   global $tpl, $user;
 
+  $tpl->define_dynamic('posting_ip', 'message');
+  $tpl->define_dynamic('parent', 'message');
+
   if (isset($user['cap.Moderate']))
-    $tpl->assign(POSTING_IP, $msg['ip']);
+    $tpl->assign(MSG_IP, $msg['ip']);
   else
     $tpl->clear_dynamic('posting_ip');
 
-  $tpl->assign(MSG_SUBJECT, $msg['subject']);
+  $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
+  $tpl->assign(MSG_SUBJECT, $subject);
   $tpl->assign(MSG_DATE, $msg['date']);
 
   if (!empty($msg['email'])) {
@@ -131,10 +131,12 @@ function print_messages($msg)
 
   $tpl->parse(MESSAGE, 'message');
 
-  $tpl->parse(MESSAGES, '.showthread_row');
+  return $tpl->fetch(MESSAGE);
 }
 
-list_thread($messages, print_messages, 0);
+$messagestr = list_thread($messages, print_message, 0);
+
+$tpl->assign(MESSAGES, $messagestr);
 
 if (!ereg("^[Rr][Ee]:", $msg['subject'], $sregs))
   $subject = "Re: " . $msg['subject'];
