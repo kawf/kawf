@@ -2,12 +2,11 @@
 
 include_once("strip.inc");
 
+$user = new AccountUser((int)$user->aid);
+
 $user->req();
 
-$tpl->set_file(array(
-  "edit" => "account/edit.tpl",
-  "changeemail_mail" => "mail/changeemail.tpl",
-));
+$tpl->set_file("edit", "account/edit.tpl");
 
 $tpl->set_block("edit", "error");
 $tpl->set_block("edit", "name");
