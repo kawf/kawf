@@ -12,6 +12,7 @@ $tpl->set_file(array(
 ));
 
 $tpl->set_var("FORUM_NAME", $forum['name']);
+$tpl->set_var("FORUM_SHORTNAME", $forum['name']);
 
 $tpl->parse("FORUM_HEADER", "forum_header");
 
@@ -36,7 +37,7 @@ $thread = mysql_fetch_array($result);
 
 $index = find_msg_index($thread['mid']);
 
-$sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
+$sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, message, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
 $result = mysql_query($sql) or sql_error($sql);
 while ($message = mysql_fetch_array($result)) {
   $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
@@ -45,7 +46,7 @@ while ($message = mysql_fetch_array($result)) {
 
 $index++;
 if (isset($indexes[$index])) {
-  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
+  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, message, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
   $result = mysql_query($sql) or sql_error($sql);
   while ($message = mysql_fetch_array($result)) {
     $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
@@ -82,6 +83,7 @@ function print_message($msg)
 
   $tpl->set_block("message", "forum_admin");
   $tpl->set_block("message", "message_ip");
+  $tpl->set_block("message", "owner");
   $tpl->set_block("message", "parent");
   $tpl->set_block("message", "changes");
 
@@ -101,6 +103,9 @@ function print_message($msg)
   else
     $tpl->set_var("message_ip", "");
 */
+
+  if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid)
+    $tpl->set_var("owner", "");
 
   $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
   $tpl->set_var(array(
