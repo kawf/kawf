@@ -82,7 +82,7 @@ function print_collapsed($thread, $msg, $count)
 
   $string .= "</font>";
 
-  if (isset($thread['flag.Locked'])) {
+  if (isset($thread['flag.Locked']) && !$msg['pmid']) {
     if (!isset($user->pref['SimpleHTML']))
       $string .= " <img src=\"/pics/lock.gif\">";
     else
