@@ -14,6 +14,9 @@ $index = find_msg_index($mid);
 
 $msg = sql_querya("select mid, aid, pid, state, subject, flags from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'");
 
+if (!isset($msg['pmid']))
+  $msg['pmid'] = $msg['pid'];
+
 if (!empty($msg['flags'])) {
   $flagexp = explode(",", $msg['flags']);
   while (list(,$flag) = each($flagexp))
@@ -58,8 +61,12 @@ if (($state == 'Moderated' && !$user->capable($forum['fid'], 'Moderate')) ||
 } else
   $flags['StateLocked'] = true;
 
-if (!isset($msg['pmid']))
-  $msg['pmid'] = $msg['pid'];
+if ($state == 'OffTopic' && $user->capable($forum['fid'], 'OffTopic'))
+  // We'll send the message in 10 minutes
+  sql_query("insert into f_offtopic ( fid, mid, aid ) values ( " . $forum['fid'] . ", " . $msg['mid'] . ", " . $msg['aid'] . " )");
+else if ($msg['state'] == 'OffTopic' && $state != 'OffTopic')
+  // Delete any queued messages
+  sql_query("delete from f_offtopic where fid = " . $forum['fid'] . " and mid = " . $msg['mid']);
 
 if (isset($flags)) {
   foreach ($flags as $k => $v)
@@ -87,13 +94,6 @@ if ($nuser->valid()) {
 /* For the purposes of these calculations */
 if (!empty($msg['state']) && $msg['pmid'] == 0)
   sql_query("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $state = $state + 1 where iid = " . $indexes[$index]['iid']);
-
-if ($state == 'OffTopic' && $user->capable($forum['fid'], 'OffTopic'))
-  // We'll send the message in 10 minutes
-  sql_query("insert into f_offtopic ( fid, mid, aid ) values ( " . $forum['fid'] . ", " . $msg['mid'] . ", " . $msg['aid'] . " )");
-else if ($priv == 'OffTopic')
-  // Delete any queued messages
-  sql_query("delete from f_offtopic where mid = " . $forum['fid'] . " and mid = " . $msg['mid']);
 
 header("Location: $page");
 ?>
