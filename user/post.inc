@@ -9,7 +9,7 @@ $tpl->set_file("postform", "postform.tpl");
 $tpl->set_block("postform", "acct");
 $tpl->set_block("postform", "noacct");
 
-if (isset($user)) {
+if (isset($user->aid)) {
   if (!isset($postcookie))
     $postcookie = md5("post" . microtime());
   $hidden = hidden("postcookie", $postcookie);
