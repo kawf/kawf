@@ -90,13 +90,14 @@ function print_message($msg)
   $sql = "update messages$index set views = views + 1 where mid = '" . addslashes($msg['mid']) . "'";
   mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_warn($sql);
 
-  $tpl->define_dynamic('posting_ip', 'message');
+  $tpl->define_dynamic('forum_admin', 'message');
   $tpl->define_dynamic('parent', 'message');
 
-  if (isset($user['cap.Moderate']))
+  if (isset($user['cap.Moderate'])) {
+    $tpl->assign(MSG_AID, "<a href=\"$urlroot/showaccount.phtml?aid=" . $msg['aid'] . "\">" . $msg['aid'] . "</a>");
     $tpl->assign(MSG_IP, $msg['ip']);
-  else
-    $tpl->clear_dynamic('posting_ip');
+  } else
+    $tpl->clear_dynamic('forum_admin');
 
   $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
   $tpl->assign(MSG_SUBJECT, $subject);
