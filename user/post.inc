@@ -22,6 +22,8 @@ if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['f
   $hidden .= hidden("forumname", $forum['shortname']);
 
   if (isset($_page) && !empty($_page))
+    $hidden .= hidden("page", $_page);
+  else
     $hidden .= hidden("page", $SCRIPT_NAME . $PATH_INFO);
 
   if (isset($imgpreview))
