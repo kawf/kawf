@@ -292,7 +292,7 @@ if (!$accepted || isset($preview)) {
 
   /* Add it into the database */
   /* Check to make sure this isn't a duplicate */
-  $sql = "insert into f_dupposts ( cookie, fid, aid, tstamp ) values ('" . addslashes($postcookie) . "', " . $forum['fid'] . ", " . $user->aid . ", NOW() )";
+  $sql = "insert into f_dupposts ( cookie, fid, aid, ip, tstamp ) values ('" . addslashes($postcookie) . "', " . $forum['fid'] . ", " . $user->aid . ", '" . addslashes($REMOTE_ADDR) . "', NOW() )";
   $result = mysql_query($sql);
 
   if (!$result) {
@@ -334,7 +334,7 @@ if (!$accepted || isset($preview)) {
     $sql = "update $mtable set " .
 	"name = '" . addslashes($name) . "', " .
 	"email = '" . addslashes($email) . "', " .
-	"ip = '$REMOTE_ADDR', " .
+	"ip = '" . addslashes($REMOTE_ADDR) . "', " .
 	"flags = '$flagset', " .
 	"subject = '" . addslashes($subject) . "', " .
 	"message = '" . addslashes($message) . "', " .
@@ -344,7 +344,7 @@ if (!$accepted || isset($preview)) {
 	"where mid = '" . addslashes($mid) . "'";
   } else
     $sql = "insert into $mtable " .
-	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, state ) values ( '" . addslashes($mid) . "', '".addslashes($user->aid)."', '".addslashes($pid)."', '".addslashes($tid)."', '".addslashes($name)."', '".addslashes($email)."', NOW(), '$REMOTE_ADDR', '$flagset', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($url)."', '".addslashes($urltext)."', '$status' );";
+	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, state ) values ( '" . addslashes($mid) . "', '".addslashes($user->aid)."', '".addslashes($pid)."', '".addslashes($tid)."', '".addslashes($name)."', '".addslashes($email)."', NOW(), '" . addslashes($REMOTE_ADDR) . "', '$flagset', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($url)."', '".addslashes($urltext)."', '$status' );";
 
   $result = mysql_query($sql) or sql_error($sql);
 
