@@ -15,7 +15,7 @@ if (!isset($msg['pmid']))
   $msg['pmid'] = $msg['pid'];
 
 sql_query("update f_messages$index set " .
-	"changes = CONCAT(changes, 'Changed to $state from ', state, ' by " . $user->name . "/" . $user->aid . " at ', NOW(), '\n'), " .
+	"changes = CONCAT(changes, 'Changed to $state from ', state, ' by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), '\n'), " .
 	"state = '$state' " .
 	"where mid = '" . addslashes($mid) . "'");
 
