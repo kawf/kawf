@@ -1,17 +1,19 @@
 <?php
 
 /* First setup the path */
-$include_path = "$srcroot/kawf:$srcroot/kawf/user:$srcroot/php:$srcroot/config:$srcroot/kawf/include";
+$include_path = "$srcroot/kawf:$srcroot/kawf/user";
 $old_include_path = ini_get("include_path");
+if (isset($include_append))
+  $include_path .= ":" . $include_append;
+
 if (!empty($old_include_path))
   $include_path .= ":" . $old_include_path;
-
 ini_set("include_path", $include_path);
 
-include("$config.inc");
-require("sql.inc");
-require("util.inc");
-require("user.inc");
+include_once("$config.inc");
+include_once("sql.inc");
+include_once("util.inc");
+include_once("user.inc");
 
 sql_open($database);
 
@@ -38,6 +40,9 @@ $scripts = array(
 
   "preferences.phtml" => "preferences.php",
 
+  "tracking.phtml" => "tracking.php",
+
+  /* These will all be in the fscripts only soon */
   "post.phtml" => "post.php",
   "edit.phtml" => "edit.php",
 
@@ -45,24 +50,44 @@ $scripts = array(
   "untrack.phtml" => "untrack.php",
   "markuptodate.phtml" => "markuptodate.php",
 
-  "tracking.phtml" => "tracking.php",
+  "changestate.phtml" => "changestate.php"
+);
+
+/* If you have your own account management routines */
+if (!isset($dont_use_account)) {
+  $account_scripts = array(
+    "login.phtml" => "account/login.php",
+    "logout.phtml" => "account/logout.php",
+
+    "forgotpassword.phtml" => "account/forgotpassword.php",
+
+    "create.phtml" => "account/create.php",
+    "edit.phtml" => "account/edit.php",
+    "finish.phtml" => "account/finish.php",
+  );
+
+  foreach ($account_scripts as $virtual => $real)
+    $scripts[$virtual] = $real;
+}
+
+$fscripts = array(
+  "" => "showforum.php",
+
+  "flat.phtml" => "flat.php",
+
+  "post.phtml" => "post.php",
+  "edit.phtml" => "edit.php",
+
+  "track.phtml" => "track.php",
+  "untrack.phtml" => "untrack.php",
+  "markuptodate.phtml" => "markuptodate.php",
 
   "changestate.phtml" => "changestate.php"
 );
 
-$fscripts = array(
-  "flat.phtml" => "flat.php",
-
-  "" => "showforum.php"
-);
-
-require("account.inc");
-
 $user = new User(true);
-if (!isset($user) || !isset($user->aid))
-  unset($user);
-
-if (isset($user)) {
+if (isset($user->aid)) {
+  /* FIXME: This kills performance */
 /*
   $sql = "update f_visits set tstamp = NOW() where aid = $user->aid";
   mysql_query($sql) or sql_error($sql);
@@ -72,28 +97,9 @@ if (isset($user)) {
     mysql_query($sql) or sql_error($sql);
   }
 */
-
-  $sql = "select * from u_forums where aid = " . $user->aid;
-  $result = mysql_query($sql) or sql_error($sql);
-
-  $u = mysql_fetch_array($result);
-  if ($u) {
-    foreach ($u as $type => $value)
-      $user->$type = $value;
-
-    if (!empty($user->capabilities)) {
-      $capabilities = explode(",", $user->capabilities);
-      foreach ($capabilities as $flag)
-        $user->cap[$flag] = true;
-    }
-
-    if (!empty($user->preferences)) {
-      $preferences = explode(",", $user->preferences);
-      foreach ($preferences as $flag)
-        $user->pref[$flag] = true;
-    }
-  }
 } else {
+  /* FIXME: This kills performance */
+/*
   $sql = "update f_visits set tstamp = NOW() where ip = '" . addslashes($REMOTE_ADDR) . "'";
   mysql_query($sql) or sql_error($sql);
 
@@ -101,6 +107,7 @@ if (isset($user)) {
     $sql = "insert into f_visits ( ip, tstamp ) values ( '" . addslashes($REMOTE_ADDR) . "', NOW() )";
     mysql_query($sql) or sql_error($sql);
   }
+*/
 }
 
 function find_forum($shortname)
@@ -218,7 +225,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
   $index = find_msg_index($mid);
   if ($index >= 0) {
     $sql = "select mid from f_messages$index where mid = '" . addslashes($mid) . "'";
-    if (!forum_moderate()) {
+    if (!isset($user->cap['Moderate'])) {
       $qual[] .= "state != 'Deleted'";
       if (isset($user))
         $qual[] .= "aid = " . $user->aid;
