@@ -24,7 +24,7 @@ if (isset($submit)) {
   sql_query("replace into f_forums " .
 		"( fid, name, shortname, options ) " .
 		"values " .
-		"( $fid, " .
+		"( '" . addslashes($fid) . "', " .
 		" '" . addslashes($name) . "'," .
 		" '" . addslashes($shortname) . "'," .
 		" '" . addslashes($options) . "'" .
@@ -52,7 +52,7 @@ page_header("Modify forum '" . $forum['name'] . "'");
 ?>
 
 <form method="post" action="<?php echo basename($PHP_SELF);?>">
-<input type="hidden" name="fid" value="<?php echo $fid;?>">
+<input type="hidden" name="fid" value="<?php echo $forum['fid'];?>">
 <table>
  <tr>
   <td>fid:</td>
