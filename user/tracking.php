@@ -4,13 +4,13 @@ $user->req();
 
 $urlroot = "/ads";
 /* We get our money from ads, make sure it's there */
-include_once("ads.inc");
+require_once("ads.inc");
 
 $ad = ads_view("a4.org," . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
 
-include_once("listthread.inc");
-include_once("filter.inc");
+require_once("listthread.inc");
+require_once("filter.inc");
 
 $tpl->set_file(array(
   "header" => "header.tpl",

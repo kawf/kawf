@@ -10,10 +10,10 @@ if (!empty($old_include_path))
   $include_path .= ":" . $old_include_path;
 ini_set("include_path", $include_path);
 
-include_once("$config.inc");
-include_once("sql.inc");
-include_once("util.inc");
-include_once("user.inc");
+require_once("$config.inc");
+require_once("sql.inc");
+require_once("util.inc");
+require_once("user.inc");
 
 sql_open($database);
 
@@ -216,7 +216,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
 
   /* Now show that page */
   $curpage = $regs[2];
-  include_once("showforum.php");
+  require_once("showforum.php");
 } else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/msgs\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
@@ -238,7 +238,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
   }
 
   if (isset($result) && mysql_num_rows($result)) {
-    include_once("showmessage.php");
+    require_once("showmessage.php");
   } else
     err_not_found("Unknown message " . $mid . " in forum " . $forum['shortname']. "\n$sql");
 } else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/threads\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
@@ -254,7 +254,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
   }
 
   if (isset($result) && mysql_num_rows($result)) {
-    include_once("showthread.php");
+    require_once("showthread.php");
   } else
     err_not_found("Unknown thread " . $tid . " in forum " . $forum['shortname']);
 } else

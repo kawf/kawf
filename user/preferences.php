@@ -2,7 +2,7 @@
 
 $user->req();
 
-include_once("strip.inc");
+require_once("strip.inc");
 
 $tpl->set_file(array(
   "header" => "header.tpl",

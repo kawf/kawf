@@ -1,8 +1,8 @@
 <?php
 
-include_once("listthread.inc");
-include_once("filter.inc");
-include_once("strip.inc");
+require_once("listthread.inc");
+require_once("filter.inc");
+require_once("strip.inc");
 
 $tpl->set_file(array(
   "header" => "header.tpl",
@@ -61,7 +61,7 @@ if (isset($tthreads_by_tid[$msg['tid']]) &&
 
 $urlroot = "/ads";
 /* We get our money from ads, make sure it's there */
-include_once("ads.inc");
+require_once("ads.inc");
 
 $ad = ads_view("a4.org," . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
@@ -308,7 +308,7 @@ $tid = $msg['tid'];
 unset($mid);
 unset($message);
 
-include_once("post.inc");
+require_once("post.inc");
 
 $tpl->parse(MESSAGE, "message");
 

@@ -9,8 +9,8 @@ if (!isset($postcookie) || !isset($forum)) {
   exit;
 }
 
-include_once("textwrap.inc");
-include_once("strip.inc");
+require_once("textwrap.inc");
+require_once("strip.inc");
 
 $tpl->set_file(array(
   "header" => "header.tpl",
@@ -40,7 +40,7 @@ $tpl->parse("FOOTER", "footer");
 
 $urlroot = "/ads";
 /* We get our money from ads, make sure it's there */
-include_once("ads.inc");
+require_once("ads.inc");
 
 $ad = ads_view("a4.org," . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
@@ -194,7 +194,7 @@ $tpl->set_var(array(
 if (isset($error) || isset($preview)) {
   $action = "post";
 
-  include_once("post.inc");
+  require_once("post.inc");
 
   $tpl->set_var("accept", "");
 } else {
@@ -328,7 +328,7 @@ if (isset($error) || isset($preview)) {
     }
   }
 
-  include_once("mailfrom.inc");
+  require_once("mailfrom.inc");
 
   $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and tid = '" . addslashes($tid) . "' and options = 'SendEmail' and aid != " . $user->aid;
   $result = mysql_query($sql) or sql_error($sql);
