@@ -11,6 +11,7 @@ $result = sql_query("select * from f_forums");
 ?>
 
 <a href="forumadd.phtml">Add new forum</a>
+<a href="useracl.phtml">User ACLs</a>
 
 <p>
 
