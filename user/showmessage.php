@@ -148,7 +148,7 @@ $ulkludge =
   ereg("^Mozilla/[0-9]\.[0-9]+ \(Macintosh; .*", $HTTP_USER_AGENT);
 
 $index = find_thread_index($msg['tid']);
-$sql = "select * from f_threads$index where tid = '" . $msg['tid'] . "'";
+$sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$index where tid = '" . $msg['tid'] . "'";
 $result = mysql_query($sql) or sql_error($sql);
 $thread = mysql_fetch_array($result);
 
