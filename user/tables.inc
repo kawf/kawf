@@ -1,4 +1,5 @@
 <?php
+# f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
 $create_message_table = "
   create table f_messages%d (
@@ -32,15 +33,7 @@ $create_thread_table = "
     primary key (tid)
   )";
 
-$create_forums_table = "
-  create table f_forums (
-    fid int not null auto_increment,
-    name varchar(150) not null,
-    shortname varchar(20) not null,
-    options set('Read','Post') default ('Read','Post'),
-    primary key (fid)
-  )";
-
+# Unused
 $create_visits_table = "
   create table f_visits (
     ip varchar(20) not null,
@@ -48,6 +41,16 @@ $create_visits_table = "
     tstamp timestamp,
     key (ip),
     key (aid)
+  )";
+
+# Create all of these by hand
+$create_forums_table = "
+  create table f_forums (
+    fid int not null auto_increment,
+    name varchar(150) not null,
+    shortname varchar(20) not null,
+    options set('Read','Post') default ('Read','Post'),
+    primary key (fid)
   )";
 
 $create_index_table = "
