@@ -159,7 +159,7 @@ function find_forum($shortname)
   }
 
   /* Grab all of the indexes for the forum */
-  $sql = "select * from f_indexes where fid = " . $forum['fid'] . " and minmid != 0 and maxmid != 0 order by iid";
+  $sql = "select * from f_indexes where fid = " . $forum['fid'] . " and ( minmid != 0 or minmid < maxmid ) order by iid";
   $result = mysql_query($sql) or sql_error($sql);
 
   while ($index = mysql_fetch_array($result))
