@@ -3,18 +3,17 @@
 <title>{DOMAIN} Forums: Login</title>
 <style type="text/css">
 <!--
-body { font-family: verdana, arial, geneva }
+body { font-family: verdana, arial, geneva; font-size: smaller }
+td { font-family: verdana, arial, geneva; font-size: smaller }
 -->
 </style>
 </head>
 
-<body bgcolor="#ffffff" text="#000000" link="#0000cc" vlink="#0000cc" alink="#0000cc" style="text-decoration: none">
+<body bgcolor="#ffffff">
 
 {HEADER}
 
 <h1>Accounts - Login</h1><p>
-
-<font face="verdana, arial, geneva" size="-1">
 
 <form action="login.phtml" method="post" name="form">
   <input type="hidden" name="page" value="{PAGE}">
@@ -34,8 +33,6 @@ body { font-family: verdana, arial, geneva }
 </form>
 
 <a href="create.phtml">Create a new account</a><p>
-
-</font>
 
 <script language="JavaScript">
 <!--

@@ -3,12 +3,13 @@
 <title>{DOMAIN} Forums: Forgot Password</title>
 <style type="text/css">
 <!--
-body { font-family: verdana, arial, geneva }
+body { font-family: verdana, arial, geneva; font-size: smaller }
+td { font-family: verdana, arial, geneva; font-size: smaller }
 -->
 </style>
 </head>
 
-<body bgcolor="#ffffff" text="#000000" link="#0000cc" vlink="#0000cc" alink="#0000cc" style="text-decoration: none">
+<body bgcolor="#ffffff">
 
 {HEADER}
 
@@ -18,7 +19,7 @@ body { font-family: verdana, arial, geneva }
 
 <h1>Accounts - Forgot Password</h1><p>
 
-<p><font face="Verdana, Arial, Geneva"><h2>Password Retrieval</h2></font><p>
+<p><h2>Password Retrieval</h2><p>
 
 <!-- BEGIN unknown -->
 The email address '{EMAIL}' is unknown. Please check the address and try again<p>
@@ -26,10 +27,8 @@ The email address '{EMAIL}' is unknown. Please check the address and try again<p
 
 <!-- BEGIN form -->
 <form action="forgotpassword.phtml" method="post">
-<font face="Verdana, Arial, Geneva" size="-1">
 Email address: <input type="text" name="email" value="{EMAIL}"><br>
 <input type="submit" value="Help me"><p>
-</font>
 </form>
 <!-- END form -->
 

@@ -3,7 +3,8 @@
 <title>{DOMAIN} Forums: Edit Account</title>
 <style type="text/css">
 <!--
-body { font-family: verdana, arial, geneva }
+body { font-family: verdana, arial, geneva; font-size: smaller }
+td { font-family: verdana, arial, geneva; font-size: smaller }
 -->
 </style>
 </head>
@@ -19,17 +20,16 @@ body { font-family: verdana, arial, geneva }
 <!-- END error -->
 
 <!-- BEGIN name -->
-<font face="verdana, arial, geneva" size="-1">Your screen name has been changed to {NAME}</font><p>
+Your screen name has been changed to {NAME}<p>
 <!-- END name -->
 
 <!-- BEGIN email -->
-<font face="verdana, arial, geneva" size="-1">An email has been sent to your new email address of {NEWEMAIL} to confirm the change. Please follow the directions in the email to finish changing your email address. Your tracking number is {TID}. You can also bookmark the <a href="pending.phtml?tracking={TID}">page</a></font><p>
+An email has been sent to your new email address of {NEWEMAIL} to confirm the change. Please follow the directions in the email to finish changing your email address. Your tracking number is {TID}. You can also bookmark the <a href="pending.phtml?tracking={TID}">page</a><p>
 <!-- END email -->
 
 <!-- BEGIN password -->
-<font face="verdana, arial, geneva" size="-1">Your password has been changed</font><p>
+Your password has been changed<p>
 <!-- END password -->
-<font face="verdana, arial, geneva" size="-1">
 <form action="acctedit.phtml" method="post">
 New Screen Name: <input type="text" name="name" length="40"><br>
 New Email Address: <input type="text" name="email" length="40"><br>
@@ -101,7 +101,6 @@ Timezone:
 
 <input type="submit" name="submit" value="Update">
 </form>
-</font>
 
 {FOOTER}
 
