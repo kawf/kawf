@@ -7,11 +7,26 @@ include_once("user/tables.inc");
 /* If submit is set, shove the data into the database (well, after some */
 /* error checking) */
 if (isset($submit)) {
+  if (isset($postedit))
+    $options[] = "PostEdit";
+  if (isset($read))
+    $options[] = "Read";
+  if (isset($postthread))
+    $options[] = "PostThread";
+  if (isset($postreply))
+    $options[] = "PostReply";
+
+  if (isset($options))
+    $options = implode(",", $options);
+  else
+    $options = "";
+
   sql_query("insert into f_forums " .
-		"( name, shortname ) " .
+		"( name, shortname, options ) " .
 		"values " .
-		"( '" . addslashes($name) . "'," .
-		" '" . addslashes($shortname) . "'" .
+		"( '" . addslashes($name) . "', " .
+		"'" . addslashes($shortname) . "', " .
+		"'" . addslashes($options) . "'" .
 		")");
   $fid = sql_query1("select last_insert_id()");
 
@@ -43,6 +58,22 @@ page_header("Add Forum");
  <tr>
   <td>Short Name:</td>
   <td><input type="text" name="shortname" value=""></td>
+ </tr>
+ <td>
+  <td>Edit Posts:<br><small>(includes deleting)</small></td>
+  <td valign="top"><input type="checkbox" name="postedit"></td>
+ </tr>
+ <td>
+  <td>Read Messages:</td>
+  <td><input type="checkbox" name="read"></td>
+ </tr>
+ <td>
+  <td>Posting new threads:</td>
+  <td><input type="checkbox" name="postthread"></td>
+ </tr>
+ <td>
+  <td>Posting new replies:</td>
+  <td><input type="checkbox" name="postreply"></td>
  </tr>
  <tr>
   <td></td>
