@@ -1,7 +1,5 @@
 <?php
 
-require('config.inc');
-
 function show_message($msg, $vmid = 0, $replies = -1)
 {
   global $user, $tthreads, $forum, $furlroot, $urlroot;

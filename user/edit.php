@@ -190,6 +190,9 @@ if (isset($error) || isset($preview)) {
   $sql = "update messages$index set name='".addslashes($name)."', email='".addslashes($email)."', ip='$REMOTE_ADDR', flags='$flagset', subject='".addslashes($subject)."', message='".addslashes($message)."', url='".addslashes($url)."', urltext='".addslashes($urltext)."' where mid='".addslashes($mid)."';";
   mysql_db_query($forumdb, $sql) or sql_error($sql);
 
+  $sql = "insert into updates (mid) values ('" . addslashes($mid) . "')";
+  mysql_db_query($forumdb, $sql); 
+
   $tpl->assign(ACCEPT, "Message Updated");
 
   $tpl->parse(POST, 'postaccept');

@@ -2,13 +2,11 @@
 
 require('account.inc');
 
-require('kawf/config.inc');
-
 /* Open up the SQL database first */
 sql_open_readonly();
 
-require('kawf/displaymsg.inc');
-require('kawf/listthreadmsg.inc');
+require('displaymsg.inc');
+require('listthreadmsg.inc');
 
 ?>
 

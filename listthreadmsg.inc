@@ -1,7 +1,5 @@
 <?php
 
-require('config.inc');
-
 function list_thread_msg($thread)
 {
   global $user, $forum;

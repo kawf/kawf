@@ -2,8 +2,6 @@
 
 require('account.inc');
 
-require('config.inc');
-
 /* Open up the SQL database first */
 sql_open_readonly();
 

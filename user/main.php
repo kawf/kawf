@@ -1,6 +1,5 @@
 <?php
 
-require('config.inc');
 require('class.FastTemplate.php3');
 
 $tpl = new FastTemplate('templates');

@@ -1,7 +1,5 @@
 <?php
 
-require('config.inc');
-
 $fdb = "forum_" . $forum['shortname'];
 
 while (list($key) = each($indexes)) {

@@ -247,6 +247,9 @@ if (isset($error) || isset($preview)) {
   } else
     echo "<font color=#ff0000>Duplicate message detected, overwriting</font>";
 
+  $sql = "insert into updates (mid) values ('" . addslashes($mid) . "')";
+  mysql_db_query($forumdb, $sql); 
+
   if (!empty($TrackThread)) {
     $options = '';
 
