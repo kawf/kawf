@@ -1,16 +1,17 @@
 <?php
 
-include_once("sql.inc");
-include_once("validate.inc");
-include_once("mailfrom.inc");
+require_once("sql.inc");
+require_once("validate.inc");
+require_once("mailfrom.inc");
+require_once("strip.inc");
 
-/* This is the standard User class */
-class User {
+/* This is the standard ForumUser class */
+class ForumUser {
   var $aid, $name, $email, $status, $createdate;
 
   var $shortname, $password, $cookie;
 
-  function User($data = null)
+  function ForumUser($data = null)
   {
     global $KawfAccount;
 
@@ -44,21 +45,6 @@ class User {
     }
   }
 
-  function setcookie()
-  {
-    global $cookie_host;
-
-    setcookie("KawfAccount", $this->cookie, time() + (60 * 60 * 24 * 365 * 5), "/", 
-$cookie_host);
-  }
-
-  function unsetcookie()
-  {
-    global $cookie_host;
-
-    setcookie("KawfAccount", "", time() - (60 * 60 * 24 * 365), "/", $cookie_host);
-  }
-
   function req()
   {
     global $account_host;
@@ -85,25 +71,79 @@ $cookie_host);
     exit;
   }
 
-  function checkpassword($password)
+  function signature($signature)
   {
-    global $urlroot;
+    global $standard_tags;
 
-    if ($this->status != "Active")
+    $signature = stripspaces($signature);
+    $signature = striptag($signature, $standard_tags);
+
+    if ($signature != $this->signature)
+      $this->update_f['signature'] = $signature;
+
+    $this->signature = $signature;
+
+    return true;
+  }
+
+  function threadsperpage($threadsperpage)
+  {
+    if ($threadsperpage != $this->threadsperpage)
+      $this->update_f['threadsperpage'] = $threadsperpage;
+
+    $this->threadsperpage = $threadsperpage;
+
+    return true;
+  }
+
+  function preference($name, $value)
+  {
+    if (isset($this->pref[$name]) != $value) {
+      if ($value)
+        unset($this->pref[$name]);
+      else
+        $this->pref[$name] = true;
+
+      if (isset($this->pref))
+        foreach ($this->pref as $var => $value)
+          $prefs[] = $var;
+
+      if (isset($prefs))
+        $this->update_f['preferences'] = implode(",", $prefs);
+      else
+        $this->update_f['preferences'] = "";
+    }
+  }
+
+  function update()
+  {
+    if (!$this->aid)
       return false;
 
-    if ($this->password == md5($password))
+    if (empty($this->update_f))
       return true;
 
-    return false;
+    /* Create a new array */
+    foreach ($this->update_f as $key => $value) {
+      if (is_int($value))
+        $update[] = "$key = $value";
+      else
+        $update[] = "$key = '" . addslashes($value) . "'";
+    }
+
+    $set = implode(", ", $update);
+
+    sql_query("update u_users set $set where aid = " . $this->aid);
+
+    return true;
   }
 }
 
 /* This is the class to change the user stuff */
-class AccountUser extends User {
+class AccountUser extends ForumUser {
   function AccountUser($data = null)
   {
-    User::User($data);
+    ForumUser::ForumUser($data);
   }
 
   function create()
@@ -157,6 +197,34 @@ class AccountUser extends User {
     mailfrom($fromaddr, $this->email, $message);
 
     return true;
+  }
+
+  function setcookie()
+  {
+    global $cookie_host;
+
+    setcookie("KawfAccount", $this->cookie, time() + (60 * 60 * 24 * 365 * 5), "/", 
+$cookie_host);
+  }
+
+  function unsetcookie()
+  {
+    global $cookie_host;
+
+    setcookie("KawfAccount", "", time() - (60 * 60 * 24 * 365), "/", $cookie_host);
+  }
+
+  function checkpassword($password)
+  {
+    global $urlroot;
+
+    if ($this->status != "Active")
+      return false;
+
+    if ($this->password == md5($password))
+      return true;
+
+    return false;
   }
 
   function forgotpassword()
