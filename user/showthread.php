@@ -145,7 +145,7 @@ function print_message($thread, $msg)
     $tpl->set_var("message_ip", "");
 */
 
-  if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid && !$thread['flag.Locked']))
+  if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || isset($thread['flag.Locked']))
     $tpl->set_var("_owner", "");
   else
     $tpl->parse("_owner", "owner");
