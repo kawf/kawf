@@ -9,8 +9,14 @@ $tpl->set_file(array(
   "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
 ));
 
+$tpl->set_block("message", "forum_admin", "_forum_admin");
+$tpl->set_block("message", "message_ip", "_message_ip");
+$tpl->set_block("message", "owner", "_owner");
+$tpl->set_block("message", "parent", "_parent");
+$tpl->set_block("message", "changes", "_changes");
+
 $tpl->set_var("FORUM_NAME", $forum['name']);
-$tpl->set_var("FORUM_SHORTNAME", $forum['name']);
+$tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
 $tpl->parse("FORUM_HEADER", "forum_header");
 
@@ -35,7 +41,7 @@ $thread = mysql_fetch_array($result);
 
 $index = find_msg_index($thread['mid']);
 
-$sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, message, url, urltext, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
+$sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
 $result = mysql_query($sql) or sql_error($sql);
 while ($message = mysql_fetch_array($result)) {
   $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
@@ -45,7 +51,7 @@ while ($message = mysql_fetch_array($result)) {
 
 $index++;
 if (isset($indexes[$index])) {
-  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, message, url, urltext, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
+  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
   $result = mysql_query($sql) or sql_error($sql);
   while ($message = mysql_fetch_array($result)) {
     $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
@@ -81,35 +87,6 @@ function print_message($msg)
   $sql = "update f_messages$index set views = views + 1 where mid = '" . addslashes($msg['mid']) . "'";
   mysql_query($sql) or sql_warn($sql);
 
-  $tpl->set_block("message", "forum_admin");
-  $tpl->set_block("message", "message_ip");
-  $tpl->set_block("message", "owner");
-  $tpl->set_block("message", "parent");
-  $tpl->set_block("message", "changes");
-
-  if ($user->moderator($forum['fid'])) {
-    $tpl->set_var("MSG_AID", $msg['aid']);
-    $changes = preg_replace("/&/", "&amp;", $msg['changes']);
-    $changes = preg_replace("/</", "&lt;", $changes);
-    $changes = preg_replace("/>/", "&gt;", $changes);
-    $tpl->set_var("MSG_CHANGES", nl2br($changes));
-    $tpl->set_var("MSG_IP", $msg['ip']);
-  } else {
-    $tpl->set_var("forum_admin", "");
-    $tpl->set_var("changes", "");
-    $tpl->set_var("message_ip", "");
-  }
-
-/*
-  if ($user->valid())
-    $tpl->set_var("MSG_IP", $msg['ip']);
-  else
-    $tpl->set_var("message_ip", "");
-*/
-
-  if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid)
-    $tpl->set_var("owner", "");
-
   $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
   $tpl->set_var(array(
     "MSG_SUBJECT" => $subject,
@@ -124,7 +101,7 @@ function print_message($msg)
   } else
     $tpl->set_var("MSG_NAMEEMAIL", $msg['name']);
 
-  $tpl->set_var("parent", "");
+  $tpl->set_var("_parent", "");
 
   $message = nl2br($msg['message']);
 
@@ -139,6 +116,34 @@ function print_message($msg)
     $message .= "<p>" . nl2br($signature) . "\n";
 
   $tpl->set_var("MSG_MESSAGE", $message . "<br><br>\n");
+
+  if ($user->moderator($forum['fid'])) {
+    $tpl->set_var("MSG_AID", $msg['aid']);
+    $changes = preg_replace("/&/", "&amp;", $msg['changes']);
+    $changes = preg_replace("/</", "&lt;", $changes);
+    $changes = preg_replace("/>/", "&gt;", $changes);
+    $tpl->set_var("MSG_CHANGES", nl2br($changes));
+    $tpl->set_var("MSG_IP", $msg['ip']);
+    $tpl->parse("_forum_admin", "forum_admin");
+    $tpl->parse("_changes", "changes");
+    $tpl->parse("_message_ip", "message_ip");
+  } else {
+    $tpl->set_var("_forum_admin", "");
+    $tpl->set_var("_changes", "");
+    $tpl->set_var("_message_ip", "");
+  }
+
+/*
+  if ($user->valid())
+    $tpl->set_var("MSG_IP", $msg['ip']);
+  else
+    $tpl->set_var("message_ip", "");
+*/
+
+  if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid)
+    $tpl->set_var("_owner", "");
+  else
+    $tpl->parse("_owner", "owner");
 
   $tpl->parse("MESSAGE", "message");
 
