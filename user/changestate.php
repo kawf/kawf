@@ -56,10 +56,13 @@ if (($state == 'Moderate' && !$user->capable($forum['fid'], 'Moderate')) ||
 if (!isset($msg['pmid']))
   $msg['pmid'] = $msg['pid'];
 
-foreach ($flags as $k => v)
-  $flagset[] = $k;
+if (isset($flags)) {
+  foreach ($flags as $k => $v)
+    $flagset[] = $k;
 
-$flagset = implode(",", $flagset);
+  $flagset = implode(",", $flagset);
+} else
+  $flagset = "";
 
 sql_query("update f_messages$index set " .
 	"changes = CONCAT(changes, 'Changed to $state from ', state, ' by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), '\n'), " .
