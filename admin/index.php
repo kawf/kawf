@@ -7,7 +7,7 @@ page_header("Forums");
 if (isset($message))
   page_show_message($message);
 
-$result = sql_query("select * from f_forums");
+$result = sql_query("select * from f_forums order by fid");
 ?>
 
 <a href="forumadd.phtml">Add new forum</a>
