@@ -11,20 +11,9 @@ class ForumUser {
 
   var $shortname, $password, $cookie;
 
-  function ForumUser($data = null)
+  /* You shouldn't call this directly */
+  function find($where)
   {
-    global $KawfAccount;
-
-    if (!isset($data))
-      return;
-
-    if (is_bool($data) && $data)
-      $where = "cookie = '" . addslashes($KawfAccount) . "'";
-    else if (is_int($data))
-      $where = "aid = '" . addslashes($data) . "'";
-    else
-      $where = "email = '" . addslashes($data) . "'";
-
     $user = sql_querya("select * from u_users where $where");
     if (!$user)
       return;
@@ -43,6 +32,36 @@ class ForumUser {
       foreach ($preferences as $flag)
         $this->pref[$flag] = true;
     }
+  }
+
+  /* These functions are used to find a user */
+  function find_by_aid($aid)
+  {
+    if (!is_int($aid))
+      return;
+
+    User::find("aid = $aid");
+  }
+
+  function find_by_email($email)
+  {
+    User::find("email = '" . addslashes($email) . "'");
+  }
+
+  function find_by_cookie()
+  {
+    global $Account;
+
+    User::find("cookie = '" . addslashes($Account) . "'");
+  }
+
+  /* Returns true if this variable is a valid user */
+  function valid()
+  {
+    if (isset($this->aid))
+      return true;
+    else
+      return false;
   }
 
   function req()
@@ -137,15 +156,15 @@ class ForumUser {
 
     return true;
   }
+
+  function post($fid, $status, $count)
+  {
+    sql_query("update u_users set posts = posts + $count where aid = " . $this->aid);
+  }
 }
 
 /* This is the class to change the user stuff */
 class AccountUser extends ForumUser {
-  function AccountUser($data = null)
-  {
-    ForumUser::ForumUser($data);
-  }
-
   function create()
   {
     global $tpl, $bounce_host, $account_host, $REMOTE_ADDR;
