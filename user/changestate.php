@@ -7,6 +7,11 @@ $tpl->set_file("mail", "mail/offtopic.tpl");
 
 $user->req();
 
+if ($state != 'Active' && $state != 'OffTopic' && $state != 'Moderated' && $state != 'Deleted' && $state != 'UserDeleted') {
+  echo "Invalid state $state\n";
+  exit;
+}
+
 $index = find_msg_index($mid);
 
 $msg = sql_querya("select mid, aid, pid, state, subject from f_messages$index where mid = '" . addslashes($mid) . "'");
@@ -65,7 +70,7 @@ if ($state == 'UserDeleted')
 if ($msg['state'] == 'UserDeleted')
   $msg['state'] == 'Deleted';
 
-if ($msg['pmid'] == 0)
+if (!empty($msg['state']) && $msg['pmid'] == 0)
   sql_query("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $state = $state + 1 where iid = $index");
 
 if ($state == 'OffTopic' && $user->capable($forum['fid'], 'OffTopic')) {

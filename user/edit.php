@@ -59,6 +59,11 @@ $result = mysql_query($sql) or sql_error($sql);
 
 $msg = mysql_fetch_array($result);
 
+if (!isset($msg)) {
+  echo "No message with mid $mid\n";
+  exit;
+}
+
 if ($msg['aid'] != $user->aid) {
   echo "This message does not belong to you!\n";
   exit;
@@ -76,6 +81,7 @@ if (!isset($message)) {
   $url = $msg['url'];
   $urltext = $msg['urltext'];
   $ExposeEmail = !empty($msg['email']);
+  $OffTopic = ($msg['state'] == 'OffTopic');
 } else {
   if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/s", $message, $regs))
     $message = $regs[2];
@@ -134,10 +140,14 @@ if ($ExposeEmail)
 else
   $email = "";
 
-// $subject = stripcrap($subject);
 $subject = striptag($subject, $subject_tags);
 $subject = stripspaces($subject);
 $subject = demoronize($subject);
+
+if ($msg['state'] == 'Active' && $OffTopic)
+  $status = "OffTopic";
+else
+  $status = $msg['state'];
 
 if (empty($subject)) {
   /* Subject is required */
@@ -274,6 +284,7 @@ if (isset($error) || isset($preview)) {
 	"email = '" . addslashes($email) . "', " .
 	"ip = '$REMOTE_ADDR', " .
 	"flags = '$flagset', " .
+	"state = '" . addslashes($status) . "', " .
 	"subject = '" . addslashes($subject) . "', " .
 	"message = '" . addslashes($message) . "', " .
 	"url = '" . addslashes($url) . "', " .

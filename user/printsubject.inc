@@ -70,6 +70,10 @@ function print_subject($thread, $msg)
   $page = $tpl->get_var("PAGE");
 
   switch ($msg['state']) {
+  case "":
+    if ($user->capable($forum['fid'], 'OffTopic'))
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Active&mid=" . $msg['mid'] . "\">am</a>";
+    break;
   case "Moderated":
     if ($user->capable($forum['fid'], 'Moderate'))
       $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Active&mid=" . $msg['mid'] . "\">um</a>";
