@@ -14,6 +14,7 @@ $tpl->set_file(array(
 
 $tpl->set_block("message", "forum_admin");
 $tpl->set_block("message", "parent");
+$tpl->set_block("message", "changes");
 
 $tpl->set_var("FORUM_NAME", $forum['name']);
 
@@ -34,7 +35,7 @@ mysql_query($sql) or sql_warn($sql);
 if (!empty($msg['flags'])) {
   $flagexp = explode(",", $msg['flags']);
   while (list(,$flag) = each($flagexp))
-    $flags[$flag] = "true";
+    $flags[$flag] = true;
 }
 
 if (isset($flags['NewStyle']) && !isset($user->pref['HideSignatures'])) {
@@ -74,10 +75,13 @@ if ($forum['shortname'] == "a4" || $forum['shortname'] == "performance")
 */
 
 if (isset($user->cap['Moderate'])) {
-  $tpl->set_var("MSG_AID", "<a href=\"/showaccount.phtml?aid=" . $msg['aid'] . "\">" . $msg['aid'] . "</a>");
+  $tpl->set_var("MSG_AID", $msg['aid']);
   $tpl->set_var("MSG_IP", $msg['ip']);
-} else
+  $tpl->set_var("MSG_CHANGES", preg_replace("/\n/", "<br>\n", $msg['changes']));
+} else {
   $tpl->set_var("forum_admin", "");
+  $tpl->set_var("changes", "");
+}
 
 $tpl->set_var(array(
   "MSG_SUBJECT" => $msg['subject'],
@@ -162,7 +166,7 @@ while (list($key, $message) = each($messages)) {
 /* Walk down from the viewed message to the root to find the path */
 $pid = $vmid;
 do {
-  $path[$pid] = 'true';
+  $path[$pid] = true;
   $key = reset($tree[$pid]);
   $pid = $messages[$key]['pid'];
 } while ($pid);
@@ -176,7 +180,7 @@ function print_subject($msg)
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
     while (list(,$flag) = each($flagexp))
-      $flags[$flag] = "true";
+      $flags[$flag] = true;
   }
 
   $string = "<li>";

@@ -86,12 +86,16 @@ function print_message($msg)
 
   $tpl->set_block("message", "forum_admin");
   $tpl->set_block("message", "parent");
+  $tpl->set_block("message", "changes");
 
   if (isset($user->cap['Moderate'])) {
-    $tpl->set_var("MSG_AID", "<a href=\"/showaccount.phtml?aid=" . $msg['aid'] . "\">" . $msg['aid'] . "</a>");
+    $tpl->set_var("MSG_AID", $msg['aid']);
     $tpl->set_var("MSG_IP", $msg['ip']);
-  } else
+    $tpl->set_var("MSG_CHANGES", preg_replace("/\n/", "<br>\n", $msg['changes']));
+  } else {
     $tpl->set_var("forum_admin", "");
+    $tpl->set_var("changes", "");
+  }
 
   $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
   $tpl->set_var(array(

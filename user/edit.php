@@ -25,10 +25,12 @@ $tpl->set_block("edit", "accept");
 
 $tpl->set_block("message", "forum_admin");
 $tpl->set_block("message", "parent");
+$tpl->set_block("message", "changes");
 
 $tpl->set_var(array(
   "forum_admin" => "",
   "parent" => "",
+  "changes" => "",
 ));
 
 $tpl->set_var("TITLE", "Message Editting");
@@ -194,7 +196,7 @@ if (isset($error) || isset($preview)) {
 	"message = '" . addslashes($message) . "', " .
 	"url = '" . addslashes($url) . "', " .
 	"urltext = '" . addslashes($urltext) . "', " .
-	"changes = CONCAT(changes, 'Updated by " . $user->name . " at ', NOW(), '\n') " .
+	"changes = CONCAT(changes, 'Edited by " . $user->name . "/" . $user->aid . " at ', NOW(), '\n') " .
 	"where mid = '" . addslashes($mid) . "'";
   mysql_query($sql) or sql_error($sql);
 
