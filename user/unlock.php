@@ -10,7 +10,7 @@ if (!$user->valid()) {
 }
 
 if (!$user->capable($forum['fid'], 'Lock')) {
-  echo "You are not allowed to lock this thread\n";
+  echo "You are not allowed to unlock this thread\n";
   exit;
 }
 
