@@ -14,7 +14,7 @@ if ($state != 'Active' && $state != 'OffTopic' && $state != 'Moderated' && $stat
 
 $index = find_msg_index($mid);
 
-$msg = sql_querya("select mid, aid, pid, state, subject from f_messages$index where mid = '" . addslashes($mid) . "'");
+$msg = sql_querya("select mid, aid, pid, state, subject, flags from f_messages$index where mid = '" . addslashes($mid) . "'");
 
 if (!empty($msg['flags'])) {
   $flagexp = explode(",", $msg['flags']);
