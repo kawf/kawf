@@ -58,7 +58,7 @@ if (($state == 'Moderated' && !$user->capable($forum['fid'], 'Moderate')) ||
     echo "You cannot change the state of this message anymore\n";
     exit;
   }
-} else
+} else if ($msg['aid'] != $user->aid)
   $flags['StateLocked'] = true;
 
 if ($state == 'OffTopic' && $user->capable($forum['fid'], 'OffTopic'))
