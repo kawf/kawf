@@ -150,7 +150,7 @@ function find_forum($shortname)
     while ($tthread = mysql_fetch_array($result)) {
       $tthreads[] = $tthread;
       if (isset($tthreads_by_tid[$tthread['tid']])) {
-        if ($tthread['tstamp'] > $tthreads_by_tid[$tthread['tid']]['tstamp'])
+        if ($tthread['unixtime'] > $tthreads_by_tid[$tthread['tid']]['unixtime'])
           $tthreads_by_tid[$tthread['tid']] = $tthread;
       } else
         $tthreads_by_tid[$tthread['tid']] = $tthread;

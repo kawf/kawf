@@ -140,7 +140,7 @@ if (!empty($user->signature))
 if (!isset($preview))
   $tpl->set_var("preview", "");
 
-$date = date("Y-m-d H:i:s");
+$date = strftime("%Y-%m-%d %H:%M:%S", time() - $user->tzoff);
 
 $tpl->set_var(array(
   "MSG_MESSAGE" => $msg_message,
