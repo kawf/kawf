@@ -330,13 +330,13 @@ if (!$accepted || isset($preview)) {
       $sql = "update $mtable set tid = $tid where mid = $mid";
       mysql_query($sql) or sql_error($sql);
 
-      $sql = "insert into $ttable ( tid, mid ) values ( $tid, $mid )";
+      $sql = "insert into $ttable ( tid, mid, tstamp ) values ( $tid, $mid, NOW() )";
       mysql_query($sql) or sql_error($sql);
 
       $sql = "update f_indexes set maxtid = $tid where iid = " . $index['iid'] . " and maxtid < $tid";
       mysql_query($sql) or sql_error($sql);
     } else {
-      $sql = "update $ttable set replies = replies + 1 where tid = '" . addslashes($tid) . "'";
+      $sql = "update $ttable set replies = replies + 1, tstamp = NOW() where tid = '" . addslashes($tid) . "'";
       mysql_query($sql) or sql_error($sql);
     }
 
