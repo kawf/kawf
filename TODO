@@ -26,6 +26,7 @@ Possibilities
 Use PEAR Cache.php for anonymous users
 Use PEAR Mail.php instead of mailfrom
 Use PEAR Image/Remote.php to will width/height info for remote pictures
+Use PEAR Benchmark stuff to test out the software
 Use X-Forwarded-For header for more IP information
 Redesign message and thread database layout (too messy now)
 
