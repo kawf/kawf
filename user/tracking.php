@@ -2,8 +2,6 @@
 
 $user->req();
 
-$tpl->set_var("TITLE", "Tracking");
-
 $urlroot = "/ads";
 /* We get our money from ads, make sure it's there */
 include("ads.inc");
