@@ -84,7 +84,7 @@ while ($forum = mysql_fetch_array($res1)) {
   while ($tracking = mysql_fetch_array($res2)) {
     $index = find_thread_index($tracking['tid']);
     if ($index < 0) {
-      echo "Tracking index < 0! (tid = " . $tracking['tid'] . ", aid = " . $tracking['aid'] . ", tstamp = " . $tracking['tstamp'] . ", options = " . $tracking['options'] . ")\n";
+      echo "Tracking index < 0! (tid = " . $tracking['tid'] . ", aid = " . $tracking['aid'] . ", tstamp = " . $tracking['tstamp'] . ", options = '" . $tracking['options'] . "')\n";
       $delete = 1;
     } else {
       $sql = "select * from threads$index where tid = " . $tracking['tid'] . " and TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14";
@@ -100,6 +100,9 @@ while ($forum = mysql_fetch_array($res1)) {
   }
 
   echo "Done scrubbing support tables\n";
+
+  /* Kludge for now */
+  continue;
 
   unset($indexes);
 
@@ -246,7 +249,8 @@ echo $sql . "\n";
     list ($deleted) = mysql_fetch_row($res2);
 
     $sql = "update indexes set active = $active, moderated = $moderated, deleted = $deleted where iid = " . $index['iid'];
-    mysql_db_query($fdb, $sql) or sql_error($sql);
+echo $sql . "\n";
+//    mysql_db_query($fdb, $sql) or sql_error($sql);
   }
 
 /*

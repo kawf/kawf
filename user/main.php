@@ -164,6 +164,9 @@ if (empty($aregs[2])) {
 if (!find_forum($aregs[1]))
   err_not_found('Unknown forum ' . $aregs[1]);
 
+mysql_free_result($result);
+unset($result);
+
 /* Parse out the filename */
 /* The . "" is to workaround a bug in PHP4 */
 if (count($aregs) >= 4 && isset($fscripts[$aregs[3] . ""])) {
@@ -188,6 +191,8 @@ if (count($aregs) >= 4 && isset($fscripts[$aregs[3] . ""])) {
   $index = find_msg_index($mid);
   if ($index >= 0) {
     $sql = "select mid from messages$index where mid = '" . addslashes($mid) . "'";
+    if (!forum_moderate())
+      $sql .= " and state != 'Deleted'";
     $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
   }
 
@@ -203,6 +208,7 @@ if (count($aregs) >= 4 && isset($fscripts[$aregs[3] . ""])) {
     $sql = "select tid from threads$index where tid = '" . addslashes($tid) . "'";
     $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
   }
+
   if (isset($result) && mysql_num_rows($result)) {
     include('showthread.php');
   } else
