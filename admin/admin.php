@@ -83,7 +83,7 @@ $sql .= " order by aid limit $skipaccounts,$accountsperpage";
 $result = mysql_db_query($database, $sql) or sql_error($sql);
 
 echo "<table>\n";
-echo "<tr><td>aid</td><td>name</td><td>email</td><td>status</td><td>capabilities</td></tr>\n";
+echo "<tr><td>aid</td><td>name</td><td>email</td><td>status</td></tr>\n";
 while ($acct = mysql_fetch_array($result)) {
 ?>
   <tr>
@@ -91,7 +91,6 @@ while ($acct = mysql_fetch_array($result)) {
     <td><?php echo stripslashes($acct['name']); ?></td>
     <td><?php echo stripslashes($acct['email']); ?></td>
     <td><?php echo $acct['status']; ?></td>
-    <td><?php echo $acct['capabilities']; ?></td>
   </tr>
 <?php
 }

@@ -21,12 +21,6 @@ class ForumUser {
       foreach ($user as $type => $value)
         $this->$type = $value;
 
-      if (!empty($this->capabilities)) {
-        $capabilities = explode(",", $this->capabilities);
-        foreach ($capabilities as $flag)
-          $this->cap[$flag] = true;
-      }
-
       if (!empty($this->preferences)) {
         $preferences = explode(",", $this->preferences);
         foreach ($preferences as $flag)

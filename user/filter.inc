@@ -1,7 +1,7 @@
 <?php
 function filter_messages($messages, $tree, $siblings, $path = array())
 {
-  global $user;
+  global $user, $forum;
 
   $s = reset($siblings);
   /*
@@ -20,9 +20,9 @@ function filter_messages($messages, $tree, $siblings, $path = array())
    *
    * then hide this message and any children
    */
-  $hide = ((!isset($user->cap['Moderate']) && !$user->pref['ShowModerated'] &&
+  $hide = ((!$user->moderator($forum['fid']) && !$user->pref['ShowModerated'] &&
             $messages[$s]['state'] == 'Moderated') ||
-	   (!isset($user->cap['Moderate']) && $messages[$s]['state'] == 'Deleted')) &&
+	   (!$user->moderator($forum['fid']) && $messages[$s]['state'] == 'Deleted')) &&
 	    (empty($path) || !isset($path[$messages[$s]['mid']])) &&
 	  $messages[$s]['aid'] != $user->aid;
   if ($hide) {

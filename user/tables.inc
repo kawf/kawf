@@ -116,7 +116,6 @@ $create_users_table =
   "  cookie varchar(50) not null,\n" .
   "  timezone varchar(5) not null,\n" .
   "  style enum('Classic','Simple','UBB') not null default 'Classic',\n" .
-  "  capabilities set('Moderate','Delete') not null,\n" .
   "  preferences set('ShowModerated','Collapsed','SecretEmail','FlatThread','AutoTrack','HideSignatures','AutoUpdateTracking','OldestFirst','SortbyActive') not null,\n" .
   "  signature text not null,\n" .
   "  threadsperpage int not null,\n" .
