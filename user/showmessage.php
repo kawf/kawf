@@ -9,12 +9,32 @@ sql_open_readonly();
 
 require('listthread.inc');
 
+require('class.FastTemplate.php3');
+
+$tpl = new FastTemplate('templates');
+$tpl->define(array(
+  header => 'header.tpl',
+  footer => 'footer.tpl',
+  showmessage => 'showmessage.tpl',
+  post => 'post.tpl',
+  post_noacct => 'post_noacct.tpl'
+));
+
+$tpl->assign(BODYTAGS, ' bgcolor="#ffffff"');
+
+$tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
+
+$tpl->assign(FORUM_PICTURE, $forum['picture']);
+$tpl->assign(FORUM_NAME, $forum['name']);
+
 /* Grab the actual message */
 $index = find_msg_index($mid);
 $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where mid = '" . addslashes($mid) . "'";
 $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 
 $msg = mysql_fetch_array($result);
+
+$tpl->assign(TITLE, $msg['subject']);
 
 if (!empty($msg['flags'])) {
   $flagexp = explode(",", $msg['flags']);
@@ -48,104 +68,56 @@ if (isset($tthreads[$msg['tid']]) &&
   $sql = "update tracking set tstamp = NOW() where tid = " . $msg['tid'] . " and aid = " . $user['aid'];
   mysql_db_query("forum_" . $forum['shortname'], $sql) || sql_warn($sql);
 }
-?>
-<head>
-<title>
-AudiWorld Forums: <?php echo $msg['subject']; ?>
-</title>
-</head>
-
-<body bgcolor=#ffffff>
-
-<center>
-<?php
 /* We get our money from ads, make sure it's there */
 /*
 require('ads.inc');
 
+echo "<center>\n";
 add_ad();
+echo "</center>\n";
 */
-?>
-</center>
 
-<hr width="100%" size="1">
-
-<table width=100%>
-<tr>
-  <td width=50% align="left">
-    <img src="<?php echo $forum['picture']; ?>">
-  </td>
-  <td width=50% align="right">
-<?php
+/*
 if ($forum['shortname'] == "a4" || $forum['shortname'] == "performance")
   ads_view("carreview", "_top");
 if ($forum['shortname'] == "wheel") 
   echo "<a href=\"mailto:Eddie@Tirerack.com\"><img src=\"$furlroot/pix/tireracksponsor.gif\" border=\"0\"></a>\n";
-?>
-  </td>
-</tr>
-</table>
+*/
 
-<font face="arial, geneva" size=-2>[ <a href="#thread">Thread</a> ] [ <a href="#postfp">Post Followup</a> ]  [<a href="http://pictureposter.audiworld.com/A4PICSnd.asp">Post Picture</a>] [ <a href="/search/" target="_top">Search Forums</a> ] [ <a href="<?php echo $urlroot . "/" . $forum['shortname']; ?>/<?php echo $indexpage; ?>"><?php echo $forum['name']; ?></a> ]</font>
-
-<table width="600">
-<tr><td>
-<br>
-<font face="Verdana, Arial, Geneva" size="+1" color="#000080"><b><?php echo $msg['subject']; ?></b></font><br>
-
-<?php
 if (isset($user['cap.Moderate']))
  echo "<font face=\"Verdana, Arial, Geneva\" size=\"-2\">Posting IP Address: " . $msg['ip'] . "</font><p>\n";
 
-?>
-<font face="Verdana, Arial, Geneva" size="-2"><b>Posted by 
-<?php
+$tpl->assign(MSG_SUBJECT, $msg['subject']);
+$tpl->assign(MSG_DATE, $msg['date']);
+
 if (!empty($msg['email'])) {
   $email = preg_replace("/@/", "&#" . ord('@') . ";", $msg['email']);
-  echo "<a href=\"mailto:" . $email . "\">" . $msg['name'] . "</a>";
+  $tpl->assign(MSG_NAMEEMAIL, "<a href=\"mailto:" . $email . "\">" . $msg['name'] . "</a>");
 } else
-  echo $msg['name'];
-?>
- on <?php echo $msg['date']; ?>:</b><p>
+  $tpl->assign(MSG_NAMEEMAIL, $msg['name']);
 
-<?php
+/*
 if ($msg['pid'] != 0) {
-?>
 In Reply to: <a href="<?php echo $msg['pid']; ?>.phtml"><?php echo $pmsg['subject']; ?></a> posted by <?php echo $pmsg['name']; ?> on <?php echo $pmsg['date']; ?><p>
-<?php
 }
-?>
-</font>
+*/
 
-<font face="Verdana, Arial, Geneva" size="-1">
-<?php
 $message = preg_replace("/\n/", "<br>\n", $msg['message']);
-
-echo $message .  "<br><br>\n";
 
 if (!empty($msg['url'])) {
   if (!empty($msg['urltext']))
-    print "<ul><li><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['urltext'] . "</a></ul>\n";
+    $message .= "<ul><li><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['urltext'] . "</a></ul>\n";
    else
-    print "<ul><li><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['url'] . "</a></ul>\n";
+    $message .= "<ul><li><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['url'] . "</a></ul>\n";
 }
 
 if (isset($signature)) {
   $signature = preg_replace("/\n/", "<br>\n", $signature);
-  $signature = stripslashes($signature);
-  echo "<p>$signature\n";
+  $message .= "<p>" . stripslashes($signature) . "\n";
 }
 
-?>
-</font>
-</td></tr></table>
+$tpl->assign(MSG_MESSAGE, $message . "<br><br>\n");
 
-<a name="thread">
-<font face="Verdana, Arial, Geneva" size="-1"><b>Thread:</b></font><br>
-
-<table width="100%"><tr><td bgcolor="#eeeeee">
-<font face="Verdana, Arial, Geneva" size="-1">
-<?php
 $sql = "select * from threads$index where tid = '" . $msg['tid'] . "'";
 
 $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
@@ -158,20 +130,14 @@ $ulkludge =
   ereg("^Mozilla/[0-9]\.[0-9]+ \(compatible; MSIE .*", $HTTP_USER_AGENT) ||
   ereg("^Mozilla/[0-9]\.[0-9]+ \(Macintosh; .*", $HTTP_USER_AGENT);
 
-echo "<ul>\n";
-list_thread($thread, $msg['mid']);
+$threadmsg = "<ul>\n";
+$threadmsg .= list_thread($thread, $msg['mid']);
 if (!$ulkludge)
-  echo "</ul>\n";
-?>
-</font>
-</td></tr></table>
+  $threadmsg .= "</ul>\n";
 
-<br>
+$tpl->assign(THREAD, $threadmsg);
 
-<a name="postfp">
-<img src="<?php echo $furlroot; ?>/pix/followup.gif"><br>
-
-<?php
+/*
 if (!ereg("^[Rr][Ee]:", $msg['subject'], $sregs))
   $subject = "Re: " . $msg['subject'];
  else
@@ -187,10 +153,25 @@ $tid = $msg['tid'];
 unset($mid);
 $action = $urlroot . "/post.phtml";
 include('./postform.inc');
+*/
+
+if (isset($user)) {
+  $pid = 0;
+  $subject = $message = $url = $urltext = $imageurl = "";
+  $subject = ereg_replace("\"", "&quot;", $subject);
+  unset($mid);
+
+  $postcookie = md5("post" . microtime());
+
+  $tpl->assign(PID, "<input type=\"hidden\" name=\"pid\" value=\"$pid\">");
+  $tpl->assign(TID, "<input type=\"hidden\" name=\"tid\" value=\"$tid\">");
+
+  $tpl->parse(POST, 'post');
+} else 
+  $tpl->parse(POST, 'post_noacct');
+
+$tpl->parse(HEADER, 'header');
+$tpl->parse(FOOTER, 'footer');
+$tpl->parse(CONTENT, 'showmessage');
+$tpl->FastPrint(CONTENT);
 ?>
-
-<p>
-<table width="600">
-<tr><td>
-<font face="arial, geneva" size=-2>[ <a href="#thread">Thread</a> ] [ <a href="#postfp">Post Followup</a> ]  [<a href="http://pictureposter.audiworld.com/A4PICSnd.asp">Post Picture</a>] [ <a href="/search/" target="_top">Search Forums</a> ] [ <a href="<?php echo $urlroot . "/" . $forum['shortname']; ?>/<?php echo $indexpage; ?>"><?php echo $forum['name']; ?></a> ]</font><br><br>
-
