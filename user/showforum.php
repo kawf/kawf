@@ -390,8 +390,7 @@ if (isset($tthreads)) {
       $tpl->set_var("MESSAGES", $messagestr);
       $tpl->set_var("MESSAGELINKS", $messagelinks);
 
-      $row .= $tpl->subst("row");
-      #$tpl->parse("_row", "row", true);
+      $tpl->parse("_row", "row", true);
     }
   }
 }
@@ -485,8 +484,7 @@ while ($numshown < $threadsperpage) {
     $tpl->set_var("MESSAGES", $messagestr);
     $tpl->set_var("MESSAGELINKS", $messagelinks);
 
-    $row .= $tpl->subst("row");
-    #$tpl->parse("_row", "row", true);
+    $tpl->parse("_row", "row", true);
   }
 
   mysql_free_result($result);
@@ -508,8 +506,6 @@ $tpl->set_var(array(
 $action = "post";
 
 require_once("post.inc");
-
-$tpl->set_var("_row", $row);
 
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");
