@@ -20,7 +20,8 @@ $create_message_table = "
     views int not null,
     changes text not null,
     primary key (mid),
-    key (tid)
+    index (pid),
+    index (tid)
   )";
 
 $create_thread_table = "
