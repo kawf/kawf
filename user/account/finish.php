@@ -3,47 +3,97 @@
 $tpl->set_file("finish", "account/finish.tpl");
 
 $tpl->set_block("finish", "form");
-$tpl->set_block("finish", "unknown");
 $tpl->set_block("finish", "error");
+$tpl->set_block("error", "unknown");
+$tpl->set_block("error", "invalid_aid");
+$tpl->set_block("error", "activate_failed");
+$tpl->set_block("error", "dup_email");
 $tpl->set_block("finish", "success");
-
 $tpl->set_block("success", "create");
 $tpl->set_block("success", "email");
-$tpl->set_block("success", "password");
+$tpl->set_block("success", "forgot_password");
 
-$error = "";
+$errors = array(
+  "unknown",
+  "invalid_aid",
+  "activate_failed",
+  "dup_email",
+);
 
-$user = sql_querya("select * from u_users where cookie = '" . addslashes($cookie) . "'");
-if (!$user) {
-  $tpl->set_var("success", "");
-  if (!isset($cookie) || empty($cookie))
-    $tpl->set_var("unknown", "");
-  else
+$successes = array(
+  "create",
+  "email",
+  "forgot_password",
+);
+
+$pending = sql_querya("select * from u_pending where cookie = '" . addslashes($cookie) . "'");
+if (!$pending) {
+  if (isset($cookie) && !empty($cookie)) {
+    $error = "unknown";
     $tpl->set_var("COOKIE", $cookie);
+  }
 } else {
-  if ($user['status'] == 'Create') {
-    $aid = $user['aid'];
+  $user = new AccountUser;
+  $user->find_by_aid((int)$pending['aid']);
+  if (!$user->valid()) {
+    $error = "invalid_aid";
+  } else {
+    sql_query("update u_pending set status = 'Done' where tid = " . $pending['tid']);
+    switch ($pending['type']) {
+    case "NewAccount":
+      if ($user->status == 'Create') {
+        $user->status("Active");
+        if (!$user->update())
+          $error = "activate_failed";
+        else
+          $success = "create";
+      } else
+        $success = "create";
 
-    $user = new AccountUser;
-    $user->find_by_aid((int)$aid);
+      $user->setcookie();
+      break;
+    case "ChangeEmail":
+      $user->email($pending['data']);
+      if (!$user->update())
+        $error = "dup_email";
+      else
+        $success = "email";
 
-    $user->status("Active");
-    if (!$user->update())
-      $error .= "Unable to activate account\n";
+      $tpl->set_var("EMAIL", $user->email);
+      break;
+    case "ForgotPassword":
+      /*
+       * Some users for some reason try to get a new password even if the
+       * message specifically says the account needs to be validated.
+       * Silently fix them up since this does validate that their email
+       * address works.
+       */
+      if ($user->status == 'Create') {
+        $user->status("Active");
+        $user->update();
+      }
 
-    $user->setcookie();
+      $user->setcookie();
+      $success = "forgot_password";
+    }
   }
 
-  $tpl->set_var(array("email" => "", "password" => ""));
-
   $tpl->set_var("form", "");
-  $tpl->set_var("unknown", "");
 }
 
-if (!empty($error))
-  $tpl->set_var("ERROR", $error);
-else
+if (isset($error)) {
+  foreach ($errors as $code)
+    if ($error != $code)
+      $tpl->set_var($code, "");
+} else
   $tpl->set_var("error", "");
+
+if (isset($success)) {
+  foreach ($successes as $code)
+    if ($success != $code)
+      $tpl->set_var($code, "");
+} else
+  $tpl->set_var("success", "");
 
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");
