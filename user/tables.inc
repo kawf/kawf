@@ -97,6 +97,13 @@ $create_update_table =
   "  primary key (fid)\n" .
   ")";
 
+$create_moderators_table =
+  "create table f_moderators (\n" .
+  "  aid int not null,\n" .
+  "  fid int not null,\n" .
+  "  key (aid)\n" .
+  ")";
+
 $create_users_table =
   "create table u_users (\n" .
   "  aid int not null auto_increment,\n" .
