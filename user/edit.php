@@ -2,6 +2,11 @@
 
 $user->req();
 
+if ($user->status != 'Active') {
+  header("Location: http://account.audiworld.com/why.phtml");
+  exit;
+}
+
 /* Check the data to make sure they entered stuff */
 if (!isset($mid) || !isset($forum)) {
   /* Hmm, how did this happen? Redirect them back to the main page */

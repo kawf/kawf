@@ -5,7 +5,7 @@ $create_message_table =
   "  pmid int not null,\n" .
   "  tid int not null,\n" .
   "  aid int not null,\n" .
-  "  state enum('Active','Moderated','Deleted') not null default 'Active',\n" .
+  "  state enum('Active','Moderated','Deleted','OffTopic','UserDeleted') not null default 'Active',\n" .
   "  flags set('NewStyle','NoText','Picture','Link') not null,\n" .
   "  name varchar(50) not null,\n" .
   "  email varchar(50) not null,\n" .
@@ -27,7 +27,7 @@ $create_thread_table =
   "  mid int not null,\n" .
   "  replies int not null,\n" .
   "  flags set('Locked') not null,\n" .
-  "  tstamp timestamp not null,\n" .
+  "  tstamp datetime not null,\n" .
   "  primary key (tid)\n" .
   ")";
 

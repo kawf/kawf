@@ -3,7 +3,7 @@
 $user->req();
 
 if ($user->status != 'Active') {
-  echo "You cannot post\n";
+  header("Location: http://account.audiworld.com/why.phtml");
   exit;
 }
 
