@@ -19,6 +19,8 @@ $tpl->set_file(array(
   "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
 ));
 
+$tpl->set_block("edit", "disabled");
+$tpl->set_block("edit", "image");
 $tpl->set_block("edit", "preview");
 $tpl->set_block("edit", "form");
 $tpl->set_block("edit", "accept");
@@ -72,6 +74,20 @@ require_once("ads.inc");
 $ad = ads_view("a4.org,aw_" . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
 
+if (!isset($forum['opt.Post'])) {
+  $tpl->set_var(array(
+    "image" => "",
+    "preview" => "",
+    "form" => "",
+    "accept" => "",
+  ));
+
+  $tpl->pparse("CONTENT", "post");
+  exit;
+}
+
+$tpl->set_var("disabled", "");
+
 /* Sanitize the strings */
 $name = stripcrap($user->name);
 if ($ExposeEmail)
@@ -122,10 +138,10 @@ if (!empty($imageurl) && !eregi("^[a-z]+://", $imageurl))
 if (!empty($imageurl) && !isset($imgpreview))
   $preview = 1;
 
-if ((isset($error) || isset($preview)) && (!empty($imageurl))) {
-  echo "<font face=\"Verdana, Arial, Geneva\" color=\"#ff0000\"><i><b>Picture Verification:</b> If you see your picture below then please scroll down and hit Post Message to complete your posting. If no picture appears then your link was set incorrectly or your image is not valid a JPG or GIF file. Correct the image type or URL link to the picture in the box below and hit Preview Message to re-verify that your picture will be visible.</i></font><br>\n";
+if ((isset($error) || isset($preview)) && (!empty($imageurl)))
   $imgpreview = 1;
-}
+else
+  $tpl->set_var("image", "");
 
 if (isset($ExposeEmail) && $ExposeEmail) {
   /* Lame spamification */
