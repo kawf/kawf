@@ -170,7 +170,6 @@ if (isset($imageurl) && !empty($imageurl))
 $tpl->parse(PREVIEW, 'previewa');
 
 if (isset($error) || isset($preview)) {
-  $incfrompost = 1;
   $action = "edit";
 
   include('post.inc');

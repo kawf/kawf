@@ -15,6 +15,7 @@ $create_message_table =
   "  message text not null,\n" .
   "  url varchar(250),\n" .
   "  urltext varchar(250),\n" .
+  "  views int not null,\n" .
   "  primary key (mid),\n" .
   "  key (pid, tid)\n" .
   ")";
@@ -28,19 +29,20 @@ $create_thread_table =
   "  primary key (tid)\n" .
   ")";
 
-/*
-create table indexes (
-  iid int not null auto_increment,
-  minmid int not null,
-  maxmid int not null,
-  mintid int not null,
-  maxtid int not null,
-  active int not null,
-  moderated int not null,
-  deleted int not null,
-  primary key (iid)
-);
+$create_index_table =
+  "create table indexes (\n" .
+  "  iid int not null auto_increment,\n" .
+  "  minmid int not null,\n" .
+  "  maxmid int not null,\n" .
+  "  mintid int not null,\n" .
+  "  maxtid int not null,\n" .
+  "  active int not null,\n" .
+  "  moderated int not null,\n" .
+  "  deleted int not null,\n" .
+  "  primary key (iid)\n" .
+  ")";
 
+/*
 create table dupposts (
   cookie varchar(40) not null,
   mid int not null,

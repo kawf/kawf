@@ -1,6 +1,5 @@
 <?php
 
-/* Open up the SQL database first */
 sql_open_readwrite();
 
 if (!isset($user)) {
@@ -61,6 +60,7 @@ if (isset($submit)) {
   option_changed('AutoTrack', "default tracking of threads");
   option_changed('HideSignatures', "hiding of signatures");
   option_changed('AutoUpdateTracking', "automatic updating of tracked threads");
+  option_changed('OldestFirst', "show replies oldest first");
 
   if (!empty($password1) && !empty($password2)) {
     if ($password1 == $password2) {
@@ -205,14 +205,15 @@ if (isset($submit)) {
   mysql_db_query('a4', $sql) or sql_error($sql);
 }
 
-do_option('ShowModerated', "showing of moderated posts");
-do_option('Collapsed', "collapsed view of threads");
-do_option('SecretEmail', "hiding of email address in posts");
-do_option('SimpleHTML', "simple HTML page generation");
-do_option('FlatThread', "flat thread display");
-do_option('AutoTrack', "default tracking of threads");
-do_option('HideSignatures', "hiding of signatures");
-do_option('AutoUpdateTracking', "automatic updating of tracked threads");
+do_option('ShowModerated');
+do_option('Collapsed');
+do_option('SecretEmail');
+do_option('SimpleHTML');
+do_option('FlatThread');
+do_option('AutoTrack');
+do_option('HideSignatures');
+do_option('AutoUpdateTracking');
+do_option('OldestFirst');
 
 if (!empty($error))
   $tpl->assign(ERROR, $error);

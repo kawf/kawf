@@ -41,6 +41,9 @@ if (isset($email) && isset($password)) {
 
     header("Location: cookiecheck.phtml?email=$email&page=$page");
 
+    /* Always delete first */
+    setcookie("ForumAccount", "", time() - 60, "$urlroot/", $cookiedom);
+
     /* Expire in 5 years */
     $expire = time() + (60 * 60 * 24 * 365 * 5);
     setcookie("ForumAccount", $cookie, $expire, "$urlroot/", $cookiedom);

@@ -75,11 +75,12 @@ if (isset($user)) {
   else
     $tpl->assign(TRACKTHREAD, '');
 
-  $tpl->assign(URLROOT, $urlroot);
   $tpl->assign(ACTION, $action);
   $tpl->clear_dynamic('noacct');
 } else
   $tpl->clear_dynamic('acct');
+
+$tpl->assign(URLROOT, $urlroot);
 
 $tpl->parse(FORM, 'postform');
 ?>

@@ -52,8 +52,8 @@ if (isset($AdsAccount)) {
   $column = "adscookie";
 }
 
-if (isset($account)) {
-  $sql = "select * from accounts where $column = '" . addslashes($account) . "';";
+if (isset($account) && !empty($account)) {
+  $sql = "select * from accounts where $column = '" . addslashes($account) . "' and $column != ''";
 
   $result = mysql_query($sql) or sql_error($sql);
 

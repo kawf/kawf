@@ -1,6 +1,7 @@
 <?php
 
 require('listthread.inc');
+require('filter.inc');
 
 $tpl->define(array(
   header => 'header.tpl',
@@ -61,20 +62,15 @@ $tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
 $tpl->parse(FORUM_HEADER, 'forum_header');
 
 /* We get our money from ads, make sure it's there */
-/* FIXME: Ads write directly to output */
-/*
-echo "<center>\n";
-require('ads.inc');
-add_ad();
-echo "</center>\n";
-*/
+include('ads.inc');
+
+$ad = ads_view("a4.org," . $forum['shortname'], "_top");
+$tpl->assign(AD, $ad);
 
 /* FIXME: More ads (forum specific ads) */
 /*
 if ($forum['shortname'] == "a4" || $forum['shortname'] == "performance")
   ads_view("carreview", "_top");
-if ($forum['shortname'] == "wheel")
-  echo "<a href=\"mailto:Eddie@Tirerack.com\"><img src=\"$furlroot/pix/tireracksponsor.gif\" border=\"0\"></a>\n";
 */
 
 /* Figure out how many total threads the user can see */
@@ -135,9 +131,9 @@ $tpl->assign(PAGES, $pagestr);
 $tpl->assign(NUMTHREADS, $numthreads);
 $tpl->assign(NUMPAGES, $numpages);
 
-function print_collapsed($thread, $msg)
+function print_collapsed($thread, $msg, $count)
 {
-  global $vmid, $user, $forum, $furlroot, $urlroot;
+  global $user, $forum, $furlroot, $urlroot;
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
@@ -147,14 +143,10 @@ function print_collapsed($thread, $msg)
 
   $string = "<li>";
 
-  if ($vmid == $msg['mid'])
-    $string .= "<font color=\"#ff0000\">" . $msg['subject'] . "</font>";
-  else {
-    if (isset($user['prefs.FlatThread']))
-      $string .= "<a href=\"$urlroot/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
-    else
-      $string .= "<a href=\"$urlroot/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
-  }
+  if (isset($user['prefs.FlatThread']))
+    $string .= "<a href=\"$urlroot/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
+  else
+    $string .= "<a href=\"$urlroot/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
 
   if (isset($flags['NoText'])) {
     if (!isset($user['prefs.SimpleHTML']))
@@ -182,7 +174,7 @@ function print_collapsed($thread, $msg)
 
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<i><font size=-2>".$msg['date']."</font></i>";
 
-  $string .= " (" . $thread['replies'] . " " . ($thread['replies'] == 1 ? "reply" : "replies") . ")";
+  $string .= " ($count " . ($count == 1 ? "reply" : "replies") . ")";
 
   if ($msg['state'] != "Active")
     $string .= " (" . $msg['state'] . ")";
@@ -223,7 +215,7 @@ function print_collapsed($thread, $msg)
 
 function print_subject($msg)
 {
-  global $vmid, $user, $tthreads_by_tid, $forum, $furlroot, $urlroot;
+  global $user, $tthreads_by_tid, $forum, $furlroot, $urlroot;
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
@@ -238,14 +230,10 @@ function print_subject($msg)
 
   if ($new)
     $string .= "<i><b>";
-  if ($vmid == $msg['mid'])
-    $string .= "<font color=\"#ff0000\">" . $msg['subject'] . "</font>";
-  else {
-    if (isset($user['prefs.FlatThread']))
-      $string .= "<a href=\"$urlroot/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
-    else
-      $string .= "<a href=\"$urlroot/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
-  }
+  if (isset($user['prefs.FlatThread']))
+    $string .= "<a href=\"$urlroot/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
+  else
+    $string .= "<a href=\"$urlroot/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
 
   if ($new)
     $string .= "</b></i>";
@@ -274,7 +262,12 @@ function print_subject($msg)
   if (isset($flags['Locked']))
     $string .= " (locked)";
 
-  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<i><font size=-2>".$msg['date']."</font></i>";
+  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $msg['name'] . "</b>&nbsp;&nbsp;<font size=-2><i>".$msg['date']."</i>";
+
+  if ($msg['unixtime'] > 968889231)
+    $string .= " (" . $msg['views'] . " view" . ($msg['views'] == 1 ? "" : "s") . ")";
+
+  $string .= "</font>";
 
   if ($msg['state'] != "Active")
     $string .= " (" . $msg['state'] . ")";
@@ -317,40 +310,45 @@ function display_thread($thread)
 {
   global $user, $forum, $ulkludge;
 
-  $messagestr = "<ul>\n";
-  if (isset($user['prefs.Collapsed'])) {
-    $index = find_msg_index($thread['mid']);
-    $sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where mid = '" . $thread['mid'] . "'";
-    $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+  $index = find_msg_index($thread['mid']);
+  $sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, views, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp, UNIX_TIMESTAMP(date) as unixtime from messages$index where tid = '" . $thread['tid'] . "' order by mid";
+  $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+  while ($message = mysql_fetch_array($result))
+    $messages[] = $message;
 
-    if (!mysql_num_rows($result))
-      return "";
-
-    $message = mysql_fetch_array($result);
-    $messagestr .= print_collapsed($thread, $message);
-  } else {
-    $index = find_msg_index($thread['mid']);
-    $sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid desc";
+  /* We assume a thread won't span more than 1 index */
+  $index++;
+  if (isset($indexes[$index])) {
+    $sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid";
     $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
     while ($message = mysql_fetch_array($result))
       $messages[] = $message;
-
-    /* We assume a thread won't span more than 1 index */
-    $index++;
-    if (isset($indexes[$index])) {
-      $sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid desc";
-      $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
-      while ($message = mysql_fetch_array($result))
-        $messages[] = $message;
-    }
-
-    $messagestr .= list_thread($messages, print_subject, 0);
   }
+
+  if (!isset($messages) || !count($messages))
+    return "";
+
+  /* Filter out moderated or deleted messages, if necessary */
+  reset($messages);
+  while (list($key, $msg) = each($messages)) {
+    $tree[$msg['mid']][] = $key;
+    $tree[$msg['pid']][] = $key;
+  }
+
+  $messages = filter_messages($messages, $tree, reset($tree));
+
+  $count = count($messages);
+
+  $messagestr = "<ul>\n";
+  if (isset($user['prefs.Collapsed']))
+    $messagestr .= print_collapsed($thread, reset($messages), $count - 1);
+  else
+    $messagestr .= list_thread(print_subject, $messages, $tree, reset($tree));
 
   if (!$ulkludge || isset($user['prefs.SimpleHTML']))
     $messagestr .= "</ul>";
 
-  return $messagestr;
+  return array($count, $messagestr);
 }
 
 # Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)
@@ -374,10 +372,7 @@ echo "<!-- checking " . $tthread['tid'] . " -->\n";
     /* Some people have duplicate threads tracked, they'll eventually fall */
     /*  off, but for now this is a simple workaround */
     if (isset($threadshown[$tthread['tid']]))
-{
-echo "<!-- " . $tthread['tid'] . " already checked -->\n";
       continue;
-}
 
     $sql = "select * from threads$index where tid = '" . addslashes($tthread['tid']) . "'";
     $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
@@ -399,10 +394,18 @@ echo "<!-- " . $tthread['tid'] . " already checked -->\n";
 
       $tpl->assign(TRTAGS, $trtags);
 
-      $messagestr = display_thread($thread);
+      list($count, $messagestr) = display_thread($thread);
 
       /* If the thread is tracked, we know they are a user already */
       $messagelinks = "<a href=\"$urlroot/untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
+      if ($count > 1) {
+        if (!isset($user['prefs.Collapsed']))
+          $messagelinks .= "<br>";
+        else
+          $messagelinks .= " ";
+
+        $messagelinks .= "<a href=\"$urlroot/markuptodate.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#0000f0\">up</font></a>";
+      }
 
       $tpl->assign(MESSAGES, $messagestr);
       $tpl->assign(MESSAGELINKS, $messagelinks);
@@ -430,7 +433,7 @@ while ($numshown < $threadsperpage) {
     $mtable = "messages" . $indexes[$threadtable]['iid'];
 
     /* Get some more results */
-    $sql = "select $ttable.tid, $ttable.mid, $ttable.replies from $ttable, $mtable";
+    $sql = "select $ttable.tid, $ttable.mid from $ttable, $mtable";
 
     $sql .= " where $ttable.mid = $mtable.mid and ( $mtable.state = 'Active' ";
     if (isset($user['cap.Moderate']))
@@ -466,7 +469,7 @@ while ($numshown < $threadsperpage) {
 
     $tpl->assign(TRTAGS, $trtags);
 
-    $messagestr = display_thread($thread);
+    list($count, $messagestr) = display_thread($thread);
 
     if (isset($user)) {
       if (isset($tthreads_by_tid[$thread['tid']]))

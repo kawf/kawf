@@ -49,6 +49,7 @@ $scripts = array(
 
   "track.phtml" => "track.php",
   "untrack.phtml" => "untrack.php",
+  "markuptodate.phtml" => "markuptodate.php",
 
   "tracking.phtml" => "tracking.php",
 

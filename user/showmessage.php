@@ -1,6 +1,9 @@
 <?php
 
+sql_open_readwrite();
+
 require('listthread.inc');
+require('filter.inc');
 
 $tpl->define(array(
   header => 'header.tpl',
@@ -29,6 +32,9 @@ $msg = mysql_fetch_array($result);
 
 $tpl->assign(TITLE, $msg['subject']);
 
+$sql = "update messages$index set views = views + 1 where mid = '" . addslashes($mid) . "'";
+mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_warn($sql);
+
 if (!empty($msg['flags'])) {
   $flagexp = explode(",", $msg['flags']);
   while (list(,$flag) = each($flagexp))
@@ -51,30 +57,23 @@ if ($msg['pid'] != 0) {
   $pmsg = mysql_fetch_array($result);
 }
 
-echo "<!-- checking tthread " . $tthreads[$msg['tid']]['tstamp'] . ", " . $msg['tstamp'] . " -->\n";
 /* Mark the thread as read if need be */
 if (isset($tthreads_by_tid[$msg['tid']]) &&
-      $tthreads_by_tid[$msg['tid']]['tstamp'] < $msg['tstamp']) {
-  sql_open_readwrite();
-
-  echo "<!-- updating tthread -->\n";
+    $tthreads_by_tid[$msg['tid']]['tstamp'] < $msg['tstamp']) {
   $sql = "update tracking set tstamp = NOW() where tid = " . $msg['tid'] . " and aid = " . $user['aid'];
   mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_warn($sql);
 }
+
 /* We get our money from ads, make sure it's there */
-/*
-require('ads.inc');
+include('ads.inc');
 
-echo "<center>\n";
-add_ad();
-echo "</center>\n";
-*/
+$ad = ads_view("a4.org," . $forum['shortname'], "_top");
+$tpl->assign(AD, $ad);
 
+/* FIXME: More ads (forum specific ads) */
 /*
 if ($forum['shortname'] == "a4" || $forum['shortname'] == "performance")
   ads_view("carreview", "_top");
-if ($forum['shortname'] == "wheel") 
-  echo "<a href=\"mailto:Eddie@Tirerack.com\"><img src=\"$furlroot/pix/tireracksponsor.gif\" border=\"0\"></a>\n";
 */
 
 if (isset($user['cap.Moderate']))
@@ -104,6 +103,7 @@ if ($msg['pid'] != 0) {
 $message = preg_replace("/\n/", "<br>\n", $msg['message']);
 
 if (!empty($msg['url'])) {
+  $urlset = 1;
   if (!empty($msg['urltext']))
     $message .= "<ul><li><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['urltext'] . "</a></ul>\n";
    else
@@ -111,11 +111,19 @@ if (!empty($msg['url'])) {
 }
 
 if (isset($signature)) {
+  unset($urlset);
   $signature = preg_replace("/\n/", "<br>\n", $signature);
-  $message .= "<p>" . stripslashes($signature) . "\n";
+/*
+  if (get_magic_quotes_gpc())
+*/
+    $signature = stripslashes($signature);
+  $message .= "<p>" . $signature . "\n";
 }
 
-$tpl->assign(MSG_MESSAGE, $message . "<br><br>\n");
+if (!isset($urlset))
+  $message .= "<br>";
+
+$tpl->assign(MSG_MESSAGE, $message . "<br>\n");
 
 # Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)
 # Mozilla/4.7 (Macintosh; U; PPC)
@@ -131,14 +139,14 @@ $thread = mysql_fetch_array($result);
 
 $index = find_msg_index($thread['mid']);
 
-$sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid desc";
+$sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, views, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp, UNIX_TIMESTAMP(date) as unixtime from messages$index where tid = '" . $thread['tid'] . "' order by mid";
 $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 while ($message = mysql_fetch_array($result))
   $messages[] = $message;
 
 $index++;
 if (isset($indexes[$index])) {
-  $sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid desc";
+  $sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid";
   $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
   while ($message = mysql_fetch_array($result))
     $messages[] = $message;
@@ -146,9 +154,26 @@ if (isset($indexes[$index])) {
 
 $vmid = $msg['mid'];
 
-function print_subjects($msg)
+/* Filter out moderated or deleted messages, if necessary */
+reset($messages);
+while (list($key, $message) = each($messages)) {
+  $tree[$message['mid']][] = $key;
+  $tree[$message['pid']][] = $key;
+}
+
+/* Walk down from the viewed message to the root to find the path */
+$pid = $vmid;
+do {
+  $path[$pid] = 'true';
+  $key = reset($tree[$pid]);
+  $pid = $messages[$key]['pid'];
+} while ($pid);
+
+$messages = filter_messages($messages, $tree, reset($tree), $path);
+
+function print_subject($msg)
 {
-  global $vmid, $user, $tthreads, $forum, $furlroot, $urlroot;
+  global $vmid, $user, $tthreads_by_tid, $forum, $furlroot, $urlroot;
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
@@ -158,8 +183,8 @@ function print_subjects($msg)
 
   $string = "<li>";
 
-  $new = (isset($tthreads[$msg['tid']]) &&
-      $tthreads[$msg['tid']]['tstamp'] < $msg['tstamp']);
+  $new = (isset($tthreads_by_tid[$msg['tid']]) &&
+      $tthreads_by_tid[$msg['tid']]['tstamp'] < $msg['tstamp']);
 
   if ($new)
     $string .= "<i><b>";
@@ -199,7 +224,12 @@ function print_subjects($msg)
   if (isset($flags['Locked']))
     $string .= " (locked)";
 
-  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<i><font size=-2>".$msg['date']."</font></i>";
+  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<font size=-2><i>".$msg['date']."</i>";
+
+  if ($msg['unixtime'] > 968889231)
+    $string .= " (" . $msg['views'] . " view" . ($msg['views'] == 1 ? "" : "s") . ")";
+
+  $string .= "</font>";
 
   if ($msg['state'] != "Active")
     $string .= " (" . $msg['state'] . ")";
@@ -239,11 +269,30 @@ function print_subjects($msg)
 }
 
 $threadmsg = "<ul>\n";
-$threadmsg .= list_thread($messages, print_subjects, 0);
+$threadmsg .= list_thread(print_subject, $messages, $tree, reset($tree));
 if (!$ulkludge)
   $threadmsg .= "</ul>\n";
 
 $tpl->assign(THREAD, $threadmsg);
+
+if (isset($user)) {
+  if (isset($tthreads_by_tid[$msg['tid']])) {
+    $threadlinks = "<a href=\"$urlroot/untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
+  } else {
+    $threadlinks = "<a href=\"$urlroot/track.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#00d000\">tt</font></a>";
+  }
+} else
+  $threadlinks = "";
+
+if (isset($tthreads_by_tid[$msg['tid']]) &&
+   ($thread['tstamp'] > $tthreads_by_tid[$msg['tid']]['tstamp'])) {
+  $tpl->assign(BGCOLOR, "#ccccee");
+  if (count($messages) > 1)
+    $threadlinks .= "<br><a href=\"$urlroot/markuptodate.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#0000f0\">up</font></a>";
+} else
+  $tpl->assign(BGCOLOR, "#eeeeee");
+
+$tpl->assign(THREADLINKS, $threadlinks);
 
 $action = "post";
 

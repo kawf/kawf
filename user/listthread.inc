@@ -1,45 +1,41 @@
 <?php
 
 /* Recursive listing of a thread */
-function list_thread($messages, $callback, $pid)
+function list_thread($callback, $messages, $tree, $siblings)
 {
-  global $user, $forum, $urlroot, $furlroot;
+  global $user;
 
   $string = "";
 
-  while (list(,$msg) = each($messages)) {
-    if ($msg['pid'] == $pid)
-      $children[] = $msg;
-    else
-      $grandchildren[] = $msg;
-  }
-
-  if (!count($children))
+  $s = reset($siblings);
+  if (!isset($messages[$s]))
     return $string;
 
-  if ($pid)
+  next($siblings);
+
+  if ($messages[$s]['pid'])
     $string .= "<ul>\n";
 
-  while (list(,$msg) = each($children)) {
-    if (!isset($user['cap.Moderate'])) {
-      if ($msg['state'] == 'Deleted')
+  $string .= $callback($messages[$s]);
+
+  if (isset($user['prefs.OldestFirst'])) {
+    while (list(, $s1) = each($siblings)) {
+      if (!isset($messages[$s1]))
         continue;
 
-      if (!isset($user['prefs.ShowModerated']) && $msg['state'] == 'Moderated')
-        continue;
+      $string .= list_thread($callback, $messages, $tree, $tree[$messages[$s1]['mid']]);
     }
+  } else {
+    for ($s1 = end($siblings); $s1 != $s; $s1 = prev($siblings)) {
+      if (!isset($messages[$s1]))
+        continue;
 
-    $string .= $callback($msg);
-
-    if (!empty($grandchildren))
-      $string .= list_thread($grandchildren, $callback, $msg['mid']);
+      $string .= list_thread($callback, $messages, $tree, $tree[$messages[$s1]['mid']]);
+    }
   }
 
-  if ($pid)
+  if ($messages[$s]['pid'])
     $string .= "</ul>\n";
-
-  unset($children);
-  unset($grandchildren);
 
   return $string;
 }

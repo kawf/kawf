@@ -20,6 +20,20 @@ while ($forum = mysql_fetch_array($res1)) {
   $res2 = mysql_db_query($fdb, $sql) or sql_error($sql);
 
   while ($index = mysql_fetch_array($res2)) {
+    $count = 0;
+    while (1) {
+      $sql = "select * from messages" . $index['iid'] . " order by mid limit $count,1000";
+      $res3 = mysql_db_query($fdb, $sql) or sql_error($sql);
+
+      if (!mysql_num_rows($res3))
+        break;
+
+      while ($msg = mysql_fetch_array($res3)) {
+        $count++;
+      }
+
+      mysql_free_result($res3);
+    }
   }
 }
 ?>

@@ -53,7 +53,8 @@ case "followup":
 
   $user = mysql_fetch_array($result);
 
-  $aid = $user['aid']
+  $aid = $user['aid'];
+  break;
 default:
   exit;
 }

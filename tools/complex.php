@@ -1,6 +1,6 @@
 <?php
 
-require('sql.inc');
+require('../sql.inc');
 
 function sql_warn($sql) {
   echo "<p>Error with SQL Query<br>\n";

@@ -2,9 +2,9 @@
 
 require('../sql.inc');
 
-sql_open_readwrite();
+# sql_open_readwrite();
 
-# mysql_pconnect("localhost", "root", "password");
+mysql_pconnect("localhost", "root", "password");
 
 set_time_limit(0);
 
@@ -20,6 +20,8 @@ while ($forum = mysql_fetch_array($res1)) {
   $res2 = mysql_db_query($fdb, $sql) or sql_error($sql);
 
   while ($index = mysql_fetch_array($res2)) {
+    $sql = "optimize table messages" . $index['iid'];
+    mysql_db_query($fdb, $sql) or sql_error($sql);
   }
 }
 ?>

@@ -1,6 +1,9 @@
 <?php
 
+sql_open_readwrite();
+
 require('listthread.inc');
+require('filter.inc');
 
 $tpl->define(array(
   header => 'header.tpl',
@@ -16,32 +19,10 @@ $tpl->assign(FORUM_NAME, $forum['name']);
 
 $tpl->parse(FORUM_HEADER, 'forum_header');
 
-/* Grab the actual message */
-$index = find_thread_index($tid);
-$sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . addslashes($tid) . "'";
-$result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
-
-$msg = mysql_fetch_array($result);
-
-if (!empty($msg['flags'])) {
-  $flagexp = explode(",", $msg['flags']);
-  while (list(,$flag) = each($flagexp))
-    $flags[$flag] = "true";
-}
-
-if (isset($flags['NewStyle']) && !isset($user['prefs.HideSignatures'])) {
-  $sql = "select signature from accounts where aid = " . $msg['aid'];
-  $result = mysql_db_query("a4", $sql) or sql_error($sql);
-
-  list($signature) = mysql_fetch_row($result);
-}
-
-echo "<!-- checking tthread " . $tthreads[$msg['tid']]['tstamp'] . ", " . $msg['tstamp'] . " -->\n";
+echo "<!-- checking tthread " . $tthreads[$tid]['tstamp'] . ", " . $msg['tstamp'] . " -->\n";
 /* Mark the thread as read if need be */
 if (isset($tthreads[$msg['tid']]) &&
       $tthreads[$msg['tid']]['tstamp'] < $msg['tstamp']) {
-  sql_open_readwrite();
-
   echo "<!-- updating tthread -->\n";
   $sql = "update tracking set tstamp = NOW() where tid = " . $msg['tid'] . " and aid = " . $user['aid'];
   mysql_db_query("forum_" . $forum['shortname'], $sql) || sql_warn($sql);
@@ -61,7 +42,7 @@ if ($forum['shortname'] == "wheel")
   echo "<a href=\"mailto:Eddie@Tirerack.com\"><img src=\"$furlroot/pix/tireracksponsor.gif\" border=\"0\"></a>\n";
 */
 
-$sql = "select * from threads$index where tid = '" . $msg['tid'] . "'";
+$sql = "select * from threads$index where tid = '" . addslashes($tid) . "'";
 
 $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 
@@ -69,7 +50,7 @@ $thread = mysql_fetch_array($result);
 
 $index = find_msg_index($thread['mid']);
 
-$sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid desc";
+$sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp, UNIX_TIMESTAMP(date) as unixtime from messages$index where tid = '" . $thread['tid'] . "' order by mid";
 $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 while ($message = mysql_fetch_array($result))
   $messages[] = $message;
@@ -82,9 +63,32 @@ if (isset($indexes[$index])) {
     $messages[] = $message;
 }
 
+/* Filter out moderated or deleted messages, if necessary */
+reset($messages);
+while (list($key, $message) = each($messages)) {
+  $tree[$message['mid']][] = $key;
+  $tree[$message['pid']][] = $key;
+}
+
+/* Walk down from the viewed message to the root to find the path */
+/*
+$pid = $vmid;
+do {
+  $path[$pid] = 'true';
+  $key = reset($tree[$pid]);
+  $pid = $messages[$key]['pid'];
+} while ($pid);
+*/
+
+$messages = filter_messages($messages, $tree, reset($tree));
+
 function print_message($msg)
 {
-  global $tpl, $user;
+  global $tpl, $user, $forum;
+
+  $index = find_msg_index($msg['mid']);
+  $sql = "update messages$index set views = views + 1 where mid = '" . addslashes($msg['mid']) . "'";
+  mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_warn($sql);
 
   $tpl->define_dynamic('posting_ip', 'message');
   $tpl->define_dynamic('parent', 'message');
@@ -135,14 +139,9 @@ function print_message($msg)
   return $tpl->fetch(MESSAGE);
 }
 
-$messagestr = list_thread($messages, print_message, 0);
+$messagestr = list_thread(print_message, $messages, $tree, reset($tree));
 
 $tpl->assign(MESSAGES, $messagestr);
-
-if (!ereg("^[Rr][Ee]:", $msg['subject'], $sregs))
-  $subject = "Re: " . $msg['subject'];
- else
-  $subject = $msg['subject'];
 
 $tpl->parse(HEADER, 'header');
 $tpl->parse(FOOTER, 'footer');
