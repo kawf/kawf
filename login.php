@@ -4,16 +4,11 @@ require('account.inc');
 
 require('config.inc');
 
-require('class.FastTemplate.php3');
-
-$tpl = new FastTemplate('templates');
 $tpl->define(array(
   header => 'header.tpl',
   footer => 'footer.tpl',
   login => 'login.tpl'
 ));
-
-$tpl->assign(BODYTAGS, ' bgcolor="#ffffff"');
 
 if (!isset($page))
   $page = $furlroot;

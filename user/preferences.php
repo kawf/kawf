@@ -1,9 +1,7 @@
 <?php
 
-require('../sql.inc');
-require('../account.inc');
-
-require('config.inc');
+require('sql.inc');
+require('account.inc');
 
 /* Open up the SQL database first */
 sql_open_readwrite();
@@ -15,19 +13,46 @@ if (!isset($user)) {
 
 require('striptag.inc');
 require('mailfrom.inc');
-?>
-<html>
-<head>
-<title>Update Preferences</title>
-</head>
 
-<body bgcolor=#ffffff>
+$tpl->define(array(
+  header => 'header.tpl',
+  footer => 'footer.tpl',
+  preferences => 'preferences.tpl'
+));
 
-<img src="<?php echo $furlroot; ?>/pix/change.gif"><br>
+$tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
 
-<?php
 $success = "";
 $error = "";
+
+function do_option($name, $message)
+{
+  global $tpl, $user, $success, $prefs, $$name;
+
+  $value = isset($$name) ? 1 : 0;
+  if ($value)
+    $prefs[] = $name;
+
+  if ($value != isset($user['prefs.' . $name]))
+    $success .= ($value ? "Enabled" : "Disabled") . " " . $message . "<p>\n";
+
+  if ($value) {
+    $user['prefs.' . $name] = 1;
+    $tpl->assign(strtoupper($name), ' checked');
+  } else {
+    unset($user['prefs.' . $name]);
+    $tpl->assign(strtoupper($name), '');
+  }
+}
+
+do_option('ShowModerated', "showing of moderated posts");
+do_option('Collapsed', "collapsed view of threads");
+do_option('SecretEmail', "hiding of email address in posts");
+do_option('SimpleHTML', "simple HTML page generation");
+do_option('FlatThread', "flat thread display");
+do_option('AutoTrack', "default tracking of threads");
+do_option('HideSignatures', "hiding of signatures");
+do_option('AutoUpdateTracking', "automatic updating of tracked threads");
 
 if (isset($submit)) {
   if (!empty($password1) && !empty($password2)) {
@@ -135,29 +160,6 @@ if (isset($submit)) {
     }
   }
 
-  function do_option($name, $message)
-  {
-    global $user, $success, $prefs, $$name;
-
-    $value = isset($$name) ? 1 : 0;
-    if ($value)
-      $prefs[] = $name;
-
-    if ($value != isset($user['prefs.' . $name]))
-      $success .= ($value ? "Enabled" : "Disabled") . " " . $message . "<p>\n";
-
-    unset($user['prefs.' . $name]);
-  }
-
-  do_option('ShowModerated', "showing of moderated posts");
-  do_option('Collapsed', "collapsed view of threads");
-  do_option('SecretEmail', "hiding of email address in posts");
-  do_option('SimpleHTML', "simple HTML page generation");
-  do_option('FlatThread', "flat thread display");
-  do_option('AutoTrack', "default tracking of threads");
-  do_option('HideSignatures', "hiding of signatures");
-  do_option('AutoUpdateTracking', "automatic updating of tracked threads");
-
   if (isset($prefs))
     $prefstr = implode(",", $prefs);
   else
@@ -196,24 +198,24 @@ if (isset($submit)) {
   mysql_db_query('a4', $sql) or sql_error($sql);
 }
 
-if (!empty($error)) {
-  echo "<font face=\"Verdana, Arial, Geneva\" color=\"#ff0000\">\n";
-  echo $error;
-  echo "</font>\n";
-}
+if (!empty($error))
+  $tpl->assign(ERROR, $error);
+else
+  $tpl->assign(ERROR, '');
 
-if (!empty($success)) {
-  echo "<font face=\"Verdana, Arial, Geneva\">\n";
-  echo $success;
-  echo "</font>\n";
-}
+if (!empty($success))
+  $text = $success . "<p>\n";
+else
+  $text = "";
 
-$text = "To change your password or update your preferences, please fill out the information below.";
+$text .= "To change your password or update your preferences, please fill out the information below.";
 
-include('./prefform.inc');
+$tpl->assign(SIGNATURE, stripslashes($user['signature']));
+$tpl->assign(TEXT, $text);
+$tpl->assign(THREADSPERPAGE, $user['threadsperpage']);
+
+$tpl->parse(HEADER, 'header');
+$tpl->parse(FOOTER, 'footer');
+$tpl->parse(CONTENT, 'preferences');
+$tpl->FastPrint(CONTENT);
 ?>
-
-</body>
-
-</html>
-

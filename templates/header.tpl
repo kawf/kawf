@@ -1,3 +1,3 @@
 <html>
 <head><title>AudiWorld Forums: {TITLE}</title></head>
-<body{BODYTAGS}>
+<body bgcolor="#ffffff">

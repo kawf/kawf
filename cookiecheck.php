@@ -27,16 +27,11 @@ else if (!isset($email))
 else
   $error = "Cookie was not set properly, old cookie still present?";
 
-require('class.FastTemplate.php3');
-
-$tpl = new FastTemplate('templates');
 $tpl->define(array(
   header => 'header.tpl',
   footer => 'footer.tpl',
   cookie_fail => 'cookie_fail.tpl'
 ));
-
-$tpl->assign(BODYTAGS, ' bgcolor="#ffffff"');
 
 $tpl->assign(ERROR, $error);
 $tpl->assign(EMAIL, $email);

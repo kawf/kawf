@@ -6,16 +6,13 @@ require('account.inc');
 require('config.inc');
 require('acct.inc');
 
-require('class.FastTemplate.php3');
-
-$tpl = new FastTemplate('templates');
 $tpl->define(array(
   header => 'header.tpl',
   footer => 'footer.tpl',
   showforum => 'showforum.tpl',
   showforum_row => 'showforum_row.tpl',
-  post => 'post.tpl',
-  post_noacct => 'post_noacct.tpl'
+  postform => 'postform.tpl',
+  postform_noacct => 'postform_noacct.tpl'
 ));
 
 /* Default it to the first page if none is specified */
@@ -46,8 +43,6 @@ function threads($key)
 
 $tpl->assign(TITLE, $forum['name']);
 
-$tpl->assign(BODYTAGS, ' bgcolor="#ffffff"');
-
 $tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
 
 $tpl->assign(FORUM_PICTURE, $forum['picture']);
@@ -71,6 +66,7 @@ if ($forum['shortname'] == "wheel")
 
 $numthreads = 0;
 
+reset($indexes);
 while (list($key) = each($indexes))
   $numthreads += threads($key);
 
@@ -154,58 +150,56 @@ $ulkludge =
 $numshown = 0;
 
 if (isset($tthreads)) {
-  while (list($tid, $tthread) = each($tthreads)) {
-    $index = find_thread_index($tid);
+  while (list($tid) = each($tthreads)) {
+    $index = find_thread_index($tthreads[$key]['tid']);
     if ($index < 0) {
       echo "<!-- Warning: Invalid tthread! $index $tid -->\n";
       continue;
     }
 
-    $sql = "select * from threads$index where tid = '" . addslashes($tid) . "'";
+    $sql = "select * from threads$index where tid = '" . addslashes($tthreads[$key]['tid']) . "'";
     $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 
     if (!mysql_num_rows($result))
       continue;
 
     $thread = mysql_fetch_array($result);
-    if ($thread['tstamp'] > $tthread['tstamp']) {
+    if ($thread['tstamp'] > $tthreads[$key]['tstamp']) {
       $threadshown[$thread['tid']] = 'true';
 
-      if ($curpage == 1) {
-        $numshown++;
-        if (!$simplehtml) {
-          $color = ($numshown % 2) ? "#ccccee" : "#ddddff";
-          $trtags = " bgcolor=\"$color\"";
-        } else
-          $trtags = "";
+      if ($curpage != 1)
+        continue;
 
-        $tpl->assign(TRTAGS, $trags);
+      $numshown++;
+      if (!$simplehtml) {
+        $color = ($numshown % 2) ? "#ccccee" : "#ddddff";
+        $trtags = " bgcolor=\"$color\"";
+      } else
+        $trtags = "";
 
-        $messagestr = "<ul>\n";
-        $messagestr .= list_thread($thread);
+      $tpl->assign(TRTAGS, $trags);
 
-        if (!$simplehtml) {
-          if (!$ulkludge)
-            $messagestr .= "</ul>";
+      $messagestr = "<ul>\n";
+      $messagestr .= list_thread($thread);
 
-            if (isset($tthreads[$thread['tid']]))
-              $messagelinks = "<a href=\"$urlroot/untrack.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
-            else
-              $messagelinks = "<a href=\"$urlroot/track.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#00d000\">tt</font></a>";
-        }
+      if (!$simplehtml) {
+        if (!$ulkludge)
+          $messagestr .= "</ul>";
 
-        $tpl->assign(MESSAGES, $messagestr);
-        $tpl->assign(MESSAGELINKS, $messagelinks);
+        $messagelinks = "<a href=\"$urlroot/untrack.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
+    }
 
-        $tpl->parse(MESSAGE_ROWS, ".showforum_row");
-      }
+      $tpl->assign(MESSAGES, $messagestr);
+      $tpl->assign(MESSAGELINKS, $messagelinks);
+
+      $tpl->parse(MESSAGE_ROWS, ".showforum_row");
     }
   }
 }
 
 $skipthreads = ($curpage - 1) * $threadsperpage;
 
-$threadtable = $numindexes - 1;
+$threadtable = count($indexes) - 1;
 
 while (isset($indexes[$threadtable])) {
   if (threads($threadtable) > $skipthreads)
@@ -216,7 +210,7 @@ while (isset($indexes[$threadtable])) {
 }
 
 while ($numshown < $threadsperpage) {
-  while ($threadtable >= 0 && $threadtable < $numindexes) {
+  while ($threadtable >= 0 && $threadtable < count($indexes)) {
     $ttable = "threads" . $indexes[$threadtable]['iid'];
     $mtable = "messages" . $indexes[$threadtable]['iid'];
 
@@ -243,7 +237,7 @@ while ($numshown < $threadsperpage) {
     $threadtable--;
   }
 
-  if ($threadtable >= $numindexes || $threadtable < 0)
+  if ($threadtable >= count($indexes) || $threadtable < 0)
     break;
 
   while ($thread = mysql_fetch_array($result)) {
@@ -270,7 +264,7 @@ while ($numshown < $threadsperpage) {
         $messagestr .= "</ul>";
 
       if (isset($user)) {
-        if (isset($tthreads[$thread['tid']]))
+        if (isset($tthreads_by_tid[$thread['tid']]))
           $messagelinks = " <a href=\"$urlroot/untrack.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
         else
           $messagelinks = " <a href=\"$urlroot/track.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#00d000\">tt</font></a>";
@@ -299,20 +293,10 @@ if (!$numshown)
   echo "<font size=\"+1\">No messages in this forum</font><br>\n";
 */
 
-if (isset($user)) {
-  $pid = 0;
-  $subject = $message = $url = $urltext = $imageurl = "";
-  $subject = ereg_replace("\"", "&quot;", $subject);
-  unset($mid);
+$directory = '../';
+unset($mid);
 
-  $postcookie = md5("post" . microtime());
-
-  $tpl->assign(PID, "<input type=\"hidden\" name=\"pid\" value=\"$pid\">");
-  $tpl->assign(TID, "<input type=\"hidden\" name=\"tid\" value=\"$tid\">");
-
-  $tpl->parse(POST, 'post');
-} else 
-  $tpl->parse(POST, 'post_noacct');
+include('post.inc');
 
 $tpl->parse(HEADER, 'header');
 $tpl->parse(FOOTER, 'footer');

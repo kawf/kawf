@@ -29,12 +29,8 @@ Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 </font>
 
 <table width="100%" border="0" cellpadding="2" cellspacing="2">
-<tr><td>
 {MESSAGE_ROWS}
-</td></tr>
 </table>
-
-<br>
 
 <table width="600">
 <tr><td>
@@ -54,7 +50,7 @@ Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 </td></tr>
 
 <tr><td>
-{POST}
+{POSTFORM}
 </td></tr>
 </table>
 

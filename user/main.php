@@ -1,20 +1,29 @@
 <?php
 
-function err_not_found() {
+require('config.inc');
+require('class.FastTemplate.php3');
+
+$tpl = new FastTemplate('templates');
+
+function err_not_found($description) {
+  global $tpl;
   global $SCRIPT_NAME, $PATH_INFO, $SERVER_SOFTWARE, $SERVER_NAME, $SERVER_PORT;
 
   Header("HTTP/1.0 404 Not found");
-?>
-<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-<HTML><HEAD>
-<TITLE>404 Not Found</TITLE>
-</HEAD><BODY>
-<H1>Not Found</H1>
-The requested URL <?php echo $SCRIPT_NAME . $PATH_INFO ?> was not found on this server.<P>
-<HR>
-<ADDRESS><?php echo $SERVER_SOFTWARE ?> at <?php echo $SERVER_NAME ?> Port <?php echo $SERVER_PORT ?></ADDRESS>
-</BODY></HTML>
-<?
+
+  $tpl->define(array(
+    errnotfound => 'errnotfound.tpl'
+  ));
+
+  $tpl->assign(DESCRIPTION, $description);
+  $tpl->assign(URL, $SCRIPT_NAME . $PATH_INFO);
+  $tpl->assign(SERVER_SOFTWARE, $SERVER_SOFTWARE);
+  $tpl->assign(SERVER_NAME, $SERVER_NAME);
+  $tpl->assign(SERVER_PORT, $SERVER_PORT);
+
+  $tpl->parse(CONTENT, "errnotfound");
+  $tpl->fastprint(CONTENT);
+
   exit;
 }
 
@@ -55,53 +64,105 @@ $fscripts = array(
   "" => "showforum.php"
 );
 
-/* Parse out the directory/filename */
-if (!ereg("^/([A-Za-z0-9\.]+)(/(.*))?$", $PATH_INFO, $aregs))
-  err_not_found();
-
 require('sql.inc');
 
 /* Look up the forums first */
 sql_open_readonly();
 
-$sql = "select fid from forums where shortname = '".addslashes($aregs[1])."'";
-$result = mysql_query($sql) or sql_error($sql);
-
-if (!mysql_num_rows($result)) {
-  if (empty($aregs[2]) && !empty($scripts[$aregs[1]])) {
-    include($scripts[$aregs[1]]);
-    exit;
-  } else
-    err_not_found();
-}
-
-list($fid) = mysql_fetch_row($result);
-
-/* Check for trailing slash */
-if ($aregs[2] == "") {
-  Header("Location: http://$SERVER_NAME$SCRIPT_NAME$PATH_INFO/");
-  exit;
-}
-
-$sql = "select * from forums where fid = $fid";
-$result = mysql_query($sql) or sql_error($sql);
-
-$forum = mysql_fetch_array($result);
-
-if ($forum['version'] == 1) {
-  echo "This forum is currently undergoing maintenance, please try back in a couple of minutes\n";
-  exit;
-}
-
 require('account.inc');
 
-$sql = "select * from tracking where aid = '" . $user['aid'] . "' order by tid desc";
-$result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+function find_forum($shortname)
+{
+  global $forum, $indexes, $tthreads, $tthreads_by_tid;
 
-while ($tthread = mysql_fetch_array($result))
-  $tthreads[$tthread['tid']] = $tthread;
+  $sql = "select * from forums where shortname = '" . addslashes($shortname) . "'";
+  $result = mysql_query($sql) or sql_error($sql);
 
-require('indexes.inc');
+  if (mysql_num_rows($result))
+    $forum = mysql_fetch_array($result);
+  else
+    return 0;
+
+  /* Short circuit it here */
+  if ($forum['version'] == 1) {
+    echo "This forum is currently undergoing maintenance, please try back in a couple of minutes\n";
+    exit;
+  }
+
+  /* Grab all of the indexes for the forum */
+  $sql = "select * from indexes order by iid";
+  $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+
+  while ($indexes[] = mysql_fetch_array($result))
+    ;
+
+  /* Grab all of the tracking data for the user */
+  if (isset($user)) {
+    $sql = "select * from tracking where aid = '" . $user['aid'] . "' order by tid desc";
+    $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+
+    while ($tthreads[] = mysql_fetch_array($result))
+      ;
+
+    reset($tthreads);
+    while (list($key) = each($tthreads))
+      $tthreads_by_tid[$tthreads[$key]['tid']] = $tthreads[$key];
+  }
+
+  return 1;
+}
+
+function find_msg_index($mid)
+{
+  global $indexes;
+
+  reset($indexes);
+  while (list($key) = each($indexes))
+    if ($indexes[$key]['minmid'] <= $mid && $indexes[$key]['maxmid'] >= $mid)
+      return $indexes[$key]['iid'];
+
+  return -1;
+}
+
+function find_thread_index($tid)
+{
+  global $indexes;
+
+  reset($indexes);
+  while (list($key) = each($indexes))
+    if ($indexes[$key]['mintid'] <= $tid && $indexes[$key]['maxtid'] >= $tid)
+      return $indexes[$key]['iid'];
+
+  return -1;
+}
+
+/* Parse out the directory/filename */
+if (!ereg("^/([A-Za-z0-9\.]+)(/(.*))?$", $PATH_INFO, $aregs))
+  err_not_found('Unable to parse directory/filename');
+
+if (empty($aregs[2])) {
+  if (isset($forumname)) {
+    if (!find_forum($forumname)) {
+      echo "No such forum $forumname<br>\n";
+      exit;
+    }
+  }
+
+  if (empty($scripts[$aregs[1]])) {
+    /* Check for trailing slash */
+    if (find_forum($aregs[1])) {
+      Header("Location: http://$SERVER_NAME$SCRIPT_NAME$PATH_INFO/");
+      exit;
+    }
+    err_not_found('Unknown script ' . $aregs[1]);
+  }
+
+  include($scripts[$aregs[1]]);
+  exit;
+}
+
+if (!find_forum($aregs[1]))
+  err_not_found('Unknown forum ' . $aregs[1]);
 
 /* Parse out the filename */
 /* The . "" is to workaround a bug in PHP4 */
@@ -133,7 +194,7 @@ if (count($aregs) >= 4 && isset($fscripts[$aregs[3] . ""])) {
   if (isset($result) && mysql_num_rows($result)) {
     include('showmessage.php');
   } else
-    err_not_found();
+    err_not_found('Unknown message ' . $mid . ' in forum ' . $forum['shortname']);
 } else if (ereg("^threads/([0-9]+)\.phtml$", $aregs[3], $fregs)) {
   /* See if the thread number is legitimate */
   $tid = $fregs[1];
@@ -145,7 +206,7 @@ if (count($aregs) >= 4 && isset($fscripts[$aregs[3] . ""])) {
   if (isset($result) && mysql_num_rows($result)) {
     include('showthread.php');
   } else
-    err_not_found();
+    err_not_found('Unknown thread ' . $tid . ' in forum ' . $forum['shortname']);
 } else
-  err_not_found();
+  err_not_found('Unknown virtual directory ' . $aregs[3]);
 ?>

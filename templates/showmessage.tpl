@@ -52,7 +52,7 @@
 </td></tr>
 
 <tr><td>
-{POST}
+{POSTFORM}
 </td></tr>
 <tr><td>
 <font face="arial, geneva" size="-2">

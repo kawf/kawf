@@ -9,18 +9,13 @@ sql_open_readonly();
 
 require('listthread.inc');
 
-require('class.FastTemplate.php3');
-
-$tpl = new FastTemplate('templates');
 $tpl->define(array(
   header => 'header.tpl',
   footer => 'footer.tpl',
   showmessage => 'showmessage.tpl',
-  post => 'post.tpl',
-  post_noacct => 'post_noacct.tpl'
+  postform => 'postform.tpl',
+  postform_noacct => 'postform_noacct.tpl'
 ));
-
-$tpl->assign(BODYTAGS, ' bgcolor="#ffffff"');
 
 $tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
 
@@ -137,38 +132,19 @@ if (!$ulkludge)
 
 $tpl->assign(THREAD, $threadmsg);
 
-/*
+$directory = '../../';
+
 if (!ereg("^[Rr][Ee]:", $msg['subject'], $sregs))
   $subject = "Re: " . $msg['subject'];
  else
   $subject = $msg['subject'];
 
-$message = "";
-$url = "";
-$urltext = "";
-$imageurl = "";
 $pid = $msg['mid'];
 $tid = $msg['tid'];
-
 unset($mid);
-$action = $urlroot . "/post.phtml";
-include('./postform.inc');
-*/
+unset($message);
 
-if (isset($user)) {
-  $pid = 0;
-  $subject = $message = $url = $urltext = $imageurl = "";
-  $subject = ereg_replace("\"", "&quot;", $subject);
-  unset($mid);
-
-  $postcookie = md5("post" . microtime());
-
-  $tpl->assign(PID, "<input type=\"hidden\" name=\"pid\" value=\"$pid\">");
-  $tpl->assign(TID, "<input type=\"hidden\" name=\"tid\" value=\"$tid\">");
-
-  $tpl->parse(POST, 'post');
-} else 
-  $tpl->parse(POST, 'post_noacct');
+include('post.inc');
 
 $tpl->parse(HEADER, 'header');
 $tpl->parse(FOOTER, 'footer');

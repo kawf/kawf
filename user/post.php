@@ -1,16 +1,12 @@
 <?php
 
 /* Check the data to make sure they entered stuff */
-if (!isset($pid) || !isset($fid) || !isset($cookie)) {
+if (!isset($postcookie)) {
   /* Hmm, how did this happen? Redirect them back to the main page */
   Header("Location: http://$SERVER_NAME$SCRIPT_NAME/");
   exit;
 }
 
-require('../sql.inc');
-require('../account.inc');
-
-require('config.inc');
 require('textwrap.inc');
 require('striptag.inc');
 
@@ -18,39 +14,27 @@ require('striptag.inc');
 sql_open_readwrite();
 
 if (empty($user)) {
-?>
-<html>
-<title>
-Posting denied
-</title>
-
-<body>
-You are not logged in, you are not allowed to post<br>
-<a href="/forum/">Go back</a>
-</body>
-</html>
-<?php
+  Header("Location: " . $furlroot);
   exit;
 }
 
-$sql = "select * from forums where fid = '".addslashes($fid)."'";
-$result = mysql_query($sql) or sql_error($sql);
-
-$forum = mysql_fetch_array($result);
-
-require('indexes.inc');
-
 $forumdb = "forum_" . $forum['shortname'];
 
-?>
-<html>
-<title>
-AudiWorld Forums: Message Posting
-</title>
+$tpl->define(array(
+  header => 'header.tpl',
+  footer => 'footer.tpl',
+  post => 'post.tpl',
+  preview => 'preview.tpl',
+  postform => 'postform.tpl',
+  postform_noacct => 'postform_noacct.tpl'
+));
 
-<body bgcolor=#ffffff>
+$tpl->assign(TITLE, "Message Posting");
 
-<?php
+$tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
+
+$tpl->assign(FORUM_PICTURE, $forum['picture']);
+
 /*
 require('../ads.inc');
 */
@@ -59,30 +43,7 @@ require('../ads.inc');
 /*
 add_ad();
 */
-?>
 
-<hr width="100%" size="1">
-
-<table width=100%>
-<tr>
-  <td width="50%" align="left">
-    <img src="<?php echo $forum['picture']; ?>">
-  </td>
-  <td width="50%" align="right">
-<?php
-if ($forum['shortname'] == "a4" || $forum['shortname'] == "performance")
-  ads_view("carreview", "_top");
-if ($forum['shortname'] == "wheel") 
-  echo "<a href=\"mailto:Eddie@Tirerack.com\"><img src=\"$furlroot/pix/tireracksponsor.gif\" border=\"0\"></a>\n";
-?>
-  </td>
-</tr>
-</table>
-
-<table width=600>
-<tr><td>
-
-<?php
 /* If magic quotes are on, strip the slashes */
 if (get_magic_quotes_gpc()) {
   $subject = stripslashes($subject);
@@ -129,15 +90,12 @@ if (isset($pid)) {
 
 if (empty($subject)) {
   /* Subject is required */
-  echo "<font face=\"Verdana, Arial, Geneva\" color=\"#ff0000\">Subject is required!</font><br>\n";
-  $error++;
+  $error .= "Subject is required!<br>\n";
 } elseif (isset($parent) && $subject == "Re: " . $parent['subject'] && empty($message) && empty($url)) {
-  echo "<font face=\"Verdana, Arial, Geneva\" color=\"#ff0000\">No change to subject or message, is this what you wanted?</font><br>\n";
-  $error++;
+  $error .= "No change to subject or message, is this what you wanted?<br>\n";
 } elseif (strlen($subject) > 100) {
   /* Subject is too long */
-  echo "<font face=\"Verdana, Arial, Geneva\" color=\"#ff0000\">Subject line too long! Truncated to 100 characters</font><br>\n";
-  $error++;
+  $error .= "Subject line too long! Truncated to 100 characters<br>\n";
   $subject = substr($subject, 0, 100);
 }
 
@@ -160,44 +118,32 @@ if ((isset($error) || isset($preview)) && (!empty($imageurl)))
   echo "<font face=\"Verdana, Arial, Geneva\" color=\"#ff0000\"><i><b>Picture Verification:</b> If you see your picture below then please scroll down and hit Post Message to complete your posting. If no picture appears then your link was set incorrectly or your image is not valid a JPG or GIF file. Correct the image type or URL link to the picture in the box below and hit Preview Message to re-verify that your picture will be visible.</i></font><br>\n";
 
 if (isset($preview)) {
-?>
-<br>
-<font face="Verdana, Arial, Geneva" size="-1">
-<b>Name:</b> <?php echo $name; ?><br>
-<b>E-Mail:</b> <?php echo $user['email']; if (empty($exposeemail)) echo " <font color=\"#ff0000\">(Hidden)</font>"; ?><br>
-<b>Subject:</b> <?php echo $subject; ?><br>
-<b>Body of Message:</b><p>
-<?php
-if (!empty($imageurl))
-  echo "<center><img src=\"$imageurl\"></center><p>";
+  $tpl->assign(NAME, $user['name']);
+  if (empty($exposeemail))
+    $tpl->assign(EMAIL, '<font color="#ff0000">(Hidden)</font>');
+  else
+    $tpl->assign(EMAIL, $user['email']);
 
-echo textwrap($message, 99999, "<br>\n") . "\n";
+  if (isset($imageurl) && !empty($imageurl))
+    $message = "<center><img src=\"$imageurl\"></center><p>";
 
-if (!empty($user['signature']))
-  echo "<p>\n" . textwrap(stripslashes($user['signature']), 99999, "<br>\n");
-?>
-<p>
-<b>URL:</b> <?php echo $url; ?><br>
-<b>URL text:</b> <?php echo $urltext; ?><br>
-<b>Image URL:</b> <?php echo $imageurl; ?><br>
-</font>
-
-<?php
-}
+  $tpl->parse(PREVIEW, 'preview');
+} else
+  $tpl->assign(PREVIEW, '');
 
 if (isset($error) || isset($preview)) {
   $incfrompost = 1;
   $action = $urlroot . "/post.phtml";
-  include('./postform.inc');
-?>
-</tr></td>
-</table>
 
-</body>
+  $directory = '';
 
-</html>
+  include('post.inc');
 
-<?php
+  $tpl->parse(HEADER, 'header');
+  $tpl->parse(FOOTER, 'footer');
+  $tpl->parse(CONTENT, 'post');
+  $tpl->FastPrint(CONTENT);
+
   exit;
 }
 
@@ -224,13 +170,13 @@ if (!empty($user['signature']))
 
 /* Add it into the database */
 /* Check to make sure this isn't a duplicate */
-$sql = "select mid from dupposts where cookie = '" . addslashes($cookie) . "';";
+$sql = "select mid from dupposts where cookie = '" . addslashes($postcookie) . "';";
 $result = mysql_db_query($forumdb, $sql) or sql_error($sql);
 
 if (mysql_num_rows($result))
   list ($mid) = mysql_fetch_row($result);
 
-$messagetable = count($indexes) - 1;
+list($messagetable) = end($indexes);
 $mtable = "messages" . $indexes[$messagetable]['iid'];
 $ttable = "threads" . $indexes[$messagetable]['iid'];
 if (isset($mid))
@@ -246,7 +192,7 @@ if (!isset($mid)) {
 
   list ($mid) = mysql_fetch_row($result);
 
-  $sql = "insert into dupposts (cookie, mid, tstamp) values ('".addslashes($cookie)."', '".addslashes($mid)."', NOW() );";
+  $sql = "insert into dupposts (cookie, mid, tstamp) values ('" . addslashes($postcookie) . "', '" . addslashes($mid) . "', NOW() );";
   mysql_db_query($forumdb, $sql) or sql_error($sql);
 
   if (!$pid) {
@@ -348,41 +294,3 @@ if (mysql_num_rows($result) > 0) {
   }
 }
 ?>
-
-<p>
-<center><h2><font face="Verdana, Arial, Geneva" color="#000080">Message Added: <?php echo $subject; ?></font></h2></center><p>
-<font face="Verdana, Arial, Geneva" size="-1">
-The following information was added to the web board:<p>
-
-<p>
-
-<b>Name:</b> <?php echo $name; ?><br>
-<b>E-Mail:</b> <?php echo $email; ?><br>
-<b>Subject:</b> <?php echo $subject; ?><br>
-<b>Body of Message:</b><p>
-<?php
-echo textwrap($message, 99999, "<br>\n"), "<p>\n";
-
-if (isset($user['signature'])) {
-  $signature = preg_replace("/\n/", "<br>\n", $user['signature']);
-  $signature = stripslashes($signature);
-  echo "<p>$signature\n";
-}
-?>
-<b>URL Link:</b> <?php echo $url; ?><br>
-<b>Link text:</b> <?php echo $urltext; ?><br>
-<b>Image URL:</b> <?php echo $imageurl; ?><br>
-
-<p>
-
-<center>[ <a href="<?php echo $urlroot . "/" . $forum['shortname'] . "/" . $mid; ?>.phtml">Go to Your Message</a> ] [ <a href="<?php echo $urlroot . "/" . $forum['shortname']; ?>">Go back to the forum</a> ]</center>
-
-</font>
-
-</tr></td>
-</table>
-
-</body>
-
-</html>
-
