@@ -8,7 +8,7 @@ if ($user->status != 'Active') {
 }
 
 /* Check the data to make sure they entered stuff */
-if (!isset($postcookie) || !isset($forum)) {
+if (!isset($forum)) {
   /* Hmm, how did this happen? Redirect them back to the main page */
   Header("Location: http://$SERVER_NAME$SCRIPT_NAME/");
   exit;
