@@ -1,25 +1,21 @@
 <?php
 
-if (!forum_admin()) {
-  Header("Location: $furlroot/");
+$index = find_msg_index($mid);
+
+$msg = sql_querya("select aid, pid, state from f_messages$index where mid = '" . addslashes($mid) . "'");
+
+if ($msg['aid'] != $user->aid && !forum_admin()) {
+  echo "You are not allowed to change the state of this message\n";
   exit;
 }
 
-/* Open up the SQL database first */
-sql_open_readwrite();
+sql_query("update f_messages$index set " .
+	"changes = CONCAT(changes, 'Changed to $state from ', state, ' by " . $user->name . "/" . $user->aid . " at ', NOW(), '\n'), " .
+	"state = '$state' " .
+	"where mid = '" . addslashes($mid) . "'");
 
-$index = find_msg_index($mid);
-$sql = "select pid, state from messages$index where mid = '" . addslashes($mid) . "'";
-$result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
-
-list($pid, $oldstate) = mysql_fetch_row($result);
-
-$sql = "update messages$index set state = '$state' where mid = '" . addslashes($mid) . "'";
-mysql_query($sql) or sql_error($sql);
-
-if (!$pid) {
-  $sql = "update indexes set $oldstate = $oldstate - 1, $state = $state + 1 where iid = $index";
-  mysql_query($sql) or sql_error($sql);
+if (!$msg['pid']) {
+  sql_query("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $state = $state + 1 where iid = $index");
 }
 
 Header("Location: " . $page);
