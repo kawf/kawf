@@ -15,6 +15,7 @@ function acct_createcookie($email, $type)
     $name = "ForumAccount";
     $dir = "/forum";
     $column = "forumcookie";
+    $query = "";
     break;
   case 2:
     $name = "AdsAccount";
@@ -26,18 +27,18 @@ function acct_createcookie($email, $type)
 
   $sql = "select $column from accounts where email = '".addslashes($email)."' and $column != ''" . $query;
 
-  $result = mysql_query($sql) or sql_error($sql);
+  $result = mysql_db_query($database, $sql) or sql_error($sql);
 
   if (!mysql_num_rows($result)) {
     $cookie = md5($name . $email .microtime());
 
     $sql = "update accounts set $column='$cookie' where email='$email';";
-    $result = mysql_query($sql) or sql_error($sql);
+    $result = mysql_db_query($database, $sql) or sql_error($sql);
   } else
     list($cookie) = mysql_fetch_row($result);
 
   $expire = time() + (60 * 60 * 24 * 365 * 5);	/* 5 years */
-  SetCookie($name, $cookie, $xpire, $dir . "/", ".audiworld.com");
+  SetCookie($name, $cookie, $expire, $dir . "/", ".audiworld.com");
 }
 
 unset($account);
@@ -55,7 +56,7 @@ if (isset($AdsAccount)) {
 if (isset($account) && !empty($account)) {
   $sql = "select * from accounts where $column = '" . addslashes($account) . "' and $column != '' and status = 'Active'";
 
-  $result = mysql_query($sql) or sql_error($sql);
+  $result = mysql_db_query($database, $sql) or sql_error($sql);
 
   if (mysql_num_rows($result) > 0) {
     $user = mysql_fetch_array($result);
