@@ -31,11 +31,17 @@ $useraclhash = Array();
 
 while ($useracl = sql_fetch_array($result)) {
   if (!isset($useraclhash[$useracl['aid']])) {
-    $useracl['fid'] = Array($useracl['fid']);
+    if ($useracl['fid'] == -1)
+      $useracl['fids'] = Array("All");
+    else
+      $useracl['fids'] = Array($useracl['fid']);
     $useracls[] = $useracl;
     $useraclhash[$useracl['aid']] = $useracl;
   } else {
-    $useraclhash[$useracl['aid']]['fid'][] = $useracl['fid'];
+    if ($useracl['fid'] == -1)
+      $useraclhash[$useracl['aid']]['fids'][] = "All";
+    else
+      $useraclhash[$useracl['aid']]['fids'][] = $useracl['fid'];
   }
 }
 
@@ -44,6 +50,7 @@ foreach ($useracls as $useracl) {
   echo "<tr bgcolor=\"$bgcolor\">\n";
   echo "<td><a href=\"useraclmodify.phtml?aid=" . $useracl['aid'] . "\">" . $useracl['aid'] . "</a></td>\n";
   echo "<td>" . $useracl['name'] . "</td>\n";
+  echo "<td>" . join(", ", $useracl['fids']) . "</td>\n";
   echo "<td>" . $useracl['capabilities'] . "</td>\n";
   echo "</tr>\n";
 
