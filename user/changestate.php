@@ -20,6 +20,13 @@ if (!empty($msg['flags'])) {
     $flags[$flag] = true;
 }
 
+$levels = array(
+  'Active' => 1,
+  'OffTopic' => 2,
+  'Moderated' => 3,
+  'Deleted' => 4,
+);
+
 switch ($msg['state']) {
 case 'OffTopic':
   $priv = "OffTopic";
@@ -44,7 +51,7 @@ if (($state == 'Moderated' && !$user->capable($forum['fid'], 'Moderate')) ||
     exit;
   }
 
-  if (isset($flags['StateLocked'])) {
+  if (isset($flags['StateLocked']) && $levels[$state] <= $levels[$msg['state']]) {
     echo "You cannot change the state of this message anymore\n";
     exit;
   }
