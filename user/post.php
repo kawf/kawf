@@ -226,7 +226,6 @@ if (isset($error) || isset($preview)) {
       sql_error($sql);
 
     $mid = sql_query1("select mid from f_dupposts where cookie = '" . addslashes($postcookie) . "'");
-echo "<!-- dup: $mid -->\n";
   } else {
     /* Grab a new mid, this should work reliably */
     do {
@@ -243,7 +242,6 @@ echo "<!-- dup: $mid -->\n";
       sql_error($sql);
 
     $newmessage = 1;
-echo "<!-- not dup: $mid -->\n";
 
     sql_query("update f_dupposts set mid = $mid where cookie = '" . addslashes($postcookie) . "'");
   }
