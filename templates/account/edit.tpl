@@ -35,6 +35,7 @@ New Screen Name: <input type="text" name="name" length="40"><br>
 New Email Address: <input type="text" name="email" length="40"><br>
 New Password: <input type="password" name="password1" length="20"><br>
 Re-enter Password: <input type="password" name="password2" length="20"><br>
+<!--
 Timezone:
 <select name="timezone">
 <option value="ndt"{TZ_ndt}>Newfoundland Daylight (NDT)
@@ -96,6 +97,7 @@ Timezone:
 <option value="idt"{TZ_idt}>Israel Daylight (IDT)
 <option value="iss"{TZ_iss}>Israel Standard (ISS)
 </select><br>
+-->
 
 <input type="submit" name="submit" value="Update">
 </form>
