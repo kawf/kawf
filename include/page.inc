@@ -1,10 +1,5 @@
 <?php
 
-if (defined("_LIB_INC_"))
-  return;
-
-define("_LIB_INC_", "1");
-
 // some layout functions
 function page_header($title)
 {
