@@ -19,6 +19,9 @@ if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['f
   $hidden = hidden("postcookie", $postcookie);
   $hidden .= hidden("forumname", $forum['shortname']);
 
+  if (isset($_page) && !empty($_page))
+    $hidden .= hidden("page", $SCRIPT_NAME . $PATH_INFO);
+
   if (isset($imgpreview))
     $hidden .= hidden("imgpreview", 'true');
   if (isset($mid)) {

@@ -35,6 +35,7 @@ $tpl->set_block("post", "preview");
 $tpl->set_block("post", "duplicate");
 $tpl->set_block("post", "form");
 $tpl->set_block("post", "accept");
+$tpl->set_block("accept", "refresh_page");
 
 $tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
@@ -118,12 +119,12 @@ $tpl->set_var("locked", "");
 
 if (isset($postcookie)) {
   /* Strip any tags from the data */
-  $message = preg_replace("/&/", "&amp;", $message);
+  // $message = preg_replace("/&/", "&amp;", $message);
   $message = striptag($message, $standard_tags);
   $message = demoronize($message);
   $message = stripspaces($message);
 
-  $subject = preg_replace("/&/", "&amp;", $subject);
+  // $subject = preg_replace("/&/", "&amp;", $subject);
   $subject = striptag($subject, $subject_tags);
   $subject = demoronize($subject);
   $subject = stripspaces($subject);
@@ -448,8 +449,16 @@ if (!$accepted || isset($preview)) {
     }
   }
 
+  if (!isset($_page) || empty($_page))
+    $tpl->set_var("refresh_page", "");
+
+  /* FIXME: Dumb workaround */
+  unset($tpl->varkeys["PAGE"]);
+  unset($tpl->varvals["PAGE"]);
+
   $tpl->set_var(array(
     "MSG_MID" => $mid,
+    "PAGE" => $_page,
     "form" => "",
   ));
 }

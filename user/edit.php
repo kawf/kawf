@@ -103,12 +103,12 @@ if (!isset($message)) {
     $message = $regs[2];
 
   /* Only do this if the client sent it to us */
-  $subject = preg_replace("/&/", "&amp;", $subject);
+  // $subject = preg_replace("/&/", "&amp;", $subject);
   $subject = striptag($subject, $subject_tags);
   $subject = demoronize($subject);
   $subject = stripspaces($subject);
 
-  $message = preg_replace("/&/", "&amp;", $message);
+  // $message = preg_replace("/&/", "&amp;", $message);
   $message = striptag($message, $standard_tags);
   $message = demoronize($message);
   $message = stripspaces($message);
