@@ -136,7 +136,7 @@ function find_forum($shortname)
     $indexes[] = $index;
 
   /* Grab all of the tracking data for the user */
-  if (isset($user)) {
+  if (isset($user->aid)) {
     $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc";
     $result = mysql_query($sql) or sql_error($sql);
 
