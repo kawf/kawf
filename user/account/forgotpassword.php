@@ -24,6 +24,8 @@ if (isset($email)) {
   else {
     $user->forgotpassword();
 
+    $user->update();
+
     $tpl->set_var("unknown", "");
     $tpl->set_var("form", "");
   }

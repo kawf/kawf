@@ -1,5 +1,8 @@
 <?php
 
+/* Seed the random number generator */
+mt_srand(getmicrotime());
+
 require_once("sql.inc");
 require_once("validate.inc");
 require_once("mailfrom.inc");
@@ -273,7 +276,7 @@ $cookie_host);
     /* Create a new password */
     $password = "";
     for ($i = 0; $i < 10; $i++)
-      $password .= rand() % 26 + 'a';
+      $password .= chr((mt_rand()%26)+97);
 
     $this->password($password);
 
