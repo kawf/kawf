@@ -30,13 +30,13 @@ $useracls = Array();
 $useraclhash = Array();
 
 while ($useracl = sql_fetch_array($result)) {
-  if (!isset($useraclhash[$useracl['aid']])) {
+  if (!isset($useraclhash[$useracl['aid']]) || $useraclhash[$useracl['aid']]['capabilities'] != $useracl['capabilities']) {
     $useracl['fids'] = Array();
     $useracls[] = $useracl;
-    $useraclhash[$useracl['aid']] = $useracl;
+    $useraclhash[$useracl['aid']] = &$useracl;
   }
 
-  $ua = $useraclhash[$useracl['aid']];
+  $ua = &$useraclhash[$useracl['aid']];
 
   if ($useracl['fid'] == -1)
     $ua['fids'][] = "All";
