@@ -109,10 +109,10 @@ $imageurl = ereg_replace(" ", "%20", $imageurl);
 if (!empty($imageurl) && !eregi("^[a-z]+://", $imageurl))
   $imageurl = "http://$imageurl";
 
-if (isset($pid)) {
-  $index = find_msg_index($pid);
+if (isset($pmid)) {
+  $index = find_msg_index($pmid);
   if ($index >= 0) {
-    $sql = "select * from f_messages$index where mid = '" . addslashes($pid) . "'";
+    $sql = "select * from f_messages$index where mid = '" . addslashes($pmid) . "'";
     $result = mysql_query($sql) or sql_error($sql);
 
     if (mysql_num_rows($result))
@@ -254,7 +254,7 @@ if (isset($error) || isset($preview)) {
   $result = mysql_query($sql) or sql_error($sql);
 
   if (isset($newmessage)) {
-    if (!$pid) {
+    if (!$pmid) {
       /* Grab a new tid, this should work reliably */
       do {
         $sql = "select max(id) + 1 from f_unique where fid = " . $forum['fid'] . " and type = 'Thread'";
@@ -262,7 +262,7 @@ if (isset($error) || isset($preview)) {
 
         list ($tid) = mysql_fetch_row($result);
 
-        $sql = "insert into f_unique ( fid, type, id ) values ( " . $forum['fid'] . ", 'Thread', $mid )";
+        $sql = "insert into f_unique ( fid, type, id ) values ( " . $forum['fid'] . ", 'Thread', $tid )";
         $result = mysql_query($sql);
       } while (!$result && mysql_errno() == 1062);
 
@@ -285,7 +285,7 @@ if (isset($error) || isset($preview)) {
     $sql = "update f_indexes set maxmid = $mid where iid = " . $index['iid'] . " and maxmid < $mid";
     mysql_query($sql) or sql_error($sql);
 
-    if (!$pid) {
+    if (!$pmid) {
       $sql = "update f_indexes set active = active + 1 where iid = " . $index['iid'];
       mysql_query($sql) or sql_error($sql);
     }
