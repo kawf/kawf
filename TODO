@@ -2,3 +2,9 @@ Use PEAR for DB routines (Done, check PEAR tag)
 Abstracted selectable interfaces (Done, need to create tag and checkin)
 Possibly use PEAR for template routines
 Move posts between forums
+Better HTML parsing
+- Fixup API
+- Replace/Add options
+- Dynamic target replacement (ie always _top for this user, always _new for another one)
+Pictureposter width/height auto fill
+Swear word censoring (replace them with partial or full *'s, etc)
