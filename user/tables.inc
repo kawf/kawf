@@ -18,7 +18,7 @@ $create_message_table =
   "  views int not null,\n" .
   "  changes text not null,\n" .
   "  primary key (mid),\n" .
-  "  key (pid)\n" .
+  "  key (pid),\n" .
   "  key (tid)\n" .
   ")";
 
