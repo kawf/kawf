@@ -97,6 +97,7 @@ function print_message($msg)
   $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
   $tpl->assign(MSG_SUBJECT, $subject);
   $tpl->assign(MSG_DATE, $msg['date']);
+  $tpl->assign(MSG_MID, $msg['mid']);
 
   if (!empty($msg['email'])) {
     /* Lame spamification */

@@ -70,7 +70,7 @@ require('account.inc');
 
 function find_forum($shortname)
 {
-  global $forum, $indexes, $tthreads, $tthreads_by_tid;
+  global $user, $forum, $indexes, $tthreads, $tthreads_by_tid;
 
   $sql = "select * from forums where shortname = '" . addslashes($shortname) . "'";
   $result = mysql_query($sql) or sql_error($sql);

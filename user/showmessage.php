@@ -84,6 +84,7 @@ else
 
 $tpl->assign(MSG_SUBJECT, $msg['subject']);
 $tpl->assign(MSG_DATE, $msg['date']);
+$tpl->assign(MSG_MID, $msg['mid']);
 
 if (!empty($msg['email'])) {
   /* Lame spamification */

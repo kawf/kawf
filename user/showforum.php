@@ -380,31 +380,35 @@ $ulkludge =
 $numshown = 0;
 
 if (isset($tthreads)) {
-  while (list($tid) = each($tthreads)) {
-    $index = find_thread_index($tthreads[$tid]['tid']);
+echo "<!-- tthreads set -->\n";
+  reset($tthreads);
+  while (list(, $tthread) = each($tthreads)) {
+echo "<!-- " . $tthread['tid'] . " -->\n";
+    $index = find_thread_index($tthread['tid']);
     if ($index < 0) {
-      echo "<!-- Warning: Invalid tthread! $index $tid -->\n";
+      echo "<!-- Warning: Invalid tthread! $index, " . $tthread['tid'] . " -->\n";
       continue;
     }
 
-    $sql = "select * from threads$index where tid = '" . addslashes($tthreads[$tid]['tid']) . "'";
+    $sql = "select * from threads$index where tid = '" . addslashes($tthread['tid']) . "'";
     $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 
     if (!mysql_num_rows($result))
       continue;
 
     $thread = mysql_fetch_array($result);
-    if ($thread['tstamp'] > $tthreads[$tid]['tstamp']) {
+    if ($thread['tstamp'] > $tthread['tstamp']) {
       $threadshown[$thread['tid']] = 'true';
 
       if ($curpage != 1)
         continue;
 
       $numshown++;
+
       $color = ($numshown % 2) ? "#ccccee" : "#ddddff";
       $trtags = " bgcolor=\"$color\"";
 
-      $tpl->assign(TRTAGS, $trags);
+      $tpl->assign(TRTAGS, $trtags);
 
       $messagestr = display_thread($thread);
 
