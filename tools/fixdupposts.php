@@ -15,10 +15,8 @@ function sql_warn($sql)
   echo "Error #" . mysql_errno() . ": " . mysql_error() . "\n";
 }
 
-if (!mysql_connect("localhost", "root", "foundry"))
+if (!mysql_connect("localhost", "root", "password"))
   die("Unable to open local SQL server");
-
-mysql_select_db("bverticals");
 
 $sql = "select * from f_forums order by fid";
 $result = mysql_query($sql) or sql_error($sql);

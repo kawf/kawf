@@ -15,10 +15,8 @@ function sql_warn($sql)
   echo "Error #" . mysql_errno() . ": " . mysql_error() . "\n";
 }
 
-if (!mysql_connect("localhost", "root", "foundry"))
+if (!mysql_connect("localhost", "root", "password"))
   die("Unable to open local SQL server");
-
-mysql_select_db("bverticals");
 
 $sql = "lock tables f_dupposts write, f_upostcount write";
 mysql_query($sql) or sql_error($sql);
