@@ -45,8 +45,11 @@ $tpl->set_var(array(
 ));
 
 $tpl->parse("FORUM_HEADER", "forum_header");
+
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");
+
+$tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
 $urlroot = "/ads";
 /* We get our money from ads, make sure it's there */
@@ -363,7 +366,6 @@ if (isset($error) || isset($preview)) {
   }
 
   $tpl->set_var(array(
-    "FORUM_SHORTNAME" => $forum['shortname'],
     "MSG_MID" => $mid,
     "form" => "",
   ));

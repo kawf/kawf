@@ -53,6 +53,7 @@ function threads($key)
 }
 
 $tpl->set_var("FORUM_NAME", $forum['name']);
+$tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
 $tpl->parse("FORUM_HEADER", "forum_header");
 

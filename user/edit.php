@@ -43,6 +43,8 @@ $tpl->parse("FORUM_HEADER", "forum_header");
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");
 
+$tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
+
 $index = find_msg_index($mid);
 
 $sql = "select * from f_messages$index where mid = '" . addslashes($mid) . "'";
@@ -220,10 +222,7 @@ if (isset($error) || isset($preview)) {
   $sql = "insert into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($mid) . "' )";
   mysql_query($sql); 
 
-  $tpl->set_var(array(
-    "FORUM_SHORTNAME" => $forum['shortname'],
-    "MSG_MID" => $mid,
-  ));
+  $tpl->set_var("MSG_MID", $mid);
 }
 
 $tpl->pparse("CONTENT", "edit");
