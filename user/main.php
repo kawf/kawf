@@ -42,6 +42,8 @@ $scripts = array(
 
   "tracking.phtml" => "tracking.php",
 
+  "redirect.phtml" => "redirect.php",
+
   /* These will all be in the fscripts only soon */
   "post.phtml" => "post.php",
   "edit.phtml" => "edit.php",
