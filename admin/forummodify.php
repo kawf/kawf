@@ -5,6 +5,8 @@ $user->req("ForumAdmin");
 /* If submit is set, shove the data into the database (well, after some */
 /* error checking) */
 if (isset($submit)) {
+  if (isset($postedit))
+    $options[] = "PostEdit";
   if (isset($read))
     $options[] = "Read";
   if (isset($post))
@@ -65,7 +67,12 @@ page_header("Modify forum '" . $forum['name'] . "'");
   <td><input type="text" name="shortname" value="<?php echo $forum['shortname']; ?>"></td>
  </tr>
  <td>
-  <td>Reading:</td>
+  <td>Edit Posts:<br>
+      <small>(includes deleting)</small></td>
+  <td valign="top"><input type="checkbox" name="postedit"<?php if (isset($options['PostEdit'])) echo " checked"; ?>></td>
+ </tr>
+ <td>
+  <td>Read Messages:</td>
   <td><input type="checkbox" name="read"<?php if (isset($options['Read'])) echo " checked"; ?>></td>
  </tr>
  <td>
