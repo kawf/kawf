@@ -100,7 +100,8 @@ if ($ExposeEmail)
 else
   $email = "";
 
-$subject = stripcrap($subject);
+// $subject = stripcrap($subject);
+$subject = striptag($subject, $subject_tags);
 $subject = stripspaces($subject);
 $subject = demoronize($subject);
 

@@ -77,8 +77,8 @@ if (isset($postcookie)) {
   $message = stripspaces($message);
   $message = demoronize($message);
 
-  $subject = stripcrap($subject);
-//  $subject = striptag($subject, $subject_tags);
+//  $subject = stripcrap($subject);
+  $subject = striptag($subject, $subject_tags);
   $subject = stripspaces($subject);
   $subject = demoronize($subject);
 
