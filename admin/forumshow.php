@@ -10,7 +10,7 @@ if (isset($message))
   page_show_message($message);
 ?>
 
-<a href="forummodify.phtml?fid=<?=$forum['fid'];?>">Modify forum</a><p>
+<a href="forummodify.phtml?fid=<?php echo $forum['fid']; ?>">Modify forum</a><p>
 
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr><td bgcolor="#99999">
