@@ -31,16 +31,16 @@ class User {
     foreach ($user as $type => $value)
       $this->$type = $value;
 
-    if (!empty($user->capabilities)) {
-      $capabilities = explode(",", $user->capabilities);
+    if (!empty($this->capabilities)) {
+      $capabilities = explode(",", $this->capabilities);
       foreach ($capabilities as $flag)
-        $user->cap[$flag] = true;
+        $this->cap[$flag] = true;
     }
 
-    if (!empty($user->preferences)) {
-      $preferences = explode(",", $user->preferences);
+    if (!empty($this->preferences)) {
+      $preferences = explode(",", $this->preferences);
       foreach ($preferences as $flag)
-        $user->pref[$flag] = true;
+        $this->pref[$flag] = true;
     }
   }
 
