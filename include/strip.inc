@@ -1,8 +1,4 @@
 <?php
-if (defined("__STRIP_INC__"))
-  return;
-
-define("__STRIP_INC__", "1");
 
 $subject_tags = array(
   array("b", "/b"),
@@ -161,4 +157,5 @@ function striptag($Message, $AllowableHTML)
 */
       return $EditedMessage;
 }
+
 ?>
