@@ -122,7 +122,14 @@ if (isset($thread) && !isset($forum['opt.PostReply']) && !$user->capable($forum[
       $tpl->set_var("OFFTOPIC", "");
   }
 
-  $tpl->set_var("EMAILFOLLOWUP", "");
+  if (isset($preview) || isset($post))
+    $checked = isset($EmailFollowup) && $EmailFollowup;
+  else
+    $checked = 0;
+  if ($checked)
+    $tpl->set_var("EMAILFOLLOWUP", " checked");
+  else
+    $tpl->set_var("EMAILFOLLOWUP", "");
 
   if (isset($preview) || isset($post))
     $checked = isset($TrackThread);
