@@ -1,6 +1,6 @@
 <?php
 
-require_once("sql.inc");
+include_once("sql.inc");
 
 /* This is the standard User class */
 class User {
@@ -24,7 +24,7 @@ class User {
 
     $user = sql_querya("select * from u_users where $where");
     if (!$user)
-      return null;
+      return;
 
     foreach ($user as $type => $value)
       $this->$type = $value;
@@ -75,7 +75,11 @@ $cookie_host);
     }
 
     $url .= $SCRIPT_NAME . $PATH_INFO;
-    header("Location: http://$account_host/login.phtml?url=$url");
+    if (isset($account_host))
+      header("Location: http://$account_host/login.phtml?url=$url");
+    else
+      header("Location: /login.phtml?url=$url");
+
     exit;
   }
 
@@ -109,8 +113,7 @@ class AccountUser extends User {
     $sql = "insert into u_users ( " .
         " name, shortname, email, password, status, cookie, createdate " .
         ") values ( " .
-        "'" . addslashes($this->name) . "', '" . addslashes($this->shortname) . 
-"', " .
+        "'" . addslashes($this->name) . "', '" . addslashes($this->shortname) . "', " .
         "'" . addslashes($this->email) . "', '$this->password', 'Create', " .
         "'$cookie', NOW() ".
         ")";
@@ -119,18 +122,15 @@ class AccountUser extends User {
       if (mysql_errno() != 1062)
         sql_error($sql);
 
-      $tshortname = sql_query1("select shortname from u_users where shortname = 
-'" . addslashes($this->shortname) . "'");
+      $tshortname = sql_query1("select shortname from u_users where shortname = '" . addslashes($this->shortname) . "'");
       if ($tshortname != null)
         $this->shortname = "";
 
-      $tname = sql_query1("select name from u_users where name = '" . addslashes
-($this->name) . "'");
+      $tname = sql_query1("select name from u_users where name = '" . addslashes($this->name) . "'");
       if ($tname != null)
         $this->name = "";
       
-      $temail = sql_query1("select email from u_users where email = '" . addslas
-hes($this->email) . "'");
+      $temail = sql_query1("select email from u_users where email = '" . addslashes($this->email) . "'");
       if ($temail != null)
         $this->email = "";
 
@@ -193,8 +193,7 @@ hes($this->email) . "'");
     /* FIXME: We should handle letters with accents, etc as well */
     $shortname = "";
     for ($i = 0; $i < strlen($name); $i++) {
-      if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789
-", substr($name, $i, 1)))
+      if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", substr($name, $i, 1)))
         $shortname .= substr($name, $i, 1);
     }
     $shortname = strtolower($shortname);
@@ -287,8 +286,7 @@ hes($this->email) . "'");
       /* Find which column collided (perhaps multiple) */
       foreach ($unique as $value) {
         if (isset($this->update[$value])) {
-          $val = sql_query1("select $value from u_users where $value = '" . adds
-lashes($this->update[$value]) . "'");
+          $val = sql_query1("select $value from u_users where $value = '" . addslashes($this->update[$value]) . "'");
           if ($val)
             $this->$value = null;
         }
