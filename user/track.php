@@ -10,7 +10,7 @@ if (!$user->valid()) {
 }
 
 $index = find_thread_index($tid);
-if (!$index) {
+if (!isset($index)) {
   echo "Invalid thread!\n";
   exit;
 }

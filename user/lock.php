@@ -15,7 +15,7 @@ if (!$user->capable($forum['fid'], 'Lock')) {
 }
 
 $index = find_thread_index($tid);
-if (!$index) {
+if (!isset($index)) {
   echo "Invalid thread!\n";
   exit;
 }

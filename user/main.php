@@ -205,7 +205,7 @@ function find_msg_index($mid)
 
   reset($indexes);
   while (list($key) = each($indexes))
-    if ($indexes[$key]['minmid'] <= $mid && $indexes[$key]['maxmid'] >= $mid)
+    if ($indexes[$key]['minmid'] <= $mid && $mid <= $indexes[$key]['maxmid'])
       return $key;
 
   return null;
@@ -266,7 +266,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
   /* See if the message number is legitimate */
   $mid = $regs[2];
   $index = find_msg_index($mid);
-  if ($index) {
+  if (isset($index)) {
     $sql = "select mid from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'";
     if (!$user->capable($forum['fid'], 'Delete')) {
       $qual[] = "state != 'Deleted' ";
@@ -291,7 +291,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
   /* See if the thread number is legitimate */
   $tid = $regs[2];
   $index = find_thread_index($tid);
-  if ($index) {
+  if (isset($index)) {
     $sql = "select tid from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tid) . "'";
     $result = mysql_query($sql) or sql_error($sql);
   }

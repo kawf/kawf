@@ -157,7 +157,7 @@ if (isset($postcookie)) {
 
   if (isset($pmid)) {
     $index = find_msg_index($pmid);
-    if ($index) {
+    if (isset($index)) {
       $sql = "select * from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($pmid) . "'";
       $result = mysql_query($sql) or sql_error($sql);
 

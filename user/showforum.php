@@ -194,7 +194,7 @@ if (isset($tthreads)) {
   reset($tthreads);
   while (list(, $tthread) = each($tthreads)) {
     $index = find_thread_index($tthread['tid']);
-    if (!$index)
+    if (!isset($index))
       continue;
 
     /* Some people have duplicate threads tracked, they'll eventually fall */

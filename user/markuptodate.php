@@ -10,7 +10,7 @@ if ($tid == "all") {
     reset($tthreads);
     while (list(, $tthread) = each($tthreads)) {
       $index = find_thread_index($tthread['tid']);
-      if (!$index)
+      if (!isset($index))
         continue;
 
       $thread = sql_querya("select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tthread['tid']) . "'");
