@@ -230,7 +230,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
   $index = find_msg_index($mid);
   if ($index >= 0) {
     $sql = "select mid from f_messages$index where mid = '" . addslashes($mid) . "'";
-    if ($user->moderator($forum['fid'])) {
+    if (!$user->moderator($forum['fid'])) {
       $qual[] .= "state != 'Deleted'";
       if ($user->valid())
         $qual[] .= "aid = " . $user->aid;
