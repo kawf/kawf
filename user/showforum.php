@@ -512,6 +512,14 @@ while ($numshown < $threadsperpage) {
 if (!$numshown)
   $tpl->set_var($table_block, "<font size=\"+1\">No messages in this forum</font><br>");
 
+$active_users = sql_query1("select count(*) from f_visits where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) <= 15 * 60 and aid != 0");
+$active_guests = sql_query1("select count(*) from f_visits where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) <= 15 * 60 and aid = 0");
+
+$tpl->set_var(array(
+  "ACTIVE_USERS" => $active_users,
+  "ACTIVE_GUESTS" => $active_guests,
+));
+
 $action = "post";
 
 include("post.inc");
