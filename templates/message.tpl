@@ -6,10 +6,10 @@
 <!-- END account_id -->
 <!-- BEGIN forum_admin -->
      <!-- Add an admin link here if you have one -->
+<!-- END forum_admin -->
 <!-- BEGIN advertiser -->
      <b>Advertiser</b>
 <!-- END advertiser -->
-<!-- END forum_admin -->
      <br>
 <!-- BEGIN message_ip -->
      Posting IP Address: {MSG_IP}<br>
