@@ -213,20 +213,22 @@ function display_thread($thread)
 
   list($messages, $tree) = fetch_thread($thread);
   if (!isset($messages) || !count($messages))
-    return "";
+    return array(0, "");
 
   $count = count($messages);
 
-  $messagestr = "<ul class=\"thread\">\n";
   if (isset($user->pref['Collapsed']))
-    $messagestr .= print_collapsed($thread, reset($messages), $count - 1);
+    $messagestr = print_collapsed($thread, reset($messages), $count - 1);
   else
-    $messagestr .= list_thread(print_subject, $messages, $tree, reset($tree));
+    $messagestr = list_thread(print_subject, $messages, $tree, reset($tree));
+
+  if (empty($messagestr))
+    return array(0, "");
 
   if (!$ulkludge || isset($user->pref['SimpleHTML']))
     $messagestr .= "</ul>";
 
-  return array($count, $messagestr);
+  return array($count, "<ul class=\"thread\">\n" . $messagestr);
 }
 
 $sql = "select * from f_forums order by fid";
