@@ -14,7 +14,7 @@ $tpl->set_file(array(
 
 $tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
-$tpl->set_block("forum_admin", "advertiser");
+$tpl->set_block("message", "advertiser");
 $tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "owner");
 $tpl->set_block("owner", "statelocked");
@@ -98,7 +98,7 @@ if ($user->capable($forum['fid'], 'Moderate')) {
 
 if (!$user->capable($forum['fid'], 'Moderate') || !$msg['aid'])
   $tpl->set_var("forum_admin", "");
-else if (!$uuser->capable($forum['fid'], 'Advertise'))
+if (!$uuser->capable($forum['fid'], 'Advertise'))
   $tpl->set_var("advertiser", "");
 
 if (!$msg['aid'])
