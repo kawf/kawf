@@ -18,19 +18,12 @@ $error = "";
 
 function option_changed($name, $message)
 {
-  global $tpl, $user, $success, $prefs, $$name;
+  global $user, $success, $$name;
 
-  $value = isset($$name) ? 1 : 0;
-  if ($value)
-    $prefs[] = $name;
+  if (!$user->preference($name, isset($$name)))
+    return;
 
-  if ($value != isset($user->pref[$name]))
-    $success .= ($value ? "Enabled" : "Disabled") . " " . $message . "<p>\n";
-
-  if ($value)
-    $user->pref[$name] = 1;
-  else
-    unset($user->pref[$name]);
+  $success .= (isset($$name) ? "Enabled" : "Disabled") . " " . $message . "<p>\n";
 }
 
 function do_option($name)
@@ -54,25 +47,12 @@ if (isset($submit)) {
   option_changed('AutoUpdateTracking', "automatic updating of tracked threads");
   option_changed('OldestFirst', "show replies oldest first");
 
-  if (isset($prefs))
-    $prefstr = implode(",", $prefs);
-  else
-    $prefstr = "";
+  $user->signature($signature);
 
-  $preferences = explode(",", $prefstr);
-  while (list(,$flag) = each($preferences))
-    $user->pref[$flag] = "true";
-
-  if (!isset($signature))
-    $signature = "";
-
-  $signature = stripspaces($signature);
-  $signature = striptag($signature, $standard_tags);
-
+/*
   if ($signature != $user->signature)
     $success .= "Updated signature<p>";
-
-  $user->signature = $signature;
+*/
 
   if (!ereg("^[0-9]+$", $threadsperpage)) {
     $error .= "Threads per page set to non number, ignoring<p>\n";
@@ -83,13 +63,16 @@ if (isset($submit)) {
   } elseif ($threadsperpage > 100) {
     $error .= "Threads per page more than upper limit of 100, setting to 100<p>\n";
     $threadsperpage = 100;
-  } elseif ($threadsperpage != $user->threadsperpage)
+  }
+
+  $user->threadsperpage($threadsperpage);
+
+/*
+ elseif ($threadsperpage != $user->threadsperpage)
     $success .= "Threads per page has been set to $threadsperpage<p>\n";
+*/
 
-  $user->threadsperpage = $threadsperpage;
-
-  $sql = "update u_users set preferences = '" . addslashes($prefstr)."', signature = '" . addslashes($signature) . "', threadsperpage = '" . addslashes($threadsperpage) . "' where aid = " . $user->aid;
-  $result = mysql_query($sql) or sql_error($sql);
+  $user->update();
 }
 
 do_option('ShowModerated');
