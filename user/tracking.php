@@ -109,7 +109,7 @@ function print_collapsed($thread, $msg, $count)
       break;
     }
 
-    if ($msg['pmid']) {
+    if (!$msg['pmid']) {
       if (isset($thread['flag.Locked']))
         $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?tid=" . $msg['tid'] . "&page=$page\">ul</a>";
       else
@@ -175,7 +175,7 @@ function print_subject($thread, $msg)
 
   $string .= "</font>";
 
-  if (isset($thread['flag.Locked'])) {
+  if (isset($thread['flag.Locked']) && !$msg['pmid']) {
     if (!isset($user->pref['SimpleHTML']))
       $string .= " <img src=\"/pics/lock.gif\">";
     else
