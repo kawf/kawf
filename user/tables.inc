@@ -61,6 +61,7 @@ $create_index_table = "
     active int not null,
     moderated int not null,
     deleted int not null,
+    offtopic int not null,
     primary key (iid),
     key (fid)
   )";
