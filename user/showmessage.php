@@ -2,17 +2,13 @@
 
 require('account.inc');
 
-require('kawf/config.inc');
+require('config.inc');
 
 /* Open up the SQL database first */
 sql_open_readonly();
 
-require('kawf/listthread.inc');
+require('listthread.inc');
 
-?>
-
-<html>
-<?php
 /* Grab the actual message */
 $index = find_msg_index($mid);
 $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where mid = '" . addslashes($mid) . "'";
@@ -64,9 +60,11 @@ AudiWorld Forums: <?php echo $msg['subject']; ?>
 <center>
 <?php
 /* We get our money from ads, make sure it's there */
+/*
 require('ads.inc');
 
 add_ad();
+*/
 ?>
 </center>
 
@@ -195,12 +193,4 @@ include('./postform.inc');
 <table width="600">
 <tr><td>
 <font face="arial, geneva" size=-2>[ <a href="#thread">Thread</a> ] [ <a href="#postfp">Post Followup</a> ]  [<a href="http://pictureposter.audiworld.com/A4PICSnd.asp">Post Picture</a>] [ <a href="/search/" target="_top">Search Forums</a> ] [ <a href="<?php echo $urlroot . "/" . $forum['shortname']; ?>/<?php echo $indexpage; ?>"><?php echo $forum['name']; ?></a> ]</font><br><br>
-
-<tr><td align="center"><font size="1" face="arial,geneva"><a href="/copyright/">Terms of Use</a> | Copyright © 1996-2000 by AudiWorld. All rights reserved.</font>
-
-</td></tr>
-</table>
-</body>
-
-</html>
 

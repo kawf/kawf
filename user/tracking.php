@@ -30,9 +30,11 @@ AudiWorld Forums: Tracked Threads
 <center>
 <?php
 /* We get our money from ads, make sure it's there */
+/*
 require('../ads.inc');
 
 add_ad();
+*/
 ?>
 </center>
 

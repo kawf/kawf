@@ -71,10 +71,13 @@ AudiWorld Forums: Edit Message
 <body bgcolor=#ffffff>
 
 <?php
+/*
 require('../ads.inc');
+*/
 
 /* Show the advertisement on errors as well :) */
 add_ad();
+*/
 ?>
 
 <hr width="100%" size="1">

@@ -12,8 +12,8 @@ $configdeclared=1;
 /* HTTP/1.0 */
 // header("Pragma: no-cache");
 
-$urlhost = "www.audiworld.com";
+$urlhost = "forum.donutzracing.com";
 $furlroot = "/forum";
-$urlroot = $furlroot . "/m.new";
+$urlroot = $furlroot . "/m";
 }
 ?>
