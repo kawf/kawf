@@ -15,14 +15,15 @@ W jerdfelt	INTERFACE Abstracted selectable interfaces
 -		Merge re-post code into edit somehow
 
 Nice to be done
-Use PEAR for template routines (HTML/ITX.php)
-Use PEAR for config routines (Config.php)
+Use PEAR HTML/ITX.php for templates
+Use PEAR Config.php for config routines
 Pictureposter width/height auto fill (ties into previous HTML parsing cleanup)
 Swear word censoring (replace them with partial or full *'s, etc)
 Count number of edits and track last edit for displaying to users
 Better tracking (don't use timestamp, use individual mid's)
 
 Possibilities
+Use PEAR Cache.php for anonymous users
 Use X-Forwarded-For header for more IP information?
 Redesign message and thread database layout (too messy now)
 
