@@ -43,7 +43,7 @@ $urlroot = "/ads";
 /* We get our money from ads, make sure it's there */
 require_once("ads.inc");
 
-$ad = ads_view("a4.org," . $forum['shortname'], "_top");
+$ad = ads_view("a4.org,aw_" . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
 
 /* Strip any tags from the data */
