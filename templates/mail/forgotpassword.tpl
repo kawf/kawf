@@ -3,11 +3,11 @@ To: {EMAIL}
 Subject: Forgotten password on {DOMAIN}
 X-Mailer: PHP/{PHPVERSION}
 
-We have assigned you a new password:
+Please visit this URL to log into your account:
 
-{PASSWORD}
+http://forums.{DOMAIN}/finish.phtml?cookie={COOKIE}
 
-You can use it to login to your account and change it.
+You can then change your password after logged in.
 
 This email was requested from {REMOTE_ADDR}
 
