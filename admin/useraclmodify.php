@@ -56,7 +56,7 @@ while ($acl = sql_fetch_array($result)) {
 
 <input type="hidden" name="opt[<?php echo $count; ?>][fid]" value="<?php echo $acl['fid']; ?>">
 
- <tr>
+ <tr bgcolor="#D0D0D0">
 <?php
   if ($acl['fid'] == -1) {
 ?>
@@ -70,7 +70,6 @@ while ($acl = sql_fetch_array($result)) {
 ?>
  </tr>
  <tr>
-  <td>Capabilities</td>
   <td>
     <input type="checkbox" name="opts[<?php echo $count; ?>][Lock]"<?php if (isset($capabilities['Lock'])) echo " checked"; ?>> Lock Threads<br>
     <input type="checkbox" name="opts[<?php echo $count; ?>][Moderate]"<?php if (isset($capabilities['Moderate'])) echo " checked"; ?>> Moderate Messages<br>
@@ -86,7 +85,6 @@ while ($acl = sql_fetch_array($result)) {
 ?>
 
  <tr>
-  <td></td>
   <td><input type="submit" name="submit" value="Update"></td>
  </tr>
 </table>
