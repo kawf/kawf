@@ -20,8 +20,13 @@ sql_query("update f_messages$index set " .
 	"where mid = '" . addslashes($mid) . "'");
 
 /* Update the posting totals for this user */
-$user->post($forum['fid'], $state, 1);
-$user->post($forum['fid'], $msg['state'], -1);
+$nuser = new User;
+$nuser->find_by_aid((int)$msg['aid']);
+
+if ($nuser->valid()) {
+  $nuser->post($forum['fid'], $state, 1);
+  $nuser->post($forum['fid'], $msg['state'], -1);
+}
 
 if ($msg['pmid'] == 0)
   sql_query("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $state = $state + 1 where iid = $index");
