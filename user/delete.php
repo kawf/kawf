@@ -52,7 +52,7 @@ $tpl->parse("FOOTER", "footer");
 
 $index = find_msg_index($mid);
 
-$sql = "select * from f_messages$index where mid = '" . addslashes($mid) . "'";
+$sql = "select * from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'";
 $result = mysql_query($sql) or sql_error($sql);
 
 $msg = mysql_fetch_array($result);

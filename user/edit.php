@@ -63,7 +63,7 @@ $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
 $index = find_msg_index($mid);
 
-$sql = "select * from f_messages$index where mid = '" . addslashes($mid) . "'";
+$sql = "select * from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'";
 $result = mysql_query($sql) or sql_error($sql);
 
 $msg = mysql_fetch_array($result);
@@ -119,7 +119,7 @@ if (!isset($forum['opt.Post'])) {
 $tpl->set_var("disabled", "");
 
 $index = find_thread_index($msg['tid']);
-$sql = "select * from f_threads$index where tid = '" . addslashes($msg['tid']) . "'";
+$sql = "select * from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($msg['tid']) . "'";
 $result = mysql_query($sql) or sql_error($sql);
 
 $thread = mysql_fetch_array($result);
@@ -291,7 +291,7 @@ if (isset($error) || isset($preview)) {
   $diff = preg_replace("/^--- [^\n]+\n\+\+\+ [^\n]+\n/", "", $diff);
 
   /* Add it into the database */
-  $sql = "update f_messages$index set " .
+  $sql = "update f_messages" . $indexes[$index]['iid'] . " set " .
 	"name = '" . addslashes($name) . "', " .
 	"email = '" . addslashes($email) . "', " .
 	"ip = '$REMOTE_ADDR', " .

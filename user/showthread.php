@@ -39,7 +39,8 @@ require_once("ads.inc");
 $ad = ads_view("a4.org,aw_" . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
 
-$sql = "select * from f_threads$index where tid = '" . addslashes($tid) . "'";
+$index = find_thread_index($tid);
+$sql = "select * from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tid) . "'";
 $result = mysql_query($sql) or sql_error($sql);
 
 $thread = mysql_fetch_array($result);
@@ -49,8 +50,7 @@ foreach ($options as $name => $value)
   $thread["flag.$value"] = true;
 
 $index = find_msg_index($thread['mid']);
-
-$sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
+$sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
 $result = mysql_query($sql) or sql_error($sql);
 while ($message = mysql_fetch_array($result)) {
   $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
@@ -60,7 +60,7 @@ while ($message = mysql_fetch_array($result)) {
 
 $index++;
 if (isset($indexes[$index])) {
-  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
+  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
   $result = mysql_query($sql) or sql_error($sql);
   while ($message = mysql_fetch_array($result)) {
     $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
@@ -99,7 +99,7 @@ function print_message($thread, $msg)
   }
 
   $index = find_msg_index($msg['mid']);
-  $sql = "update f_messages$index set views = views + 1 where mid = '" . addslashes($msg['mid']) . "'";
+  $sql = "update f_messages" . $indexes[$index]['iid'] . " set views = views + 1 where mid = '" . addslashes($msg['mid']) . "'";
   mysql_query($sql) or sql_warn($sql);
 
   $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";

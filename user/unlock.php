@@ -15,13 +15,12 @@ if (!$user->capable($forum['fid'], 'Lock')) {
 }
 
 $index = find_thread_index($tid);
-if ($index < 0) {
+if (!$index) {
   echo "Invalid thread!\n";
   exit;
 }
 
-$index = find_thread_index($tid);
-$sql = "select * from f_threads$index where tid = '" . addslashes($tid) . "'";
+$sql = "select * from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tid) . "'";
 $result = mysql_query($sql) or sql_error($sql);
 
 $thread = mysql_fetch_array($result);
@@ -34,10 +33,10 @@ foreach ($options as $name => $value) {
 
 $flags = implode(",", $options);
 
-$sql = "update f_threads$index set flags = '" . addslashes($flags) . "' where tid = '" . addslashes($tid) . "'";
+$sql = "update f_threads" . $indexes[$index]['iid'] . " set flags = '" . addslashes($flags) . "' where tid = '" . addslashes($tid) . "'";
 mysql_query($sql) or sql_error($sql);
 
-sql_query("update f_messages$index set " .
+sql_query("update f_messages" . $indexes[$index]['iid'] . " set " .
         "changes = CONCAT(changes, 'Unlocked by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), '\n') " .
         "where mid = '" . addslashes($thread['mid']) . "'");
 

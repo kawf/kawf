@@ -30,14 +30,14 @@ $tpl->parse("FORUM_HEADER", "forum_header");
 
 /* Grab the actual message */
 $index = find_msg_index($mid);
-$sql = "select *, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime from f_messages$index where mid = '" . addslashes($mid) . "'";
+$sql = "select *, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'";
 $result = mysql_query($sql) or sql_error($sql);
 
 $msg = mysql_fetch_array($result);
 
 $msg['date'] = strftime("%Y-%m-%d %H:%M:%S", $msg['unixtime']);
 
-$sql = "update f_messages$index set views = views + 1 where mid = '" . addslashes($mid) . "'";
+$sql = "update f_messages" . $indexes[$index]['iid'] . " set views = views + 1 where mid = '" . addslashes($mid) . "'";
 mysql_query($sql) or sql_warn($sql);
 
 if (!empty($msg['flags'])) {
@@ -55,7 +55,7 @@ if (!isset($msg['pmid']))
 
 if ($msg['pmid'] != 0) {
   $index = find_msg_index($msg['pmid']);
-  $sql = "select mid, subject, name, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime from f_messages$index where mid = " . $msg['pmid'];
+  $sql = "select mid, subject, name, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime from f_messages" . $indexes[$index]['iid'] . " where mid = " . $msg['pmid'];
   $result = mysql_query($sql) or sql_error($sql);
 
   $pmsg = mysql_fetch_array($result);
@@ -70,7 +70,7 @@ if (isset($tthreads_by_tid[$msg['tid']]) &&
 }
 
 $index = find_thread_index($msg['tid']);
-$sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$index where tid = '" . $msg['tid'] . "'";
+$sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . $msg['tid'] . "'";
 $result = mysql_query($sql) or sql_error($sql);
 $thread = mysql_fetch_array($result);
 

@@ -194,7 +194,7 @@ if (isset($tthreads)) {
   reset($tthreads);
   while (list(, $tthread) = each($tthreads)) {
     $index = find_thread_index($tthread['tid']);
-    if ($index < 0)
+    if (!$index)
       continue;
 
     /* Some people have duplicate threads tracked, they'll eventually fall */
@@ -202,7 +202,7 @@ if (isset($tthreads)) {
     if (isset($threadshown[$tthread['tid']]))
       continue;
 
-    $sql = "select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_threads$index where tid = '" . addslashes($tthread['tid']) . "'";
+    $sql = "select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tthread['tid']) . "'";
     $result = mysql_query($sql) or sql_error($sql);
 
     if (!mysql_num_rows($result))

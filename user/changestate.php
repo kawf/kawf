@@ -14,7 +14,7 @@ if ($state != 'Active' && $state != 'OffTopic' && $state != 'Moderated' && $stat
 
 $index = find_msg_index($mid);
 
-$msg = sql_querya("select mid, aid, pid, state, subject, flags from f_messages$index where mid = '" . addslashes($mid) . "'");
+$msg = sql_querya("select mid, aid, pid, state, subject, flags from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'");
 
 if (!empty($msg['flags'])) {
   $flagexp = explode(",", $msg['flags']);
@@ -64,7 +64,7 @@ if (isset($flags)) {
 } else
   $flagset = "";
 
-sql_query("update f_messages$index set " .
+sql_query("update f_messages" . $indexes[$index]['iid'] . " set " .
 	"changes = CONCAT(changes, 'Changed to $state from ', state, ' by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), '\n'), " .
 	"flags = '" . addslashes($flagset) . "', " .
 	"state = '$state' " .
@@ -81,7 +81,7 @@ if ($nuser->valid()) {
 
 /* For the purposes of these calculations */
 if (!empty($msg['state']) && $msg['pmid'] == 0)
-  sql_query("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $state = $state + 1 where iid = $index");
+  sql_query("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $state = $state + 1 where iid = " . $indexes[$index]['iid']);
 
 if ($state == 'OffTopic' && $user->capable($forum['fid'], 'OffTopic')) {
   $tpl->set_var(array(

@@ -91,7 +91,7 @@ $tpl->set_var("disabled", "");
 
 if (isset($tid) && $tid) {
   $index = find_thread_index($tid);
-  $sql = "select * from f_threads$index where tid = '" . addslashes($tid) . "'";
+  $sql = "select * from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tid) . "'";
   $result = mysql_query($sql) or sql_error($sql);
 
   $thread = mysql_fetch_array($result);
@@ -157,8 +157,8 @@ if (isset($postcookie)) {
 
   if (isset($pmid)) {
     $index = find_msg_index($pmid);
-    if ($index >= 0) {
-      $sql = "select * from f_messages$index where mid = '" . addslashes($pmid) . "'";
+    if ($index) {
+      $sql = "select * from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($pmid) . "'";
       $result = mysql_query($sql) or sql_error($sql);
 
       if (mysql_num_rows($result))
@@ -223,7 +223,7 @@ if (isset($postcookie)) {
   if (isset($pid)) {
     /* Grab the actual message */
     $index = find_msg_index($pid);
-    $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages$index where mid = '" . addslashes($pid) . "'";
+    $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($pid) . "'";
     $result = mysql_query($sql) or sql_error($sql);
 
     $pmsg = mysql_fetch_array($result);
@@ -415,7 +415,7 @@ if (!$accepted || isset($preview)) {
   if (mysql_num_rows($result) > 0) {
     # This is needed since $index may be trashed --jerdfelt
     $index = find_msg_index($thread['mid']);
-    $sql = "select subject from f_messages$index where mid = " . $thread['mid'];
+    $sql = "select subject from f_messages" . $indexes[$index]['iid'] . " where mid = " . $thread['mid'];
     $res2 = mysql_query($sql) or sql_error($sql);
 
     list($t_subject) = mysql_fetch_row($res2);
