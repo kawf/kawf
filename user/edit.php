@@ -106,7 +106,7 @@ $options = explode(",", $thread['flags']);
 foreach ($options as $name => $value)
   $thread["flag.$value"] = true;
 
-if (isset($thread['flag.Locked'])) {
+if (isset($thread['flag.Locked']) && !$user->moderator($forum['fid'])) {
   $tpl->set_var(array(
     "image" => "",
     "preview" => "",
