@@ -205,9 +205,66 @@ class ForumUser {
 
 /* This is the class to change the user stuff */
 class AccountUser extends ForumUser {
+  function add_pending($type, $data = "")
+  {
+    do {
+      /* We want a 6 digit number */
+      $tid = mt_rand(100000, 999999);
+      $cookie = substr(md5("pending" . $this->aid . mt_rand()), 0, 15);
+
+      $sql = "insert into u_pending " .
+                "( tid, cookie, aid, type, data, status, tstamp ) values " .
+                "( $tid, '$cookie', $this->aid, '" . addslashes($type) . "', " .
+                "'" . addslashes($data) . "', 'Sent', NOW() )";
+      $ret = _sql_query($sql);
+    } while (!$ret && mysql_errno() == 1062);
+
+    if (!$ret)
+      sql_error();
+
+    return sql_querya("select * from u_pending where tid = $tid");
+  }
+
+  function send_email($pending)
+  {
+    global $tpl, $bounce_host, $REMOTE_ADDR;
+
+    switch($pending['type']) {
+    case 'NewAccount':
+      $tpl->set_file("mail", "mail/create.tpl");
+      $fromprefix = "create";
+      $email = $this->email;
+      break;
+    case 'ForgotPassword':
+      $tpl->set_file("mail", "mail/forgotpassword.tpl");
+      $fromprefix = "forgotpassword";
+      $email = $this->email;
+      break;
+    case 'ChangeEmail':
+      $tpl->set_file("mail", "mail/changeemail.tpl");
+      $fromprefix = "changeemail";
+      $email = $pending['data'];
+      break;
+    }
+
+    $tpl->set_var(array(
+      "REMOTE_ADDR" => $REMOTE_ADDR,
+      "COOKIE" => $pending['cookie'],
+      "TID" => $pending['tid'],
+      "EMAIL" => $email,
+      "PHPVERSION" => phpversion(),
+    ));
+
+    /* Send an email with the directions */
+    $message = $tpl->parse("MAIL", "mail");
+
+    $fromaddr = $fromprefix . "-" . $pending['tid'] . "@" . $bounce_host;
+    mailfrom($fromaddr, $email, $message);
+  }
+
   function create()
   {
-    global $tpl, $bounce_host, $account_host, $REMOTE_ADDR;
+    global $tpl, $bounce_host, $REMOTE_ADDR;
 
     $cookie = md5("cookie" . $this->email . microtime());
 
@@ -240,22 +297,11 @@ class AccountUser extends ForumUser {
 
     $this->aid = sql_last_insert_id();
 
-    $tpl->set_var(array(
-      "REMOTE_ADDR" => $REMOTE_ADDR,
-      "HOST" => $account_host,
-      "COOKIE" => $cookie,
-      "TID" => $tid,
-      "EMAIL" => $this->email,
-      "PHPVERSION" => phpversion(),
-    ));
+    $pending = $this->add_pending("NewAccount");
 
-    /* Send an email with the directions */
-    $message = $tpl->parse("MAIL", "create_mail");
+    $this->send_email($pending);
 
-    $fromaddr = "create-" . $this->aid . "@" . $bounce_host;
-    mailfrom($fromaddr, $this->email, $message);
-
-    return true;
+    return $pending['tid'];
   }
 
   function setcookie()
@@ -288,30 +334,11 @@ $cookie_host);
 
   function forgotpassword()
   {
-    global $tpl, $bounce_host, $account_host, $REMOTE_ADDR;
+    $pending = $this->add_pending("ForgotPassword");
 
-    /* Create a new password */
-    $password = "";
-    for ($i = 0; $i < 10; $i++)
-      $password .= chr((mt_rand()%26)+97);
+    $this->send_email($pending);
 
-    $this->password($password);
-
-    $tpl->set_var(array(
-      "REMOTE_ADDR" => $REMOTE_ADDR,
-      "HOST" => $account_host,
-      "PASSWORD" => $password,
-      "TID" => $tid,
-      "EMAIL" => $this->email,
-      "PHPVERSION" => phpversion(),
-    ));
-
-    $message = $tpl->parse("MAIL", "forgotpassword_mail");
-
-    $fromaddr = "forgotpassword-" . $this->aid . "@" . $bounce_host;
-    mailfrom($fromaddr, $this->email, $message);
-
-    return $tid;
+    return $pending['tid'];
   }
 
   /* Change the users name */
@@ -336,6 +363,19 @@ $cookie_host);
     $this->shortname = $shortname;
 
     return true;
+  }
+
+  function verify_email($email)
+  {
+    $val = sql_query1("select email from u_users where email = '" . addslashes($email) . "'");
+    if ($val)
+      return false;
+
+    $pending = $this->add_pending("ChangeEmail", $email);
+
+    $this->send_email($pending);
+
+    return $pending['tid'];
   }
 
   /* Change the users email */

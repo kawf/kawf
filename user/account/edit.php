@@ -82,7 +82,8 @@ if (empty($error)) {
 }
 
 if (isset($update_email) && empty($error)) {
-  if (!$user->email($update_email))
+  $email_tid = $user->verify_email($update_email);
+  if (!$email_tid)
     $error .= "The email address '$update_email' is already used by another account\n";
 }
 
@@ -93,6 +94,11 @@ if (empty($error)) {
     $tpl->set_var("password", "");
   if (!isset($update_email))
     $tpl->set_var("email", "");
+  else
+    $tpl->set_var(array(
+      "TID" => $email_tid,
+      "NEWEMAIL" => $update_email,
+    ));
 
   $tpl->set_var("error", "");
 } else {
