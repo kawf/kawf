@@ -95,7 +95,7 @@ if (isset($submit)) {
 
   if (!mysql_affected_rows()) {
     $sql = "insert into u_forums ( aid, preferences, signature, threadsperpage ) values ( $user->aid, '" . addslashes($prefstr)."', '" . addslashes($signature) . "', '" . addslashes($threadsperpage) . "' )";
-    mysql_query($sql) or sql_error($sql);
+    mysql_query($sql);
   }
 }
 
