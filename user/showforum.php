@@ -2,6 +2,7 @@
 
 require_once("listthread.inc");
 require_once("filter.inc");
+require_once("thread.inc");
 
 $tpl->set_file(array(
   "header" => "header.tpl",
@@ -297,39 +298,9 @@ function display_thread($thread)
 {
   global $user, $forum, $ulkludge;
 
-  $index = find_msg_index($thread['mid']);
-  if ($index < 0)
-    return "Error retrieving thread";
-
-  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
-  $result = mysql_query($sql) or sql_error($sql);
-  while ($message = mysql_fetch_array($result)) {
-    $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
-    $messages[] = $message;
-  }
-
-  /* We assume a thread won't span more than 2 indexes */
-  $index++;
-  if (isset($indexes[$index])) {
-    $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
-    $result = mysql_query($sql) or sql_error($sql);
-    while ($message = mysql_fetch_array($result)) {
-      $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
-      $messages[] = $message;
-    }
-  }
-
+  list($messages, $tree) = fetch_thread($thread);
   if (!isset($messages) || !count($messages))
     return array(0, "", "");
-
-  /* Filter out moderated or deleted messages, if necessary */
-  reset($messages);
-  while (list($key, $msg) = each($messages)) {
-    $tree[$msg['mid']][] = $key;
-    $tree[$msg['pid']][] = $key;
-  }
-
-  $messages = filter_messages($messages, $tree, reset($tree));
 
   $count = count($messages);
 
