@@ -34,7 +34,7 @@ function do_option($name)
 
 if (isset($submit)) {
   option_changed('ShowOffTopic', "showing of off-topic posts");
-  option_changed('ShowModerated', "showing of moderated posts");
+#  option_changed('ShowModerated', "showing of moderated posts");
   option_changed('Collapsed', "collapsed view of threads");
   option_changed('SecretEmail', "hiding of email address in posts");
   option_changed('SimpleHTML', "simple HTML page generation");
@@ -73,7 +73,7 @@ if (isset($submit)) {
 }
 
 do_option('ShowOffTopic');
-do_option('ShowModerated');
+#do_option('ShowModerated');
 do_option('Collapsed');
 do_option('SecretEmail');
 do_option('SimpleHTML');
