@@ -61,7 +61,7 @@ if (isset($tthreads_by_tid[$msg['tid']]) &&
 
 $urlroot = "/ads";
 /* We get our money from ads, make sure it's there */
-include("ads.inc");
+include_once("ads.inc");
 
 $ad = ads_view("a4.org," . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
@@ -308,7 +308,7 @@ $tid = $msg['tid'];
 unset($mid);
 unset($message);
 
-include('post.inc');
+include_once("post.inc");
 
 $tpl->parse(MESSAGE, "message");
 

@@ -193,7 +193,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
       err_not_found("Unknown script " . $regs[2]);
   }
 
-  include($scripts[$regs[2]]);
+  include_once($scripts[$regs[2]]);
 } elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
   if (isset($QUERY_STRING) && !empty($QUERY_STRING))
     Header("Location: msgs/" . $regs[2] . ".phtml?" . $QUERY_STRING);
@@ -208,14 +208,14 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
-  include($fscripts[$regs[2] . ""]);
+  include_once($fscripts[$regs[2] . ""]);
 } else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/pages\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
   /* Now show that page */
   $curpage = $regs[2];
-  include("showforum.php");
+  include_once("showforum.php");
 } else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/msgs\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
@@ -237,7 +237,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
   }
 
   if (isset($result) && mysql_num_rows($result)) {
-    include("showmessage.php");
+    include_once("showmessage.php");
   } else
     err_not_found("Unknown message " . $mid . " in forum " . $forum['shortname']. "\n$sql");
 } else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/threads\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
@@ -253,7 +253,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
   }
 
   if (isset($result) && mysql_num_rows($result)) {
-    include("showthread.php");
+    include_once("showthread.php");
   } else
     err_not_found("Unknown thread " . $tid . " in forum " . $forum['shortname']);
 } else

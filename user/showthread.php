@@ -25,7 +25,7 @@ if (isset($tthreads[$msg['tid']]) &&
 
 $urlroot = "/ads";
 /* We get our money from ads, make sure it's there */
-include("ads.inc");
+include_once("ads.inc");
 
 $ad = ads_view("a4.org," . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
