@@ -321,12 +321,6 @@ function display_thread($thread)
   return array($count, "<ul class=\"thread\">\n" . $messagestr, $state);
 }
 
-# Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)
-# Mozilla/4.7 (Macintosh; U; PPC)
-$ulkludge =
-  ereg("^Mozilla/[0-9]\.[0-9]+ \(compatible; MSIE .*", $HTTP_USER_AGENT) ||
-  ereg("^Mozilla/[0-9]\.[0-9]+ \(Macintosh; .*", $HTTP_USER_AGENT);
-
 $numshown = 0;
 
 if (isset($tthreads)) {

@@ -148,12 +148,6 @@ if (!isset($urlset))
 
 $tpl->set_var("MSG_MESSAGE", $message . "<br>\n");
 
-# Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)
-# Mozilla/4.7 (Macintosh; U; PPC)
-$ulkludge =
-  ereg("^Mozilla/[0-9]\.[0-9]+ \(compatible; MSIE .*", $HTTP_USER_AGENT) ||
-  ereg("^Mozilla/[0-9]\.[0-9]+ \(Macintosh; .*", $HTTP_USER_AGENT);
-
 $index = find_thread_index($msg['tid']);
 $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$index where tid = '" . $msg['tid'] . "'";
 $result = mysql_query($sql) or sql_error($sql);
