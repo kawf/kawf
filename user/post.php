@@ -172,9 +172,9 @@ if (isset($postcookie)) {
     }
   }
 
-  if (empty($subject))
+  if (empty($subject) && strlen($subject) == 0)
     $error["subject_req"] = true;
-  elseif (isset($parent) && $subject == "Re: " . $parent['subject'] && empty($message) && empty($url))
+  elseif (isset($parent) && $subject == "Re: " . $parent['subject'] && empty($message) && strlen($message) == 0 && empty($url))
     $error["subject_change"] = true;
   elseif (strlen($subject) > 100) {
     /* Subject is too long */
@@ -276,7 +276,7 @@ if (!$accepted || isset($preview)) {
 } else {
   $flags[] = "NewStyle";
 
-  if (empty($message))
+  if (empty($message) && strlen($message) == 0)
     $flags[] = "NoText";
 
   if (!empty($url) || preg_match("/<[[:space:]]*a[[:space:]]+href/i", $message))

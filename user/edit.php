@@ -180,7 +180,7 @@ if ($msg['state'] == 'Active' && $OffTopic)
 else
   $status = $msg['state'];
 
-if (empty($subject))
+if (empty($subject) && strlen($subject) == 0)
   $error["subject_req"] = true;
 
 if (strlen($subject) > 100) {
@@ -267,7 +267,7 @@ if (isset($error) || isset($preview)) {
   if (isset($flags['StateLocked']))
     $flagset[] = 'StateLocked';
 
-  if (empty($message))
+  if (empty($message) && strlen($message) == 0)
     $flagset[] = "NoText";
 
   if (!empty($url) || preg_match("/<[[:space:]]*a[[:space:]]+href/i", $message))
