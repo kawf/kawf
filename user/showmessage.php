@@ -134,10 +134,16 @@ $tpl->set_var(array(
   "MSG_AID" => $msg['aid'],
 ));
 
+/* UGLY hack, kludge, etc to workaround nasty ordering problem */
 $_page = $tpl->get_var("PAGE");
 unset($tpl->varkeys["PAGE"]);
 unset($tpl->varvals["PAGE"]);
 $tpl->set_var("PAGE", $_page);
+
+$_domain = $tpl->get_var("DOMAIN");
+unset($tpl->varkeys["DOMAIN"]);
+unset($tpl->varvals["DOMAIN"]);
+$tpl->set_var("DOMAIN", $_domain);
 
 if ($user->valid() && !empty($msg['email'])) {
   /* Lame spamification */
