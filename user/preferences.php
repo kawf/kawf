@@ -99,7 +99,8 @@ else
 if (empty($user->signature))
   $tpl->set_var("signature", "");
 
-$tpl->set_var("SIGNATURE", nl2br($user->signature));
+$tpl->set_var("SIGNATURE_COOKED", nl2br($user->signature));
+$tpl->set_var("SIGNATURE", $user->signature);
 $tpl->set_var("THREADSPERPAGE", $user->threadsperpage);
 $tpl->set_var("TEXT", $text);
 $tpl->set_var("PAGE", $page);
