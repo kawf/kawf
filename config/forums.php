@@ -6,10 +6,10 @@ $srcroot = "/home/jerdfelt/software";
 $template_dir = "/web/kawf.org/forums/dev/templates/";
 
 /* This is optional. Don't declare the variable if you don't want it added */
-$include_append = "$srcroot/config:$srcroot/php:$srcroot/kawf/include:$srcroot/kawf/user/account";
+$include_append = "$srcroot/config:$srcroot/kawf/include:$srcroot/kawf/user/account";
 
-/* Style for guests and initial for new users */
-$default_style = "classic";
+/* Uncomment this if you have your own account management stuff */
+#$dont_use_account = true;
 
 /*
  * At audiworld.com, we have different configs for production and development
