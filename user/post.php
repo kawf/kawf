@@ -375,7 +375,8 @@ if (!$accepted || isset($preview)) {
   $result = mysql_query($sql) or sql_error($sql);
 
   if (mysql_num_rows($result) > 0) {
-#    $index = find_msg_index($thread['mid']);
+    # This is needed since $index may be trashed --jerdfelt
+    $index = find_msg_index($thread['mid']);
     $sql = "select subject from f_messages$index where mid = " . $thread['mid'];
     $res2 = mysql_query($sql) or sql_error($sql);
 
