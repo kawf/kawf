@@ -26,26 +26,29 @@ $result = sql_query("select f_moderators.*, u_users.name from f_moderators, u_us
 </tr>
 
 <?php
+$aids = Array();
 $useracls = Array();
-$useraclhash = Array();
 
 while ($useracl = sql_fetch_array($result)) {
-  $ua = $useracl;
+  $aid = $useracl['aid'];
 
-  if (!isset($useraclhash[$ua['aid']]) || $useraclhash[$ua['aid']]['capabilities'] != $ua['capabilities']) {
-    $ua['fids'] = Array();
-    $useracls[] = $ua;
-    $useraclhash[$ua['aid']] = &$ua;
-  } else
-    $ua = $useraclhash[$useracl['aid']];
+  /* If the entry doesn't exist already or the capabilities are different */
+  if (!isset($useracls[$aid]) ||
+      $useracls[$aid]['capabilities'] != $useracl['capabilities']) {
+    $useracl['fids'] = Array();
+    $aids[] = $aid;
+    $useracls[$aid] = $useracl;
+  }
 
   if ($useracl['fid'] == -1)
-    $ua['fids'][] = "All";
+    $useracls[$aid]['fids'][] = "All";
   else
-    $ua['fids'][] = $useracl['fid'];
+    $useracls[$aid]['fids'][] = $useracl['fid'];
 }
 
-foreach ($useracls as $useracl) {
+foreach ($aids as $aid) {
+  $useracl = $useracls[$aid];
+
   $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
   echo "<tr bgcolor=\"$bgcolor\">\n";
   echo "<td><a href=\"useraclmodify.phtml?aid=" . $useracl['aid'] . "\">" . $useracl['aid'] . "</a></td>\n";
