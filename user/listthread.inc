@@ -18,7 +18,7 @@ function list_thread($callback, $messages, $tree, $siblings)
 
   $string .= $callback($messages[$s]);
 
-  if (isset($user['prefs.OldestFirst'])) {
+  if (isset($user->pref['OldestFirst'])) {
     while (list(, $s1) = each($siblings)) {
       if (!isset($messages[$s1]))
         continue;

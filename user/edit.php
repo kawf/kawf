@@ -1,9 +1,6 @@
 <?php
 
-if (!isset($user)) {
-  echo "No user account, no editting\n";
-  exit;
-}
+$user->req();
 
 /* Check the data to make sure they entered stuff */
 if (!isset($mid) || !isset($forum)) {
@@ -12,43 +9,44 @@ if (!isset($mid) || !isset($forum)) {
   exit;
 }
 
-require('textwrap.inc');
-require('striptag.inc');
+require("textwrap.inc");
+require("strip.inc");
 
-/* Open up the SQL database */
-sql_open_readwrite();
-
-$forumdb = "forum_" . $forum['shortname'];
-
-$tpl->define(array(
-  header => 'header.tpl',
-  footer => 'footer.tpl',
-  edit => 'edit.tpl',
-  postaccept => 'postaccept.tpl',
-  previewa => 'preview.tpl',
-  postform => 'postform.tpl',
-  forum_header => 'forum/' . $forum['shortname'] . '.tpl'
+$tpl->set_file(array(
+  "header" => "header.tpl",
+  "footer" => "footer.tpl",
+  "edit" => "edit.tpl",
+  "message" => "message.tpl",
+  "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
 ));
 
-$tpl->define_dynamic('preview', 'edit');
-$tpl->define_dynamic('form', 'edit');
-$tpl->define_dynamic('accept', 'edit');
+$tpl->set_block("edit", "preview");
+$tpl->set_block("edit", "form");
+$tpl->set_block("edit", "accept");
 
-$tpl->assign(TITLE, "Message Editting");
+$tpl->set_block("message", "forum_admin");
+$tpl->set_block("message", "parent");
 
-$tpl->parse(FORUM_HEADER, 'forum_header');
+$tpl->set_var(array(
+  "forum_admin" => "",
+  "parent" => "",
+));
 
-$tpl->parse(HEADER, 'header');
-$tpl->parse(FOOTER, 'footer');
+$tpl->set_var("TITLE", "Message Editting");
+
+$tpl->parse("FORUM_HEADER", 'forum_header');
+
+$tpl->parse("HEADER", "header");
+$tpl->parse("FOOTER", "footer");
 
 $index = find_msg_index($mid);
 
-$sql = "select * from messages$index where mid = '" . addslashes($mid) . "'";
-$result = mysql_db_query($forumdb, $sql) or sql_error($sql);
+$sql = "select * from f_messages$index where mid = '" . addslashes($mid) . "'";
+$result = mysql_query($sql) or sql_error($sql);
 
 $msg = mysql_fetch_array($result);
 
-if ($msg['aid'] != $user['aid']) {
+if ($msg['aid'] != $user->aid) {
   echo "This message does not belong to you!\n";
   exit;
 }
@@ -62,25 +60,12 @@ if (!isset($message)) {
   $ExposeEmail = !empty($msg['email']);
 }
 
-/*
-require('../ads.inc');
-*/
+$urlroot = "/ads";
+/* We get our money from ads, make sure it's there */
+include("ads.inc");
 
-/* Show the advertisement on errors as well :) */
-/*
-add_ad();
-*/
-
-/* If magic quotes are on, strip the slashes */
-/*
-if (get_magic_quotes_gpc()) {
-*/
-  $subject = stripslashes($subject);
-  $message = stripslashes($message);
-  $urltext = stripslashes($urltext);
-/*
-}
-*/
+$ad = ads_view("a4.org," . $forum['shortname'], "_top");
+$tpl->set_var("AD", $ad);
 
 function stripcrap($string) {
   $string = striptag($string, $no_tags);
@@ -96,9 +81,9 @@ $message = striptag($message, $standard_tags);
 $message = stripspaces($message);
 
 /* Sanitize the strings */
-$name = stripcrap($user['name']);
+$name = stripcrap($user->name);
 if ($exposeemail)
-  $email = stripcrap($user['email']);
+  $email = stripcrap($user->email);
 
 $subject = stripcrap($subject);
 $url = stripcrap($url);
@@ -144,42 +129,43 @@ if ((isset($error) || isset($preview)) && (!empty($imageurl))) {
   $imgpreview = 1;
 }
 
-$tpl->assign(MSG_NAME, $user['name']);
-if (empty($ExposeEmail))
-  $tpl->assign(MSG_EMAIL, '<font color="#ff0000">(Hidden)</font>');
-else
-  $tpl->assign(MSG_EMAIL, $user['email']);
+if (empty($ExposeEmail)) {
+  /* Lame spamification */
+  $email = preg_replace("/@/", "&#" . ord('@') . ";", $user->email);
+  $tpl->set_var("MSG_NAMEEMAIL", "<a href=\"mailto:" . $email . "\">" . $user->name . "</a>");
+} else
+  $tpl->set_var("MSG_NAMEEMAIL", $user->name);
 
 if (!empty($imageurl))
   $msg_message = "<center><img src=\"$imageurl\"></center><p>";
 else
   $msg_message = "";
 $msg_message .= preg_replace("/\n/", "<br>\n", $message);
-if (!empty($user['signature']))
-  $msg_message .= $user['signature'];
-$tpl->assign(MSG_MESSAGE, $msg_message);
+if (!empty($user->signature))
+  $msg_message .= $user->signature;
 
-$tpl->assign(MSG_SUBJECT, $subject);
-$tpl->assign(MSG_URL, $url);
-$tpl->assign(MSG_URLTEXT, $urltext);
-$tpl->assign(MSG_IMAGEURL, $imageurl);
+$tpl->set_var(array(
+  "MSG_MESSAGE" => $msg_message,
+  "MSG_SUBJECT" => $subject,
+  "MSG_DATE" => $msg['date'],
+));
 
 if (!isset($preview))
-  $tpl->clear_dynamic('preview');
+  $tpl->set_var("preview", "");
 
-$tpl->parse(PREVIEW, 'previewa');
+$tpl->parse("PREVIEW", "message");
 
 if (isset($error) || isset($preview)) {
   $action = "edit";
 
   include('post.inc');
 
-  $tpl->clear_dynamic('accept');
+  $tpl->set_var("accept", "");
 } else {
-  $tpl->clear_dynamic('form');
+  $tpl->set_var("form", "");
 
   if (isset($ExposeEmail))
-    $email = $user['email'];
+    $email = $user->email;
   else
     $email = "";
 
@@ -200,20 +186,27 @@ if (isset($error) || isset($preview)) {
     $message = "<center><img src=\"$imageurl\"></center><p>" . $message;
 
   /* Add it into the database */
-  $sql = "update messages$index set name='".addslashes($name)."', email='".addslashes($email)."', ip='$REMOTE_ADDR', flags='$flagset', subject='".addslashes($subject)."', message='".addslashes($message)."', url='".addslashes($url)."', urltext='".addslashes($urltext)."' where mid='".addslashes($mid)."';";
-  mysql_db_query($forumdb, $sql) or sql_error($sql);
+  $sql = "update f_messages$index set " .
+	"name = '" . addslashes($name) . "', " .
+	"email = '" . addslashes($email) . "', " .
+	"ip = '$REMOTE_ADDR', " .
+	"flags = '$flagset', " .
+	"subject = '" . addslashes($subject) . "', " .
+	"message = '" . addslashes($message) . "', " .
+	"url = '" . addslashes($url) . "', " .
+	"urltext = '" . addslashes($urltext) . "', " .
+	"changes = CONCAT(changes, 'Updated by " . $user->name . " at ', NOW(), '\n') " .
+	"where mid = '" . addslashes($mid) . "'";
+  mysql_query($sql) or sql_error($sql);
 
-  $sql = "insert into updates (mid) values ('" . addslashes($mid) . "')";
-  mysql_db_query($forumdb, $sql); 
+  $sql = "insert into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($mid) . "' )";
+  mysql_query($sql); 
 
-  $tpl->assign(ACCEPT, "Message Updated");
-
-  $tpl->assign(FORUM_SHORTNAME, $forum['shortname']);
-  $tpl->assign(MID, $mid);
-
-  $tpl->parse(FORM, 'postaccept');
+  $tpl->set_var(array(
+    "FORUM_SHORTNAME" => $forum['shortname'],
+    "MSG_MID" => $mid,
+  ));
 }
 
-$tpl->parse(CONTENT, 'edit');
-$tpl->FastPrint(CONTENT);
+$tpl->pparse("CONTENT", "edit");
 ?>

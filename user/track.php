@@ -1,12 +1,11 @@
 <?php
-if (!isset($page))
-  $page = $furlroot;
+if (!isset($forum)) {
+  echo "Invalid forum\n";
+  exit;
+}
 
 if (!isset($user))
   Header("Location: $page");
-
-/* Open up the SQL database first */
-sql_open_readwrite();
 
 $index = find_thread_index($tid);
 if ($index < 0) {
@@ -15,8 +14,8 @@ if ($index < 0) {
 }
 
 if (!isset($tthreads_by_tid[$tid])) {
-  $sql = "insert into tracking (tid, aid) values ('" . addslashes($tid) . "', '" . addslashes($user['aid']) . "')";
-  mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+  $sql = "insert into f_tracking ( fid, tid, aid, options ) values ( " . $forum['fid'] . ", '" . addslashes($tid) . "', '" . $user->aid . "', '' )";
+  mysql_query($sql) or sql_error($sql);
 }
 
 Header("Location: $page");
