@@ -79,30 +79,30 @@ $create_dupposts_table = "
     key (ip)
   )";
 
-$create_unique_table =
-  "create table f_unique (\n" .
-  "  fid int not null,\n" .
-  "  type enum('Message','Thread') not null,\n" .
-  "  id int not null,\n" .
-  "  primary key (fid, type, id)\n" .
-  ")";
+$create_unique_table = "
+  create table f_unique (
+    fid int not null,
+    type enum('Message','Thread') not null,
+    id int not null,
+    primary key (fid, type, id)
+  )";
 
-$create_tracking_table =
-  "create table f_tracking (\n" .
-  "  fid int not null,\n" .
-  "  tid int not null,\n" .
-  "  aid int not null,\n" .
-  "  tstamp timestamp,\n" .
-  "  options set('SendEmail') not null,\n" .
-  "  key (fid, aid)\n" .
-  ")";
+$create_tracking_table = "
+  create table f_tracking (
+    fid int not null,
+    tid int not null,
+    aid int not null,
+    tstamp timestamp,
+    options set('SendEmail') not null,
+    key (fid, aid)
+  )";
 
-$create_update_table =
-  "create table f_updates (\n" .
-  "  fid int not null,\n" .
-  "  mid int not null,\n" .
-  "  primary key (fid)\n" .
-  ")";
+$create_update_table = "
+  create table f_updates (
+    fid int not null,
+    mid int not null,
+    primary key (fid)
+  )";
 
 $create_moderators_table = "
   create table f_moderators (
@@ -121,27 +121,27 @@ $create_upostcount_table = "
     primary key (aid, fid, status)
   )";
 
-$create_users_table =
-  "create table u_users (\n" .
-  "  aid int not null auto_increment,\n" .
-  "  name varchar(50) not null,\n" .
-  "  shortname varchar(50) not null,\n" .
-  "  email varchar(100) not null,\n" .
-  "  password varchar(50) not null,\n" .
-  "  status enum('Create','Active','Suspended') not null default 'Create',\n" .
-  "  createdate datetime not null,\n" .
-  "  cookie varchar(50) not null,\n" .
-  "  timezone varchar(5) not null,\n" .
-  "  style enum('Classic','Simple','UBB') not null default 'Classic',\n" .
-  "  preferences set('ShowModerated','Collapsed','SecretEmail','FlatThread','AutoTrack','HideSignatures','AutoUpdateTracking','OldestFirst','SortbyActive') not null,\n" .
-  "  signature text not null,\n" .
-  "  threadsperpage int not null,\n" .
-  "  posts int not null,\n" .
-  "  primary key (aid),\n" .
-  "  unique (shortname),\n" .
-  "  unique (email),\n" .
-  "  unique (cookie)\n" .
-  ")";
+$create_users_table = "
+  create table u_users (
+    aid int not null auto_increment,
+    name varchar(50) not null,
+    shortname varchar(50) not null,
+    email varchar(100) not null,
+    password varchar(50) not null,
+    status enum('Create','Active','Suspended') not null default 'Create',
+    createdate datetime not null,
+    cookie varchar(50) not null,
+    timezone varchar(5) not null,
+    style enum('Classic','Simple','UBB') not null default 'Classic',
+    preferences set('ShowModerated','Collapsed','SecretEmail','FlatThread','AutoTrack','HideSignatures','AutoUpdateTracking','OldestFirst','SortbyActive') not null,
+    signature text not null,
+    threadsperpage int not null,
+    posts int not null,
+    primary key (aid),
+    unique (shortname),
+    unique (email),
+    unique (cookie)
+  )";
 
 $create_global_messages_table = "
   create table f_global_messages (
