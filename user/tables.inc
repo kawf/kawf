@@ -50,7 +50,7 @@ $create_forums_table = "
     fid int not null auto_increment,
     name varchar(150) not null,
     shortname varchar(20) not null,
-    options set('PostEdit','Read','PostThread','PostReply','OffTopic') default 'PostEdit,Read,PostThread,PostReply',
+    options set('Read','PostThread','PostReply','PostEdit','OffTopic') not null default 'Read,PostThread,PostReply,PostEdit',
     primary key (fid)
   )";
 
