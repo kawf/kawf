@@ -1,7 +1,7 @@
 <?php
 
 $tpl->set_file(array(
-  "forgotpassword" => "forgotpassword.tpl",
+  "forgotpassword" => "account/forgotpassword.tpl",
   "forgotpassword_mail" => "mail/forgotpassword.tpl",
 ));
 

@@ -1,6 +1,8 @@
 <?php
 
 include_once("sql.inc");
+include_once("validate.inc");
+include_once("mailfrom.inc");
 
 /* This is the standard User class */
 class User {

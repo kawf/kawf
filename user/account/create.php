@@ -1,6 +1,6 @@
 <?php
 
-require("strip.inc");
+include_once("strip.inc");
 
 /* Delete the logged in user */
 unset($user);
@@ -9,7 +9,7 @@ unset($user);
 $user = new AccountUser;
 
 $tpl->set_file(array(
-  "create" => "create.tpl",
+  "create" => "account/create.tpl",
   "create_mail" => "mail/create.tpl",
 ));
 

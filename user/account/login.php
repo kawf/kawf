@@ -9,7 +9,7 @@ if (isset($forgotpassword)) {
   exit;
 }
 
-$tpl->set_file("login", "login.tpl");
+$tpl->set_file("login", "account/login.tpl");
 
 $tpl->set_block("login", "message");
 

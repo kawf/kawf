@@ -1,6 +1,6 @@
 <?php
 
-$tpl->set_file("finish", "finish.tpl");
+$tpl->set_file("finish", "account/finish.tpl");
 
 $tpl->set_block("finish", "form");
 $tpl->set_block("finish", "unknown");

@@ -1,11 +1,11 @@
 <?php
 
-require("strip.inc");
+include_once("strip.inc");
 
 $user->req();
 
 $tpl->set_file(array(
-  "edit" => "edit.tpl",
+  "edit" => "account/edit.tpl",
   "changeemail_mail" => "mail/changeemail.tpl",
 ));
 
