@@ -24,11 +24,17 @@ body { font-family: verdana, arial, geneva }
 </table>
 
 <!-- BEGIN disabled -->
-<h2>Posting on this forum has been temporarily disabled, please try again later</h2><br>
-<!-- END disabled -->
+<!-- Users should never get here except for a race condition, so we use the term "temporarily" since it's expected to be enabled again later. Normally they should never get the form to reply in the first case. -->
+<!-- BEGIN nonewthreads -->
+<h2>Posting new threads on this forum has been temporarily disabled.</h2>
+<!-- END nonewthreads -->
+<!-- BEGIN noreplies -->
+<h2>Posting replies on this forum has been temporarily disabled</h2>
+<!-- END noreplies -->
 <!-- BEGIN locked -->
 This thread is locked, no replies allowed<p>
 <!-- END locked -->
+<!-- END disabled -->
 <!-- BEGIN error -->
 <font color="#ff0000">
 <!-- BEGIN image -->
