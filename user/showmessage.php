@@ -139,7 +139,7 @@ unset($tpl->varkeys["PAGE"]);
 unset($tpl->varvals["PAGE"]);
 $tpl->set_var("PAGE", $_page);
 
-if (!empty($msg['email'])) {
+if ($user->valid() && !empty($msg['email'])) {
   /* Lame spamification */
   $email = preg_replace("/@/", "&#" . ord('@') . ";", $msg['email']);
   $tpl->set_var("MSG_NAMEEMAIL", "<a href=\"mailto:" . $email . "\">" . $msg['name'] . "</a>");

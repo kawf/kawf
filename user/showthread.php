@@ -113,7 +113,7 @@ function print_message($thread, $msg)
   $uuser = new ForumUser;
   $uuser->find_by_aid((int)$msg['aid']);
 
-  if (!empty($msg['email'])) {
+  if ($user->valid() && !empty($msg['email'])) {
     /* Lame spamification */
     $email = preg_replace("/@/", "&#" . ord('@') . ";", $msg['email']);
     $tpl->set_var("MSG_NAMEEMAIL", "<a href=\"mailto:" . $email . "\">" . $msg['name'] . "</a>");
