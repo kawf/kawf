@@ -264,13 +264,9 @@ while ($forum = mysql_fetch_array($result)) {
     $tthreads_by_tid[$tthread['tid']] = $tthread;
 
     $index = find_thread_index($tthread['tid']);
-    $sql = "select * from f_threads$index where tid = '" . addslashes($tthread['tid']) . "'";
-    $res3 = mysql_query($sql) or sql_error($sql);
-
-    if (!mysql_num_rows($res3))
+    $thread = sql_quera("select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_threads$index where tid = '" . addslashes($tthread['tid']) . "'");
+    if (!$thread)
       continue;
-
-    $thread = mysql_fetch_array($res3);
 
     if ($thread['unixtime'] > $tthread['unixtime'])
       $tpl->set_var("CLASS", "trow" . ($forumcount % 2));
