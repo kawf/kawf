@@ -80,7 +80,9 @@ if ($forum['shortname'] == "wheel")
 */
 
 if (isset($user['cap.Moderate']))
- echo "<font face=\"Verdana, Arial, Geneva\" size=\"-2\">Posting IP Address: " . $msg['ip'] . "</font><p>\n";
+  $tpl->assign(POSTING_IP, "<font size=\"-2\">Posting IP Address: " . $msg['ip'] . "</font><p>");
+else
+  $tpl->assign(POSTING_IP, "");
 
 $tpl->assign(MSG_SUBJECT, $msg['subject']);
 $tpl->assign(MSG_DATE, $msg['date']);
@@ -91,11 +93,10 @@ if (!empty($msg['email'])) {
 } else
   $tpl->assign(MSG_NAMEEMAIL, $msg['name']);
 
-/*
-if ($msg['pid'] != 0) {
-In Reply to: <a href="<?php echo $msg['pid']; ?>.phtml"><?php echo $pmsg['subject']; ?></a> posted by <?php echo $pmsg['name']; ?> on <?php echo $pmsg['date']; ?><p>
-}
-*/
+if ($msg['pid'] != 0)
+  $tpl->assign(PARENT, "In Reply to: <a href=\"" . $msg['pid'] . ".phtml\">" . $pmsg['subject'] . "</a> posted by " . $pmsg['name'] . " on " . $pmsg['date'] . "<p>");
+else
+  $tpl->assign(PARENT, "");
 
 $message = preg_replace("/\n/", "<br>\n", $msg['message']);
 

@@ -26,7 +26,10 @@
 <tr><td>
   <font face="Verdana, Arial, Geneva">
     <font size="+1" color="#000080"><b>{MSG_SUBJECT}</b></font><br>
-    <font size="-2"><b>Posted by {MSG_NAMEEMAIL} on {MSG_DATE}</b></font><br><br>
+    {POSTING_IP}
+    <font size="-2"><b>Posted by {MSG_NAMEEMAIL} on {MSG_DATE}</b><p>
+    {PARENT}
+    </font>
     <font size="-1">
 {MSG_MESSAGE}
     </font>
@@ -52,7 +55,7 @@
 </td></tr>
 
 <tr><td>
-{POSTFORM}
+{POST}
 </td></tr>
 <tr><td>
 <font face="arial, geneva" size="-2">

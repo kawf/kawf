@@ -50,7 +50,7 @@ Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 </td></tr>
 
 <tr><td>
-{POSTFORM}
+{POST}
 </td></tr>
 </table>
 

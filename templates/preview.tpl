@@ -1,22 +1,13 @@
 <br>
 <font face="Verdana, Arial, Geneva" size="-1">
-<b>Name:</b> {NAME}<br>
-<b>E-Mail:</b> {EMAIL}<br>
-<b>Subject:</b> {SUBJECT}<br>
+<b>Name:</b> {MSG_NAME}<br>
+<b>E-Mail:</b> {MSG_EMAIL}<br>
+<b>Subject:</b> {MSG_SUBJECT}<br>
 <b>Body of Message:</b><p>
-{MESSAGE}
-<?php
-if (!empty($imageurl))
-  echo "<center><img src=\"$imageurl\"></center><p>";
-
-echo textwrap($message, 99999, "<br>\n") . "\n";
-
-if (!empty($user['signature']))
-  echo "<p>\n" . textwrap(stripslashes($user['signature']), 99999, "<br>\n");
-?>
+{MSG_MESSAGE}
 <p>
-<b>URL:</b> <?php echo $url; ?><br>
-<b>URL text:</b> <?php echo $urltext; ?><br>
-<b>Image URL:</b> <?php echo $imageurl; ?><br>
+<b>URL:</b> {MSG_URL}<br>
+<b>URL text:</b> {MSG_URLTEXT}<br>
+<b>Image URL:</b> {MSG_IMAGEURL}<br>
 </font>
 

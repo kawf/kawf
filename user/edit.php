@@ -6,7 +6,7 @@ if (!isset($user)) {
 }
 
 /* Check the data to make sure they entered stuff */
-if (!isset($mid) || !isset($shortname)) {
+if (!isset($mid)) {
   /* Hmm, how did this happen? Redirect them back to the main page */
   Header("Location: http://$SERVER_NAME$SCRIPT_NAME/");
   exit;
@@ -24,6 +24,7 @@ $tpl->define(array(
   header => 'header.tpl',
   footer => 'footer.tpl',
   edit => 'edit.tpl',
+  postaccept => 'postaccept.tpl',
   preview => 'preview.tpl',
   postform => 'postform.tpl'
 ));
@@ -31,6 +32,9 @@ $tpl->define(array(
 $tpl->assign(TITLE, "Message Editting");
 
 $tpl->assign(FORUM_PICTURE, $forum['picture']);
+
+$tpl->parse(HEADER, 'header');
+$tpl->parse(FOOTER, 'footer');
 
 $index = find_msg_index($mid);
 
@@ -50,7 +54,7 @@ if (!isset($message)) {
   $subject = $msg['subject'];
   $url = $msg['url'];
   $urltext = $msg['urltext'];
-  $exposeemail = !empty($msg['email']);
+  $ExposeEmail = !empty($msg['email']);
 }
 
 /*
@@ -58,6 +62,7 @@ require('../ads.inc');
 */
 
 /* Show the advertisement on errors as well :) */
+/*
 add_ad();
 */
 
@@ -128,13 +133,27 @@ if (!empty($imageurl) && !isset($frompost))
 if ((isset($error) || isset($preview)) && (!empty($imageurl)))
   echo "<font face=\"Verdana, Arial, Geneva\" color=\"#ff0000\"><i><b>Picture Verification:</b> If you see your picture below then please scroll down and hit Post Message to complete your posting. If no picture appears then your link was set incorrectly or your image is not valid a JPG or GIF file. Correct the image type or URL link to the picture in the box below and hit Preview Message to re-verify that your picture will be visible.</i></font><br>\n";
 
-if (isset($preview)) {
-  $tpl->assign(NAME, $user['name']);
-  if (empty($exposeemail))
-    $tpl->assign(EMAIL, '<font color="#ff0000">(Hidden)</font>');
-  else
-    $tpl->assign(EMAIL, $user['email']);
+$tpl->assign(MSG_NAME, $user['name']);
+if (empty($ExposeEmail))
+  $tpl->assign(MSG_EMAIL, '<font color="#ff0000">(Hidden)</font>');
+else
+  $tpl->assign(MSG_EMAIL, $user['email']);
 
+if (!empty($imageurl))
+  $msg_message = "<center><img src=\"$imageurl\"></center><p>";
+else
+  $msg_message = "";
+$msg_message .= preg_replace("/\n/", "<br>\n", $message);
+if (!empty($user['signature']))
+  $msg_message .= $user['signature'];
+$tpl->assign(MSG_MESSAGE, $msg_message);
+
+$tpl->assign(MSG_SUBJECT, $subject);
+$tpl->assign(MSG_URL, $url);
+$tpl->assign(MSG_URLTEXT, $urltext);
+$tpl->assign(MSG_IMAGEURL, $imageurl);
+
+if (isset($preview)) {
   if (isset($imageurl) && !empty($imageurl))
     $message = "<center><img src=\"$imageurl\"></center><p>";
 
@@ -149,37 +168,32 @@ if (isset($error) || isset($preview)) {
   $directory = '';
 
   include('post.inc');
+} else {
+  $flags[] = "NewStyle";
 
-  $tpl->parse(HEADER, 'header');
-  $tpl->parse(FOOTER, 'footer');
-  $tpl->parse(CONTENT, 'edit');
-  $tpl->FastPrint(CONTENT);
+  if (empty($message))
+    $flags[] = "NoText";
 
-  exit;
+  if (!empty($url) || eregi("<[[:space:]]*a[[:space:]]+href", $message))
+    $flags[] = "Link";
+
+  if (!empty($imageurl) || eregi("<[[:space:]]*img[[:space:]]+src", $message))
+    $flags[] = "Picture";
+
+  $flagset = implode(",", $flags);
+
+  if (!empty($imageurl))
+    $message = "<center><img src=\"$imageurl\"></center><p>" . $message;
+
+  /* Add it into the database */
+  $sql = "update messages$index set name='".addslashes($name)."', email='".addslashes($email)."', ip='$REMOTE_ADDR', flags='$flagset', subject='".addslashes($subject)."', message='".addslashes($message)."', url='".addslashes($url)."', urltext='".addslashes($urltext)."' where mid='".addslashes($mid)."';";
+  mysql_db_query($forumdb, $sql) or sql_error($sql);
+
+  $tpl->assign(ACCEPT, "Message Updated");
+
+  $tpl->parse(POST, 'postaccept');
 }
 
-$flags[] = "NewStyle";
-
-if (empty($message))
-  $flags[] = "NoText";
-
-if (!empty($url) || eregi("<[[:space:]]*a[[:space:]]+href", $message))
-  $flags[] = "Link";
-
-if (!empty($imageurl) || eregi("<[[:space:]]*img[[:space:]]+src", $message))
-  $flags[] = "Picture";
-
-$flagset = implode(",", $flags);
-
-if (!empty($imageurl))
-  $message = "<center><img src=\"$imageurl\"></center><p>" . $message;
-
-/*
-if (!empty($user['signature']))
-  $message .= "<p>" . stripslashes($user['signature']);
-*/
-
-/* Add it into the database */
-$sql = "update messages$index set name='".addslashes($name)."', email='".addslashes($email)."', ip='$REMOTE_ADDR', flags='$flagset', subject='".addslashes($subject)."', message='".addslashes($message)."', url='".addslashes($url)."', urltext='".addslashes($urltext)."' where mid='".addslashes($mid)."';";
-mysql_db_query($forumdb, $sql) or sql_error($sql);
+$tpl->parse(CONTENT, 'edit');
+$tpl->FastPrint(CONTENT);
 ?>

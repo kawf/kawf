@@ -67,8 +67,8 @@ if (isset($user)) {
 
   $tpl->assign(DIRECTORY, $directory);
 
-  $tpl->parse(POSTFORM, 'postform');
+  $tpl->parse(POST, 'postform');
 } else
-  $tpl->parse(POSTFORM, 'postform_noacct');
+  $tpl->parse(POST, 'postform_noacct');
 
 ?>

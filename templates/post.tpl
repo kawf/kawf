@@ -15,7 +15,7 @@
 
 {PREVIEW}
 
-{POSTFORM}
+{POST}
 
 {FOOTER}
 
