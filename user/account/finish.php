@@ -13,7 +13,7 @@ $tpl->set_block("success", "password");
 
 $error = "";
 
-$user = sql_querya("select * from u_users where cookie = '" . addslashes($cookie) . "' and status = 'Create'");
+$user = sql_querya("select * from u_users where cookie = '" . addslashes($cookie) . "'");
 if (!$user) {
   $tpl->set_var("success", "");
   if (!isset($cookie) || empty($cookie))
@@ -21,12 +21,15 @@ if (!$user) {
   else
     $tpl->set_var("COOKIE", $cookie);
 } else {
-  $user = new AccountUser((int)$user['aid']);
-  $user->status("Active");
-  if (!$user->update())
-    $error .= "Unable to activate account\n";
+  if ($user->status == 'Create') {
+    $user = new AccountUser((int)$user['aid']);
+    $user->status("Active");
+    if (!$user->update())
+      $error .= "Unable to activate account\n";
 
-  $user->setcookie();
+    $user->setcookie();
+  }
+
   $tpl->set_var(array("email" => "", "password" => ""));
 
   $tpl->set_var("form", "");
