@@ -1,0 +1,4 @@
+Use PEAR for DB routines (Done, check PEAR tag)
+Abstracted selectable interfaces (Done, need to create tag and checkin)
+Possibly use PEAR for template routines
+Move posts between forums
