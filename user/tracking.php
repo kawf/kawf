@@ -25,6 +25,12 @@ if (isset($user->pref['SimpleHTML'])) {
 $tpl->set_block($table_block, "row", "_row");
 $tpl->set_block($table_block, "update_all", "_update_all");
 
+/* HACK */ 
+$_page = $tpl->get_var("PAGE");
+unset($tpl->varkeys["PAGE"]);
+unset($tpl->varvals["PAGE"]);
+$tpl->set_var("PAGE", $_page);
+
 $urlroot = "/ads";
 /* We get our money from ads, make sure it's there */
 require_once("ads.inc");

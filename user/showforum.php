@@ -23,6 +23,12 @@ if (isset($user->pref['SimpleHTML'])) {
 
 $tpl->set_block($table_block, "row", "_row");
 
+/* HACK */
+$_page = $tpl->get_var("PAGE");
+unset($tpl->varkeys["PAGE"]);
+unset($tpl->varvals["PAGE"]);
+$tpl->set_var("PAGE", $_page);
+
 /* Default it to the first page if none is specified */
 if (!isset($curpage))
   $curpage = 1;
