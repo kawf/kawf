@@ -13,6 +13,7 @@ ini_set("include_path", $include_path);
 require_once("$config.inc");
 require_once("sql.inc");
 require_once("template.inc");
+require_once("user.inc");
 
 $tpl = new Template($template_dir, "comment");
 $tpl->set_file("mail", "mail/offtopic.tpl");
@@ -28,7 +29,7 @@ while ($f = sql_fetch_array($result)) {
 
 $result = sql_query("select * from f_offtopic where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) > 10 * 60");
 while ($msg = sql_fetch_array($result)) {
-  $nuser = new ForumUser;
+  $nuser = new User;
   $nuser->find_by_aid((int)$msg['aid']);
 
   $tpl->set_var(array(
