@@ -24,14 +24,31 @@ body { font-family: verdana, arial, geneva }
 </table>
 
 <!-- BEGIN disabled -->
-<h2>Editting posts on this forum has been temporarily disabled, please try again later</h2>
+<h2>Editting posts on this forum has been temporarily disabled, please try again later</h2><br>
 <!-- END disabled -->
+<!-- BEGIN locked -->
+<h2>This thread is locked. Posts are not allowed to be edited</h2><br>
+<!-- END locked -->
+<!-- BEGIN error -->
+<font color="#ff0000">
 <!-- BEGIN image -->
-<font color="#ff0000"><i><b>Picture Verification:</b> If you see your picture below then please scroll down and hit Post Message to complete your posting. If no picture appears then your link was set incorrectly or your image is not valid a JPG or GIF file. Correct the image type or URL link to the picture in the box below and hit Preview Message to re-verify that your picture will be visible.</i>
-</font><br>
+<i><b>Picture Verification:</b> If you see your picture below then please scroll down and hit Post Message to complete your posting. If no picture appears then your link was set incorrectly or your image is not valid a JPG or GIF file. Correct the image type or URL link to the picture in the box below and hit Preview Message to re-verify that your picture will be visible.</i>
+<br>
 <!-- END image -->
+<!-- BEGIN subject_req -->
+Subject is required!<br>
+<!-- END subject_req -->
+<!-- BEGIN subject_too_long -->
+Subject is too long! Truncated to 100 characters<br>
+<!-- END subject_too_long -->
+</font><p>
+<!-- END error -->
 <!-- BEGIN preview -->
+<table width="600">
+<tr><td>
 {PREVIEW}
+</td></tr>
+</table>
 <!-- END preview -->
 <!-- BEGIN form -->
 {FORM}
