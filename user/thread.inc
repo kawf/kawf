@@ -30,6 +30,8 @@ function fetch_thread($thread, $vmid = 0)
     $tree[$msg['pmid']][] = $key;
   }
 
+  $path = array();
+
   if ($vmid) {
     /* Walk down from the viewed message to the root to find the path */
     $pmid = $vmid;
@@ -43,6 +45,6 @@ function fetch_thread($thread, $vmid = 0)
   } else
     filter_messages($messages, $tree, reset($tree));
 
-  return array($messages, $tree);
+  return array($messages, $tree, $path);
 }
 ?>

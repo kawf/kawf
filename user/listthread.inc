@@ -1,9 +1,9 @@
 <?php
 
 /* Recursive listing of a thread */
-function list_thread($callback, $messages, $tree, $siblings, &$thread, $dontshow = 0)
+function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = array(), $dontshow = 0)
 {
-  global $user, $vmid;
+  global $user;
 
   $string = "";
 
@@ -16,7 +16,7 @@ function list_thread($callback, $messages, $tree, $siblings, &$thread, $dontshow
   if ($messages[$s]['pmid'])
     $string .= "<ul>\n";
 
-  if (!$dontshow && ($messages[$s]['mid'] == $vmid || $messages[$s]['state'] != 'OffTopic' || !isset($user->pref['CollapseOffTopic']))) {
+  if (!$dontshow && (isset($path[$messages[$s]['mid']]) || $messages[$s]['state'] != 'OffTopic' || !isset($user->pref['CollapseOffTopic']))) {
     $string .= $callback($thread, $messages[$s]);
 
     if (isset($user->pref['OldestFirst'])) {
@@ -41,7 +41,7 @@ function list_thread($callback, $messages, $tree, $siblings, &$thread, $dontshow
       if (!isset($messages[$s1]))
         continue;
 
-      $count += list_thread($callback, $messages, $tree, $tree[$messages[$s1]['mid']], $thread, 1);
+      $count += list_thread($callback, $messages, $tree, $tree[$messages[$s1]['mid']], $thread, $path, 1);
     }
 
     if ($dontshow)

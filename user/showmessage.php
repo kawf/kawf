@@ -178,12 +178,12 @@ if (!isset($urlset))
 
 $tpl->set_var("MSG_MESSAGE", $message . "<br>\n");
 
-list($messages, $tree) = fetch_thread($thread, $msg['mid']);
+$vmid = $msg['mid'];
 
-$vmid = $mid;
+list($messages, $tree, $path) = fetch_thread($thread, $vmid);
 
 $threadmsg = "<ul class=\"thread\">\n";
-$threadmsg .= list_thread(print_subject, $messages, $tree, reset($tree), $thread);
+$threadmsg .= list_thread(print_subject, $messages, $tree, reset($tree), $thread, $path);
 if (!$ulkludge)
   $threadmsg .= "</ul>\n";
 
