@@ -86,6 +86,8 @@ $fscripts = array(
   "changestate.phtml" => "changestate.php"
 );
 
+header("Cache-Control: private");
+
 $user = new ForumUser();
 $user->find_by_cookie();
 
