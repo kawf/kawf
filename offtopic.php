@@ -44,6 +44,8 @@ while ($msg = sql_fetch_array($result)) {
     $nuser->email, $e_message);
 
   unset($nuser);
+
+  sql_query("delete from f_offtopic where fid = " . $msg['fid'] . " and mid = " $msg['mid']);
 }
 
 ?>
