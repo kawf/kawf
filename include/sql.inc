@@ -1,20 +1,8 @@
 <?php
-/* Avoid reincluding the code */
-if (defined("__SQL_INC__"))
-  return;
-
-define("__SQL_INC__", "1");
 
 function sql_open($db = "")
 {
   global $sql_host, $sql_username, $sql_password;
-
-/*
-  if (defined("__SQL_OPEN__"))
-    return;
-
-  define("__SQL_OPEN__", "1");
-*/
 
   if (!isset($sql_host))
     $host = "localhost";
@@ -30,22 +18,24 @@ function sql_open($db = "")
 
 function sql_select_db($db)
 {
-  if (!empty($db))
-    mysql_select_db($db);
+  mysql_select_db($db) or sql_error();
 }
 
 /* Useful function to print out a standard error message */
-function sql_warn($sql, $link = "")
+function sql_warn($sql = "", $link = "")
 {
-  echo "<p>Error with SQL Query<br>\n";
-  echo "<pre>$sql</pre>\n";
+  if (!empty($sql)) {
+    echo "<p>Error with SQL Query<br>\n";
+    echo "<pre>$sql</pre>\n";
+  }
+
   if (!empty($link))
     echo "Error #", mysql_errno($link), ": ", mysql_error($link), "<br>\n";
   else
     echo "Error #", mysql_errno(), ": ", mysql_error(), "<br>\n";
 }
 
-function sql_error($sql, $link = "")
+function sql_error($sql = "", $link = "")
 {
   sql_warn($sql, $link);
   exit;
