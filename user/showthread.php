@@ -90,7 +90,7 @@ filter_messages($messages, $tree, reset($tree));
 
 function print_message($thread, $msg)
 {
-  global $tpl, $user, $forum;
+  global $tpl, $user, $forum, $indexes;
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
