@@ -3,7 +3,10 @@
 $user->req();
 
 if ($user->status != 'Active') {
-  header("Location: http://account.audiworld.com/why.phtml");
+  if (isset($why_url)) 
+    header("Location: $why_url");
+
+  echo "Your account isn't validated\n";
   exit;
 }
 
