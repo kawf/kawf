@@ -14,24 +14,28 @@ class ForumUser {
   /* You shouldn't call this directly */
   function find($where)
   {
+    global $tz_to_offset, $timezone;
+
     $user = sql_querya("select * from u_users where $where");
-    if (!$user)
-      return;
+    if ($user) {
+      foreach ($user as $type => $value)
+        $this->$type = $value;
 
-    foreach ($user as $type => $value)
-      $this->$type = $value;
+      if (!empty($this->capabilities)) {
+        $capabilities = explode(",", $this->capabilities);
+        foreach ($capabilities as $flag)
+          $this->cap[$flag] = true;
+      }
 
-    if (!empty($this->capabilities)) {
-      $capabilities = explode(",", $this->capabilities);
-      foreach ($capabilities as $flag)
-        $this->cap[$flag] = true;
-    }
+      if (!empty($this->preferences)) {
+        $preferences = explode(",", $this->preferences);
+        foreach ($preferences as $flag)
+          $this->pref[$flag] = true;
+      }
+    } else
+      $this->timezone = $timezone;
 
-    if (!empty($this->preferences)) {
-      $preferences = explode(",", $this->preferences);
-      foreach ($preferences as $flag)
-        $this->pref[$flag] = true;
-    }
+    $this->tzoff = $tz_to_offset[$timezone] - $tz_to_offset[$this->timezone];
   }
 
   /* These functions are used to find a user */
