@@ -223,7 +223,7 @@ if (isset($tthreads)) {
         continue;
 
       $numshown++;
-      $tthreadsshow++;
+      $tthreadsshown++;
 
       /* If the thread is tracked, we know they are a user already */
       $messagelinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
