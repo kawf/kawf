@@ -226,6 +226,7 @@ if (isset($error) || isset($preview)) {
       sql_error($sql);
 
     $mid = sql_query1("select mid from f_dupposts where postcookie = '" . addslashes($postcookie) . "'");
+echo "<!-- dup: $mid -->\n";
   } else {
     /* Grab a new mid, this should work reliably */
     do {
@@ -242,6 +243,7 @@ if (isset($error) || isset($preview)) {
       sql_error($sql);
 
     $newmessage = 1;
+echo "<!-- not dup: $mid -->\n";
   }
 
   /* Add the message to the last index */
