@@ -373,8 +373,8 @@ if (!$accepted || isset($preview)) {
       "HOST" => $_url,
       "FORUM_SHORTNAME" => $forum['shortname'],
       "MSG_MID" => $mid,
-      "MSG_SUBJECT" => $subject,
-      "MSG_MESSAGE" => $e_message,
+      "MAIL_MSG_SUBJECT" => $subject,
+      "MAIL_MSG_MESSAGE" => $e_message,
       "PHPVERSION" => phpversion(),
     ));
 
