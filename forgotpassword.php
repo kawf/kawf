@@ -46,6 +46,8 @@ if (isset($email)) {
 	"From: accounts@audiworld.com\n" .
 	"X-Mailer: PHP/" . phpversion());
 
+    $tpl->assign(EMAIL, $email);
+
     $tpl->parse(CONTENT, 'forgotpassword_sent');
     $tpl->FastPrint(CONTENT);
 
