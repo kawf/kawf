@@ -66,9 +66,9 @@ if ($nuser->valid()) {
 
 /* For the purposes of these calculations */
 if ($state == 'UserDeleted')
-  $state == 'Deleted';
+  $state = 'Deleted';
 if ($msg['state'] == 'UserDeleted')
-  $msg['state'] == 'Deleted';
+  $msg['state'] = 'Deleted';
 
 if (!empty($msg['state']) && $msg['pmid'] == 0)
   sql_query("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $state = $state + 1 where iid = $index");
