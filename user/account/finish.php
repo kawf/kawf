@@ -50,7 +50,11 @@ if (!$pending) {
       } else
         $success = "create";
 
-      $tpl->set_var("DOMAIN", $domain);
+      /* HACK: Workaround lame template engine */
+      $_domain = $tpl->get_var("DOMAIN");
+      unset($tpl->varkeys["DOMAIN"]);
+      unset($tpl->varvals["DOMAIN"]);
+      $tpl->set_var("DOMAIN", $_domain);
       $user->setcookie();
       break;
     case "ChangeEmail":
