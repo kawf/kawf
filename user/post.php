@@ -375,13 +375,14 @@ if (!$accepted || isset($preview)) {
       "MSG_MID" => $mid,
       "MSG_SUBJECT" => $subject,
       "MSG_MESSAGE" => $e_message,
+      "PHPVERSION" => phpversion(),
     ));
 
     while ($track = mysql_fetch_array($result)) {
       $uuser = new ForumUser;
       $uuser->find_by_aid((int)$track['aid']);
 
-      $tpl->set_var("EMAIL", $email);
+      $tpl->set_var("EMAIL", $uuser->email);
 
       $e_message = $tpl->parse("MAIL", "mail");
       $e_message = textwrap($e_message, 78, "\n");
