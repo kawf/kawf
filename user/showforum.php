@@ -40,13 +40,13 @@ if (!$threadsperpage) {
 
 function threads($key)
 {
-  global $user, $indexes;
+  global $user, $forum, $indexes;
 
   $numthreads = $indexes[$key]['active'];
 
   /* People with moderate privs automatically see all moderated and deleted */
   /*  messages */
-  if (isset($user->cap['Moderate']))
+  if ($user->moderator($forum['fid']))
     $numthreads += $indexes[$key]['moderated'] + $indexes[$key]['deleted'];
   else if (isset($user->pref['ShowModerated']))
     $numthreads += $indexes[$key]['moderated'];
@@ -183,21 +183,18 @@ function print_collapsed($thread, $msg, $count)
 
   $page = $tpl->get_var("PAGE");
 
-  if (isset($user->cap['Moderate'])) {
+  if ($user->moderator($forum['fid'])) {
     switch ($msg['state']) {
     case "Moderated":
       $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">um</a>";
-      if (isset($user->cap['Delete']))
-        $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     case "Deleted":
-      if (isset($user->cap['Delete']))
-        $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
       break;
     case "Active":
       $string .= " <a href=\"/changestate.phtml?page=$page&state=Moderated&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">mm</a>";
-      if (isset($user->cap['Delete']))
-        $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     }
 
@@ -211,7 +208,7 @@ function print_collapsed($thread, $msg, $count)
 
   if ($user->valid() && isset($flags['NewStyle']) && $msg['aid'] == $user->aid) {
     $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
-    if (!isset($user->cap['Delete']) && $msg['state'] != 'Deleted')
+    if (!$user->moderator($forum['fid']) && $msg['state'] != 'Deleted')
       $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">delete</a>";
   }
 
@@ -281,21 +278,18 @@ function print_subject($msg)
 
   $page = $tpl->get_var("PAGE");
 
-  if (isset($user->cap['Moderate'])) {
+  if ($user->moderator($forum['fid'])) {
     switch ($msg['state']) {
     case "Moderated":
       $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">um</a>";
-      if (isset($user->cap['Delete']))
-        $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     case "Deleted":
-      if (isset($user->cap['Delete']))
-        $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
       break;
     case "Active":
       $string .= " <a href=\"/changestate.phtml?page=$page&state=Moderated&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">mm</a>";
-      if (isset($user->cap['Delete']))
-        $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     }
 
@@ -309,7 +303,7 @@ function print_subject($msg)
 
   if ($user->valid() && isset($flags['NewStyle']) && $msg['aid'] == $user->aid) {
     $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
-    if (!isset($user->cap['Delete']) && $msg['state'] != 'Deleted')
+    if (!$user->moderator($forum['fid']) && $msg['state'] != 'Deleted')
       $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">delete</a>";
   }
 
@@ -462,7 +456,7 @@ while ($numshown < $threadsperpage) {
 	" $ttable.mid >= " . $index['minmid'] . " and" .
 	" $ttable.mid <= " . $index['maxmid'] . " and" .
 	" $ttable.mid = $mtable.mid and ( $mtable.state = 'Active' ";
-    if (isset($user->cap['Moderate']))
+    if ($user->moderator($forum['fid']))
       $sql .= "or $mtable.state = 'Moderated' or $mtable.state = 'Deleted' "; 
     else if (isset($user->pref['ShowModerated']))
       $sql .= "or $mtable.state = 'Moderated' ";

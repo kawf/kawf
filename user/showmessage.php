@@ -72,7 +72,7 @@ if ($forum['shortname'] == "a4" || $forum['shortname'] == "performance")
   ads_view("carreview", "_top");
 */
 
-if (isset($user->cap['Moderate'])) {
+if ($user->moderator($forum['fid'])) {
   $tpl->set_var("MSG_AID", $msg['aid']);
   $tpl->set_var("MSG_IP", $msg['ip']);
   $tpl->set_var("MSG_CHANGES", preg_replace("/\n/", "<br>\n", $msg['changes']));
@@ -236,21 +236,18 @@ function print_subject($msg)
 
   $page = $tpl->get_var("PAGE");
 
-  if (isset($user->cap['Moderate'])) {
+  if ($user->moderator($forum['fid'])) {
     switch ($msg['state']) {
     case "Moderated":
       $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">um</a>";
-      if (isset($user->cap['Delete']))
-        $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     case "Deleted":
-      if (isset($user->cap['Delete']))
-        $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
       break;
     case "Active":
       $string .= " <a href=\"/changestate.phtml?page=$page&state=Moderated&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">mm</a>";
-      if (isset($user->cap['Delete']))
-        $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     }
 

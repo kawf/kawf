@@ -161,6 +161,14 @@ class ForumUser {
   {
     sql_query("update u_users set posts = posts + $count where aid = " . $this->aid);
   }
+
+  function moderator($fid)
+  {
+    if (!$this->valid())
+      return false;
+
+    return sql_query1("select aid from f_moderators where aid = " . $this->aid . " and ( fid = $fid or fid = -1 )");
+  }
 }
 
 /* This is the class to change the user stuff */
