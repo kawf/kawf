@@ -219,6 +219,9 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
+  if (!isset($fscripts[$regs[2]]))
+    err_not_found("Unknown script " . $regs[2]);
+
   include_once($fscripts[$regs[2] . ""]);
 } else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/pages\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
   if (!find_forum($regs[1]))
