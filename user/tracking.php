@@ -264,7 +264,7 @@ while ($forum = mysql_fetch_array($result)) {
     $tthreads_by_tid[$tthread['tid']] = $tthread;
 
     $index = find_thread_index($tthread['tid']);
-    $thread = sql_quera("select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_threads$index where tid = '" . addslashes($tthread['tid']) . "'");
+    $thread = sql_querya("select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_threads$index where tid = '" . addslashes($tthread['tid']) . "'");
     if (!$thread)
       continue;
 
