@@ -205,6 +205,32 @@ if (isset($error) || isset($preview)) {
   if (!empty($imageurl))
     $message = "<center><img src=\"$imageurl\"></center><p>" . $message;
 
+  /* Create a diff for the old message and the new message */
+  $origfn = tempnam("/tmp", "kawf");
+  $newfn = tempnam("/tmp", "kawf");
+
+  $origfd = fopen($origfn, "w+");
+  $newfd = fopen($newfn, "w+");
+
+  /* Dump the \r's, we don't want them */
+  $msg['message'] = preg_replace("/\r/", "", $msg['message']);
+  $message = preg_replace("/\r/", "", $message);
+
+  fwrite($origfd, "Subject: " . $msg['subject'] . "\n" . $msg['message'] . "\n");
+  fwrite($newfd, "Subject: " . $subject . "\n" . $message . "\n");
+
+  fclose($origfd);
+  fclose($newfd);
+
+  $diff = `diff -u $origfn $newfn`;
+
+  unlink($origfn);
+  unlink($newfn);
+
+  /* The first 2 lines don't mean anything to us since it's just temporary */
+  /*  filenames */
+  $diff = preg_replace("/^--- [^\n]+\n\+\+\+ [^\n]+\n/", "", $diff);
+
   /* Add it into the database */
   $sql = "update f_messages$index set " .
 	"name = '" . addslashes($name) . "', " .
@@ -215,7 +241,7 @@ if (isset($error) || isset($preview)) {
 	"message = '" . addslashes($message) . "', " .
 	"url = '" . addslashes($url) . "', " .
 	"urltext = '" . addslashes($urltext) . "', " .
-	"changes = CONCAT(changes, 'Edited by " . $user->name . "/" . $user->aid . " at ', NOW(), '\n') " .
+	"changes = CONCAT(changes, 'Edited by " . $user->name . "/" . $user->aid . " at ', NOW(), '\n" . addslashes($diff) . "\n') " .
 	"where mid = '" . addslashes($mid) . "'";
   mysql_query($sql) or sql_error($sql);
 
