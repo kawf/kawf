@@ -8,3 +8,4 @@ Better HTML parsing
 - Dynamic target replacement (ie always _top for this user, always _new for another one)
 Pictureposter width/height auto fill
 Swear word censoring (replace them with partial or full *'s, etc)
+Use X-Forwarded-For header for more IP information?
