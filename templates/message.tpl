@@ -2,7 +2,7 @@
    <font size="+1" color="#000080"><b>{MSG_SUBJECT}</b></font><br>
    <font size="-2">
 <!-- BEGIN account_id -->
-     User account number (aid): <!-- a href="http://account.{DOMAIN}/users/{MSG_AID}.phtml" -->{MSG_AID}<!-- /a -->
+     User account number (aid): <a href="http://forums.{DOMAIN}/account/{MSG_AID}.phtml">{MSG_AID}</a>
 <!-- END account_id -->
 <!-- BEGIN forum_admin -->
      <!-- Add an admin link here if you have one -->
