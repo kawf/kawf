@@ -170,6 +170,7 @@ $tpl->set_var(array(
   "MSG_SUBJECT" => $subject,
   "MSG_DATE" => $msg['date'],
   "MSG_IP" => $REMOTE_ADDR,
+  "MSG_AID" => $user->aid,
 ));
 
 if (!isset($preview))
