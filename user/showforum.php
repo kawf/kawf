@@ -172,9 +172,11 @@ function print_collapsed($thread, $msg, $count)
   if (isset($flags['Locked']))
     $string .= " (locked)";
 
-  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<i><font size=-2>".$msg['date']."</font></i>";
+  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $msg['name'] . "</b>&nbsp;&nbsp;<font size=\"-2\"><i>" . $msg['date'] . "</i>";
 
   $string .= " ($count " . ($count == 1 ? "reply" : "replies") . ")";
+
+  $string .= "</font>";
 
   if ($msg['state'] != "Active")
     $string .= " (" . $msg['state'] . ")";
@@ -262,7 +264,7 @@ function print_subject($msg)
   if (isset($flags['Locked']))
     $string .= " (locked)";
 
-  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $msg['name'] . "</b>&nbsp;&nbsp;<font size=-2><i>".$msg['date']."</i>";
+  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $msg['name'] . "</b>&nbsp;&nbsp;<font size=\"-2\"><i>" . $msg['date'] . "</i>";
 
   if ($msg['unixtime'] > 968889231)
     $string .= " (" . $msg['views'] . " view" . ($msg['views'] == 1 ? "" : "s") . ")";
@@ -339,7 +341,7 @@ function display_thread($thread)
 
   $count = count($messages);
 
-  $messagestr = "<ul>\n";
+  $messagestr = "<ul class=\"thread\">\n";
   if (isset($user['prefs.Collapsed']))
     $messagestr .= print_collapsed($thread, reset($messages), $count - 1);
   else
@@ -428,14 +430,21 @@ while (isset($indexes[$threadtable])) {
 }
 
 while ($numshown < $threadsperpage) {
-  while ($threadtable >= 0 && $threadtable < count($indexes)) {
-    $ttable = "threads" . $indexes[$threadtable]['iid'];
-    $mtable = "messages" . $indexes[$threadtable]['iid'];
+  unset($result);
+
+  while (isset($indexes[$threadtable])) {
+    $index = $indexes[$threadtable];
+
+    $ttable = "threads" . $index['iid'];
+    $mtable = "messages" . $index['iid'];
 
     /* Get some more results */
-    $sql = "select $ttable.tid, $ttable.mid from $ttable, $mtable";
-
-    $sql .= " where $ttable.mid = $mtable.mid and ( $mtable.state = 'Active' ";
+    $sql = "select $ttable.tid, $ttable.mid from $ttable, $mtable where" .
+	" $ttable.tid >= " . $index['mintid'] . " and" .
+	" $ttable.tid <= " . $index['maxtid'] . " and" .
+	" $ttable.mid >= " . $index['minmid'] . " and" .
+	" $ttable.mid <= " . $index['maxmid'] . " and" .
+	" $ttable.mid = $mtable.mid and ( $mtable.state = 'Active' ";
     if (isset($user['cap.Moderate']))
       $sql .= "or $mtable.state = 'Moderated' or $mtable.state = 'Deleted' "; 
     else if (isset($user['prefs.ShowModerated']))
@@ -455,8 +464,10 @@ while ($numshown < $threadsperpage) {
     $threadtable--;
   }
 
-  if ($threadtable >= count($indexes) || $threadtable < 0)
+  if (!isset($indexes[$threadtable]))
     break;
+
+  $skipthreads += mysql_num_rows($result);
 
   while ($thread = mysql_fetch_array($result)) {
     if (isset($threadshown[$thread['tid']]))
@@ -484,14 +495,10 @@ while ($numshown < $threadsperpage) {
 
     $tpl->parse(MESSAGE_ROWS, ".showforum_row");
   }
-
-  $threadtable--;
 }
 
-/*
 if (!$numshown)
-  echo "<font size=\"+1\">No messages in this forum</font><br>\n";
-*/
+  $tpl->assign(MESSAGE_ROWS, "<font size=\"+1\">No messages in this forum</font><br>");
 
 $action = "post";
 
