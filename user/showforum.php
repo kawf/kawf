@@ -224,7 +224,7 @@ function print_subject($msg)
   $string = "<li>";
 
   $new = (isset($tthreads_by_tid[$msg['tid']]) &&
-      $tthreads_by_tid[$msg['tid']]['tstamp'] < $msg['tstamp']);
+      $tthreads_by_tid[$msg['tid']]['unixtime'] < $msg['unixtime']);
 
   if ($new)
     $string .= "<i><b>";
@@ -314,18 +314,22 @@ function display_thread($thread)
   if ($index < 0)
     return "Error retrieving thread";
 
-  $sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, views, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp, UNIX_TIMESTAMP(date) as unixtime from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
+  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
   $result = mysql_query($sql) or sql_error($sql);
-  while ($message = mysql_fetch_array($result))
+  while ($message = mysql_fetch_array($result)) {
+    $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
     $messages[] = $message;
+  }
 
   /* We assume a thread won't span more than 2 indexes */
   $index++;
   if (isset($indexes[$index])) {
-    $sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
+    $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
     $result = mysql_query($sql) or sql_error($sql);
-    while ($message = mysql_fetch_array($result))
+    while ($message = mysql_fetch_array($result)) {
+      $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
       $messages[] = $message;
+    }
   }
 
   if (!isset($messages) || !count($messages))
@@ -381,14 +385,14 @@ if (isset($tthreads)) {
     if (isset($threadshown[$tthread['tid']]))
       continue;
 
-    $sql = "select * from f_threads$index where tid = '" . addslashes($tthread['tid']) . "'";
+    $sql = "select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_threads$index where tid = '" . addslashes($tthread['tid']) . "'";
     $result = mysql_query($sql) or sql_error($sql);
 
     if (!mysql_num_rows($result))
       continue;
 
     $thread = mysql_fetch_array($result);
-    if ($thread['tstamp'] > $tthread['tstamp']) {
+    if ($thread['unixtime'] > $tthread['unixtime']) {
       $threadshown[$thread['tid']] = 'true';
 
       if ($curpage != 1)
@@ -444,7 +448,7 @@ while ($numshown < $threadsperpage) {
     $mtable = "f_messages" . $index['iid'];
 
     /* Get some more results */
-    $sql = "select $ttable.tid, $ttable.mid from $ttable, $mtable where" .
+    $sql = "select $ttable.tid, $ttable.mid, $mtable.state from $ttable, $mtable where" .
 	" $ttable.tid >= " . $index['mintid'] . " and" .
 	" $ttable.tid <= " . $index['maxtid'] . " and" .
 	" $ttable.mid >= " . $index['minmid'] . " and" .
@@ -481,15 +485,15 @@ while ($numshown < $threadsperpage) {
     if (isset($threadshown[$thread['tid']]))
       continue;
 
-    list($count, $messagestr, $state) = display_thread($thread);
+    list($count, $messagestr) = display_thread($thread);
 
     if (!$count)
       continue;
 
 /*
-    if ($state == 'Deleted')
+    if ($thread['state'] == 'Deleted')
       $tpl->set_var("CLASS", "drow" . ($numshown % 2));
-    else if ($state == 'Moderated')
+    else if ($thread['state'] == 'Moderated')
       $tpl->set_var("CLASS", "mrow" . ($numshown % 2));
     else
 */
