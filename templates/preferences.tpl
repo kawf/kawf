@@ -56,10 +56,12 @@ body { font-family: verdana, arial, geneva }
     <b>Preferences:
     </font></td>
     <td width="425"><font face="Verdana, Arial, Geneva" size="-1"> 
-<input type="checkbox" name="ShowModerated"{SHOWMODERATED}> Show moderated messages?<br>
+<input type="checkbox" name="ShowOffTopic"{SHOWOFFTOPIC}> Show offtopic messages?<br>
+<!-- input type="checkbox" name="ShowModerated"{SHOWMODERATED}> Show moderated messages?<br -->
 <input type="checkbox" name="SecretEmail"{SECRETEMAIL}> Default to hide email address in postings?<br>
 <input type="checkbox" name="SimpleHTML"{SIMPLEHTML}> Simple HTML page generation?<br>
 <input type="checkbox" name="Collapsed"{COLLAPSED}> Collapse threads?<br>
+<input type="checkbox" name="CollapseOffTopic"{COLLAPSEOFFTOPIC}> Collapse offtopic replies?<br>
 <input type="checkbox" name="FlatThread"{FLATTHREAD}> Show all of thread instead of single messages?<br>
 <input type="checkbox" name="AutoTrack"{AUTOTRACK}> Default to track threads you create or followup to?<br>
 <input type="checkbox" name="HideSignatures"{HIDESIGNATURES}> Hide signatures when viewing messages?<br>
