@@ -1,10 +1,20 @@
 <?php
 
-require('sql.inc');
-require('config.inc');
-require('tables.inc');
+/* First setup the path */
+$include_path = "$srcroot/kawf:$srcroot/kawf/user:$srcroot/php:$srcroot/config";
+$old_include_path = ini_get("include_path");
+if (!empty($old_include_path))
+  $include_path .= ":" . $old_include_path;
 
-mysql_pconnect("localhost", "root", "password");
+ini_set("include_path", $include_path);
+
+require("$config.inc");
+require("sql.inc");
+require("util.inc");
+require("user.inc");
+require("user/tables.inc");
+
+sql_open($database);
 
 set_time_limit(0);
 
@@ -32,71 +42,48 @@ function find_thread_index($tid)
   return -1;
 }
 
+if (0) {
+/* FIXME: move this to an account maintanence nightly script */
 /* First, delete any pending state older than 30 days */
 $sql = "select * from pending where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 30";
-mysql_db_query($acctdb, $sql) or sql_error($sql);
+mysql_db_query($sql) or sql_error($sql);
+}
 
-$sql = "select * from forums order by fid";
-$res1 = mysql_db_query($database, $sql) or sql_error($sql);
+/* Clear out dupposts */
+sql_query("delete from f_dupposts where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14");
 
-while ($forum = mysql_fetch_array($res1)) {
+
+$res1 = sql_query("select * from f_forums order by fid");
+while ($forum = sql_fetch_array($res1)) {
   echo $forum['shortname'] . "\n";
 
-  $fdb = "forum_" . $forum['shortname'];
-
-  /* Clean out the uthread and umessage tables */
-  $sql = "select max(tid) from uthread";
-  $result = mysql_db_query($fdb, $sql) or sql_error($sql);
-
-  list($maxtid) = mysql_fetch_row($result);
-
-  $sql = "delete from uthread where tid < $maxtid";
-  mysql_db_query($fdb, $sql) or sql_error($sql);
-
-  $sql = "select max(mid) from umessage";
-  $result = mysql_db_query($fdb, $sql) or sql_error($sql);
-
-  list($maxmid) = mysql_fetch_row($result);
-
-  $sql = "delete from umessage where mid < $maxmid";
-  mysql_db_query($fdb, $sql) or sql_error($sql);
-
-  /* Clear out dupposts */
-  $sql = "delete from dupposts where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 30";
-  mysql_db_query($fdb, $sql) or sql_error($sql);
+  /* Clean up the unique tables */
+  sql_query("delete from f_unique where fid = " . $forum['fid'] . " and type = 'Message' and id < max(id)");
+  sql_query("delete from f_unique where fid = " . $forum['fid'] . " and type = 'Thread' and id < max(id)");
 
   unset($indexes);
 
   /* Grab all of the indexes for the forum */
-  $sql = "select * from indexes order by iid";
-  $result = mysql_db_query($fdb, $sql) or sql_error($sql);
+  $res2 = sql_query("select * from f_indexes where fid = " . $forum['fid'] . " order by iid");
 
-  while ($index = mysql_fetch_array($result))
+  while ($index = mysql_fetch_array($result2))
     $indexes[] = $index;
 
   $index = end($indexes);
-  $newindex = $index['iid'] + 1;
 
   /* Clear out tracking */
-  $sql = "select * from tracking where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14";
-  $res2 = mysql_db_query($fdb, $sql) or sql_error($sql);
+  $res2 = sql_query("select * from f_tracking where fid = " . $forum['fid'] . " and TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14");
 
   while ($tracking = mysql_fetch_array($res2)) {
     $index = find_thread_index($tracking['tid']);
     if ($index < 0) {
       echo "Tracking index < 0! (tid = " . $tracking['tid'] . ", aid = " . $tracking['aid'] . ", tstamp = " . $tracking['tstamp'] . ", options = '" . $tracking['options'] . "')\n";
       $delete = 1;
-    } else {
-      $sql = "select * from threads$index where tid = " . $tracking['tid'] . " and TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14";
-      $res3 = mysql_db_query($fdb, $sql) or sql_error($sql);
+    } else
+      $delete = sql_query1("select * from f_threads$index where tid = " . $tracking['tid'] . " and TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14");
 
-      $delete = mysql_num_rows($res3);
-    }
-
-    if ($delete) {
-      $sql = "delete from tracking where tid = " . $tracking['tid'] . " and aid = " . $tracking['aid'];
-      mysql_db_query($fdb, $sql) or sql_error($sql);
-    }
+    if ($delete)
+      sql_query("delete from f_tracking where fid = " . $forum['fid'] . " and tid = " . $tracking['tid'] . " and aid = " . $tracking['aid']);
   }
 
   echo "Done scrubbing support tables\n";
@@ -122,10 +109,6 @@ while ($forum = mysql_fetch_array($res1)) {
   while (list($key, $index) = each($indexes)) {
     if ($index['maxmid'] - $index['minmid'] <= $msgsperindex + 10)
       continue;
-/*
-    if ($index['iid'] != 2)
-      continue;
-*/
 
     echo "Index $key too big, splitting\n";
 
