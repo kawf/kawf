@@ -55,7 +55,7 @@ else {
 $tpl->set_var("URL", $_url . $SCRIPT_NAME . $PATH_INFO);
 
 $scripts = array(
-  "" => "tracking.php",
+  "" => "index.php",
 
   "preferences.phtml" => "preferences.php",
 
