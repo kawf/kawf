@@ -90,7 +90,7 @@ page_header("Modify forum '" . $forum['name'] . "'");
  </tr>
  <tr>
   <td></td>
-  <td><input type="submit" name="submit" value="Go"></td>
+  <td><input type="submit" name="submit" value="Update"></td>
  </tr>
 </table>
 </form>
