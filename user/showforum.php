@@ -339,7 +339,7 @@ function display_thread($thread)
   }
 
   if (!isset($messages) || !count($messages))
-    return "";
+    return array(0, "", "");
 
   /* Filter out moderated or deleted messages, if necessary */
   reset($messages);
@@ -358,12 +358,15 @@ function display_thread($thread)
     $messagestr = list_thread(print_subject, $messages, $tree, reset($tree));
 
   if (empty($messagestr))
-    return array(0, "");
+    return array(0, "", "");
 
   if (!$ulkludge || isset($user->pref['SimpleHTML']))
     $messagestr .= "</ul>";
 
-  return array($count, "<ul class=\"thread\">\n" . $messagestr);
+  $message = reset($messages);
+  $state = $message['state'];
+
+  return array($count, "<ul class=\"thread\">\n" . $messagestr, $state);
 }
 
 # Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)
@@ -490,9 +493,14 @@ while ($numshown < $threadsperpage) {
 
     $numshown++;
 
-    $tpl->set_var("CLASS", "row" . ($numshown % 2));
+    list($count, $messagestr, $state) = display_thread($thread);
 
-    list($count, $messagestr) = display_thread($thread);
+    if ($state == 'Deleted')
+      $tpl->set_var("CLASS", "drow" . ($numshown % 2));
+    else if ($state == 'Moderated')
+      $tpl->set_var("CLASS", "mrow" . ($numshown % 2));
+    else
+      $tpl->set_var("CLASS", "row" . ($numshown % 2));
 
     if (isset($user)) {
       if (isset($tthreads_by_tid[$thread['tid']]))
@@ -512,8 +520,10 @@ while ($numshown < $threadsperpage) {
 if (!$numshown)
   $tpl->set_var($table_block, "<font size=\"+1\">No messages in this forum</font><br>");
 
+/*
 $active_users = sql_query1("select count(*) from f_visits where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) <= 15 * 60 and aid != 0");
 $active_guests = sql_query1("select count(*) from f_visits where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) <= 15 * 60 and aid = 0");
+*/
 
 $tpl->set_var(array(
   "ACTIVE_USERS" => $active_users,

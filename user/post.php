@@ -304,13 +304,11 @@ if (isset($error) || isset($preview)) {
       $sql = "update f_indexes set active = active + 1 where iid = " . $index['iid'];
       mysql_query($sql) or sql_error($sql);
     }
+
+    $sql = "update u_forums set posts = posts + 1 where aid = " . $user->aid;
+    mysql_query($sql);
   } else
     echo "<font color=#ff0000>Duplicate message detected, overwriting</font>";
-
-  $sql = "select date from $mtable where mid = $mid";
-  $result = mysql_query($sql) or sql_error($sql);
-
-  list($date) = mysql_fetch_row($result);
 
   $sql = "insert into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($mid) . "' )";
   mysql_query($sql);
