@@ -179,7 +179,7 @@ if ($curpage == 1 && $user->gmsgswait != 0) {
 
       $tpl->set_var("CLASS", "grow" . ($numshown % 2));
 
-      $tpl->set_var("MESSAGES", "<ul class=\"thread\"><li><a href=\"/gmessage.phtml?gid=" . $gmsg['gid'] . "\">" . $gmsg['subject'] . "</a>&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $gmsg['name'] . "</b>&nbsp;&nbsp;<font size=-2><i>" . $gmsg['date'] . "</i></font></ul>");
+      $tpl->set_var("MESSAGES", "<ul class=\"thread\"><li><a href=\"/gmessage.phtml?gid=" . $gmsg['gid'] . "\" target=\"_top\">" . $gmsg['subject'] . "</a>&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $gmsg['name'] . "</b>&nbsp;&nbsp;<font size=-2><i>" . $gmsg['date'] . "</i></font></ul>");
       $tpl->set_var("MESSAGELINKS", "&nbsp;");
 
       $tpl->parse("_row", "row", true);
