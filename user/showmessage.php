@@ -14,13 +14,18 @@ $tpl->define(array(
   footer => 'footer.tpl',
   showmessage => 'showmessage.tpl',
   postform => 'postform.tpl',
-  postform_noacct => 'postform_noacct.tpl'
+  postform_noacct => 'postform_noacct.tpl',
+  forum_header => 'forum/' . $forum['shortname'] . '.tpl'
 ));
+
+$tpl->define_dynamic('posting_ip', 'showmessage');
+$tpl->define_dynamic('parent', 'showmessage');
 
 $tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
 
-$tpl->assign(FORUM_PICTURE, $forum['picture']);
 $tpl->assign(FORUM_NAME, $forum['name']);
+
+$tpl->parse(FORUM_HEADER, 'forum_header');
 
 /* Grab the actual message */
 $index = find_msg_index($mid);
@@ -80,23 +85,27 @@ if ($forum['shortname'] == "wheel")
 */
 
 if (isset($user['cap.Moderate']))
-  $tpl->assign(POSTING_IP, "<font size=\"-2\">Posting IP Address: " . $msg['ip'] . "</font><p>");
+  $tpl->assign(POSTING_IP, $msg['ip']);
 else
-  $tpl->assign(POSTING_IP, "");
+  $tpl->clear_dynamic('posting_ip');
 
 $tpl->assign(MSG_SUBJECT, $msg['subject']);
 $tpl->assign(MSG_DATE, $msg['date']);
 
 if (!empty($msg['email'])) {
+  /* Lame spamification */
   $email = preg_replace("/@/", "&#" . ord('@') . ";", $msg['email']);
   $tpl->assign(MSG_NAMEEMAIL, "<a href=\"mailto:" . $email . "\">" . $msg['name'] . "</a>");
 } else
   $tpl->assign(MSG_NAMEEMAIL, $msg['name']);
 
-if ($msg['pid'] != 0)
-  $tpl->assign(PARENT, "In Reply to: <a href=\"" . $msg['pid'] . ".phtml\">" . $pmsg['subject'] . "</a> posted by " . $pmsg['name'] . " on " . $pmsg['date'] . "<p>");
-else
-  $tpl->assign(PARENT, "");
+if ($msg['pid'] != 0) {
+  $tpl->assign(PID, $msg['pid']);
+  $tpl->assign(PSUBJECT, $pmsg['subject']);
+  $tpl->assign(PNAME, $pmsg['name']);
+  $tpl->assign(PDATE, $pmsg['date']);
+} else
+  $tpl->clear_dynamic('parent');
 
 $message = preg_replace("/\n/", "<br>\n", $msg['message']);
 

@@ -6,7 +6,7 @@ if (!isset($user)) {
 }
 
 /* Check the data to make sure they entered stuff */
-if (!isset($mid)) {
+if (!isset($mid) || !isset($forum)) {
   /* Hmm, how did this happen? Redirect them back to the main page */
   Header("Location: http://$SERVER_NAME$SCRIPT_NAME/");
   exit;
@@ -26,12 +26,13 @@ $tpl->define(array(
   edit => 'edit.tpl',
   postaccept => 'postaccept.tpl',
   preview => 'preview.tpl',
-  postform => 'postform.tpl'
+  postform => 'postform.tpl',
+  forum_header => 'forum/' . $forum['shortname'] . '.tpl'
 ));
 
 $tpl->assign(TITLE, "Message Editting");
 
-$tpl->assign(FORUM_PICTURE, $forum['picture']);
+$tpl->parse(FORUM_HEADER, 'forum_header');
 
 $tpl->parse(HEADER, 'header');
 $tpl->parse(FOOTER, 'footer');

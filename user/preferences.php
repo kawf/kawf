@@ -14,10 +14,14 @@ require('mailfrom.inc');
 $tpl->define(array(
   header => 'header.tpl',
   footer => 'footer.tpl',
-  preferences => 'preferences.tpl'
+  preferences => 'preferences.tpl',
+  prefform => 'prefform.tpl'
 ));
 
-$tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
+$tpl->define_dynamic('error', 'prefform');
+
+$tpl->assign(PAGE, $SCRIPT_NAME . $PATH_INFO);
+$tpl->assign(TITLE, "Preferences");
 
 $success = "";
 $error = "";
@@ -206,6 +210,12 @@ else
   $text = "";
 
 $text .= "To change your password or update your preferences, please fill out the information below.";
+if (empty($error))
+  $tpl->clear_dynamic('error');
+else
+  $tpl->assign(ERROR, $error);
+
+$tpl->parse(PREF, 'prefform');
 
 $tpl->assign(SIGNATURE, stripslashes($user['signature']));
 $tpl->assign(TEXT, $text);

@@ -12,9 +12,10 @@ $configdeclared=1;
 /* HTTP/1.0 */
 // header("Pragma: no-cache");
 
+$emailhost = "forum.donutzracing.com";
 $urlhost = "forum.donutzracing.com";
 $cookiedom = "forum.donutzracing.com";
-$furlroot = "/forum";
+$furlroot = "";
 $urlroot = $furlroot . "/m";
 }
 ?>

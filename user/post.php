@@ -6,7 +6,7 @@ if (!isset($user)) {
 }
 
 /* Check the data to make sure they entered stuff */
-if (!isset($postcookie)) {
+if (!isset($postcookie) || !isset($forum)) {
   /* Hmm, how did this happen? Redirect them back to the main page */
   Header("Location: http://$SERVER_NAME$SCRIPT_NAME/");
   exit;
@@ -27,14 +27,15 @@ $tpl->define(array(
   postaccept => 'postaccept.tpl',
   preview => 'preview.tpl',
   postform => 'postform.tpl',
-  postform_noacct => 'postform_noacct.tpl'
+  postform_noacct => 'postform_noacct.tpl',
+  forum_header => 'forum/' . $forum['shortname'] . '.tpl'
 ));
 
 $tpl->assign(TITLE, "Message Posting");
 
 $tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
 
-$tpl->assign(FORUM_PICTURE, $forum['picture']);
+$tpl->assign(FORUM_HEADER, 'forum_header');
 
 $tpl->parse(HEADER, 'header');
 $tpl->parse(FOOTER, 'footer');

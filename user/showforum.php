@@ -8,7 +8,8 @@ $tpl->define(array(
   showforum => 'showforum.tpl',
   showforum_row => 'showforum_row.tpl',
   postform => 'postform.tpl',
-  postform_noacct => 'postform_noacct.tpl'
+  postform_noacct => 'postform_noacct.tpl',
+  forum_header => 'forum/' . $forum['shortname'] . '.tpl'
 ));
 
 /* Default it to the first page if none is specified */
@@ -41,7 +42,7 @@ $tpl->assign(TITLE, $forum['name']);
 
 $tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
 
-$tpl->assign(FORUM_PICTURE, $forum['picture']);
+$tpl->parse(FORUM_HEADER, 'forum_header');
 
 /* We get our money from ads, make sure it's there */
 /* FIXME: Ads write directly to output */

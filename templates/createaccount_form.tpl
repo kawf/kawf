@@ -5,27 +5,20 @@
 <form action="createaccount.phtml?page={PAGE}" method="post">
 	
   <table width="600" border="0" cellpadding="5" cellspacing="2">
-<?php
-  if (!empty($error)) {
-?>
+<!-- BEGIN DYNAMIC BLOCK: error -->
     <tr bgcolor="#cccccc">
-      <td colspan="2"><font face="Verdana, Arial, Geneva" size="-1">
-        <?php echo $error; ?>
+      <td colspan="2"><font face="Verdana, Arial, Geneva" size="-1" color="#ff0000">
+        {ERROR}
       </td>
     </tr>
-<?php
-  }
-?>
+<!-- END DYNAMIC BLOCK: error -->
     <tr bgcolor="#cccccc">
       <td colspan="2"><font face="Verdana, Arial, Geneva" size="-1">
         To be able to make posts on the AudiWorld forums, you must first register an account. Registration is absolutely free if you agree to our rules and regulations listed below.
       </font></td>
     </tr>
 
-<?php
-  if (empty($error)) {
-?>
-
+<!-- BEGIN DYNAMIC BLOCK: rules -->
     <tr bgcolor="#cccccc">
       <td colspan="2"><font face="Verdana, Arial, Geneva" size="-1">
 
@@ -49,15 +42,10 @@
 
       </font></td>
     </tr>
-
-<?php
-  }
-?>
+<!-- END DYNAMIC BLOCK: rules -->
 
     <tr bgcolor="#cccccc">
-      <!-- td width="120" align="right"><font face="Verdana, Arial, Geneva" size="-1"><b>Screen Name:</b></td -->
       <td align="right"><font face="Verdana, Arial, Geneva" size="-1"><b>Screen Name (for the forums):</b></td>
-      <!-- td width="480"><input type="text" name="name" value="" size="40" maxlength="40"></font></td -->
       <td><input type="text" name="name" value="" size="40" maxlength="40"></font></td>
     </tr>
 

@@ -1,4 +1,4 @@
-<?
+<?php
 
 /*
 	CVS Revision. 1.1.0
