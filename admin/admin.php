@@ -13,12 +13,29 @@ $accountsperpage = 100;
 if (!isset($page))
   $page = 1;
 
+$where = "";
+if (isset($email) && !empty($email)) {
+  echo "<h2>Searching for email like $email</h2><br>\n";
+  $where .= " email like '" . addslashes($email) . "'";
+}
+if (isset($name) && !empty($name)) {
+  echo "<h2>Searching for name like $name</h2><br>\n";
+  if (!empty($where))
+    $where .= " and";
+  $where .= " name like '" . addslashes($name) . "'";
+}
+
 $sql = "select count(*) from accounts";
-$result = mysql_query($sql) or sql_error($sql);
+if (!empty($where))
+  $sql .= " where $where";
+$result = mysql_db_query($database, $sql) or sql_error($sql);
 
 list($numaccounts) = mysql_fetch_row($result);
 
-echo "$numaccounts total accounts<br>\n";
+if (!empty($where))
+  echo "$numaccounts matching accounts<br>\n";
+else
+  echo "$numaccounts total accounts<br>\n";
 
 $numpages = ceil($numaccounts / $accountsperpage);
 
@@ -37,12 +54,51 @@ function print_pages()
   echo "<br>\n";
 }
 
+print_pages();
+?>
+
+<br>
+
+<form action="admin.phtml" method="get">
+Search Email: <input type="text" name="email">
+<input type="submit">
+</form>
+<br>
+
+<form action="admin.phtml" method="get">
+Search Name: <input type="text" name="name">
+<input type="submit">
+</form>
+<br>
+
+<br>
+
+<?php
 $skipaccounts = ($page - 1) * $accountsperpage;
 
-$sql = "select * from accounts order by aid limit $skipaccounts,$accountsperpage";
-$result = mysql_query($sql) or sql_error($sql);
+$sql = "select * from accounts";
+if (!empty($where))
+  $sql .= " where $where";
+$sql .= " order by aid limit $skipaccounts,$accountsperpage";
+$result = mysql_db_query($database, $sql) or sql_error($sql);
 
+echo "<table>\n";
+echo "<tr><td>aid</td><td>name</td><td>email</td><td>status</td><td>capabilities</td></tr>\n";
 while ($acct = mysql_fetch_array($result)) {
+?>
+  <tr>
+    <td><a href="showaccount.phtml?aid=<?php echo $acct['aid']; ?>"><?php echo $acct['aid']; ?></a></td>
+    <td><?php echo stripslashes($acct['name']); ?></td>
+    <td><?php echo stripslashes($acct['email']); ?></td>
+    <td><?php echo $acct['status']; ?></td>
+    <td><?php echo $acct['capabilities']; ?></td>
+  </tr>
+<?php
 }
+echo "</table>\n";
+
+echo "<br>\n";
+
+print_pages();
 
 ?>
