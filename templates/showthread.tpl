@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>{DOMAIN} Forums: {THREAD_SUBJECT}</title>
+<title>{DOMAIN} Forums: {FORUM_NAME}</title>
 <style type="text/css">
 <!--
 body { font-family: verdana, arial, geneva; font-size: smaller }
