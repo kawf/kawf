@@ -26,7 +26,7 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 <table width="600">
 <tr><td>
   <font size="-2">
-  &nbsp; &nbsp;[<a href="/forum/tips.shtml">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>]
+  &nbsp; &nbsp;[<a href="/forum/tips.shtml">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>] [<a href="/logout.phtml?url=/login.phtml">Logout</a>]
   </font>
 </td></tr>
 </table>
@@ -77,7 +77,7 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 <table width="600">
 <tr><td>
   <font size="-2">
-  &nbsp; &nbsp;[<a href="/forum/tips.shtml">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>]
+  &nbsp; &nbsp;[<a href="/forum/tips.shtml">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>] [<a href="/logout.phtml?url=/login.phtml">Logout</a>]
   </font>
 </td></tr>
 </table>

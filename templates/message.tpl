@@ -5,7 +5,7 @@
      User account number (aid): <a href="http://forums.{DOMAIN}/account/{MSG_AID}.phtml">{MSG_AID}</a>
 <!-- END account_id -->
 <!-- BEGIN forum_admin -->
-     <!-- Add an admin link here if you have one -->
+     <a href="http://forums.{DOMAIN}/admin/su.phtml?aid={MSG_AID}">su</a>
 <!-- END forum_admin -->
 <!-- BEGIN advertiser -->
      <b>Advertiser</b>
