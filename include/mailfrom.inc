@@ -6,7 +6,7 @@ function mailfrom($fromaddr, $toaddr, $message)
 {
   $message = stripspaces($message);
 
-  $fp = popen("/usr/sbin/sendmail -f" . $fromaddr. " " . addslashes($toaddr), "w");
+  $fp = popen("/usr/lib/sendmail -f" . $fromaddr. " " . addslashes($toaddr), "w");
   if (!$fp)
     return false;
 
