@@ -2,13 +2,6 @@
 
 $user->req();
 
-$urlroot = "/ads";
-/* We get our money from ads, make sure it's there */
-require_once("ads.inc");
-
-$ad = ads_view("a4.org," . $forum['shortname'], "_top");
-$tpl->set_var("AD", $ad);
-
 require_once("listthread.inc");
 require_once("filter.inc");
 
@@ -18,18 +11,28 @@ $tpl->set_file(array(
   "tracking" => "tracking.tpl",
 ));
 
-$tpl->set_block("tracking", "simple");
-$tpl->set_block("tracking", "normal");
-
 if (isset($user->pref['SimpleHTML'])) {
+  $tpl->set_block("tracking", "normal");
+  $tpl->set_block("tracking", "simple", "_block");
   $table_block = "simple";
+
   $tpl->set_var("normal", "");
 } else {
+  $tpl->set_block("tracking", "simple");
+  $tpl->set_block("tracking", "normal", "_block");
   $table_block = "normal";
+
   $tpl->set_var("simple", "");
 }
 
 $tpl->set_block($table_block, "row", "_row");
+
+$urlroot = "/ads";
+/* We get our money from ads, make sure it's there */
+require_once("ads.inc");
+
+$ad = ads_view("a4.org," . $forum['shortname'], "_top");
+$tpl->set_var("AD", $ad);
 
 function print_collapsed($thread, $msg, $count)
 {
@@ -257,12 +260,15 @@ $ulkludge =
   ereg("^Mozilla/[0-9]\.[0-9]+ \(compatible; MSIE .*", $HTTP_USER_AGENT) ||
   ereg("^Mozilla/[0-9]\.[0-9]+ \(Macintosh; .*", $HTTP_USER_AGENT);
 
-$sql = "select * from f_forums";
+$sql = "select * from f_forums order by fid";
 $result = mysql_query($sql) or sql_error($sql);
 
 $numshown = 0;
 
 while ($forum = mysql_fetch_array($result)) {
+  $tpl->set_var("FORUM_NAME", $forum['name']);
+  $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
+
   unset($indexes);
 
   $sql = "select * from f_indexes where fid = " . $forum['fid'];
@@ -273,13 +279,17 @@ while ($forum = mysql_fetch_array($result)) {
   for ($i = 0; $i < $numindexes; $i++)
     $indexes[$i] = mysql_fetch_array($res2);
 
-  $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid;
+  $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc";
   $res2 = mysql_query($sql) or sql_error($sql);
 
   $forumcount = 0;
 
+  unset($tthreads_by_tid);
+
+  $tpl->set_var("_row", "");
+
   while ($tthread = mysql_fetch_array($res2)) {
-    $tthreads[$tthread['tid']] = $tthread;
+    $tthreads_by_tid[$tthread['tid']] = $tthread;
 
     $index = find_thread_index($tthread['tid']);
     $sql = "select * from f_threads$index where tid = '" . addslashes($tthread['tid']) . "'";
@@ -290,16 +300,13 @@ while ($forum = mysql_fetch_array($result)) {
 
     $thread = mysql_fetch_array($res3);
 
-    if (!$forumcount)
-      echo "<tr><td>" . $forum['name'] . "</td></tr>\n";
-
     $forumcount++;
     $numshown++;
 
     if ($thread['tstamp'] > $tthread['tstamp'])
-      $tpl->set_var("CLASS", "trow" . ($numshown % 2));
+      $tpl->set_var("CLASS", "trow" . ($forumcount % 2));
     else
-      $tpl->set_var("CLASS", "row" . ($numshown % 2));
+      $tpl->set_var("CLASS", "row" . ($forumcount % 2));
 
     list($count, $messagestr) = display_thread($thread);
 
@@ -319,6 +326,18 @@ while ($forum = mysql_fetch_array($result)) {
     $tpl->set_var("MESSAGELINKS", $messagelinks);
 
     $tpl->parse("_row", "row", true);
+  }
+
+  if ($forumcount) {
+    /* HACK: ugly */
+    unset($tpl->varkeys['forum_header']);
+    unset($tpl->varvals['forum_header']);
+
+    $tpl->set_file("forum_header", "forum/" . $forum['shortname'] . ".tpl");
+
+    $tpl->parse("FORUM_HEADER", "forum_header");
+
+    $tpl->parse("_block", $table_block, true);
   }
 }
 
