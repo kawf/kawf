@@ -178,10 +178,11 @@ function print_message($thread, $msg)
     $tpl->set_var("_owner", "");
   else {
     if (isset($flags['StateLocked'])) {
-      $tpl->set_var(array(
-        "_undelete" => "",
-        "_delete" => "",
-      ));
+      $tpl->set_var("_undelete", "");
+      if ($msg['state'] != 'OffTopic')
+        $tpl->set_var("_delete", "");
+      else
+        $tpl->parse("_delete", "delete");
 
       $tpl->parse("_statelocked", "statelocked");
     } else {
