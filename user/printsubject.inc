@@ -1,6 +1,6 @@
 <?php
 
-function print_subject($thread, $msg)
+function print_subject($thread, $msg, $hiddenreplies = -1)
 {
   global $vmid, $user, $tthreads_by_tid, $forum, $tpl;
 
@@ -55,6 +55,9 @@ function print_subject($thread, $msg)
     $string .= " <img src=\"/pics/ot.gif\">";
 
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<font size=-2><i>".$msg['date']."</i>";
+
+  if ($hiddenreplies >= 0)
+    $string .= " ($hiddenreplies " . ($hiddenreplies == 1 ? "reply" : "replies") . " hidden)";
 
   if ($msg['unixtime'] > 968889231)
     $string .= " (" . $msg['views'] . " view" . ($msg['views'] == 1 ? "" : "s") . ")";

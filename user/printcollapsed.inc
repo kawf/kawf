@@ -1,6 +1,6 @@
 <?php
 
-function print_collapsed($thread, $msg, $count)
+function print_collapsed($thread, $msg, $replies)
 {
   global $user, $forum, $tpl;
 
@@ -43,7 +43,7 @@ function print_collapsed($thread, $msg, $count)
 
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $msg['name'] . "</b>&nbsp;&nbsp;<font size=\"-2\"><i>" . $msg['date'] . "</i>";
 
-  $string .= " ($count " . ($count == 1 ? "reply" : "replies") . ")";
+  $string .= " ($replies " . ($replies == 1 ? "reply" : "replies") . ")";
 
   $string .= "</font>";
 
