@@ -7,16 +7,16 @@ require_once("strip.inc");
 
 $tpl->set_file(array(
   "showmessage" => "showmessage.tpl",
-  "message" => "message.tpl",
+  "MESSAGE" => "message.tpl",
   "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
 ));
 
-$tpl->set_block("message", "account_id");
-$tpl->set_block("message", "forum_admin");
-$tpl->set_block("message", "message_ip");
-$tpl->set_block("message", "owner");
-$tpl->set_block("message", "parent");
-$tpl->set_block("message", "changes");
+$tpl->set_block("MESSAGE", "account_id");
+$tpl->set_block("MESSAGE", "forum_admin");
+$tpl->set_block("MESSAGE", "message_ip");
+$tpl->set_block("MESSAGE", "owner");
+$tpl->set_block("MESSAGE", "parent");
+$tpl->set_block("MESSAGE", "changes");
 
 $tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
@@ -302,7 +302,8 @@ unset($message);
 
 require_once("post.inc");
 
-$tpl->parse(MESSAGE, "message");
+$tpl->subst("MESSAGE");
+#$tpl->parse(MESSAGE, "message");
 
 $tpl->parse(HEADER, "header");
 $tpl->parse(FOOTER, "footer");
