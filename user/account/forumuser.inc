@@ -167,7 +167,14 @@ class ForumUser {
     if (!$this->valid())
       return false;
 
-    return sql_query1("select aid from f_moderators where aid = " . $this->aid . " and ( fid = $fid or fid = -1 )");
+    if (isset($this->moderator[$fid]))
+      return $this->moderator[$fid];
+
+    $ret = sql_query1("select aid from f_moderators where aid = " . $this->aid .
+ " and ( fid = $fid or fid = -1 )");
+    $this->moderator[$fid] = $ret;
+
+    return $ret;
   }
 }
 
