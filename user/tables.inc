@@ -72,9 +72,11 @@ $create_dupposts_table = "
     cookie varchar(40) not null,
     mid int not null,
     aid int not null,
+    ip varchar(20) not null,
     tstamp datetime not null,
     primary key (cookie),
-    key (aid)
+    key (aid),
+    key (ip)
   )";
 
 $create_unique_table =
