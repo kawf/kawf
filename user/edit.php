@@ -292,8 +292,19 @@ if (isset($error) || isset($preview)) {
   $msg['message'] = preg_replace("/\r/", "", $msg['message']);
   $message = preg_replace("/\r/", "", $message);
 
-  fwrite($origfd, "Subject: " . $msg['subject'] . "\n" . $msg['message'] . "\n");
-  fwrite($newfd, "Subject: " . $subject . "\n" . $message . "\n");
+  fwrite($origfd, "Subject: " . $msg['subject'] . "\n");
+  fwrite($origfd, $msg['message'] . "\n");
+  if (!empty($msg['url'])) {
+    fwrite($origfd, "urltext: " . $msg['urltext'] . "\n");
+    fwrite($origfd, "url: " . $msg['url'] . "\n");
+  }
+
+  fwrite($newfd, "Subject: " . $subject . "\n");
+  fwrite($newfd, $message . "\n");
+  if (!empty($url)) {
+    fwrite($newfd, "urltext: " . $urltext . "\n");
+    fwrite($newfd, "url: " . $url . "\n");
+  }
 
   fclose($origfd);
   fclose($newfd);
@@ -311,14 +322,13 @@ if (isset($error) || isset($preview)) {
   $sql = "update f_messages" . $indexes[$index]['iid'] . " set " .
 	"name = '" . addslashes($name) . "', " .
 	"email = '" . addslashes($email) . "', " .
-	"ip = '$REMOTE_ADDR', " .
 	"flags = '$flagset', " .
 	"state = '" . addslashes($status) . "', " .
 	"subject = '" . addslashes($subject) . "', " .
 	"message = '" . addslashes($message) . "', " .
 	"url = '" . addslashes($url) . "', " .
 	"urltext = '" . addslashes($urltext) . "', " .
-	"changes = CONCAT(changes, 'Edited by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), '\n" . addslashes($diff) . "\n') " .
+	"changes = CONCAT(changes, 'Edited by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), ' from $REMOTE_ADDR\n" . addslashes($diff) . "\n') " .
 	"where mid = '" . addslashes($mid) . "'";
   mysql_query($sql) or sql_error($sql);
 
