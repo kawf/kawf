@@ -130,7 +130,7 @@ function print_subject($msg)
   $string = "<li>";
 
   $new = (isset($tthreads_by_tid[$msg['tid']]) &&
-      $tthreads_by_tid[$msg['tid']]['tstamp'] < $msg['tstamp']);
+      $tthreads_by_tid[$msg['tid']]['unixtime'] < $msg['unixtime']);
 
   if ($new)
     $string .= "<i><b>";
@@ -214,18 +214,22 @@ function display_thread($thread)
   global $user, $forum, $ulkludge;
 
   $index = find_msg_index($thread['mid']);
-  $sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, views, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp, UNIX_TIMESTAMP(date) as unixtime from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
+  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
   $result = mysql_query($sql) or sql_error($sql);
-  while ($message = mysql_fetch_array($result))
+  while ($message = mysql_fetch_array($result)) {
+    $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
     $messages[] = $message;
+  }
 
   /* We assume a thread won't span more than 1 index */
   $index++;
   if (isset($indexes[$index])) {
-    $sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
+    $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
     $result = mysql_query($sql) or sql_error($sql);
-    while ($message = mysql_fetch_array($result))
+    while ($message = mysql_fetch_array($result)) {
+      $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
       $messages[] = $message;
+    }
   }
 
   if (!isset($messages) || !count($messages))
@@ -300,7 +304,7 @@ while ($forum = mysql_fetch_array($result)) {
 
     $thread = mysql_fetch_array($res3);
 
-    if ($thread['tstamp'] > $tthread['tstamp'])
+    if ($thread['unixtime'] > $tthread['unixtime'])
       $tpl->set_var("CLASS", "trow" . ($forumcount % 2));
     else
       $tpl->set_var("CLASS", "row" . ($forumcount % 2));
@@ -321,7 +325,7 @@ while ($forum = mysql_fetch_array($result)) {
       else
         $messagelinks .= " ";
 
-      if ($thread['tstamp'] > $tthread['tstamp'])
+      if ($thread['unixtime'] > $tthread['unixtime'])
         $messagelinks .= "<a href=\"/markuptodate.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#0000f0\">up</font></a>";
     }
 

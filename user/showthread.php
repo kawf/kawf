@@ -17,7 +17,7 @@ $tpl->parse("FORUM_HEADER", "forum_header");
 
 /* Mark the thread as read if need be */
 if (isset($tthreads[$msg['tid']]) &&
-      $tthreads[$msg['tid']]['tstamp'] < $msg['tstamp']) {
+      $tthreads[$msg['tid']]['unixtime'] < $msg['unixtime']) {
   echo "<!-- updating tthread -->\n";
   $sql = "update f_tracking set tstamp = NOW() where tid = " . $msg['tid'] . " and aid = " . $user->aid;
   mysql_query($sql) || sql_warn($sql);
@@ -37,17 +37,21 @@ $thread = mysql_fetch_array($result);
 
 $index = find_msg_index($thread['mid']);
 
-$sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp, UNIX_TIMESTAMP(date) as unixtime from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
+$sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
 $result = mysql_query($sql) or sql_error($sql);
-while ($message = mysql_fetch_array($result))
+while ($message = mysql_fetch_array($result)) {
+  $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
   $messages[] = $message;
+}
 
 $index++;
 if (isset($indexes[$index])) {
-  $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages$index where tid = '" . $thread['tid'] . "' order by mid desc";
+  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
   $result = mysql_query($sql) or sql_error($sql);
-  while ($message = mysql_fetch_array($result))
+  while ($message = mysql_fetch_array($result)) {
+    $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
     $messages[] = $message;
+  }
 }
 
 /* Filter out moderated or deleted messages, if necessary */
@@ -82,7 +86,7 @@ function print_message($msg)
   $tpl->set_block("message", "parent");
   $tpl->set_block("message", "changes");
 
-  if (isset($user->cap['Moderate'])) {
+  if ($user->moderator($forum['fid'])) {
     $tpl->set_var("MSG_AID", $msg['aid']);
     $tpl->set_var("MSG_CHANGES", nl2br($msg['changes']));
     $tpl->set_var("MSG_IP", $msg['ip']);
