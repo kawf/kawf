@@ -174,6 +174,7 @@ $tpl->set_var(array(
   "MSG_SUBJECT" => $subject,
   "MSG_DATE" => $date,
   "MSG_IP" => $REMOTE_ADDR,
+  "MSG_AID" => $user->aid,
 ));
 
 if (isset($error) || isset($preview)) {
