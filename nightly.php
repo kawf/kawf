@@ -1,18 +1,20 @@
 <?php
 
 /* First setup the path */
-$include_path = "$srcroot/kawf:$srcroot/kawf/user:$srcroot/php:$srcroot/config";
+$include_path = "$srcroot/kawf:$srcroot/kawf/user";
+if (isset($include_append))
+  $include_path .= ":" . $include_append;
+
 $old_include_path = ini_get("include_path");
 if (!empty($old_include_path))
   $include_path .= ":" . $old_include_path;
-
 ini_set("include_path", $include_path);
 
-require("$config.inc");
-require("sql.inc");
-require("util.inc");
-require("user.inc");
-require("user/tables.inc");
+require_once("$config.inc");
+require_once("sql.inc");
+require_once("util.inc");
+# require_once("forumuser.inc");
+require_once("user/tables.inc");
 
 sql_open($database);
 
