@@ -35,6 +35,9 @@ $scripts = array(
   "useracladd.phtml" => "useracladd.php",
   "useraclmodify.phtml" => "useraclmodify.php",
   "useracldelete.phtml" => "useracldelete.php",
+
+  "pending.phtml" => "pending.php",
+  "pendingdelete.phtml" => "pendingdelete.php",
 );
 
 $user = new AdminUser;

@@ -12,6 +12,7 @@ $result = sql_query("select * from f_forums");
 
 <a href="forumadd.phtml">Add new forum</a>
 <a href="useracl.phtml">User ACLs</a>
+<a href="pending.phtml">Administer pending requests</a>
 
 <p>
 
