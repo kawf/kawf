@@ -17,7 +17,7 @@ class ForumUser {
   /* You shouldn't call this directly */
   function find($where)
   {
-    global $tz_to_offset, $timezone;
+    global $tz_to_offset, $local_timezone;
 
     $user = sql_querya("select * from u_users where $where");
     if ($user) {
@@ -30,9 +30,9 @@ class ForumUser {
           $this->pref[$flag] = true;
       }
     } else
-      $this->timezone = $timezone;
+      $this->timezone = $local_timezone;
 
-    $this->tzoff = $tz_to_offset[$timezone] - $tz_to_offset[$this->timezone];
+    $this->tzoff = $tz_to_offset[$local_timezone] - $tz_to_offset[$this->timezone];
   }
 
   /* These functions are used to find a user */
