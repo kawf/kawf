@@ -2,8 +2,7 @@
 
 $user->req("ForumAdmin");
 
-if(!isset($aid)) {
-    Header("Location: /admin/");
+if (!isset($aid)) {
     Header("Location: /admin/?message=" . urlencode("No aid!"));
     exit();
 }
@@ -11,7 +10,6 @@ if(!isset($aid)) {
 $user = new AccountUser;
 $user->find_by_aid((int)$aid);
 if (!$user->valid()) {
-    $error = "invalid_aid";
     Header("Location: /admin/?message=" . urlencode("Invalid aid $aid"));
     exit();
 }
