@@ -41,6 +41,7 @@ $scripts = array(
 
   "admin.phtml" => "admin.php",
   "showaccount.phtml" => "showaccount.php",
+  "modifyaccount.phtml" => "modifyaccount.php",
 
   "preferences.phtml" => "preferences.php",
 
@@ -163,9 +164,6 @@ if (empty($aregs[2])) {
 
 if (!find_forum($aregs[1]))
   err_not_found('Unknown forum ' . $aregs[1]);
-
-mysql_free_result($result);
-unset($result);
 
 /* Parse out the filename */
 /* The . "" is to workaround a bug in PHP4 */
