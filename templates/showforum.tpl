@@ -47,6 +47,10 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 <font face="Verdana, Arial, Geneva" size="-1">
 Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 
+<!-- BEGIN update_all -->
+<div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}">Update all</a></div>
+<!-- END update_all -->
+
 <!-- BEGIN normal -->
 <table width="100%" border="0" cellpadding="2" cellspacing="2">
 <!-- BEGIN row -->
