@@ -88,8 +88,10 @@ $endpage = $startpage + 9;
 if ($endpage > $numpages)
   $endpage = $numpages;
 
+/*
 if ($endpage == $startpage)
   $endpage++;
+*/
 
 $pagestr = "";
 
