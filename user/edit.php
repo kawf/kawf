@@ -241,7 +241,7 @@ if (isset($error) || isset($preview)) {
 	"message = '" . addslashes($message) . "', " .
 	"url = '" . addslashes($url) . "', " .
 	"urltext = '" . addslashes($urltext) . "', " .
-	"changes = CONCAT(changes, 'Edited by " . $user->name . "/" . $user->aid . " at ', NOW(), '\n" . addslashes($diff) . "\n') " .
+	"changes = CONCAT(changes, 'Edited by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), '\n" . addslashes($diff) . "\n') " .
 	"where mid = '" . addslashes($mid) . "'";
   mysql_query($sql) or sql_error($sql);
 
