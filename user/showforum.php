@@ -1,6 +1,6 @@
 <?php
 
-require('listthread.new.inc');
+require('listthread.inc');
 
 $tpl->define(array(
   header => 'header.tpl',
