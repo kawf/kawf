@@ -1,27 +1,29 @@
 <?php
 $create_message_table =
-  "create table messages%d (\n" .
+  "create table f_messages%d (\n" .
   "  mid int not null auto_increment,\n" .
   "  pid int not null,\n" .
   "  tid int not null,\n" .
   "  aid int not null,\n" .
   "  state enum('Active','Moderated','Deleted') not null default 'Active',\n" .
   "  flags set('NewStyle','NoText','Picture','Link','Locked'),\n" .
-  "  name varchar(50),\n" .
-  "  email varchar(50),\n" .
+  "  name varchar(50) not null,\n" .
+  "  email varchar(50) not null,\n" .
   "  date datetime not null default '0000-00-00 00:00:00',\n" .
   "  ip varchar(15) not null default '0.0.0.0',\n" .
   "  subject text not null,\n" .
   "  message text not null,\n" .
-  "  url varchar(250),\n" .
-  "  urltext varchar(250),\n" .
+  "  url varchar(250) not null,\n" .
+  "  urltext varchar(250) not null,\n" .
   "  views int not null,\n" .
+  "  changes text not null,\n" .
   "  primary key (mid),\n" .
-  "  key (pid, tid)\n" .
+  "  key (pid)\n" .
+  "  key (tid)\n" .
   ")";
 
 $create_thread_table =
-  "create table threads%d (\n" .
+  "create table f_threads%d (\n" .
   "  tid int not null auto_increment,\n" .
   "  mid int not null,\n" .
   "  replies int not null,\n" .
@@ -30,8 +32,9 @@ $create_thread_table =
   ")";
 
 $create_index_table =
-  "create table indexes (\n" .
+  "create table f_indexes (\n" .
   "  iid int not null auto_increment,\n" .
+  "  fid int not null,\n" . 
   "  minmid int not null,\n" .
   "  maxmid int not null,\n" .
   "  mintid int not null,\n" .
@@ -39,42 +42,41 @@ $create_index_table =
   "  active int not null,\n" .
   "  moderated int not null,\n" .
   "  deleted int not null,\n" .
-  "  primary key (iid)\n" .
+  "  primary key (iid),\n" .
+  "  key (fid)\n" .
   ")";
 
-/*
-create table dupposts (
-  cookie varchar(40) not null,
-  mid int not null,
-  tstamp datetime,
-  primary key (cookie)
-);
+$create_dupposts_table =
+  "create table f_dupposts (\n" .
+  "  fid int not null,\n" .
+  "  cookie varchar(40) not null,\n" .
+  "  mid int not null,\n" .
+  "  tstamp datetime not null,\n" .
+  "  primary key (cookie)\n" .
+  ")
 
-create table umessage (
-  mid int not null auto_increment,
-  tstamp timestamp,
-  primary key (mid)
-);
+$create_unique_table =
+  "create table f_unique (\n" .
+  "  fid int not null,\n" .
+  "  type enum('Message','Thread') not null,\n" .
+  "  id int not null,\n" .
+  "  primary key (fid,type,id)\n" .
+  ")";
 
-create table uthread (
-  tid int not null auto_increment,
-  tstamp timestamp,
-  primary key (tid)
-);
+$create_tracking_table =
+  "create table f_tracking (\n" .
+  "  fid int not null,\n" .
+  "  tid int not null,\n" .
+  "  aid int not null,\n" .
+  "  tstamp timestamp,\n" .
+  "  options set('SendEmail') not null,\n" .
+  "  key (fid,aid)\n" .
+  ")";
 
-create table tracking (
-  tid int not null,
-  aid int not null,
-  tstamp timestamp,
-  options set('SendEmail') not null,
-  key (aid)
-);
-
-insert into indexes ( iid ) values ( NULL );
-
-create table updates (
-  mid int not null,
-  primary key (mid)
-);
-*/
+$create_update_table =
+  "create table f_updates (\n" .
+  "  fid int not null,\n" .
+  "  mid int not null,\n" .
+  "  primary key (fid)\n" .
+  ")";
 ?>
