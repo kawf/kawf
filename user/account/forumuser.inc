@@ -183,6 +183,24 @@ class ForumUser {
 
     return $ret;
   }
+
+  function capable($fid, $type)
+  {
+    if (!$this->valid())
+      return false;
+
+    if (isset($this->capable[$fid]))
+      return isset($this->capable[$fid][$type]);
+
+    $capabilities = sql_query1("select capabilities from f_moderators where aid 
+= " . $this->aid . " and ( fid = $fid or fid = -1 )");
+
+    $caps = explode(",", $capabilities);
+    foreach ($caps as $flag)
+      $this->capable[$fid][$flag] = true;
+
+    return isset($this->capable[$fid][$type]);
+  }
 }
 
 /* This is the class to change the user stuff */
@@ -407,24 +425,6 @@ $cookie_host);
     }
 
     return true;
-  }
-
-  function capable($fid, $type)
-  {
-    if (!$this->valid())
-      return false;
-
-    if (isset($this->capable[$fid]))
-      return isset($this->capable[$fid][$type]);
-
-    $capabilities = sql_query1("select capabilities from f_moderators where aid 
-= " . $this->aid . " and ( fid = $fid or fid = -1 )");
-
-    $caps = explode(",", $capabilities);
-    foreach ($caps as $flag)
-      $this->capable[$fid][$flag] = true;
-
-    return isset($this->capable[$fid][$type]);
   }
 }
 
