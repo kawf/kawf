@@ -91,7 +91,12 @@ if (isset($submit)) {
   $user->threadsperpage = $threadsperpage;
 
   $sql = "update u_forums set preferences = '" . addslashes($prefstr)."', signature = '" . addslashes($signature) . "', threadsperpage = '" . addslashes($threadsperpage) . "' where aid = " . $user->aid;
-  mysql_query($sql) or sql_error($sql);
+  $result = mysql_query($sql) or sql_error($sql);
+
+  if (!mysql_affected_rows()) {
+    $sql = "insert into u_forums ( aid, preferences, signature, threadsperpage ) values ( $user->aid, '" . addslashes($prefstr)."', '" . addslashes($signature) . "', '" . addslashes($threadsperpage) . "' )";
+    mysql_query($sql) or sql_error($sql);
+  }
 }
 
 do_option('ShowModerated');
