@@ -9,6 +9,10 @@ if (isset($submit)) {
     $options[] = "Read";
   if (isset($post))
     $options[] = "Post";
+  if (isset($postthread))
+    $options[] = "PostThread";
+  if (isset($postreply))
+    $options[] = "PostReply";
 
   if (isset($options))
     $options = implode(",", $options);
@@ -61,12 +65,21 @@ page_header("Modify forum '" . $forum['name'] . "'");
   <td><input type="text" name="shortname" value="<?php echo $forum['shortname']; ?>"></td>
  </tr>
  <td>
-  <td>Reading enabled:</td>
+  <td>Reading:</td>
   <td><input type="checkbox" name="read"<?php if (isset($options['Read'])) echo " checked"; ?>></td>
  </tr>
  <td>
-  <td>Posting enabled:</td>
-  <td><input type="checkbox" name="post"<?php if (isset($options['Post'])) echo " checked"; ?>></td>
+  <td>Posting:<br>
+      <small>(soon to be obsoleted)</small></td>
+  <td valign="top"><input type="checkbox" name="post"<?php if (isset($options['Post'])) echo " checked"; ?>></td>
+ </tr>
+ <td>
+  <td>Posting new threads:</td>
+  <td><input type="checkbox" name="postthread"<?php if (isset($options['PostThread'])) echo " checked"; ?>></td>
+ </tr>
+ <td>
+  <td>Posting new replies:</td>
+  <td><input type="checkbox" name="postreply"<?php if (isset($options['PostReply'])) echo " checked"; ?>></td>
  </tr>
  <tr>
   <td></td>
