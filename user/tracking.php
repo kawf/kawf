@@ -283,7 +283,7 @@ while ($forum = mysql_fetch_array($result)) {
   for ($i = 0; $i < $numindexes; $i++)
     $indexes[$i] = mysql_fetch_array($res2);
 
-  $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc";
+  $sql = "select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc";
   $res2 = mysql_query($sql) or sql_error($sql);
 
   $forumcount = 0;
