@@ -33,7 +33,7 @@ $tpl->set_var(array(
   "changes" => "",
 ));
 
-$tpl->set_var("TITLE", "Message Editting");
+$tpl->set_var("TITLE", "Message Editing");
 
 $tpl->parse("FORUM_HEADER", 'forum_header');
 
