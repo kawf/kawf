@@ -5,6 +5,12 @@ if (!$user->valid() || !isset($forum)) {
   exit;
 }
 
+if (!isset($time))
+  $time = time();
+
+/* Convert it to MySQL format */
+$time = strftime("%Y%m%d%H%M%S", $time);
+
 if ($tid == "all") {
   if (isset($tthreads)) {
     reset($tthreads);
@@ -18,11 +24,11 @@ if ($tid == "all") {
         continue;
 
       if ($thread['unixtime'] > $tthread['unixtime'])
-        sql_query("update f_tracking set tstamp = NOW() where fid = " . $forum['fid'] . " and tid = " . $thread['tid'] . " and aid = " . $user->aid);
+        sql_query("update f_tracking set tstamp = $time where fid = " . $forum['fid'] . " and tid = " . $thread['tid'] . " and aid = " . $user->aid);
     }
   }
 } else
-  sql_query("update f_tracking set tstamp = NOW() where fid = " . $forum['fid'] . " and tid = " . addslashes($tid) . " and aid = " . $user->aid);
+  sql_query("update f_tracking set tstamp = $time where fid = " . $forum['fid'] . " and tid = " . addslashes($tid) . " and aid = " . $user->aid);
 
 Header("Location: " . $page);
 

@@ -202,7 +202,7 @@ if (isset($tthreads_by_tid[$msg['tid']]) &&
    ($thread['unixtime'] > $tthreads_by_tid[$msg['tid']]['unixtime'])) {
   $tpl->set_var("BGCOLOR", "#ccccee");
   if (count($messages) > 1)
-    $threadlinks .= "<br><a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#0000f0\">up</font></a>";
+    $threadlinks .= "<br><a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "&time=" . time() . "\"><font color=\"#0000f0\">up</font></a>";
 } else
   $tpl->set_var("BGCOLOR", "#eeeeee");
 

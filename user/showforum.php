@@ -233,7 +233,7 @@ if (isset($tthreads)) {
         else
           $messagelinks .= " ";
 
-        $messagelinks .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#0000f0\">up</font></a>";
+        $messagelinks .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "&time=" . time() . "\"><font color=\"#0000f0\">up</font></a>";
       }
 
       $tpl->set_var("MESSAGES", $messagestr);
