@@ -24,8 +24,9 @@ $tpl->set_var("PAGE", $page);
 if (isset($email)) {
   $tpl->set_var("EMAIL", $email);
 
-  $user = new AccountUser($email);
-  if (!$user || !$user->checkpassword($password))
+  $user = new AccountUser();
+  $user->find_by_email($email);
+  if (!$user->valid() || !$user->checkpassword($password))
     $message = "Invalid password for $email\n";
   else {
     $user->setcookie();

@@ -22,7 +22,10 @@ if (!$user) {
     $tpl->set_var("COOKIE", $cookie);
 } else {
   if ($user['status'] == 'Create') {
-    $user = new AccountUser((int)$user['aid']);
+    $aid = $user['aid'];
+
+    $user = new AccountUser();
+    $user->find_by_aid((int)$aid);
     $user->status("Active");
     if (!$user->update())
       $error .= "Unable to activate account\n";

@@ -2,7 +2,10 @@
 
 include_once("strip.inc");
 
-$user = new AccountUser((int)$user->aid);
+$aid = $user->aid;
+
+$user = new AccountUser();
+$user->find_by_aid((int)$aid);
 
 $user->req();
 

@@ -17,8 +17,9 @@ $tpl->set_var("PAGE", $page);
 if (isset($email)) {
   $tpl->set_var("EMAIL", $email);
 
-  $user = new AccountUser($email);
-  if (!$user)
+  $user = new AccountUser();
+  $user->find_by_email($email);
+  if (!$user->valid())
     $tpl->set_var("success", "");
   else {
     $user->forgotpassword();
