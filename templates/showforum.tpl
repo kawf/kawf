@@ -39,7 +39,10 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
   <font size="-2">
   <b>Page:</b> {PAGES}
 
-  &nbsp; &nbsp;[<a href="/tips.shtml">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>]
+  &nbsp; &nbsp;
+  [<a href="/tips.shtml">Reading Tips</a>]
+  [<a href="/search/" target="_top">Search</a>]
+  [<a href="#post">Post New Thread</a>]
 
   </font>
 </td></tr>
@@ -77,7 +80,10 @@ Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
   <font size="-2">
   <b>Page:</b> {PAGES}
 
-  &nbsp; &nbsp;[<a href="/forum/tips.shtml">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>]
+  &nbsp; &nbsp;
+  [<a href="/tips.shtml">Reading Tips</a>]
+  [<a href="/search/" target="_top">Search</a>]
+  [<a href="#post">Post New Thread</a>]
 
   </font>
 </td></tr>
