@@ -9,7 +9,14 @@ require('acct.inc');
 require('class.FastTemplate.php3');
 
 $tpl = new FastTemplate('templates');
-$tpl->define(array(header => 'header.tpl', footer => 'footer.tpl', showforum => 'showforum.tpl'));
+$tpl->define(array(
+  header => 'header.tpl',
+  footer => 'footer.tpl',
+  showforum => 'showforum.tpl',
+  showforum_row => 'showforum_row.tpl',
+  post => 'post.tpl',
+  post_noacct => 'post_noacct.tpl'
+));
 
 /* Default it to the first page if none is specified */
 if (!isset($curpage))
@@ -41,6 +48,10 @@ $tpl->assign(TITLE, $forum['name']);
 
 $tpl->assign(BODYTAGS, ' bgcolor="#ffffff"');
 
+$tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
+
+$tpl->assign(FORUM_PICTURE, $forum['picture']);
+
 /* We get our money from ads, make sure it's there */
 /* FIXME: Ads write directly to output */
 /*
@@ -49,27 +60,15 @@ require('ads.inc');
 add_ad();
 echo "</center>\n";
 */
-?>
 
-<hr width="100%" size="1">
-
-<table width=100%>
-<tr>
-  <td width=50% align="left">
-    <img src="<?php echo $forum['picture']; ?>">
-  </td>
-  <td width=50% align="right">
-<?php
+/* FIXME: More ads (forum specific ads) */
+/*
 if ($forum['shortname'] == "a4" || $forum['shortname'] == "performance")
   ads_view("carreview", "_top");
 if ($forum['shortname'] == "wheel")
   echo "<a href=\"mailto:Eddie@Tirerack.com\"><img src=\"$furlroot/pix/tireracksponsor.gif\" border=\"0\"></a>\n";
-?>
-  </td>
-</tr>
-</table>
+*/
 
-<?php
 $numthreads = 0;
 
 while (list($key) = each($indexes))
@@ -77,66 +76,54 @@ while (list($key) = each($indexes))
 
 $numpages = ceil($numthreads / $threadsperpage);
 
-function print_pages()
-{
-  global $numpages, $furlroot, $urlroot, $forum, $curpage;
+$startpage = $curpage - 4;
+if ($startpage < 1)
+  $startpage = 1;
 
-  $startpage = $curpage - 4;
-  if ($startpage < 1)
-    $startpage = 1;
+$endpage = $startpage + 9;
+if ($endpage > $numpages)
+  $endpage = $numpages;
 
-  $endpage = $startpage + 9;
-  if ($endpage > $numpages)
-    $endpage = $numpages;
-?>
-<table width="600">
-<tr><td>
-<font face="Verdana, Arial, Geneva" size="-2">
-<?php
-  echo "<b>Page:</b> ";
-  if ($endpage == $startpage)
-    $endpage++;
+if ($endpage == $startpage)
+  $endpage++;
 
-  if ($curpage > 1) {
-    $prevpage = $curpage - 1;
-    echo "[<a href=\"$urlroot/" . $forum['shortname'] . "/pages/$prevpage.phtml\">&lt;&lt;&lt;</a>] ";
-  }
+$pagestr = "";
 
-  echo "[<a href=\"$urlroot/" . $forum['shortname'] . "/pages/1.phtml\">";
-  if ($curpage == 1)
-    echo "<font size=\"+1\"><b>1</b></font>";
-  else
-    echo "1";
-  echo "</a>]\n";
-
-  if ($startpage == 1)
-    $startpage++;
-  elseif ($startpage < $endpage)
-    echo "...\n";
-
-  for ($i = $startpage; $i <= $endpage; $i++) {
-?>
-[<a href="<?php echo $urlroot . "/" . $forum['shortname']; ?>/pages/<?php echo $i; ?>.phtml"><?php if ($i == $curpage) { echo "<font size=\"+1\"><b>$i</b></font>"; } else { echo $i; } ?></a>] 
-<?php
-  }
-
-  if ($curpage < $numpages) {
-    $nextpage = $curpage + 1;
-    echo "[<a href=\"$urlroot/" . $forum['shortname'] . "/pages/$nextpage.phtml\">&gt;&gt;&gt;</a>] ";
-  }
-?>
-&nbsp; &nbsp;[<a href="/forum/tips.shtml">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>] [<a href="http://pictureposter.audiworld.com/A4PICSnd.asp">Post Picture</a>]</font>
-<?php
-  echo "</font>\n";
-  echo "</td></tr>\n";
-  echo "</table>\n";
+if ($curpage > 1) {
+  $prevpage = $curpage - 1;
+  $pagestr .= "[<a href=\"$urlroot/" . $forum['shortname'] . "/pages/$prevpage.phtml\">&lt;&lt;&lt;</a>] ";
 }
 
-echo "<font face=\"Verdana, Arial, Geneva\" size=\"-1\">\n";
-echo "Total threads: " . $numthreads . ", total pages: " . $numpages . "<br>\n";
-echo "</font>\n";
+$pagestr .= "[<a href=\"$urlroot/" . $forum['shortname'] . "/pages/1.phtml\">";
+if ($curpage == 1)
+  $pagestr .= "<font size=\"+1\"><b>1</b></font>";
+else
+  $pagestr .= "1";
+$pagestr .= "</a>]\n";
 
-print_pages();
+if ($startpage == 1)
+  $startpage++;
+elseif ($startpage < $endpage)
+  $pagestr .= " ... ";
+
+for ($i = $startpage; $i <= $endpage; $i++) {
+  $pagestr .= "[<a href=\"" . $urlroot . "/" . $forum['shortname'] . "/pages/" . $i . ".phtml\">";
+  if ($i == $curpage)
+    $pagestr .= "<font size=\"+1\"><b>$i</b></font>";
+  else
+    $pagestr .= $i;
+  $pagestr .= "</a>] ";
+}
+
+if ($curpage < $numpages) {
+  $nextpage = $curpage + 1;
+  $pagestr .= "[<a href=\"$urlroot/" . $forum['shortname'] . "/pages/$nextpage.phtml\">&gt;&gt;&gt;</a>] ";
+}
+
+$tpl->assign(PAGES, $pagestr);
+
+$tpl->assign(NUMTHREADS, $numthreads);
+$tpl->assign(NUMPAGES, $numpages);
 
 require('listthread.inc');
 
@@ -151,10 +138,12 @@ $simplehtml = isset($user['prefs.SimpleHTML']);
 
 $shortname = $forum['shortname'];
 
+/*
 if (!$simplehtml)
   echo "<table width=\"100%\" border=\"0\" cellpadding=\"2\" cellspacing=\"2\">\n";
 else
   echo "<font face=\"Verdana, Arial, Geneva\" size=\"-1\"><ul>\n";
+*/
 
 # Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)
 # Mozilla/4.7 (Macintosh; U; PPC)
@@ -168,7 +157,7 @@ if (isset($tthreads)) {
   while (list($tid, $tthread) = each($tthreads)) {
     $index = find_thread_index($tid);
     if ($index < 0) {
-      echo "Warning: Invalid tthread! Please send email to jerdfelt@audiworld.com with the numbers '$index' and '$tid'<br>\n";
+      echo "<!-- Warning: Invalid tthread! $index $tid -->\n";
       continue;
     }
 
@@ -186,24 +175,29 @@ if (isset($tthreads)) {
         $numshown++;
         if (!$simplehtml) {
           $color = ($numshown % 2) ? "#ccccee" : "#ddddff";
-          echo "<tr bgcolor=\"$color\"><td><font face=\"Verdana, Arial, Geneva\" size=\"-1\"><ul>\n";
-        }
+          $trtags = " bgcolor=\"$color\"";
+        } else
+          $trtags = "";
 
-        list_thread($thread);
+        $tpl->assign(TRTAGS, $trags);
+
+        $messagestr = "<ul>\n";
+        $messagestr .= list_thread($thread);
 
         if (!$simplehtml) {
           if (!$ulkludge)
-            echo "</ul>";
-          echo "</font></td>\n";
-          echo "<td valign=\"top\">\n";
+            $messagestr .= "</ul>";
 
-    if (isset($tthreads[$thread['tid']]))
-      echo " <a href=\"$urlroot/untrack.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
-    else
-      echo " <a href=\"$urlroot/track.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#00d000\">tt</font></a>";
-
-          echo "</td></tr>\n";
+            if (isset($tthreads[$thread['tid']]))
+              $messagelinks = "<a href=\"$urlroot/untrack.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
+            else
+              $messagelinks = "<a href=\"$urlroot/track.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#00d000\">tt</font></a>";
         }
+
+        $tpl->assign(MESSAGES, $messagestr);
+        $tpl->assign(MESSAGELINKS, $messagelinks);
+
+        $tpl->parse(MESSAGE_ROWS, ".showforum_row");
       }
     }
   }
@@ -262,66 +256,64 @@ while ($numshown < $threadsperpage) {
       /* $color = ($numshown % 2) ? "#cccccc" : "#dfdfdf"; */
       /* $color = ($numshown % 2) ? "#dfdfdf" : "#ffffff"; */
       $color = ($numshown % 2) ? "#eeeeee" : "#ffffff";
-      echo "<tr bgcolor=\"$color\"><td><font face=\"Verdana, Arial, Geneva\" size=\"-1\"><ul>\n";
-    }
+      $trtags = " bgcolor=\"$color\"";
+    } else
+      $trtags = "";
 
-    list_thread($thread);
+    $tpl->assign(TRTAGS, $trtags);
+
+    $messagestr = "<ul>\n";
+    $messagestr .= list_thread($thread);
 
     if (!$simplehtml) {
       if (!$ulkludge)
-        echo "</ul>";
-      echo "</font></td>\n";
-      echo "<td valign=\"top\">\n";
-  if (isset($user)) {
-    if (isset($tthreads[$thread['tid']]))
-      echo " <a href=\"$urlroot/untrack.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
-    else
-      echo " <a href=\"$urlroot/track.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#00d000\">tt</font></a>";
+        $messagestr .= "</ul>";
 
-    if (isset($flags['NewStyle']) && $msg['aid'] == $user['aid'])
-      echo " <a href=\"$urlroot/edit.phtml?shortname=" . $forum['shortname'] . "&mid=" . $thread['mid'] . "\">edit</a>";
-  }
-      echo "</td></tr>\n";
+      if (isset($user)) {
+        if (isset($tthreads[$thread['tid']]))
+          $messagelinks = " <a href=\"$urlroot/untrack.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
+        else
+          $messagelinks = " <a href=\"$urlroot/track.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#00d000\">tt</font></a>";
+
+      }
     }
+
+    $tpl->assign(MESSAGES, $messagestr);
+    $tpl->assign(MESSAGELINKS, $messagelinks);
+
+    $tpl->parse(MESSAGE_ROWS, ".showforum_row");
   }
 
   $threadtable--;
 }
 
+/*
 if (!$simplehtml)
   echo "</table>\n";
 else
   echo "</ul></font>\n";
+*/
 
+/*
 if (!$numshown)
   echo "<font size=\"+1\">No messages in this forum</font><br>\n";
-?>
+*/
 
-<br>
-<?php
-/* Print the number of pages this forum spans */
-print_pages();
-?>
+if (isset($user)) {
+  $pid = 0;
+  $subject = $message = $url = $urltext = $imageurl = "";
+  $subject = ereg_replace("\"", "&quot;", $subject);
+  unset($mid);
 
-<table width=600>
-<tr><td align="center">
-<a name="post">
-<img src="<?php echo $furlroot; ?>/pix/post.gif">
-</td></tr>
+  $postcookie = md5("post" . microtime());
 
-<tr><td>
-<?php
-$pid = 0;
-$subject = $message = $url = $urltext = $imageurl = "";
-unset($mid);
-$action = $urlroot . "/post.phtml";
-include('./postform.inc');
-?>
-</td></tr>
+  $tpl->assign(PID, "<input type=\"hidden\" name=\"pid\" value=\"$pid\">");
+  $tpl->assign(TID, "<input type=\"hidden\" name=\"tid\" value=\"$tid\">");
 
-</table>
+  $tpl->parse(POST, 'post');
+} else 
+  $tpl->parse(POST, 'post_noacct');
 
-<?php
 $tpl->parse(HEADER, 'header');
 $tpl->parse(FOOTER, 'footer');
 $tpl->parse(CONTENT, 'showforum');

@@ -17,96 +17,100 @@ function show_message($msg, $vmid = 0, $replies = -1)
       $flags[$flag] = "true";
   }
 
-  echo "<li>";
+  $string = "<li>";
 
   $new = (isset($tthreads[$msg['tid']]) &&
       $tthreads[$msg['tid']]['tstamp'] < $msg['tstamp']);
 
   if ($new)
-    echo "<i><b>";
+    $string .= "<i><b>";
 
   if ($vmid)
-    echo "<font color=\"#ff0000\">" . $msg['subject'] . "</font>";
+    $string .= "<font color=\"#ff0000\">" . $msg['subject'] . "</font>";
   else {
     if (isset($user['prefs.FlatThread']))
-      echo "<a href=\"$urlroot/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
+      $string .= "<a href=\"$urlroot/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
     else
-      echo "<a href=\"$urlroot/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
+      $string .= "<a href=\"$urlroot/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
   }
 
   if ($new)
-    echo "</b></i>";
+    $string .= "</b></i>";
 
   if (isset($flags['NoText'])) {
     if (!isset($user['prefs.SimpleHTML']))
-      echo " <img src=\"$furlroot/pix/nt.gif\">";
+      $string .= " <img src=\"$furlroot/pix/nt.gif\">";
     else
-      echo " (nt)";
+      $string .= " (nt)";
   }
 
   if (isset($flags['Picture'])) {
     if (!isset($user['prefs.SimpleHTML']))
-      echo " <img src=\"$furlroot/pix/pic.gif\">";
+      $string .= " <img src=\"$furlroot/pix/pic.gif\">";
     else
-      echo " (pic)";
+      $string .= " (pic)";
   }
 
   if (isset($flags['Link'])) {
     if (!isset($user['prefs.SimpleHTML']))
-      echo " <img src=\"$furlroot/pix/url.gif\">";
+      $string .= " <img src=\"$furlroot/pix/url.gif\">";
     else
-      echo " (link)";
+      $string .= " (link)";
   }
 
   if (isset($flags['Locked']))
-    echo " (locked)";
+    $string .= " (locked)";
 
   if ($msg['state'] == "Moderated" && !isset($user['cap.Moderate']))
-    echo " (moderated)";
+    $string .= " (moderated)";
 
-  echo "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<i><font size=-2>".$msg['date']."</font></i>";
+  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<i><font size=-2>".$msg['date']."</font></i>";
 
   if ($replies >= 0 && isset($user['prefs.Collapsed']))
-    echo " ($replies replies)";
+    $string .= " ($replies replies)";
 
   if (isset($user['cap.Moderate'])) {
     switch ($msg['state']) {
     case "Moderated":
-      echo " <a href=\"$urlroot/unmoderate.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">um</a>";
+      $string .= " <a href=\"$urlroot/unmoderate.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">um</a>";
       if (isset($user['cap.Delete']))
-        echo " <a href=\"$urlroot/delete.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">dm</a>";
+        $string .= " <a href=\"$urlroot/delete.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">dm</a>";
       break;
     case "Deleted":
       if (isset($user['cap.Delete']))
-        echo " <a href=\"$urlroot/undelete.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">ud</a>";
+        $string .= " <a href=\"$urlroot/undelete.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">ud</a>";
       break;
     case "Active":
-      echo " <a href=\"$urlroot/moderate.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">mm</a>";
+      $string .= " <a href=\"$urlroot/moderate.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">mm</a>";
       if (isset($user['cap.Delete']))
-        echo " <a href=\"$urlroot/delete.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">dm</a>";
+        $string .= " <a href=\"$urlroot/delete.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">dm</a>";
       break;
     }
 
 if ($forum['shortname'] == "test") {
     if (isset($flags['Locked']))
-      echo " <a href=\"$urlroot/unlock.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">ul</a>";
+      $string .= " <a href=\"$urlroot/unlock.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">ul</a>";
     else
-      echo " <a href=\"$urlroot/lock.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">lm</a>";
+      $string .= " <a href=\"$urlroot/lock.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">lm</a>";
 }
 
     if ($msg['state'] != "Active")
-      echo " (".$msg['state'].")";
+      $string .= " (".$msg['state'].")";
   }
 
   if (isset($user) && isset($flags['NewStyle']) && $msg['aid'] == $user['aid'])
-    echo " <a href=\"$urlroot/edit.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">edit</a>";
+    $string .= " <a href=\"$urlroot/edit.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">edit</a>";
 
-  echo "</li>\n";
+  $string .= "</li>\n";
+
+  return $string;
 }
 
 function list_thread($thread, $vmid = 0)
 {
   global $user, $forum;
+
+  $string = "";
 
   $index = find_msg_index($thread['mid']);
 
@@ -117,9 +121,7 @@ function list_thread($thread, $vmid = 0)
     $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 
     while ($msg = mysql_fetch_array($result))
-      show_message($msg, $msg['mid'] == $vmid, $thread['replies']);
-
-    $count = 1;
+      $string .= show_message($msg, $msg['mid'] == $vmid, $thread['replies']);
   } else {
     $sql .= " where tid = '" . $thread['tid'] . "'";
 
@@ -139,13 +141,11 @@ function list_thread($thread, $vmid = 0)
     while ($msg = mysql_fetch_array($result))
       $children[] = $msg;
 
-    if (empty($children))
-      return 0;
-
-    $count = list_thread_replies($children, 0, $vmid);
+    if (!empty($children))
+      $string .= list_thread_replies($children, 0, $vmid);
   }
 
-  return $count;
+  return $string;
 }
 
 /* Recursive listing of a thread */
@@ -153,7 +153,8 @@ function list_thread_replies($messages, $pid, $vmid = 0)
 {
   global $user, $forum, $urlroot, $furlroot;
 
-  $nummessages = 0;
+  $string = "";
+
   while (list(,$msg) = each($messages)) {
     if ($msg['pid'] == $pid)
       $children[] = $msg;
@@ -161,26 +162,25 @@ function list_thread_replies($messages, $pid, $vmid = 0)
       $grandchildren[] = $msg;
   }
 
-  $nummessages = count($children);
-  if (!$nummessages)
-    return 0;
+  if (!count($children))
+    return $string;
 
   if ($pid)
-    echo "<ul>\n";
+    $string .= "<ul>\n";
 
   while (list(,$msg) = each($children)) {
-    show_message($msg, $msg['mid'] == $vmid);
+    $string .= show_message($msg, $msg['mid'] == $vmid);
 
     if (!empty($grandchildren))
-      $nummessages += list_thread_replies($grandchildren, $msg['mid'], $vmid);
+      $string .= list_thread_replies($grandchildren, $msg['mid'], $vmid);
   }
 
   if ($pid)
-    echo "</ul>\n";
+    $string .= "</ul>\n";
 
   unset($children);
   unset($grandchildren);
 
-  return $nummessages;
+  return $string;
 }
 ?>
