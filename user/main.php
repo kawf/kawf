@@ -107,31 +107,6 @@ header("Cache-Control: private");
 $user = new ForumUser;
 $user->find_by_cookie();
 
-if (isset($user) && isset($user->aid) && $user->aid == 22192) {
-  if (!isset($SearchString)) {
-    mailfrom("jerdfelt@audiworld.com", "johannes@erdfelt.com", 
-	"From: jerdfelt@audiworld.com\n" .
-	"To: johannes@erdfelt.com\n" .
-	"Subject: s4ica requested page from $REMOTE_ADDR\n\n" .
-
-	"IP: $REMOTE_ADDR\n" .
-	"USER_AGENT: $USER_AGENT\n" .
-	"aid: $user->aid\n");
-  }
-  setcookie("SearchString", "none", time() + (60 * 60 * 24 * 365 * 5), "/", ".audiworld.com");
-}
-
-if (isset($SearchString)) {
-  mailfrom("jerdfelt@audiworld.com", "johannes@erdfelt.com", 
-	"From: jerdfelt@audiworld.com\n" .
-	"To: johannes@erdfelt.com\n" .
-	"Subject: SearchString requested page from $REMOTE_ADDR\n\n" .
-
-	"IP: $REMOTE_ADDR\n" .
-	"USER_AGENT: $USER_AGENT\n" .
-	"aid: $user->aid\n");
-}
-
 /* FIXME: This kills performance */
 /*
 if ($user->valid()) {
