@@ -24,23 +24,23 @@ if (!empty($msg['flags'])) {
 
 switch ($msg['state']) {
 case 'OffTopic':
-  $astatus = "OffTopic";
+  $priv = "OffTopic";
   break;
 case 'Moderated':
-  $astatus = "Moderate";
+  $priv = "Moderate";
   break;
 case 'Deleted':
-  $astatus = "Delete";
+  $priv = "Delete";
   break;
 default:
-  $astatus = "Delete";
+  $priv = "Delete";
   break;
 }
 
 if (($state == 'Moderated' && !$user->capable($forum['fid'], 'Moderate')) ||
     ($state == 'Deleted' && !$user->capable($forum['fid'], 'Delete')) ||
     ($state == 'OffTopic' && !$user->capable($forum['fid'], 'OffTopic')) ||
-    ($state == 'Active' && !$user->capable($forum['fid'], $astatus))) {
+    ($state == 'Active' && !$user->capable($forum['fid'], $priv))) {
   if ($user->aid != $msg['aid']) {
     echo "You are not allowed to change the state of this message\n";
     exit;
