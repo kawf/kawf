@@ -8,7 +8,7 @@ if (!empty($old_include_path))
 
 ini_set("include_path", $include_path);
 
-require("$config.inc");
+include("$config.inc");
 require("sql.inc");
 require("util.inc");
 require("user.inc");
