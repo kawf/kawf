@@ -24,7 +24,8 @@ if (!$user) {
   if ($user['status'] == 'Create') {
     $aid = $user['aid'];
 
-    $user = AccountUser::find_by_aid((int)$aid);
+    $user = new AccountUser;
+    $user->find_by_aid((int)$aid);
 
     $user->status("Active");
     if (!$user->update())

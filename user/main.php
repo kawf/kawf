@@ -89,7 +89,8 @@ $fscripts = array(
 
 header("Cache-Control: private");
 
-$user = ForumUser::find_by_cookie();
+$user = new ForumUser;
+$user->find_by_cookie();
 
 /* FIXME: This kills performance */
 /*

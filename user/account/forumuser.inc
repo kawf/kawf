@@ -43,13 +43,11 @@ class ForumUser {
     if (!is_int($aid))
       return;
 
-    $this = new ForumUser;
     return $this->find("aid = $aid");
   }
 
   function find_by_email($email)
   {
-    $this = new ForumUser;
     return $this->find("email = '" . addslashes($email) . "'");
   }
 
@@ -57,7 +55,6 @@ class ForumUser {
   {
     global $KawfAccount;
 
-    $this = new ForumUser;
     return $this->find("cookie = '" . addslashes($KawfAccount) . "'");
   }
 
@@ -75,7 +72,7 @@ class ForumUser {
     global $account_host;
     global $SCRIPT_NAME, $PATH_INFO, $SERVER_NAME, $SERVER_PORT, $HTTP_HOST;
 
-    if ($this->aid)
+    if ($this->valid())
       return true;
 
     if (isset($HTTP_HOST) && !empty($HTTP_HOST))
@@ -374,7 +371,7 @@ $cookie_host);
     /* Unique columns */
     static $unique = array("name", "shortname", "email");
 
-    if (!$this->aid)
+    if (!$this->valid())
       return false;
 
     /* Nothing to update, nothing to do */

@@ -17,7 +17,8 @@ $tpl->set_var("PAGE", $page);
 if (isset($email)) {
   $tpl->set_var("EMAIL", $email);
 
-  $user = AccountUser::find_by_email($email);
+  $user = new AccountUser;
+  $user->find_by_email($email);
   if (!$user->valid())
     $tpl->set_var("success", "");
   else {
