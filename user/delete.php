@@ -83,7 +83,7 @@ require_once("ads.inc");
 $ad = ads_view("a4.org,aw_" . $forum['shortname'], "_top");
 $tpl->_set_var("AD", $ad);
 
-if (!isset($forum['opt.Post'])) {
+if (!isset($forum['opt.PostEdit'])) {
   $tpl->set_var(array(
     "image" => "",
     "preview" => "",

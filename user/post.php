@@ -28,6 +28,8 @@ $tpl->set_file(array(
 ));
 
 $tpl->set_block("post", "disabled");
+$tpl->set_block("disabled", "nonewthreads");
+$tpl->set_block("disabled", "noreplies");
 $tpl->set_block("post", "locked");
 $tpl->set_block("post", "error");
 $tpl->set_block("error", "image");
@@ -79,18 +81,36 @@ require_once("ads.inc");
 $ad = ads_view("a4.org,aw_" . $forum['shortname'], "_top");
 $tpl->_set_var("AD", $ad);
 
-if (!isset($forum['opt.Post'])) {
-  $tpl->set_var(array(
-    "locked" => "",
-    "error" => "",
-    "preview" => "",
-    "duplicate" => "",
-    "form" => "",
-    "accept" => "",
-  ));
+if (!isset($tid)) {
+  if (!isset($forum['opt.PostThread'])) {
+    $tpl->set_var(array(
+      "locked" => "",
+      "error" => "",
+      "preview" => "",
+      "duplicate" => "",
+      "form" => "",
+      "accept" => "",
+      "noreplies" => "",
+    ));
 
-  $tpl->pparse("CONTENT", "post");
-  exit;
+    $tpl->pparse("CONTENT", "post");
+    exit;
+  }
+} else {
+  if (!isset($forum['opt.PostReply'])) {
+    $tpl->set_var(array(
+      "locked" => "",
+      "error" => "",
+      "preview" => "",
+      "duplicate" => "",
+      "form" => "",
+      "accept" => "",
+      "nonewthreads" => "",
+    ));
+
+    $tpl->pparse("CONTENT", "post");
+    exit;
+  }
 }
 
 $tpl->set_var("disabled", "");
