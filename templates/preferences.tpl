@@ -77,7 +77,7 @@ body { font-family: verdana, arial, geneva }
   </tr>
   <tr bgcolor="#cccccc">
     <td colspan="2" align="center"><font face="Verdana, Arial, Geneva" size="-1">
-    <p><a href="{PAGE}"><b>Click here to return to the AudiWorld Discussion Forums</a>
+    <p><a href="{PAGE}"><b>Click here to return to the {DOMAIN} Discussion Forums</a>
     </td>
   </tr>
 </table>
