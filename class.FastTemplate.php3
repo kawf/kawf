@@ -196,8 +196,7 @@ class FastTemplate {
 					settype($val,"string");
 				}
 
-				$template = ereg_replace("\{$key}","$val","$template");
-				//$template = str_replace("\{$key}","$val","$template");
+				$template = str_replace("\{$key}","$val","$template");
 			}
 		}
 
