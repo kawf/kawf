@@ -368,7 +368,7 @@ if (!$accepted || isset($preview)) {
 	"url = '" . addslashes($url) . "', " .
 	"urltext = '" . addslashes($urltext) . "', " .
 	"state = '$status' " .
-	"where mid = '" . addslashes($mid) . "'";
+	"where mid = '" . addslashes($mid) . "' and state = 'Active'";
   } else
     $sql = "insert into $mtable " .
 	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, state ) values ( '" . addslashes($mid) . "', '".addslashes($user->aid)."', '".addslashes($pid)."', '".addslashes($tid)."', '".addslashes($name)."', '".addslashes($email)."', NOW(), '" . addslashes($REMOTE_ADDR) . "', '$flagset', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($url)."', '".addslashes($urltext)."', '$status' );";
