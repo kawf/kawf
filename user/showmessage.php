@@ -67,15 +67,9 @@ require_once("ads.inc");
 $ad = ads_view("a4.org," . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
 
-/* FIXME: More ads (forum specific ads) */
-/*
-if ($forum['shortname'] == "a4" || $forum['shortname'] == "performance")
-  ads_view("carreview", "_top");
-*/
-
 if ($user->moderator($forum['fid'])) {
   $tpl->set_var("MSG_AID", $msg['aid']);
-  $tpl->set_var("MSG_CHANGES", preg_replace("/\n/", "<br>\n", $msg['changes']));
+  $tpl->set_var("MSG_CHANGES", nl2br($msg['changes']));
 } else {
   $tpl->set_var("forum_admin", "");
   $tpl->set_var("changes", "");
@@ -109,7 +103,7 @@ if ($msg['pid'] != 0) {
 } else
   $tpl->set_var("parent", "");
 
-$message = preg_replace("/\n/", "<br>\n", $msg['message']);
+$message = nl2br($msg['message']);
 
 if (!empty($msg['url'])) {
   $urlset = 1;
@@ -121,10 +115,8 @@ if (!empty($msg['url'])) {
 
 if (isset($signature)) {
   unset($urlset);
-  $signature = stripspaces($signature);
-  $signature = preg_replace("/\n/", "<br>\n", $signature);
   if (!empty($signature))
-    $message .= "<p>" . $signature . "\n";
+    $message .= "<p>" . nl2br($signature) . "\n";
 }
 
 if (!isset($urlset))

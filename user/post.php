@@ -46,49 +46,6 @@ require_once("ads.inc");
 $ad = ads_view("a4.org," . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
 
-function stripcrap($string)
-{
-  global $no_tags;
-
-  $string = striptag($string, $no_tags);
-  $string = stripspaces($string);
-  $string = ereg_replace("<", "&lt;", $string);
-  $string = ereg_replace(">", "&gt;", $string);
-
-  return $string;
-}
-
-function demoronize($string)
-{
-  /* Remove any and all non-ISO Microsoft extensions */
-  $string = preg_replace("/\x82/", ",", $string);
-  $string = preg_replace("/\x83/", "<em>f</em>", $string);
-  $string = preg_replace("/\x84/", ",,", $string);
-  $string = preg_replace("/\x85/", "...", $string);
-
-  $string = preg_replace("/\x88/", "^", $string);
-  $string = preg_replace("/\x89/", " °/°°", $string);
-
-  $string = preg_replace("/\x8B/", "<", $string);
-  $string = preg_replace("/\x8C/", "Oe", $string);
-
-  $string = preg_replace("/\x91/", "`", $string);
-  $string = preg_replace("/\x92/", "'", $string);
-  $string = preg_replace("/\x93/", "\"", $string);
-  $string = preg_replace("/\x94/", "\"", $string);
-
-  $string = preg_replace("/\x95/", "*", $string);
-  $string = preg_replace("/\x96/", "-", $string);
-  $string = preg_replace("/\x97/", "--", $string);
-  $string = preg_replace("/\x98/", "<sup>~</sup>", $string);
-  $string = preg_replace("/\x99/", "<sup>TM</sup>", $string);
-
-  $string = preg_replace("/\x9B/", ">", $string);
-  $string = preg_replace("/\x9C/", "oe", $string);
-
-  return $string;
-}
-
 /* Strip any tags from the data */
 $message = striptag($message, $standard_tags);
 $message = stripspaces($message);
@@ -109,8 +66,22 @@ else
   $email = "";
 
 $url = stripcrap($url);
+$url = stripspaces($url);
+$url = ereg_replace(" ", "%20", $url);
+
+if (!empty($url) && !eregi("^[a-z]+://", $url))
+  $url = "http://$url";
+
 $urltext = stripcrap($urltext);
+$urltext = stripspaces($urltext);
+$urltext = demoronize($urltext);
+
 $imageurl = stripcrap($imageurl);
+$imageurl = stripspaces($imageurl);
+$imageurl = ereg_replace(" ", "%20", $imageurl);
+
+if (!empty($imageurl) && !eregi("^[a-z]+://", $imageurl))
+  $imageurl = "http://$imageurl";
 
 if (isset($pid)) {
   $index = find_msg_index($pid);
@@ -134,18 +105,6 @@ if (empty($subject)) {
   $subject = substr($subject, 0, 100);
 }
 
-$url = stripspaces($url);
-$imageurl = stripspaces($imageurl);
-
-$url = ereg_replace(" ", "%20", $url);
-$imageurl = ereg_replace(" ", "%20", $imageurl);
-
-if (!empty($url) && !eregi("^[a-z]+://", $url))
-  $url = "http://$url";
-
-if (!empty($imageurl) && !eregi("^[a-z]+://", $imageurl))
-  $imageurl = "http://$imageurl";
-
 if (!empty($imageurl) && !isset($imgpreview))
   $preview = 1;
 
@@ -166,7 +125,7 @@ if (!empty($imageurl))
 else
   $msg_message = "";
 
-$msg_message .= preg_replace("/\n/", "<br>\n", $message);
+$msg_message .= nl2br($message);
 
 if (!empty($url)) {
   if (!empty($urltext))
@@ -175,10 +134,8 @@ if (!empty($url)) {
     $msg_message .= "<ul><li><a href=\"" . $url . "\" target=\"_top\">" . $url . "</a></ul>\n";
 }
 
-if (!empty($user->signature)) {
-  $signature = preg_replace("/\n/", "<br>\n", $user->signature);
-  $msg_message .= "<p>" . $signature . "\n";
-}
+if (!empty($user->signature))
+  $msg_message .= "<p>" . nl2br($user->signature) . "\n";
 
 if (!isset($preview))
   $tpl->set_var("preview", "");

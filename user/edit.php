@@ -72,21 +72,16 @@ require_once("ads.inc");
 $ad = ads_view("a4.org," . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
 
-function stripcrap($string) {
-  $string = striptag($string, $no_tags);
-  $string = stripspaces($string);
-  $string = ereg_replace("<", "&lt;", $string);
-  $string = ereg_replace(">", "&gt;", $string);
-
-  return $string;
-}
-
 /* Sanitize the strings */
 $name = stripcrap($user->name);
 if ($ExposeEmail)
   $email = stripcrap($user->email);
+else
+  $email = "";
 
 $subject = stripcrap($subject);
+$subject = stripspaces($subject);
+$subject = demoronize($subject);
 
 if (empty($subject)) {
   /* Subject is required */
@@ -104,6 +99,7 @@ if (strlen($subject) > 100) {
 /* Strip any tags from the data */
 $message = striptag($message, $standard_tags);
 $message = stripspaces($message);
+$message = demoronize($message);
 
 $url = stripcrap($url);
 $url = stripspaces($url);
@@ -113,6 +109,8 @@ if (!empty($url) && !eregi("^[a-z]+://", $url))
   $url = "http://$url";
 
 $urltext = stripcrap($urltext);
+$urltext = stripspaces($urltext);
+$urltext = demoronize($urltext);
 
 $imageurl = stripcrap($imageurl);
 $imageurl = stripspaces($imageurl);
@@ -141,8 +139,9 @@ if (!empty($imageurl))
 else
   $msg_message = "";
 $msg_message .= nl2br($message);
+
 if (!empty($user->signature))
-  $msg_message .= $user->signature;
+  $msg_message .= "<p>" . nl2br($user->signature) . "\n";
 
 $tpl->set_var(array(
   "MSG_MESSAGE" => $msg_message,

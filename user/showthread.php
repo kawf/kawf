@@ -30,13 +30,6 @@ require_once("ads.inc");
 $ad = ads_view("a4.org," . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
 
-/*
-if ($forum['shortname'] == "a4" || $forum['shortname'] == "performance")
-  ads_view("carreview", "_top");
-if ($forum['shortname'] == "wheel") 
-  echo "<a href=\"mailto:Eddie@Tirerack.com\"><img src=\"/pix/tireracksponsor.gif\" border=\"0\"></a>\n";
-*/
-
 $sql = "select * from f_threads$index where tid = '" . addslashes($tid) . "'";
 $result = mysql_query($sql) or sql_error($sql);
 
@@ -91,7 +84,7 @@ function print_message($msg)
 
   if (isset($user->cap['Moderate'])) {
     $tpl->set_var("MSG_AID", $msg['aid']);
-    $tpl->set_var("MSG_CHANGES", preg_replace("/\n/", "<br>\n", $msg['changes']));
+    $tpl->set_var("MSG_CHANGES", nl2br($msg['changes']));
   } else {
     $tpl->set_var("forum_admin", "");
     $tpl->set_var("changes", "");
@@ -126,7 +119,7 @@ function print_message($msg)
   } else
     $tpl->set_var("parent", "");
 
-  $message = preg_replace("/\n/", "<br>\n", $msg['message']);
+  $message = nl2br($msg['message']);
 
   if (!empty($msg['url'])) {
     if (!empty($msg['urltext']))
@@ -135,10 +128,8 @@ function print_message($msg)
       $message .= "<ul><li><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['url'] . "</a></ul>\n";
   }
 
-  if (isset($signature)) {
-    $signature = preg_replace("/\n/", "<br>\n", $signature);
-    $message .= "<p>" . $signature . "\n";
-  }
+  if (isset($signature))
+    $message .= "<p>" . nl2br($signature) . "\n";
 
   $tpl->set_var("MSG_MESSAGE", $message . "<br><br>\n");
 

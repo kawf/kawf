@@ -65,12 +65,6 @@ require_once("ads.inc");
 $ad = ads_view("a4.org," . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
 
-/* FIXME: More ads (forum specific ads) */
-/*
-if ($forum['shortname'] == "a4" || $forum['shortname'] == "performance")
-  ads_view("carreview", "_top");
-*/
-
 /* Figure out how many total threads the user can see */
 $numthreads = 0;
 
