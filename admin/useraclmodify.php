@@ -32,7 +32,7 @@ if (!isset($aid)) {
   ads_die("", "No aid specified");
 }
 
-page_header("Modify forum '" . $forum['name'] . "'");
+page_header("Modify User ACL $aid");
 
 ?>
 
