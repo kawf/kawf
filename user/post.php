@@ -218,7 +218,7 @@ if (isset($error) || isset($preview)) {
 
   /* Add it into the database */
   /* Check to make sure this isn't a duplicate */
-  $sql = "insert into f_dupposts ( cookie, fid, mid, tstamp ) values ('" . addslashes($postcookie) . "', " . $forum['fid'] . ", $mid, NOW() )";
+  $sql = "insert into f_dupposts ( cookie, fid, tstamp ) values ('" . addslashes($postcookie) . "', " . $forum['fid'] . ", NOW() )";
   $result = mysql_query($sql);
 
   if (!$result) {
@@ -244,6 +244,8 @@ echo "<!-- dup: $mid -->\n";
 
     $newmessage = 1;
 echo "<!-- not dup: $mid -->\n";
+
+    sql_query("update f_dupposts set mid = $mid where postcookie = '" . addslashes($postcookie) . "'");
   }
 
   /* Add the message to the last index */
