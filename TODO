@@ -20,6 +20,7 @@ W jerdfelt	INTERFACE Abstracted selectable interfaces
 -			Rate limit posts (via f_duppost)
 -			Ignore user fearure
 W jerdfelt		Finish pid to pmid conversion
+-			Restrictions on screen names (prevent @audiworld.com, or moderator, etc)
 
 Nice to be done
 ===============
