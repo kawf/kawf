@@ -198,12 +198,6 @@ function print_collapsed($thread, $msg, $count)
     }
   }
 
-  if ($user->valid() && isset($flags['NewStyle']) && $msg['aid'] == $user->aid) {
-    $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
-    if (!$user->moderator($forum['fid']) && $msg['state'] != 'Deleted')
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">delete</a>";
-  }
-
   $string .= "</li>\n";
 
   return $string;
@@ -291,12 +285,6 @@ function print_subject($msg)
       else
         $string .= " <a href=\"/lock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">lm</a>";
     }
-  }
-
-  if ($user->valid() && isset($flags['NewStyle']) && $msg['aid'] == $user->aid) {
-    $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
-    if (!$user->moderator($forum['fid']) && $msg['state'] != 'Deleted')
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">delete</a>";
   }
 
   $string .= "</li>\n";

@@ -25,6 +25,7 @@ $tpl->set_file(array(
   "footer" => "footer.tpl",
 ));
 
+$_page = $page;
 $tpl->set_var("PAGE", $SCRIPT_NAME . $PATH_INFO);
 if (isset($HTTP_HOST) && !empty($HTTP_HOST))
   $_url = $HTTP_HOST;
@@ -47,13 +48,12 @@ $scripts = array(
 
   /* These will all be in the fscripts only soon */
   "post.phtml" => "post.php",
-  "edit.phtml" => "edit.php",
 
   "track.phtml" => "track.php",
   "untrack.phtml" => "untrack.php",
   "markuptodate.phtml" => "markuptodate.php",
 
-  "changestate.phtml" => "changestate.php"
+  "changestate.phtml" => "changestate.php",
 );
 
 /* If you have your own account management routines */
@@ -81,12 +81,13 @@ $fscripts = array(
 
   "post.phtml" => "post.php",
   "edit.phtml" => "edit.php",
+  "delete.phtml" => "delete.php",
 
   "track.phtml" => "track.php",
   "untrack.phtml" => "untrack.php",
   "markuptodate.phtml" => "markuptodate.php",
 
-  "changestate.phtml" => "changestate.php"
+  "changestate.phtml" => "changestate.php",
 );
 
 header("Cache-Control: private");

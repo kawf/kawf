@@ -109,9 +109,6 @@ function print_collapsed($thread, $msg, $count)
     }
   }
 
-  if ($user->valid() && isset($flags['NewStyle']) && $msg['aid'] == $user->aid)
-    $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
-
   $string .= "</li>\n";
 
   return $string;
@@ -200,9 +197,6 @@ function print_subject($msg)
         $string .= " <a href=\"/lock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">lm</a>";
     }
   }
-
-  if ($user->valid() && isset($flags['NewStyle']) && $msg['aid'] == $user->aid)
-    $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
 
   $string .= "</li>\n";
 
@@ -349,7 +343,7 @@ while ($forum = mysql_fetch_array($result)) {
 }
 
 if (!$numshown)
-  $tpl->set_var($table_block, "<font size=\"+1\">No updated threads</font><br>");
+  $tpl->set_var("_block", "<font size=\"+1\">No updated threads</font><br>");
 
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");

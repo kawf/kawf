@@ -14,10 +14,12 @@ $tpl->set_file(array(
 
 $tpl->set_block("message", "forum_admin");
 $tpl->set_block("message", "message_ip");
+$tpl->set_block("message", "owner");
 $tpl->set_block("message", "parent");
 $tpl->set_block("message", "changes");
 
 $tpl->set_var("FORUM_NAME", $forum['name']);
+$tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
 $tpl->parse("FORUM_HEADER", "forum_header");
 
@@ -87,11 +89,19 @@ else
   $tpl->set_var("message_ip", "");
 */
 
+if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid)
+  $tpl->set_var("owner", "");
+
 $tpl->set_var(array(
   "MSG_SUBJECT" => $msg['subject'],
   "MSG_DATE" => $msg['date'],
   "MSG_MID" => $msg['mid'],
 ));
+
+$_page = $tpl->get_var("PAGE");
+unset($tpl->varkeys["PAGE"]);
+unset($tpl->varvals["PAGE"]);
+$tpl->set_var("PAGE", $_page);
 
 if (!empty($msg['email'])) {
   /* Lame spamification */
@@ -266,9 +276,6 @@ function print_subject($msg)
         $string .= " <a href=\"/lock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">lm</a>";
     }
   }
-
-  if ($user->valid() && isset($flags['NewStyle']) && $msg['aid'] == $user->aid)
-    $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
 
   $string .= "</li>\n";
 
