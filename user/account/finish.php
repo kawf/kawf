@@ -50,6 +50,7 @@ if (!$pending) {
       } else
         $success = "create";
 
+      $tpl->set_var("DOMAIN", $domain);
       $user->setcookie();
       break;
     case "ChangeEmail":
