@@ -1,47 +1,40 @@
 <?php
 
-include('config.inc');
+/* First setup the path */
+$include_path = "$srcroot/kawf:$srcroot/kawf/user:$srcroot/php:$srcroot/config";
+$old_include_path = ini_get("include_path");
+if (!empty($old_include_path))
+  $include_path .= ":" . $old_include_path;
 
-require('class.FastTemplate.php3');
+ini_set("include_path", $include_path);
 
-$tpl = new FastTemplate('templates');
+require("$config.inc");
+require("sql.inc");
+require("util.inc");
+require("user.inc");
 
-function err_not_found($description) {
-  global $tpl;
-  global $SCRIPT_NAME, $PATH_INFO, $SERVER_SOFTWARE, $SERVER_NAME, $SERVER_PORT;
+sql_open($database);
 
-  Header("HTTP/1.0 404 Not found");
+$tpl = new Template($template_dir, "comment");
 
-  $tpl->define(array(
-    errnotfound => 'errnotfound.tpl'
-  ));
+$tpl->set_file(array(
+  "header" => "header.tpl",
+  "footer" => "footer.tpl",
+));
 
-  $tpl->assign(DESCRIPTION, $description);
-  $tpl->assign(URL, $SCRIPT_NAME . $PATH_INFO);
-  $tpl->assign(SERVER_SOFTWARE, $SERVER_SOFTWARE);
-  $tpl->assign(SERVER_NAME, $SERVER_NAME);
-  $tpl->assign(SERVER_PORT, $SERVER_PORT);
+$tpl->set_var("PAGE", $SCRIPT_NAME . $PATH_INFO);
+if (isset($HTTP_HOST) && !empty($HTTP_HOST))
+  $_url = $HTTP_HOST;
+else {
+  $_url = $SERVER_NAME;
 
-  $tpl->parse(CONTENT, "errnotfound");
-  $tpl->fastprint(CONTENT);
-
-  exit;
+  if ($SERVER_PORT != 80)
+    $_url .= ":" . $SERVER_PORT;
 }
+$tpl->set_var("URL", $_url . $SCRIPT_NAME . $PATH_INFO);
 
 $scripts = array(
-  "login.phtml" => "login.php",
-  "logout.phtml" => "logout.php",
-  "cookiecheck.phtml" => "cookiecheck.php",
-
-  "createaccount.phtml" => "createaccount.php",
-  "finishreg.phtml" => "finishreg.php",
-  "finishemail.phtml" => "finishemail.php",
-  "forgotpassword.phtml" => "forgotpassword.php",
-  "pending.phtml" => "pending.php",
-
-  "admin.phtml" => "admin.php",
-  "showaccount.phtml" => "showaccount.php",
-  "modifyaccount.phtml" => "modifyaccount.php",
+  "" => "tracking.php",
 
   "preferences.phtml" => "preferences.php",
 
@@ -63,19 +56,41 @@ $fscripts = array(
   "" => "showforum.php"
 );
 
-require('sql.inc');
+require("account.inc");
 
-/* Look up the forums first */
-sql_open_readonly();
+$user = new User(true);
+if (!isset($user) || !isset($user->aid))
+  unset($user);
 
-require('account.inc');
+if (isset($user)) {
+  $sql = "select * from u_forums where aid = " . $user->aid;
+  $result = mysql_query($sql) or sql_error($sql);
+
+  $u = mysql_fetch_array($result);
+  if ($u) {
+    foreach ($u as $type => $value)
+      $user->$type = $value;
+
+    if (!empty($user->capabilities)) {
+      $capabilities = explode(",", $user->capabilities);
+      foreach ($capabilities as $flag)
+        $user->cap[$flag] = true;
+    }
+
+    if (!empty($user->preferences)) {
+      $preferences = explode(",", $user->preferences);
+      foreach ($preferences as $flag)
+        $user->pref[$flag] = true;
+    }
+  }
+}
 
 function find_forum($shortname)
 {
-  global $user, $forum, $indexes, $tthreads, $tthreads_by_tid, $database;
+  global $user, $forum, $indexes, $tthreads, $tthreads_by_tid;
 
-  $sql = "select * from forums where shortname = '" . addslashes($shortname) . "'";
-  $result = mysql_db_query($database, $sql) or sql_error($sql);
+  $sql = "select * from f_forums where shortname = '" . addslashes($shortname) . "'";
+  $result = mysql_query($sql) or sql_error($sql);
 
   if (mysql_num_rows($result))
     $forum = mysql_fetch_array($result);
@@ -83,22 +98,22 @@ function find_forum($shortname)
     return 0;
 
   /* Short circuit it here */
-  if ($forum['version'] == 1) {
+  if (isset($forum['version']) && $forum['version'] == 1) {
     echo "This forum is currently undergoing maintenance, please try back in a couple of minutes\n";
     exit;
   }
 
   /* Grab all of the indexes for the forum */
-  $sql = "select * from indexes order by iid";
-  $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+  $sql = "select * from f_indexes where fid = " . $forum['fid'] . " order by iid";
+  $result = mysql_query($sql) or sql_error($sql);
 
   while ($index = mysql_fetch_array($result))
     $indexes[] = $index;
 
   /* Grab all of the tracking data for the user */
   if (isset($user)) {
-    $sql = "select * from tracking where aid = " . $user['aid'] . " order by tid desc";
-    $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+    $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc";
+    $result = mysql_query($sql) or sql_error($sql);
 
     while ($tthread = mysql_fetch_array($result)) {
       $tthreads[] = $tthread;
@@ -137,80 +152,85 @@ function find_thread_index($tid)
   return -1;
 }
 
-/* Parse out the directory/filename */
-if (!ereg("^/([A-Za-z0-9\.]+)(/(.*))?$", $PATH_INFO, $aregs))
-  err_not_found('Unable to parse directory/filename');
-
-if (empty($aregs[2])) {
-  if (isset($forumname)) {
-    if (!find_forum($forumname)) {
-      echo "No such forum $forumname<br>\n";
-      exit;
-    }
+if (isset($forumname))
+  if (!find_forum($forumname)) {
+    echo "Unable to find forum $forumname<br>\n";
+    exit;
   }
 
-  if (empty($scripts[$aregs[1]])) {
-    /* Check for trailing slash */
-    if (find_forum($aregs[1])) {
+/* Parse out the directory/filename */
+if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
+  if (!isset($scripts[$regs[2]])) {
+    if (find_forum($regs[2])) {
       Header("Location: http://$SERVER_NAME$SCRIPT_NAME$PATH_INFO/");
       exit;
-    }
-    err_not_found('Unknown script ' . $aregs[1]);
+    } else
+      err_not_found("Unknown script " . $regs[2]);
   }
 
-  include($scripts[$aregs[1]]);
-  exit;
-}
-
-if (!find_forum($aregs[1]))
-  err_not_found('Unknown forum ' . $aregs[1]);
-
-/* Parse out the filename */
-/* The . "" is to workaround a bug in PHP4 */
-if (count($aregs) >= 4 && isset($fscripts[$aregs[3] . ""])) {
-  include($fscripts[$aregs[3] . ""]);
-} else if (ereg("^page([0-9]+)\.phtml$", $aregs[3], $fregs)) {
+  include($scripts[$regs[2]]);
+} elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
   if (isset($QUERY_STRING) && !empty($QUERY_STRING))
-    Header("Location: pages/" . $fregs[1] . ".phtml?" . $QUERY_STRING);
+    Header("Location: msgs/" . $regs[2] . ".phtml?" . $QUERY_STRING);
   else
-    Header("Location: pages/" . $fregs[1] . ".phtml");
-} else if (ereg("^pages/([0-9]+)\.phtml$", $aregs[3], $fregs)) {
+    Header("Location: msgs/" . $regs[2] . ".phtml");
+} elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/page([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
+  if (isset($QUERY_STRING) && !empty($QUERY_STRING))
+    Header("Location: pages/" . $regs[2] . ".phtml?" . $QUERY_STRING);
+  else
+    Header("Location: pages/" . $regs[2] . ".phtml");
+} elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/([0-9a-zA-Z_.-]*)$/", $PATH_INFO, $regs)) {
+  if (!find_forum($regs[1]))
+    err_not_found("Unknown forum " . $regs[1]);
+
+  include($fscripts[$regs[2] . ""]);
+} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/pages\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
+  if (!find_forum($regs[1]))
+    err_not_found("Unknown forum " . $regs[1]);
+
   /* Now show that page */
-  $curpage = $fregs[1];
-  include('showforum.php');
-} else if (ereg("^([0-9]+)\.phtml$", $aregs[3], $fregs)) {
-  if (isset($QUERY_STRING) && !empty($QUERY_STRING))
-    Header("Location: msgs/" . $fregs[1] . ".phtml?" . $QUERY_STRING);
-  else
-    Header("Location: msgs/" . $fregs[1] . ".phtml");
-} else if (ereg("^msgs/([0-9]+)\.phtml$", $aregs[3], $fregs)) {
+  $curpage = $regs[2];
+  include("showforum.php");
+} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/msgs\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
+  if (!find_forum($regs[1]))
+    err_not_found("Unknown forum " . $regs[1]);
+
   /* See if the message number is legitimate */
-  $mid = $fregs[1];
+  $mid = $regs[2];
   $index = find_msg_index($mid);
   if ($index >= 0) {
-    $sql = "select mid from messages$index where mid = '" . addslashes($mid) . "'";
-    if (!forum_moderate())
-      $sql .= " and state != 'Deleted'";
-    $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+    $sql = "select mid from f_messages$index where mid = '" . addslashes($mid) . "'";
+    if (!forum_moderate()) {
+      $qual[] .= "state != 'Deleted'";
+      if (isset($user))
+        $qual[] .= "aid = " . $user->aid;
+    }
+
+    if (isset($qual))
+      $sql .= " and ( " . implode(" or ", $qual) . " )";
+    $result = mysql_query($sql) or sql_error($sql);
   }
 
   if (isset($result) && mysql_num_rows($result)) {
-    include('showmessage.php');
+    include("showmessage.php");
   } else
-    err_not_found('Unknown message ' . $mid . ' in forum ' . $forum['shortname']);
-} else if (ereg("^threads/([0-9]+)\.phtml$", $aregs[3], $fregs)) {
+    err_not_found("Unknown message " . $mid . " in forum " . $forum['shortname']. "\n$sql");
+} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/threads\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
+  if (!find_forum($regs[1]))
+    err_not_found("Unknown forum " . $regs[1]);
+
   /* See if the thread number is legitimate */
-  $tid = $fregs[1];
+  $tid = $regs[2];
   $index = find_thread_index($tid);
   if ($index >= 0) {
-    $sql = "select tid from threads$index where tid = '" . addslashes($tid) . "'";
-    $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+    $sql = "select tid from f_threads$index where tid = '" . addslashes($tid) . "'";
+    $result = mysql_query($sql) or sql_error($sql);
   }
 
   if (isset($result) && mysql_num_rows($result)) {
-    include('showthread.php');
+    include("showthread.php");
   } else
-    err_not_found('Unknown thread ' . $tid . ' in forum ' . $forum['shortname']);
+    err_not_found("Unknown thread " . $tid . " in forum " . $forum['shortname']);
 } else
-  err_not_found('Unknown virtual directory ' . $aregs[3]);
+  err_not_found("Unknown path");
 ?>
