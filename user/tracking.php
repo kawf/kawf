@@ -33,12 +33,14 @@ unset($tpl->varkeys["PAGE"]);
 unset($tpl->varvals["PAGE"]);
 $tpl->set_var("PAGE", $_page);
 
-$urlroot = "/ads";
-/* We get our money from ads, make sure it's there */
-require_once("ads.inc");
+if (isset($ad_generic)) {
+  $urlroot = "/ads";
+  /* We get our money from ads, make sure it's there */
+  require_once("ads.inc");
 
-$ad = ads_view("a4.org", "_top");
-$tpl->_set_var("AD", $ad);
+  $ad = ads_view($ad_generic, "_top");
+  $tpl->_set_var("AD", $ad);
+}
 
 $time = time();
 $tpl->set_var("TIME", $time);

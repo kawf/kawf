@@ -32,12 +32,14 @@ if (isset($tthreads[$msg['tid']]) &&
   mysql_query($sql) || sql_warn($sql);
 }
 
-$urlroot = "/ads";
-/* We get our money from ads, make sure it's there */
-require_once("ads.inc");
+if (isset($ad_generic)) {
+  $urlroot = "/ads";
+  /* We get our money from ads, make sure it's there */
+  require_once("ads.inc");
 
-$ad = ads_view("a4.org,aw_" . $forum['shortname'], "_top");
-$tpl->_set_var("AD", $ad);
+  $ad = ads_view("$ad_generic,$ad_base_" . $forum['shortname'], "_top");
+  $tpl->_set_var("AD", $ad);
+}
 
 $index = find_thread_index($tid);
 $sql = "select * from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tid) . "'";

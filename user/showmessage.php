@@ -78,12 +78,14 @@ $options = explode(",", $thread['flags']);
 foreach ($options as $name => $value)
   $thread["flag.$value"] = true;
 
-$urlroot = "/ads";
-/* We get our money from ads, make sure it's there */
-require_once("ads.inc");
+if (isset($ad_generic)) {
+  $urlroot = "/ads";
+  /* We get our money from ads, make sure it's there */
+  require_once("ads.inc");
 
-$ad = ads_view("a4.org,aw_" . $forum['shortname'], "_top");
-$tpl->_set_var("AD", $ad);
+  $ad = ads_view("$ad_generic,${ad_base}_" . $forum['shortname'], "_top");
+  $tpl->_set_var("AD", $ad);
+}
 
 if ($user->capable($forum['fid'], 'Moderate')) {
   $changes = preg_replace("/&/", "&amp;", $msg['changes']);
