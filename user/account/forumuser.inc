@@ -120,9 +120,9 @@ class ForumUser {
   {
     if (isset($this->pref[$name]) != $value) {
       if ($value)
-        unset($this->pref[$name]);
-      else
         $this->pref[$name] = true;
+      else
+        unset($this->pref[$name]);
 
       if (isset($this->pref))
         foreach ($this->pref as $var => $value)
