@@ -32,6 +32,8 @@ $scripts = array(
   "forumdelete.phtml" => "forumdelete.php",
 
   "useracl.phtml" => "useracl.php",
+  "useracladd.phtml" => "useracladd.php",
+  "useraclmodify.phtml" => "useraclmodify.php",
 );
 
 $user = new AdminUser;
