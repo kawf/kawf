@@ -32,7 +32,7 @@ $useraclhash = Array();
 while ($useracl = sql_fetch_array($result)) {
   if (!isset($useraclhash[$useracl['aid']]) || $useraclhash[$useracl['aid']]['capabilities'] != $useracl['capabilities']) {
     $useracl['fids'] = Array();
-    $useracls[] = $useracl;
+    $useracls[] = &$useracl;
     $useraclhash[$useracl['aid']] = &$useracl;
   }
 
