@@ -38,19 +38,19 @@ class ForumUser {
     if (!is_int($aid))
       return;
 
-    User::find("aid = $aid");
+    ForumUser::find("aid = $aid");
   }
 
   function find_by_email($email)
   {
-    User::find("email = '" . addslashes($email) . "'");
+    ForumUser::find("email = '" . addslashes($email) . "'");
   }
 
   function find_by_cookie()
   {
     global $Account;
 
-    User::find("cookie = '" . addslashes($Account) . "'");
+    ForumUser::find("cookie = '" . addslashes($Account) . "'");
   }
 
   /* Returns true if this variable is a valid user */
