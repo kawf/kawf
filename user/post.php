@@ -366,7 +366,7 @@ if (isset($error) || isset($preview)) {
 
     while ($track = mysql_fetch_array($result)) {
       $sql = "select email from accounts where aid = " . $track['aid'];
-      $res2 = mysql_db_query('a4', $sql) or sql_error($sql);
+      $res2 = mysql_db_query($database, $sql) or sql_error($sql);
 
       if (!mysql_num_rows($res2))
         continue;

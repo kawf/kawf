@@ -34,10 +34,10 @@ function find_thread_index($tid)
 
 /* First, delete any pending state older than 30 days */
 $sql = "select * from pending where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 30";
-mysql_db_query('accounts', $sql) or sql_error($sql);
+mysql_db_query($acctdb, $sql) or sql_error($sql);
 
 $sql = "select * from forums order by fid";
-$res1 = mysql_db_query('a4', $sql) or sql_error($sql);
+$res1 = mysql_db_query($database, $sql) or sql_error($sql);
 
 while ($forum = mysql_fetch_array($res1)) {
   echo $forum['shortname'] . "\n";

@@ -112,7 +112,7 @@ srand(microtime());
 do {
   $tracking = rand();
   $sql = "insert into pending ( tracking, aid, cookie, type ) values ( $tracking, $aid, '" . addslashes($cookie) . "', 'NewAccount' )";
-} while (!mysql_db_query('accounts', $sql));
+} while (!mysql_db_query($acctdb, $sql));
 
 $tpl->assign(REMOTE_ADDR, $REMOTE_ADDR);
 
@@ -129,10 +129,10 @@ mailfrom("newaccount-$tracking@" . $emailhost, $email,
 	"From: accounts@" . $emailhost . "\n" . "X-Mailer: PHP/" . phpversion());
 
 $sql = "insert into history ( aid, type, message, date ) values ( $aid, 'Create Account', NULL, NOW() )";
-mysql_db_query('accounts', $sql) or sql_error($sql);
+mysql_db_query($acctdb, $sql) or sql_error($sql);
 
 $sql = "insert into history ( aid, type, message, date ) values ( $aid, 'Sent Mail', '" . addslashes("To: $email\n\n" . $tpl->fetch(LOGGED_EMAIL)) . "', NOW() )";
-mysql_db_query('accounts', $sql) or sql_error($sql);
+mysql_db_query($acctdb, $sql) or sql_error($sql);
 
 $tpl->assign(TRACKING, $tracking);
 

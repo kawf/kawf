@@ -35,7 +35,7 @@ $ulkludge =
   ereg("^Mozilla/[0-9]\.[0-9]+ \(Macintosh; .*", $HTTP_USER_AGENT);
 
 $sql = "select * from forums";
-$result = mysql_db_query('a4', $sql) or sql_error($sql);
+$result = mysql_db_query($database, $sql) or sql_error($sql);
 
 $numshown = 0;
 

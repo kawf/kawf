@@ -65,7 +65,7 @@ if (isset($submit)) {
   if (!empty($password1) && !empty($password2)) {
     if ($password1 == $password2) {
       $sql = "update accounts set password = encrypt('" . addslashes($password1) . "') where aid = '" . addslashes($user['aid']) . "'";
-      mysql_db_query('a4', $sql) or sql_error($sql);
+      mysql_db_query($database, $sql) or sql_error($sql);
 
       $success .= "Password has been updated<p>";
     } else
@@ -86,7 +86,7 @@ if (isset($submit)) {
     }
 
     $sql = "select name from accounts where name = '" . addslashes($name) . "' and aid != " . $user['aid'];
-    $result = mysql_db_query('a4', $sql) or sql_error($sql);
+    $result = mysql_db_query($database, $sql) or sql_error($sql);
 
     if (mysql_num_rows($result) > 0) {
       $error .= "Name '$name' already taken, please choose another<p>\n";
@@ -97,7 +97,7 @@ if (isset($submit)) {
         unset($shortname);
       } else {
         $sql = "select shortname from accounts where shortname = '" . addslashes($shortname) . "' and aid != ". $user['aid'];
-        $result = mysql_db_query('a4', $sql) or sql_error($sql);
+        $result = mysql_db_query($database, $sql) or sql_error($sql);
 
         if (mysql_num_rows($result) > 0) {
           $error .= "Name '$name' is too similar to another name already used, please choose another<p>\n";
@@ -108,7 +108,7 @@ if (isset($submit)) {
 
     if (isset($name) && isset($shortname)) {
       $sql = "update accounts set name = '" . addslashes($name) . "', shortname = '" . addslashes($shortname) . "' where aid = '" . addslashes($user['aid']) . "'";
-      mysql_db_query('a4', $sql) or sql_error($sql);
+      mysql_db_query($database, $sql) or sql_error($sql);
 
       $success .= "Your screen name has now been changed to '$name'<p>\n";
     }
@@ -120,7 +120,7 @@ if (isset($submit)) {
       unset($email);
     } else {
       $sql = "select email from accounts where email = '" . addslashes($email) . "'";
-      $result = mysql_db_query('a4', $sql) or sql_error($sql);
+      $result = mysql_db_query($database, $sql) or sql_error($sql);
 
       if (mysql_num_rows($result) > 0) {
         $error .= "Email '$email' already taken, please choose another<p>\n";
@@ -131,7 +131,7 @@ if (isset($submit)) {
         do {
           $tracking = rand();
           $sql = "insert into pending ( tracking, aid, cookie, type, email, tstamp ) values ( $tracking, " . $user['aid'] . ", '$cookie', 'ChangeEmail', '" . addslashes($email) . "', NOW() )";
-        } while (!mysql_db_query('accounts', $sql));
+        } while (!mysql_db_query($acctdb, $sql));
 
         $logged_message = "To: $email\n\n";
 
@@ -160,7 +160,7 @@ if (isset($submit)) {
 		"From: accounts@audiworld.com\n" . "X-Mailer: PHP/" . phpversion());
 
         $sql = "insert into history ( aid, type, message, date ) values ( " . $user['aid'] . ", 'Sent Mail', '" . addslashes($logged_message) . "', NOW() )";
-        mysql_db_query('accounts', $sql) or sql_error($sql);
+        mysql_db_query($acctdb, $sql) or sql_error($sql);
 
         $success .= "Email has been sent to '$email' with instructions on how to complete the update<p>\n";
       }
@@ -202,7 +202,7 @@ if (isset($submit)) {
   $user['threadsperpage'] = $threadsperpage;
 
   $sql = "update accounts set preferences = '" . addslashes($prefstr)."', signature = '" . addslashes($signature) . "', threadsperpage = '" . addslashes($threadsperpage) . "' where aid = '" . addslashes($user['aid']) . "'";
-  mysql_db_query('a4', $sql) or sql_error($sql);
+  mysql_db_query($database, $sql) or sql_error($sql);
 }
 
 do_option('ShowModerated');

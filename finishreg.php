@@ -21,13 +21,13 @@ $tpl->assign(TITLE, "Finish Registration");
 sql_open_readwrite();
 
 $sql = "select * from pending where cookie = '" . addslashes($cookie) . "'";
-$result = mysql_db_query('accounts', $sql) or sql_error($sql);
+$result = mysql_db_query($acctdb, $sql) or sql_error($sql);
 
 if (mysql_num_rows($result)) {
   $pending = mysql_fetch_array($result);
 
   $sql = "select * from accounts where aid = " . $pending['aid'];
-  $result = mysql_db_query('a4', $sql) or sql_error($sql);
+  $result = mysql_db_query($database, $sql) or sql_error($sql);
 
   if (mysql_num_rows($result)) {
     $user = mysql_fetch_array($result);

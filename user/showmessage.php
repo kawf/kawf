@@ -43,7 +43,7 @@ if (!empty($msg['flags'])) {
 
 if (isset($flags['NewStyle']) && !isset($user['prefs.HideSignatures'])) {
   $sql = "select signature from accounts where aid = " . $msg['aid'];
-  $result = mysql_db_query("a4", $sql) or sql_error($sql);
+  $result = mysql_db_query($database, $sql) or sql_error($sql);
 
   list($signature) = mysql_fetch_row($result);
 }

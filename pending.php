@@ -27,7 +27,7 @@ if (!isset($tracking)) {
 }
 
 $sql = "select * from pending where tracking = '" . addslashes($tracking) . "'";
-$result = mysql_db_query('accounts', $sql) or sql_error($sql);
+$result = mysql_db_query($acctdb, $sql) or sql_error($sql);
 
 if (!mysql_num_rows($result)) {
   $tpl->clear_dynamic('table');
@@ -41,7 +41,7 @@ if (!mysql_num_rows($result)) {
 $pending = mysql_fetch_array($result);
 
 $sql = "select * from history where aid = '" . addslashes($pending['aid']) . "' order by date";
-$result = mysql_db_query('accounts', $sql) or sql_error($sql);
+$result = mysql_db_query($acctdb, $sql) or sql_error($sql);
 
 $i = 0;
 while ($history = mysql_fetch_array($result)) {
