@@ -495,11 +495,13 @@ while ($numshown < $threadsperpage) {
 
     list($count, $messagestr, $state) = display_thread($thread);
 
+/*
     if ($state == 'Deleted')
       $tpl->set_var("CLASS", "drow" . ($numshown % 2));
     else if ($state == 'Moderated')
       $tpl->set_var("CLASS", "mrow" . ($numshown % 2));
     else
+*/
       $tpl->set_var("CLASS", "row" . ($numshown % 2));
 
     if (isset($user)) {
