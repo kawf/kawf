@@ -54,8 +54,8 @@ if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['f
 
   if (!isset($message))
     $message = "";
-  $message = preg_replace("/&lt;/", "<", $message);
-  $message = preg_replace("/&gt;/", ">", $message);
+  // $message = preg_replace("/&lt;/", "<", $message);
+  // $message = preg_replace("/&gt;/", ">", $message);
   $tpl->set_var("MESSAGE", $message);
 
   if (!isset($url))

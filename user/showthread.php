@@ -11,7 +11,7 @@ $tpl->set_file(array(
 
 $tpl->set_block("message", "account_id", "_account_id");
 $tpl->set_block("message", "forum_admin", "_forum_admin");
-$tpl->set_block("forum_admin", "advertiser", "_advertiser");
+$tpl->set_block("message", "advertiser", "_advertiser");
 $tpl->set_block("message", "message_ip", "_message_ip");
 $tpl->set_block("message", "owner", "_owner");
 $tpl->set_block("owner", "statelocked", "_statelocked");
@@ -153,15 +153,15 @@ function print_message($thread, $msg)
     $tpl->set_var("_message_ip", "");
   }
 
-  if ($user->capable($forum['fid'], 'Moderate') && $msg['aid']) {
-    if ($uuser->capable($forum['fid'], 'Advertise'))
-      $tpl->parse("_advertiser", "advertiser");
-    else
-      $tpl->set_var("_advertiser", "");
-
+  if ($user->capable($forum['fid'], 'Moderate') && $msg['aid'])
     $tpl->parse("_forum_admin", "forum_admin");
-  } else
+  else
     $tpl->set_var("_forum_admin", "");
+
+  if ($uuser->capable($forum['fid'], 'Advertise'))
+    $tpl->parse("_advertiser", "advertiser");
+  else
+    $tpl->set_var("_advertiser", "");
 
   if ($msg['aid'])
     $tpl->parse("_account_id", "account_id");

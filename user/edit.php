@@ -38,6 +38,7 @@ $tpl->set_block("edit", "accept");
 
 $tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
+$tpl->set_block("message", "advertiser");
 $tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "owner");
 $tpl->set_block("owner", "delete");
@@ -53,6 +54,7 @@ $errors = array(
 
 $tpl->set_var(array(
   "forum_admin" => "",
+  "advertiser" => "",
   "owner" => "",
   "parent" => "",
   "changes" => "",
