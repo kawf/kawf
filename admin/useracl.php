@@ -36,10 +36,12 @@ while ($useracl = sql_fetch_array($result)) {
     $useraclhash[$useracl['aid']] = $useracl;
   }
 
+  $ua = $useraclhash[$useracl['aid']];
+
   if ($useracl['fid'] == -1)
-    $useraclhash[$useracl['aid']]['fids'][] = "All";
+    $ua['fids'][] = "All";
   else
-    $useraclhash[$useracl['aid']]['fids'][] = $useracl['fid'];
+    $ua['fids'][] = $useracl['fid'];
 }
 
 foreach ($useracls as $useracl) {
