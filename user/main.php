@@ -62,7 +62,7 @@ if (!isset($dont_use_account)) {
     "forgotpassword.phtml" => "account/forgotpassword.php",
 
     "create.phtml" => "account/create.php",
-    "edit.phtml" => "account/edit.php",
+    "acctedit.phtml" => "account/edit.php",
     "finish.phtml" => "account/finish.php",
   );
 
