@@ -22,6 +22,7 @@ $result = sql_query("select * from f_forums");
 <td>fid</td>
 <td>Name</td>
 <td>Shortname</td>
+<td>Options</td>
 </tr>
 
 <?php
@@ -31,6 +32,7 @@ while ($forum = sql_fetch_array($result)) {
   echo "<td><a href=\"forumshow.phtml?fid=" . $forum['fid'] . "\">" . $forum['fid'] . "</a></td>\n";
   echo "<td>" . $forum['name'] . "</td>\n";
   echo "<td>" . $forum['shortname'] . "</td>\n";
+  echo "<td>" . $forum['options'] . "</td>\n";
   echo "</tr>\n";
 
   $count++;
