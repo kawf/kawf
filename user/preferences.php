@@ -88,13 +88,8 @@ if (isset($submit)) {
 
   $user->threadsperpage = $threadsperpage;
 
-  $sql = "update u_forums set preferences = '" . addslashes($prefstr)."', signature = '" . addslashes($signature) . "', threadsperpage = '" . addslashes($threadsperpage) . "' where aid = " . $user->aid;
+  $sql = "update u_users set preferences = '" . addslashes($prefstr)."', signature = '" . addslashes($signature) . "', threadsperpage = '" . addslashes($threadsperpage) . "' where aid = " . $user->aid;
   $result = mysql_query($sql) or sql_error($sql);
-
-  if (!mysql_affected_rows()) {
-    $sql = "insert into u_forums ( aid, preferences, signature, threadsperpage ) values ( $user->aid, '" . addslashes($prefstr)."', '" . addslashes($signature) . "', '" . addslashes($threadsperpage) . "' )";
-    mysql_query($sql);
-  }
 }
 
 do_option('ShowModerated');
