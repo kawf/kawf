@@ -13,6 +13,7 @@ W jerdfelt	INTERFACE Abstracted selectable interfaces
 		Dynamic target replacement (ie always _top for this user, always _new for another one)
 -		Move posts between forums
 -		Merge re-post code into edit somehow
+-		Rate limit posts (via f_duppost)
 
 Nice to be done
 Use PEAR HTML/ITX.php for templates
