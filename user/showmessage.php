@@ -70,15 +70,19 @@ $tpl->set_var("AD", $ad);
 if ($user->moderator($forum['fid'])) {
   $tpl->set_var("MSG_AID", $msg['aid']);
   $tpl->set_var("MSG_CHANGES", nl2br($msg['changes']));
+  $tpl->set_var("MSG_IP", $msg['ip']);
 } else {
   $tpl->set_var("forum_admin", "");
   $tpl->set_var("changes", "");
+  $tpl->set_var("message_ip", "");
 }
 
+/*
 if ($user->valid())
   $tpl->set_var("MSG_IP", $msg['ip']);
 else
   $tpl->set_var("message_ip", "");
+*/
 
 $tpl->set_var(array(
   "MSG_SUBJECT" => $msg['subject'],

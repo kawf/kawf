@@ -85,15 +85,19 @@ function print_message($msg)
   if (isset($user->cap['Moderate'])) {
     $tpl->set_var("MSG_AID", $msg['aid']);
     $tpl->set_var("MSG_CHANGES", nl2br($msg['changes']));
+    $tpl->set_var("MSG_IP", $msg['ip']);
   } else {
     $tpl->set_var("forum_admin", "");
     $tpl->set_var("changes", "");
+    $tpl->set_var("message_ip", "");
   }
 
+/*
   if ($user->valid())
     $tpl->set_var("MSG_IP", $msg['ip']);
   else
     $tpl->set_var("message_ip", "");
+*/
 
   $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
   $tpl->set_var(array(
