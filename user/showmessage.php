@@ -37,10 +37,10 @@ if (!empty($msg['flags'])) {
 }
 
 if (isset($flags['NewStyle']) && !isset($user->pref['HideSignatures'])) {
-  $sql = "select signature from u_users where aid = " . $msg['aid'];
-  $result = mysql_query($sql) or sql_error($sql);
+  $uuser = new ForumUser();
+  $uuser->find_by_aid((int)$msg['aid']);
 
-  list($signature) = mysql_fetch_row($result);
+  $signature = $uuser->signature;
 }
 
 /* Grab some information about the parent (if there is one) */
@@ -262,7 +262,7 @@ function print_subject($msg)
     }
   }
 
-  if (isset($user->aid) && isset($flags['NewStyle']) && $msg['aid'] == $user->aid)
+  if ($user->valid() && isset($flags['NewStyle']) && $msg['aid'] == $user->aid)
     $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
 
   $string .= "</li>\n";
@@ -277,7 +277,7 @@ if (!$ulkludge)
 
 $tpl->set_var("THREAD", $threadmsg);
 
-if (isset($user->aid)) {
+if ($user->valid()) {
   if (isset($tthreads_by_tid[$msg['tid']])) {
     $threadlinks = "<a href=\"/untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
   } else {

@@ -305,8 +305,7 @@ if (isset($error) || isset($preview)) {
       mysql_query($sql) or sql_error($sql);
     }
 
-    $sql = "update u_users set posts = posts + 1 where aid = " . $user->aid;
-    mysql_query($sql);
+    $user->post($forum['fid'], 'Active', 1);
   } else
     echo "<font color=#ff0000>Duplicate message detected, overwriting</font>";
 
@@ -373,16 +372,11 @@ if (isset($error) || isset($preview)) {
     $e_message .= "\n--\naudiworld.com\n";
 
     while ($track = mysql_fetch_array($result)) {
-      $sql = "select email from u_users where aid = " . $track['aid'];
-      $res2 = mysql_query($sql) or sql_error($sql);
+      $uuser = new ForumUser();
+      $uuser->find_by_aid((int)$track['aid']);
 
-      if (!mysql_num_rows($res2))
-        continue;
-
-      list($email) = mysql_fetch_row($res2);
-
-      mailfrom("followup-" . $track['aid'] . "@bounce.audiworld.com", $email,
-	"To: $email\n" . $e_message);
+      mailfrom("followup-" . $track['aid'] . "@bounce.audiworld.com",
+	$uuser->email, "To: $email\n" . $e_message);
     }
   }
 
