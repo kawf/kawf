@@ -30,13 +30,14 @@ $create_thread_table =
   "  primary key (tid)\n" .
   ")";
 
-$create_forums_table =
-  "create table f_forums (\n" .
-  "  fid int not null auto_increment,\n" .
-  "  name varchar(150) not null,\n" .
-  "  shortname varchar(20) not null,\n" .
-  "  primary key (fid)\n" .
-  ")";
+$create_forums_table = "
+  create table f_forums (
+    fid int not null auto_increment,
+    name varchar(150) not null,
+    shortname varchar(20) not null,
+    options set('Read','Post') default ('Read','Post'),
+    primary key (fid)
+  )";
 
 $create_visits_table =
   "create table f_visits (\n" .
@@ -76,7 +77,7 @@ $create_unique_table =
   "  fid int not null,\n" .
   "  type enum('Message','Thread') not null,\n" .
   "  id int not null,\n" .
-  "  primary key (fid,type,id)\n" .
+  "  primary key (fid, type, id)\n" .
   ")";
 
 $create_tracking_table =
@@ -86,7 +87,7 @@ $create_tracking_table =
   "  aid int not null,\n" .
   "  tstamp timestamp,\n" .
   "  options set('SendEmail') not null,\n" .
-  "  key (fid,aid)\n" .
+  "  key (fid, aid)\n" .
   ")";
 
 $create_update_table =
@@ -109,7 +110,7 @@ $create_upostcount_table = "
     fid int not null,
     status enum ('Active','Moderated','Deleted') not null,
     count int not null,
-    unique (aid, fid, status)
+    primary key (aid, fid, status)
   )";
 
 $create_users_table =
