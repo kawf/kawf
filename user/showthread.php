@@ -145,7 +145,7 @@ function print_message($thread, $msg)
   if ($msg['aid'])
     $tpl->parse("_account_id", "account_id");
   else
-    $tpl->parse("_account_id", "");
+    $tpl->set_var("_account_id", "");
 /*
   if ($user->valid())
     $tpl->set_var("MSG_IP", $msg['ip']);
