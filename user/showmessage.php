@@ -116,7 +116,7 @@ if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || (isset($
 else {
   if (isset($flags['StateLocked'])) {
     $tpl->set_var("undelete", "");
-    if ($msg['state'] != 'OffTopic')
+    if ($msg['state'] != 'OffTopic' && $msg['state'] != 'Active')
       $tpl->set_var("delete", "");
   } else {
     $tpl->set_var("statelocked", "");
