@@ -26,9 +26,9 @@ body { font-family: verdana, arial, geneva }
 <!-- BEGIN disabled -->
 <h2>Editting posts on this forum has been temporarily disabled, please try again later</h2><br>
 <!-- END disabled -->
-<!-- BEGIN locked -->
+<!-- BEGIN edit_locked -->
 <h2>This thread is locked. Posts are not allowed to be edited</h2><br>
-<!-- END locked -->
+<!-- END edit_locked -->
 <!-- BEGIN error -->
 <font color="#ff0000">
 <!-- BEGIN image -->
