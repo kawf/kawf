@@ -178,6 +178,11 @@ if (isset($error) || isset($preview)) {
 } else {
   $tpl->clear_dynamic('form');
 
+  if (isset($ExposeEmail))
+    $email = $user['email'];
+  else
+    $email = "";
+
   $flags[] = "NewStyle";
 
   if (empty($message))
