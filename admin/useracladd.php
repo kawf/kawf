@@ -5,20 +5,20 @@ $user->req("ForumAdmin");
 /* If submit is set, shove the data into the database (well, after some */
 /* error checking) */
 if (isset($submit)) {
-  capabilities = Array();
+  $capabilities = Array();
 
   if (isset($Lock))
-    capabilities[] = "Lock";
+    $capabilities[] = "Lock";
   if (isset($Moderate))
-    capabilities[] = "Moderate";
+    $capabilities[] = "Moderate";
   if (isset($Delete))
-    capabilities[] = "Delete";
+    $capabilities[] = "Delete";
   if (isset($OffTopic))
-    capabilities[] = "OffTopic";
+    $capabilities[] = "OffTopic";
   if (isset($Advertise))
-    capabilities[] = "Advertise";
+    $capabilities[] = "Advertise";
 
-  capabilities = join(",", capabilities);
+  $capabilities = join(",", $capabilities);
 
   sql_query("insert into f_moderators " .
 		"( aid, fid, capabilities ) " .

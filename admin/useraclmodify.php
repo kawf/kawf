@@ -8,17 +8,17 @@ if (isset($submit)) {
   $capabilities = Array();
 
   if (isset($Lock))
-    capabilities[] = "Lock";
+    $capabilities[] = "Lock";
   if (isset($Moderate))
-    capabilities[] = "Moderate";
+    $capabilities[] = "Moderate";
   if (isset($Delete))
-    capabilities[] = "Delete";
+    $capabilities[] = "Delete";
   if (isset($OffTopic))
-    capabilities[] = "OffTopic";
+    $capabilities[] = "OffTopic";
   if (isset($Advertise))
-    capabilities[] = "Advertise";
+    $capabilities[] = "Advertise";
 
-  capabilities = join(",", capabilities);
+  $capabilities = join(",", $capabilities);
 
   sql_query("update f_moderators set fid = " . addslashes($fid) . ", capabilities = '" . addslashes($capabilities) . "'");
 
