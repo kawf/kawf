@@ -56,6 +56,7 @@ if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['f
   if (!isset($url))
     $url = "";
   $url = preg_replace("/&/", "&amp;", $url);
+  $url = preg_replace("/\"/", "&quot;", $url);
   $tpl->set_var("URLLINK", $url);
 
   if (!isset($urltext))
@@ -68,6 +69,7 @@ if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['f
   if (!isset($imageurl))
     $imageurl = "";
   $imageurl = preg_replace("/&amp;/", "&", $imageurl);
+  $imageurl = preg_replace("/\"/", "&quot;", $imageurl);
   $tpl->set_var("IMAGEURL", $imageurl);
 
   $tpl->set_var("USER_NAME", $user->name);
