@@ -10,7 +10,7 @@ Must be done
 - ------------- ------- -----------
 W jerdfelt	PEAR	Use PEAR DB.php for DB routines
 W jerdfelt	PEAR	Use PEAR Config.php for config routines
-W jerdfelt	INTERFACE Abstracted selectable interfaces
+W jerdfelt	PEAR	Abstracted selectable interfaces
 -			Better HTML parsing
 			Cleanup API
 			Replace/Add options
@@ -37,7 +37,7 @@ Possibilities
 
 Use PEAR Cache.php for anonymous users
 Use PEAR Mail.php instead of mailfrom
-Use PEAR Image/Remote.php to will width/height info for remote pictures
+Use PEAR Image/Remote.php to grab width/height info for remote pictures
 Use PEAR Benchmark stuff to test out the software
 Use X-Forwarded-For header for more IP information
 Redesign message and thread database layout (too messy now)
