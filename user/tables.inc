@@ -96,4 +96,27 @@ $create_update_table =
   "  mid int not null,\n" .
   "  primary key (fid)\n" .
   ")";
+
+$create_users_table =
+  "create table u_users (\n" .
+  "  aid int not null auto_increment,\n" .
+  "  name varchar(50) not null,\n" .
+  "  shortname varchar(50) not null,\n" .
+  "  email varchar(100) not null,\n" .
+  "  password varchar(50) not null,\n" .
+  "  status enum('Create','Active','Suspended') not null default 'Create',\n" .
+  "  createdate datetime not null,\n" .
+  "  cookie varchar(50) not null,\n" .
+  "  timezone varchar(5) not null,\n" .
+  "  style enum('Classic','Simple','UBB') not null default 'Classic',\n" .
+  "  capabilities set('Moderate','Delete') not null,\n" .
+  "  preferences set('ShowModerated','Collapsed','SecretEmail','FlatThread','AutoTrack','HideSignatures','AutoUpdateTracking','OldestFirst','SortbyActive') not null,\n" .
+  "  signature text not null,\n" .
+  "  threadsperpage int not null,\n" .
+  "  posts int not null,\n" .
+  "  primary key (aid),\n" .
+  "  unique (shortname),\n" .
+  "  unique (email),\n" .
+  "  unique (cookie)\n" .
+  ")";
 ?>
