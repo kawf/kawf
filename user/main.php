@@ -54,6 +54,9 @@ else {
 }
 $tpl->set_var("URL", $_url . $SCRIPT_NAME . $PATH_INFO);
 
+if (isset($domain) && strlen($domain))
+  $tpl->set_var("DOMAIN", $domain);
+
 $scripts = array(
   "" => "index.php",
 
