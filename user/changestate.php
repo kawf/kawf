@@ -20,7 +20,7 @@ sql_query("update f_messages$index set " .
 	"where mid = '" . addslashes($mid) . "'");
 
 /* Update the posting totals for this user */
-$nuser = new User;
+$nuser = new ForumUser;
 $nuser->find_by_aid((int)$msg['aid']);
 
 if ($nuser->valid()) {
