@@ -2,6 +2,11 @@
 
 $user->req();
 
+if ($user->status != 'Active') {
+  echo "You cannot post\n";
+  exit;
+}
+
 /* Check the data to make sure they entered stuff */
 if (!isset($postcookie) || !isset($forum)) {
   /* Hmm, how did this happen? Redirect them back to the main page */
