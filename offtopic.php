@@ -15,6 +15,7 @@ require_once("sql.inc");
 require_once("template.inc");
 require_once("user.inc");
 require_once("textwrap.inc");
+require_once("mailfrom.inc");
 
 $tpl = new Template($template_dir, "comment");
 $tpl->set_file("mail", "mail/offtopic.tpl");
