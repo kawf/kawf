@@ -109,7 +109,7 @@ if (isset($thread) && !isset($forum['opt.PostReply']) && !$user->capable($forum[
   else
     $tpl->set_var("EXPOSEEMAIL", "");
 
-  if ($forum['shortname'] == 'other' || $forum['shortname'] == 'offtopic')
+  if (!isset($forum['opt.OffTopic']))
     $tpl->set_var("offtopic", "");
   else {
     if (isset($preview) || isset($post))
