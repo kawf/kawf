@@ -154,7 +154,7 @@ function print_message($thread, $msg)
   }
 
   if ($user->capable($forum['fid'], 'Moderate') && $msg['aid']) {
-    if (!$uuser->capable($forum['fid'], 'Advertise'))
+    if ($uuser->capable($forum['fid'], 'Advertise'))
       $tpl->parse("_advertiser", "advertiser");
     else
       $tpl->set_var("_advertiser", "");
