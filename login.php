@@ -32,14 +32,14 @@ if (isset($email) && isset($password)) {
       sql_open_readwrite();
 
       /* Create a cookie */
-      $cookie = md5($email . microtime());
+      $cookie = md5($acct['email'] . microtime());
 
       $sql = "update accounts set forumcookie = '$cookie' where email = '" . addslashes($email) . "'";
       mysql_query($sql) or sql_error($sql);
     } else
       $cookie = $acct['forumcookie'];
 
-    header("Location: cookiecheck.phtml?email=$email&page=$page");
+    header("Location: cookiecheck.phtml?email=" . $acct['email'] . "&page=$page");
 
     /* Always delete first */
     setcookie("ForumAccount", "", time() - 60, "$urlroot/", $cookiedom);
