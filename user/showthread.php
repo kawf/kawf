@@ -186,15 +186,13 @@ function print_message($thread, $msg)
       $tpl->parse("_statelocked", "statelocked");
     } else {
       $tpl->set_var("_statelocked", "");
-      if ($msg['state'] == 'Deleted')
+      if ($msg['state'] != 'Deleted') {
         $tpl->set_var("_undelete", "");
-      else
-        $tpl->parse("_undelete", "undelete");
-
-      if ($msg['state'] == 'Active')
-        $tpl->set_var("_delete", "");
-      else
         $tpl->parse("_delete", "delete");
+      } else {
+        $tpl->set_var("_delete", "");
+        $tpl->parse("_undelete", "undelete");
+      }
     }
 
     $tpl->parse("_owner", "owner");

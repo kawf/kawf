@@ -123,7 +123,7 @@ else {
     $tpl->set_var("statelocked", "");
     if ($msg['state'] != 'Deleted')
       $tpl->set_var("undelete", "");
-    if ($msg['state'] != 'Active')
+    else
       $tpl->set_var("delete", "");
   }
 }
