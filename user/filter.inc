@@ -1,5 +1,5 @@
 <?php
-function filter_messages($messages, $tree, $siblings, $path = array())
+function filter_messages(&$messages, $tree, $siblings, $path = array())
 {
   global $user, $forum;
 
@@ -9,20 +9,21 @@ function filter_messages($messages, $tree, $siblings, $path = array())
    * english version:
    *
    * IF
-   *  We're not a forum moderator, and we don't want to see moderated
-   *   messages and the message is moderated
+   *   we don't want to see moderated messages and the message is moderated
+   *   AND
+   *   we don't want to see offtopic messages and the message is offtopic
    *  OR
-   *  We're not a forum moderator, the message is deleted
+   *  We're not a moderator (Delete), the message is deleted or userdeleted
    * AND
-   * The message exists (?)
+   * The message isn't in the path to this leaf
    * AND
    * The message wasn't posted by the user viewing
    *
    * then hide this message and any children
    */
-  $hide = ((!$user->moderator($forum['fid']) && !$user->pref['ShowModerated'] &&
-            $messages[$s]['state'] == 'Moderated') ||
-	   (!$user->moderator($forum['fid']) && $messages[$s]['state'] == 'Deleted')) &&
+  $hide = ((!$user->pref['ShowModerated'] && $messages[$s]['state'] == 'Moderated' &&
+            !$user->pref['ShowOffTopic'] && $messages[$s]['state'] == 'OffTopic') ||
+	   (!$user->capable($forum['fid'], 'Delete') && ($messages[$s]['state'] == 'Deleted' || $messages[$s]['state'] == 'UserDeleted'))) &&
 	    (empty($path) || !isset($path[$messages[$s]['mid']])) &&
 	  $messages[$s]['aid'] != $user->aid;
   if ($hide) {
@@ -33,10 +34,7 @@ function filter_messages($messages, $tree, $siblings, $path = array())
   next($siblings);
 
   while (list(, $s) = each($siblings)) {
-    $messages = filter_messages($messages, $tree, $tree[$messages[$s]['mid']],
-      $path);
+    filter_messages($messages, $tree, $tree[$messages[$s]['mid']], $path);
   }
-
-  return $messages;
 }
 ?>

@@ -39,9 +39,9 @@ function fetch_thread($thread, $vmid = 0)
       $pmid = $messages[$key]['pmid'];
     } while ($pmid);
 
-    $messages = filter_messages($messages, $tree, reset($tree), $path);
+    filter_messages($messages, $tree, reset($tree), $path);
   } else
-    $messages = filter_messages($messages, $tree, reset($tree));
+    filter_messages($messages, $tree, reset($tree));
 
   return array($messages, $tree);
 }

@@ -1,35 +1,35 @@
 <?php
-$create_message_table =
-  "create table f_messages%d (\n" .
-  "  mid int not null auto_increment,\n" .
-  "  pmid int not null,\n" .
-  "  tid int not null,\n" .
-  "  aid int not null,\n" .
-  "  state enum('Active','Moderated','Deleted','OffTopic','UserDeleted') not null default 'Active',\n" .
-  "  flags set('NewStyle','NoText','Picture','Link') not null,\n" .
-  "  name varchar(50) not null,\n" .
-  "  email varchar(50) not null,\n" .
-  "  date datetime not null default '0000-00-00 00:00:00',\n" .
-  "  ip varchar(15) not null default '0.0.0.0',\n" .
-  "  subject text not null,\n" .
-  "  message text not null,\n" .
-  "  url varchar(250) not null,\n" .
-  "  urltext varchar(250) not null,\n" .
-  "  views int not null,\n" .
-  "  changes text not null,\n" .
-  "  primary key (mid),\n" .
-  "  key (tid)\n" .
-  ")";
+$create_message_table = "
+  create table f_messages%d (
+    mid int not null auto_increment,
+    pmid int not null,
+    tid int not null,
+    aid int not null,
+    state enum('Active','Moderated','Deleted','OffTopic','UserDeleted') not null default 'Active',
+    flags set('NewStyle','NoText','Picture','Link') not null,
+    name varchar(50) not null,
+    email varchar(50) not null,
+    date datetime not null default '0000-00-00 00:00:00',
+    ip varchar(15) not null default '0.0.0.0',
+    subject text not null,
+    message text not null,
+    url varchar(250) not null,
+    urltext varchar(250) not null,
+    views int not null,
+    changes text not null,
+    primary key (mid),
+    key (tid)
+  )";
 
-$create_thread_table =
-  "create table f_threads%d (\n" .
-  "  tid int not null auto_increment,\n" .
-  "  mid int not null,\n" .
-  "  replies int not null,\n" .
-  "  flags set('Locked') not null,\n" .
-  "  tstamp datetime not null,\n" .
-  "  primary key (tid)\n" .
-  ")";
+$create_thread_table = "
+  create table f_threads%d (
+    tid int not null auto_increment,
+    mid int not null,
+    replies int not null,
+    flags set('Locked') not null,
+    tstamp datetime not null,
+    primary key (tid)
+  )";
 
 $create_forums_table = "
   create table f_forums (
@@ -40,29 +40,29 @@ $create_forums_table = "
     primary key (fid)
   )";
 
-$create_visits_table =
-  "create table f_visits (\n" .
-  "  ip varchar(20) not null,\n" .
-  "  aid int not null,\n" .
-  "  tstamp timestamp,\n" .
-  "  key (ip),\n" .
-  "  key (aid)\n" .
-  ")";
+$create_visits_table = "
+  create table f_visits (
+    ip varchar(20) not null,
+    aid int not null,
+    tstamp timestamp,
+    key (ip),
+    key (aid)
+  )";
 
-$create_index_table =
-  "create table f_indexes (\n" .
-  "  iid int not null auto_increment,\n" .
-  "  fid int not null,\n" . 
-  "  minmid int not null,\n" .
-  "  maxmid int not null,\n" .
-  "  mintid int not null,\n" .
-  "  maxtid int not null,\n" .
-  "  active int not null,\n" .
-  "  moderated int not null,\n" .
-  "  deleted int not null,\n" .
-  "  primary key (iid),\n" .
-  "  key (fid)\n" .
-  ")";
+$create_index_table = "
+  create table f_indexes (
+    iid int not null auto_increment,
+    fid int not null, 
+    minmid int not null,
+    maxmid int not null,
+    mintid int not null,
+    maxtid int not null,
+    active int not null,
+    moderated int not null,
+    deleted int not null,
+    primary key (iid),
+    key (fid)
+  )";
 
 $create_dupposts_table = "
   create table f_dupposts (
@@ -104,14 +104,15 @@ $create_moderators_table = "
   create table f_moderators (
     aid int not null,
     fid int not null,
-    key (aid)
+    capabilities set('Lock','Moderate','Delete','OffTopic','Advertise') not null,
+    key (aid, fid)
   )";
 
 $create_upostcount_table = "
   create table f_upostcount (
     aid int not null,
     fid int not null,
-    status enum ('Active','Moderated','Deleted') not null,
+    status enum ('Active','Moderated','Deleted','OffTopic','UserDeleted') not null,
     count int not null,
     primary key (aid, fid, status)
   )";
@@ -137,4 +138,14 @@ $create_users_table =
   "  unique (email),\n" .
   "  unique (cookie)\n" .
   ")";
+
+$create_global_messages_table = "
+  create table f_global_messages (
+    gid int not null,
+    subject text not null,
+    url varchar(200) not null,
+    name varchar(50) not null,
+    date datetime not null default '0000-00-00 00:00:00',
+    primary key (gid)
+  )";
 ?>

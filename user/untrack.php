@@ -5,8 +5,10 @@ if (!isset($forum)) {
   exit;
 }
 
-if (!$user->valid())
-  Header("Location: $page");
+if (!$user->valid()) {
+  header("Location: $page");
+  exit;
+}
 
 $sql = "delete from f_tracking where fid = " . $forum['fid'] . " and tid = '" . addslashes($tid) . "' and aid = '" . $user->aid . "'";
 mysql_query($sql) or sql_error($sql);

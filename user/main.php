@@ -51,6 +51,7 @@ $scripts = array(
   "tracking.phtml" => "tracking.php",
 
   "redirect.phtml" => "redirect.php",
+  "gmessage.phtml" => "gmessage.php",
 );
 
 /* If you have your own account management routines */
@@ -79,6 +80,7 @@ $fscripts = array(
   "post.phtml" => "post.php",
   "edit.phtml" => "edit.php",
   "delete.phtml" => "delete.php",
+  "undelete.phtml" => "undelete.php",
 
   "track.phtml" => "track.php",
   "untrack.phtml" => "untrack.php",
@@ -255,7 +257,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
   $index = find_msg_index($mid);
   if ($index >= 0) {
     $sql = "select mid from f_messages$index where mid = '" . addslashes($mid) . "'";
-    if (!$user->moderator($forum['fid'])) {
+    if (!$user->capable($forum['fid'], 'Delete')) {
       $qual[] .= "state != 'Deleted'";
       if ($user->valid())
         $qual[] .= "aid = " . $user->aid;
@@ -288,4 +290,6 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
     err_not_found("Unknown thread " . $tid . " in forum " . $forum['shortname']);
 } else
   err_not_found("Unknown path");
+
+sql_close();
 ?>

@@ -33,6 +33,8 @@ $tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
 $tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "owner");
+$tpl->set_block("owner", "delete");
+$tpl->set_block("owner", "undelete");
 $tpl->set_block("message", "parent");
 $tpl->set_block("message", "changes");
 
@@ -111,7 +113,7 @@ $options = explode(",", $thread['flags']);
 foreach ($options as $name => $value)
   $thread["flag.$value"] = true;
 
-if (isset($thread['flag.Locked']) && !$user->moderator($forum['fid'])) {
+if (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')) {
   $tpl->set_var(array(
     "image" => "",
     "preview" => "",

@@ -8,26 +8,26 @@ if (isset($no)) {
 }
 
 if (isset($yes)) {
-  header("Location: changestate.phtml?state=UserDeleted&mid=$mid&page=$page");
+  header("Location: changestate.phtml?state=Active&mid=$mid&page=$page");
   exit;
 }
 
 /* Check the data to make sure they entered stuff */
 if (!isset($mid) || !isset($forum)) {
   /* Hmm, how did this happen? Redirect them back to the main page */
-  header("Location: http://$SERVER_NAME$SCRIPT_NAME/");
+  Header("Location: http://$SERVER_NAME$SCRIPT_NAME/");
   exit;
 }
 
 require_once("strip.inc");
 
 $tpl->set_file(array(
-  "delete" => "delete.tpl",
+  "undelete" => "undelete.tpl",
   "message" => "message.tpl",
   "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
 ));
 
-$tpl->set_block("delete", "disabled");
+$tpl->set_block("undelete", "disabled");
 
 $tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
@@ -123,5 +123,5 @@ $tpl->set_var(array(
 
 $tpl->parse("PREVIEW", "message");
 
-$tpl->pparse("CONTENT", "delete");
+$tpl->pparse("CONTENT", "undelete");
 ?>

@@ -28,6 +28,8 @@ $tpl->set_block("post", "disabled");
 $tpl->set_block("post", "locked");
 $tpl->set_block("post", "image");
 $tpl->set_block("post", "preview");
+$tpl->set_block("post", "error");
+$tpl->set_block("post", "duplicate");
 $tpl->set_block("post", "form");
 $tpl->set_block("post", "accept");
 
@@ -35,6 +37,8 @@ $tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
 $tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "owner");
+$tpl->set_block("owner", "delete");
+$tpl->set_block("owner", "undelete");
 $tpl->set_block("message", "parent");
 $tpl->set_block("message", "changes");
 
@@ -64,6 +68,8 @@ if (!isset($forum['opt.Post'])) {
     "locked" => "",
     "image" => "",
     "preview" => "",
+    "error" => "",
+    "duplicate" => "",
     "form" => "",
     "accept" => "",
   ));
@@ -85,10 +91,12 @@ if (isset($tid) && $tid) {
   foreach ($options as $name => $value)
     $thread["flag.$value"] = true;
 
-  if (isset($thread['flag.Locked']) && !$user->moderator($forum['fid'])) {
+  if (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')) {
     $tpl->set_var(array(
       "image" => "",
       "preview" => "",
+      "error" => "",
+      "duplicate" => "",
       "form" => "",
       "accept" => "",
     ));
@@ -106,7 +114,6 @@ if (isset($postcookie)) {
   $message = stripspaces($message);
   $message = demoronize($message);
 
-//  $subject = stripcrap($subject);
   $subject = striptag($subject, $subject_tags);
   $subject = stripspaces($subject);
   $subject = demoronize($subject);
@@ -194,6 +201,11 @@ if (isset($postcookie)) {
   if (!empty($user->signature))
     $msg_message .= "<p>" . nl2br($user->signature) . "\n";
 
+  if (isset($OffTopic))
+    $status = "OffTopic";
+  else
+    $status = "Active";
+
   $accepted = !isset($error);
 } else {
   $message = $urltext = $imageurl = "";
@@ -231,12 +243,20 @@ $tpl->set_var(array(
   "MSG_AID" => $user->aid,
 ));
 
+if (isset($error) && !empty($error))
+  $tpl->set_var("ERROR", $error);
+else
+  $tpl->set_var("error", "");
+    
 if (!$accepted || isset($preview)) {
   $action = "post";
 
   require_once("post.inc");
 
-  $tpl->set_var("accept", "");
+  $tpl->set_var(array(
+    "accept" => "",
+    "duplicate" => "",
+  ));
 } else {
   $flags[] = "NewStyle";
 
@@ -293,7 +313,8 @@ if (!$accepted || isset($preview)) {
   if (!isset($pid) && isset($pmid))
     $pid = $pmid;
 
-  if (!isset($newmessage))
+  if (!isset($newmessage)) {
+    $omsg = sql_querya("select * from $mtable where mid = '" . addslashes($mid) ."'");
     $sql = "update $mtable set " .
 	"name = '" . addslashes($name) . "', " .
 	"email = '" . addslashes($email) . "', " .
@@ -303,11 +324,12 @@ if (!$accepted || isset($preview)) {
 	"subject = '" . addslashes($subject) . "', " .
 	"message = '" . addslashes($message) . "', " .
 	"url = '" . addslashes($url) . "', " .
-	"urltext = '" . addslashes($urltext) . "' " .
+	"urltext = '" . addslashes($urltext) . "', " .
+	"state = '$status' " .
 	"where mid = '" . addslashes($mid) . "'";
-  else
+  } else
     $sql = "insert into $mtable " .
-	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext ) values ( '" . addslashes($mid) . "', '".addslashes($user->aid)."', '".addslashes($pid)."', '".addslashes($tid)."', '".addslashes($name)."', '".addslashes($email)."', NOW(), '$REMOTE_ADDR', '$flagset', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($url)."', '".addslashes($urltext)."');";
+	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, state ) values ( '" . addslashes($mid) . "', '".addslashes($user->aid)."', '".addslashes($pid)."', '".addslashes($tid)."', '".addslashes($name)."', '".addslashes($email)."', NOW(), '$REMOTE_ADDR', '$flagset', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($url)."', '".addslashes($urltext)."', '$status' );";
 
   $result = mysql_query($sql) or sql_error($sql);
 
@@ -344,13 +366,18 @@ if (!$accepted || isset($preview)) {
     mysql_query($sql) or sql_error($sql);
 
     if (!$pmid) {
-      $sql = "update f_indexes set active = active + 1 where iid = " . $index['iid'];
+      $sql = "update f_indexes set $status = $status + 1 where iid = " . $index['iid'];
       mysql_query($sql) or sql_error($sql);
     }
 
-    $user->post($forum['fid'], 'Active', 1);
-  } else
-    echo "<font color=#ff0000>Duplicate message detected, overwriting</font>";
+    $user->post($forum['fid'], $status, 1);
+    $tpl->set_var("duplicate", "");
+  } else {
+    $user->post($forum['fid'], $omsg['status'], -1);
+
+    if (!$pmid)
+      sql_query("update f_indexes set " . $omsg['status'] . " = " . $omsg['status'] . " - 1 where iid = " . $index['iid']);
+  }
 
   $sql = "insert into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($mid) . "' )";
   mysql_query($sql);

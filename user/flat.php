@@ -9,15 +9,13 @@ while (list($key) = each($indexes)) {
 
   $nummessages = 0;
   while ($curmid < $nummids) {
-    $sql = "select mid,state from f_messages" . $indexes[$key]['iid'] . " order by mid limit $nummessages,1000;";
+    $sql = "select mid from f_messages" . $indexes[$key]['iid'] . " where state = 'Active' order by mid limit $nummessages,1000;";
     $result = mysql_query($sql) or sql_error($sql);
 
     $curmid += mysql_num_rows($result);
 
-    while (list($mid,$state) = mysql_fetch_row($result)) {
+    while (list($mid) = mysql_fetch_row($result)) {
       $nummessages++;
-      if ($state == 'Deleted' || $state == 'Moderated')
-        continue;
 ?>
 <a href="/<?php echo $forum['shortname'] . "/msgs/" . $mid; ?>.phtml">&nbsp;</a><br>
 <?php

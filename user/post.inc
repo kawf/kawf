@@ -10,7 +10,7 @@ $tpl->set_block("postform", "acct");
 $tpl->set_block("postform", "noacct");
 $tpl->set_block("postform", "locked");
 
-if (isset($thread) && isset($thread['flag.Locked']) && !$user->moderator($forum['fid'])) {
+if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')) {
   $tpl->set_var("acct", "");
   $tpl->set_var("noacct", "");
 } else if (isset($user->aid)) {

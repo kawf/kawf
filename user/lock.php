@@ -4,10 +4,12 @@ if (!isset($forum)) {
   exit;
 }
 
-if (!$user->valid())
-  Header("Location: $page");
+if (!$user->valid()) {
+  header("Location: $page");
+  exit;
+}
 
-if (!$user->moderator($forum['fid'])) {
+if (!$user->capable($forum['fid'], 'Lock')) {
   echo "You are not allowed to lock this thread\n";
   exit;
 }
@@ -40,5 +42,5 @@ sql_query("update f_messages$index set " .
         "changes = CONCAT(changes, 'Locked by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), '\n') " .
         "where mid = '" . addslashes($thread['mid']) . "'");
 
-Header("Location: $page");
+header("Location: $page");
 ?>

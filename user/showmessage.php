@@ -1,5 +1,6 @@
 <?php
 
+require_once("printsubject.inc");
 require_once("listthread.inc");
 require_once("thread.inc");
 require_once("filter.inc");
@@ -13,8 +14,11 @@ $tpl->set_file(array(
 
 $tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
+$tpl->set_block("forum_admin", "advertiser");
 $tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "owner");
+$tpl->set_block("owner", "delete");
+$tpl->set_block("owner", "undelete");
 $tpl->set_block("message", "parent");
 $tpl->set_block("message", "changes");
 
@@ -41,12 +45,8 @@ if (!empty($msg['flags'])) {
     $flags[$flag] = true;
 }
 
-if (isset($flags['NewStyle']) && !isset($user->pref['HideSignatures'])) {
-  $uuser = new ForumUser;
-  $uuser->find_by_aid((int)$msg['aid']);
-
-  $signature = $uuser->signature;
-}
+$uuser = new ForumUser;
+$uuser->find_by_aid((int)$msg['aid']);
 
 /* Grab some information about the parent (if there is one) */
 if (!isset($msg['pmid']))
@@ -84,7 +84,7 @@ require_once("ads.inc");
 $ad = ads_view("a4.org,aw_" . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
 
-if ($user->moderator($forum['fid'])) {
+if ($user->capable($forum['fid'], 'Moderate')) {
   $changes = preg_replace("/&/", "&amp;", $msg['changes']);
   $changes = preg_replace("/</", "&lt;", $changes);
   $changes = preg_replace("/>/", "&gt;", $changes);
@@ -95,8 +95,10 @@ if ($user->moderator($forum['fid'])) {
   $tpl->set_var("message_ip", "");
 }
 
-if (!$user->moderator($forum['fid']) || !$msg['aid'])
+if (!$user->capable($forum['fid'], 'Moderate') || !$msg['aid'])
   $tpl->set_var("forum_admin", "");
+else if (!$uuser->capable($forum['fid'], 'Advertise'))
+  $tpl->set_var("advertiser", "");
 
 if (!$msg['aid'])
   $tpl->set_var("account_id", "");
@@ -108,8 +110,14 @@ else
   $tpl->set_var("message_ip", "");
 */
 
-if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || (isset($thread['flag.Locked']) && !$user->moderator($forum['fid'])))
+if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')))
   $tpl->set_var("owner", "");
+else {
+  if ($msg['state'] != 'UserDeleted')
+    $tpl->set_var("undelete", "");
+  if ($msg['state'] != 'Active')
+    $tpl->set_var("delete", "");
+}
 
 $tpl->set_var(array(
   "MSG_SUBJECT" => $msg['subject'],
@@ -150,10 +158,11 @@ if (!empty($msg['url'])) {
     $message .= "<ul><li><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['url'] . "</a></ul>\n";
 }
 
-if (isset($signature)) {
+if (isset($flags['NewStyle']) && !isset($user->pref['HideSignatures']) &&
+   isset($uuser->signature)) {
   unset($urlset);
-  if (!empty($signature))
-    $message .= "<p>" . nl2br($signature) . "\n";
+  if (!empty($uuser->signature))
+    $message .= "<p>" . nl2br($uuser->signature) . "\n";
 }
 
 if (!isset($urlset))
@@ -162,103 +171,6 @@ if (!isset($urlset))
 $tpl->set_var("MSG_MESSAGE", $message . "<br>\n");
 
 list($messages, $tree) = fetch_thread($thread, $msg['mid']);
-
-function print_subject($thread, $msg)
-{
-  global $vmid, $user, $tthreads_by_tid, $forum, $tpl;
-
-  if (!empty($msg['flags'])) {
-    $flagexp = explode(",", $msg['flags']);
-    while (list(,$flag) = each($flagexp))
-      $flags[$flag] = true;
-  }
-
-  $string = "<li>";
-
-  $new = (isset($tthreads_by_tid[$msg['tid']]) &&
-      $tthreads_by_tid[$msg['tid']]['unixtime'] < $msg['unixtime']);
-
-  if ($new)
-    $string .= "<i><b>";
-  if ($vmid == $msg['mid'])
-    $string .= "<font color=\"#ff0000\">" . $msg['subject'] . "</font>";
-  else {
-    if (isset($user->pref['FlatThread']))
-      $string .= "<a href=\"/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
-    else
-      $string .= "<a href=\"/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
-  }
-
-  if ($new)
-    $string .= "</b></i>";
-
-  if (isset($flags['NoText'])) {
-    if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/nt.gif\">";
-    else
-      $string .= " (nt)";
-  }
-
-  if (isset($flags['Picture'])) {
-    if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/pic.gif\">";
-    else
-      $string .= " (pic)";
-  }
-
-  if (isset($flags['Link'])) {
-    if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/url.gif\">";
-    else
-      $string .= " (link)";
-  }
-
-  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<font size=-2><i>".$msg['date']."</i>";
-
-  if ($msg['unixtime'] > 968889231)
-    $string .= " (" . $msg['views'] . " view" . ($msg['views'] == 1 ? "" : "s") . ")";
-
-  $string .= "</font>";
-
-  if (isset($thread['flag.Locked']) && !$msg['pmid']) {
-    if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/lock.gif\">";
-    else
-      $string .= " (locked)";
-  }
-
-  if ($msg['state'] != "Active")
-    $string .= " (" . $msg['state'] . ")";
-
-  $page = $tpl->get_var("PAGE");
-
-  if ($user->moderator($forum['fid'])) {
-    switch ($msg['state']) {
-    case "Moderated":
-      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Active&mid=" . $msg['mid'] . "\">um</a>";
-      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Deleted&mid=" . $msg['mid'] . "\">dm</a>";
-      break;
-    case "Deleted":
-      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Active&mid=" . $msg['mid'] . "\">ud</a>";
-      break;
-    case "Active":
-      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Moderated&mid=" . $msg['mid'] . "\">mm</a>";
-      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Deleted&mid=" . $msg['mid'] . "\">dm</a>";
-      break;
-    }
-
-    if (!$msg['pmid']) {
-      if (isset($thread['flag.Locked']))
-        $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?tid=" . $msg['tid'] . "&page=$page\">ul</a>";
-      else
-        $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?tid=" . $msg['tid'] . "&page=$page\">lt</a>";
-    }
-  }
-
-  $string .= "</li>\n";
-
-  return $string;
-}
 
 $vmid = $mid;
 

@@ -4,8 +4,10 @@ if (!isset($forum)) {
   exit;
 }
 
-if (!$user->valid())
-  Header("Location: $page");
+if (!$user->valid()) {
+  header("Location: $page");
+  exit;
+}
 
 $index = find_thread_index($tid);
 if ($index < 0) {

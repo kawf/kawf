@@ -11,8 +11,11 @@ $tpl->set_file(array(
 
 $tpl->set_block("message", "account_id", "_account_id");
 $tpl->set_block("message", "forum_admin", "_forum_admin");
+$tpl->set_block("forum_admin", "advertiser", "_advertiser");
 $tpl->set_block("message", "message_ip", "_message_ip");
 $tpl->set_block("message", "owner", "_owner");
+$tpl->set_block("owner", "delete", "_delete");
+$tpl->set_block("owner", "undelete", "_undelete");
 $tpl->set_block("message", "parent", "_parent");
 $tpl->set_block("message", "changes", "_changes");
 
@@ -82,7 +85,7 @@ do {
 } while ($pmid);
 */
 
-$messages = filter_messages($messages, $tree, reset($tree));
+filter_messages($messages, $tree, reset($tree));
 
 function print_message($thread, $msg)
 {
@@ -123,7 +126,7 @@ function print_message($thread, $msg)
 
   $tpl->set_var("MSG_MESSAGE", $message . "<br><br>\n");
 
-  if ($user->moderator($forum['fid'])) {
+  if ($user->capable($forum['fid'], 'Moderate')) {
     $tpl->set_var("MSG_AID", $msg['aid']);
     $changes = preg_replace("/&/", "&amp;", $msg['changes']);
     $changes = preg_replace("/</", "&lt;", $changes);
@@ -137,9 +140,13 @@ function print_message($thread, $msg)
     $tpl->set_var("_message_ip", "");
   }
 
-  if ($user->moderator($forum['fid']) && $msg['aid'])
+  if ($user->capable($forum['fid'], 'Moderate') && $msg['aid']) {
+    if (!$uuser->capable($forum['fid'], 'Advertise'))
+      $tpl->parse("_advertiser", "advertiser");
+    else
+      $tpl->set_var("_advertiser", "");
     $tpl->parse("_forum_admin", "forum_admin");
-  else
+  } else
     $tpl->set_var("_forum_admin", "");
 
   if ($msg['aid'])
@@ -153,10 +160,16 @@ function print_message($thread, $msg)
     $tpl->set_var("message_ip", "");
 */
 
-  if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || (isset($thread['flag.Locked']) && !$user->moderator($forum['fid'])))
+  if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')))
     $tpl->set_var("_owner", "");
-  else
+  else {
+    if ($msg['state'] != 'UserDeleted')
+      $tpl->set_var("undelete", "");
+    if ($msg['state'] != 'Active')
+      $tpl->set_var("delete", "");
+
     $tpl->parse("_owner", "owner");
+  }
 
   $tpl->parse("MESSAGE", "message");
 
