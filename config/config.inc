@@ -1,6 +1,7 @@
 <?php
 $msgsperindex = 10000;
 $database = 'a4';
+$acctdb = 'database';
 $emailhost = "audiworld.com";
 $urlhost = "www.audiworld.com";
 $cookiedom = "www.audiworld.com";
