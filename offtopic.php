@@ -12,6 +12,7 @@ ini_set("include_path", $include_path);
 
 require_once("$config.inc");
 require_once("sql.inc");
+require_once("template.inc");
 
 $tpl = new Template($template_dir, "comment");
 $tpl->set_file("mail", "mail/offtopic.tpl");
