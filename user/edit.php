@@ -9,7 +9,6 @@ if (!isset($mid) || !isset($forum)) {
   exit;
 }
 
-require("textwrap.inc");
 require("strip.inc");
 
 $tpl->set_file(array(
