@@ -34,8 +34,6 @@ $tpl->set_var(array(
   "changes" => "",
 ));
 
-$tpl->set_var("TITLE", "Message Posting");
-
 $tpl->parse("FORUM_HEADER", "forum_header");
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");

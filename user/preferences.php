@@ -13,8 +13,6 @@ $tpl->set_file(array(
 $tpl->set_block("preferences", "error");
 $tpl->set_block("preferences", "signature");
 
-$tpl->set_var("TITLE", "Preferences");
-
 $success = "";
 $error = "";
 
