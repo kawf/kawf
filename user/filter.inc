@@ -1,13 +1,30 @@
 <?php
 function filter_messages($messages, $tree, $siblings, $path = array())
 {
-  global $user, $_foo;
+  global $user;
 
   $s = reset($siblings);
-  $hide = ((!forum_moderate() && !$user['prefs.ShowModerated'] &&
+  /*
+   * Hiding portions of the tree needs some tricky logic, so here's the
+   * english version:
+   *
+   * IF
+   *  We're not a forum moderator, and we don't want to see moderated
+   *   messages and the message is moderated
+   *  OR
+   *  We're not a forum moderator, the message is deleted
+   * AND
+   * The message exists (?)
+   * AND
+   * The message wasn't posted by the user viewing
+   *
+   * then hide this message and any children
+   */
+  $hide = ((!forum_moderate() && !$user->pref['ShowModerated'] &&
             $messages[$s]['state'] == 'Moderated') ||
-	  (!forum_moderate() && $messages[$s]['state'] == 'Deleted')) &&
-	   (empty($path) || !isset($path[$messages[$s]['mid']]));
+	   (!forum_moderate() && $messages[$s]['state'] == 'Deleted')) &&
+	    (empty($path) || !isset($path[$messages[$s]['mid']])) &&
+	  $messages[$s]['aid'] != $user->aid;
   if ($hide) {
     unset($messages[$s]);
     return $messages;
