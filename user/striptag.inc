@@ -1,9 +1,4 @@
 <?php
-/*
-$no_tags = array(
-);
-*/
-
 $standard_tags = array(
   array("a href=.*", "/a"),
   array("img src=.*"),
@@ -25,7 +20,7 @@ function stripspaces($string)
   /* Beginning */
   if (strlen($string) > 0) {
     $c = substr($string, 0, 1);
-    while (($c == " " || $c == "\n") && strlen($string) > 0) {
+    while (($c == " " || $c == "\n" || $c  == "\r") && strlen($string) > 0) {
       $string = substr($string, 1);
       $c = substr($string, 0, 1);
     }
@@ -34,7 +29,7 @@ function stripspaces($string)
   /* End */
   if (strlen($string) > 0) {
     $c = substr($string, -1);
-    while (($c == " " || $c == "\n") && strlen($string) > 0) {
+    while (($c == " " || $c == "\n" || $c == "\r") && strlen($string) > 0) {
       $string = substr($string, 0, -1);
       $c = substr($string, -1);
     }
@@ -43,7 +38,8 @@ function stripspaces($string)
   return $string;
 }
 
-function striptag($Message, $AllowableHTML) {
+function striptag($Message, $AllowableHTML)
+{
 # Each element in the AllowableHTML array is the tag body, without the <>
 # (eg; '/i' for the </I> tag), and case is irrelevant. You may include
 # Posix regexps in the tags. For example, you can use the '.*' (match 0 or

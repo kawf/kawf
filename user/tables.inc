@@ -6,7 +6,7 @@ $create_message_table =
   "  tid int not null,\n" .
   "  aid int not null,\n" .
   "  state enum('Active','Moderated','Deleted') not null default 'Active',\n" .
-  "  flags set('NoText','Picture','Link','Locked'),\n" .
+  "  flags set('NewStyle','NoText','Picture','Link','Locked'),\n" .
   "  name varchar(50),\n" .
   "  email varchar(50),\n" .
   "  date datetime not null default '0000-00-00 00:00:00',\n" .

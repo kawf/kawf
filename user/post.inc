@@ -68,16 +68,18 @@ if (isset($user)) {
   if (isset($preview) || isset($post))
     $checked = isset($TrackThread);
   else
-    $checked = isset($user['prefs.AutoTrack']);
+    $checked = isset($user['prefs.AutoTrack']) ||
+               (isset($tid) && isset($tthreads_by_tid[$tid]));
   if ($checked)
     $tpl->assign(TRACKTHREAD, ' checked');
   else
     $tpl->assign(TRACKTHREAD, '');
 
-  $tpl->assign(DIRECTORY, $directory);
+  $tpl->assign(URLROOT, $urlroot);
+  $tpl->assign(ACTION, $action);
   $tpl->clear_dynamic('noacct');
 } else
   $tpl->clear_dynamic('acct');
 
-$tpl->parse(POST, 'postform');
+$tpl->parse(FORM, 'postform');
 ?>

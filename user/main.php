@@ -73,7 +73,7 @@ function find_forum($shortname)
   global $user, $forum, $indexes, $tthreads, $tthreads_by_tid;
 
   $sql = "select * from forums where shortname = '" . addslashes($shortname) . "'";
-  $result = mysql_query($sql) or sql_error($sql);
+  $result = mysql_db_query('a4', $sql) or sql_error($sql);
 
   if (mysql_num_rows($result))
     $forum = mysql_fetch_array($result);
@@ -95,16 +95,16 @@ function find_forum($shortname)
 
   /* Grab all of the tracking data for the user */
   if (isset($user)) {
-    $sql = "select * from tracking where aid = '" . $user['aid'] . "' order by tid desc";
+    $sql = "select * from tracking where aid = " . $user['aid'] . " order by tid desc";
     $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 
-    while ($tthread = mysql_fetch_array($result))
+    while ($tthread = mysql_fetch_array($result)) {
       $tthreads[] = $tthread;
-
-    if (isset($tthreads)) {
-      reset($tthreads);
-      while (list($key) = each($tthreads))
-        $tthreads_by_tid[$tthreads[$key]['tid']] = $tthreads[$key];
+      if (isset($tthreads_by_tid[$tthread['tid']])) {
+        if ($tthread['tstamp'] > $tthreads_by_tid[$tthread['tid']]['tstamp'])
+          $tthreads_by_tid[$tthread['tid']] = $tthread;
+      } else
+        $tthreads_by_tid[$tthread['tid']] = $tthread;
     }
   }
 

@@ -150,11 +150,6 @@ function print_subjects($msg)
 {
   global $vmid, $user, $tthreads, $forum, $furlroot, $urlroot;
 
-  if (get_magic_quotes_gpc()) {
-    $msg['name'] = stripslashes($msg['name']);
-    $msg['subject'] = stripslashes($msg['subject']);
-  }
-
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
     while (list(,$flag) = each($flagexp))
@@ -250,7 +245,7 @@ if (!$ulkludge)
 
 $tpl->assign(THREAD, $threadmsg);
 
-$directory = '../../';
+$action = "post";
 
 if (!ereg("^[Rr][Ee]:", $msg['subject'], $sregs))
   $subject = "Re: " . $msg['subject'];

@@ -25,10 +25,14 @@ $tpl->define(array(
   footer => 'footer.tpl',
   edit => 'edit.tpl',
   postaccept => 'postaccept.tpl',
-  preview => 'preview.tpl',
+  previewa => 'preview.tpl',
   postform => 'postform.tpl',
   forum_header => 'forum/' . $forum['shortname'] . '.tpl'
 ));
+
+$tpl->define_dynamic('preview', 'edit');
+$tpl->define_dynamic('form', 'edit');
+$tpl->define_dynamic('accept', 'edit');
 
 $tpl->assign(TITLE, "Message Editting");
 
@@ -68,11 +72,15 @@ add_ad();
 */
 
 /* If magic quotes are on, strip the slashes */
+/*
 if (get_magic_quotes_gpc()) {
+*/
   $subject = stripslashes($subject);
   $message = stripslashes($message);
   $urltext = stripslashes($urltext);
+/*
 }
+*/
 
 function stripcrap($string) {
   $string = striptag($string, $no_tags);
@@ -154,22 +162,23 @@ $tpl->assign(MSG_URL, $url);
 $tpl->assign(MSG_URLTEXT, $urltext);
 $tpl->assign(MSG_IMAGEURL, $imageurl);
 
-if (isset($preview)) {
-  if (isset($imageurl) && !empty($imageurl))
-    $message = "<center><img src=\"$imageurl\"></center><p>";
+if (!isset($preview))
+  $tpl->clear_dynamic('preview');
 
-  $tpl->parse(PREVIEW, 'preview');
-} else
-  $tpl->assign(PREVIEW, '');
+if (isset($imageurl) && !empty($imageurl))
+  $message = "<center><img src=\"$imageurl\"></center><p>";
+$tpl->parse(PREVIEW, 'previewa');
 
 if (isset($error) || isset($preview)) {
   $incfrompost = 1;
-  $action = $PHP_SELF;
-
-  $directory = '';
+  $action = "edit";
 
   include('post.inc');
+
+  $tpl->clear_dynamic('accept');
 } else {
+  $tpl->clear_dynamic('form');
+
   $flags[] = "NewStyle";
 
   if (empty($message))
@@ -195,7 +204,10 @@ if (isset($error) || isset($preview)) {
 
   $tpl->assign(ACCEPT, "Message Updated");
 
-  $tpl->parse(POST, 'postaccept');
+  $tpl->assign(FORUM_SHORTNAME, $forum['shortname']);
+  $tpl->assign(MID, $mid);
+
+  $tpl->parse(FORM, 'postaccept');
 }
 
 $tpl->parse(CONTENT, 'edit');

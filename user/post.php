@@ -25,10 +25,14 @@ $tpl->define(array(
   footer => 'footer.tpl',
   post => 'post.tpl',
   postaccept => 'postaccept.tpl',
-  preview => 'preview.tpl',
+  previewa => 'preview.tpl',
   postform => 'postform.tpl',
   forum_header => 'forum/' . $forum['shortname'] . '.tpl'
 ));
+
+$tpl->define_dynamic('preview', 'post');
+$tpl->define_dynamic('form', 'post');
+$tpl->define_dynamic('accept', 'post');
 
 $tpl->assign(TITLE, "Message Posting");
 
@@ -60,7 +64,10 @@ if (get_magic_quotes_gpc()) {
 }
 */
 
-function stripcrap($string) {
+function stripcrap($string)
+{
+  global $no_tags;
+
   $string = striptag($string, $no_tags);
   $string = stripspaces($string);
   $string = ereg_replace("<", "&lt;", $string);
@@ -69,9 +76,41 @@ function stripcrap($string) {
   return $string;
 }
 
+function demoronize($string)
+{
+  /* Remove any and all non-ISO Microsoft extensions */
+  $string = preg_replace("/\x82/", ",", $string);
+  $string = preg_replace("/\x83/", "<em>f</em>", $string);
+  $string = preg_replace("/\x84/", ",,", $string);
+  $string = preg_replace("/\x85/", "...", $string);
+
+  $string = preg_replace("/\x88/", "^", $string);
+  $string = preg_replace("/\x89/", " °/°°", $string);
+
+  $string = preg_replace("/\x8B/", "<", $string);
+  $string = preg_replace("/\x8C/", "Oe", $string);
+
+  $string = preg_replace("/\x91/", "`", $string);
+  $string = preg_replace("/\x92/", "'", $string);
+  $string = preg_replace("/\x93/", "\"", $string);
+  $string = preg_replace("/\x94/", "\"", $string);
+
+  $string = preg_replace("/\x95/", "*", $string);
+  $string = preg_replace("/\x96/", "-", $string);
+  $string = preg_replace("/\x97/", "--", $string);
+  $string = preg_replace("/\x98/", "<sup>~</sup>", $string);
+  $string = preg_replace("/\x99/", "<sup>TM</sup>", $string);
+
+  $string = preg_replace("/\x9B/", ">", $string);
+  $string = preg_replace("/\x9C/", "oe", $string);
+
+  return $string;
+}
+
 /* Strip any tags from the data */
 $message = striptag($message, $standard_tags);
 $message = stripspaces($message);
+$message = demoronize($message);
 
 /* Sanitize the strings */
 $name = stripcrap($user['name']);
@@ -79,6 +118,7 @@ if (!empty($exposeemail))
   $email = stripcrap($user['email']);
 
 $subject = stripcrap($subject);
+$subject = demoronize($subject);
 $url = stripcrap($url);
 $urltext = stripcrap($urltext);
 $imageurl = stripcrap($imageurl);
@@ -146,21 +186,21 @@ $tpl->assign(MSG_URL, $url);
 $tpl->assign(MSG_URLTEXT, $urltext);
 $tpl->assign(MSG_IMAGEURL, $imageurl);
 
-if (isset($preview)) {
-  if (isset($imageurl) && !empty($imageurl))
-    $message = "<center><img src=\"$imageurl\"></center><p>" . $message;
+if (!isset($preview))
+  $tpl->clear_dynamic('preview');
 
-  $tpl->parse(PREVIEW, 'preview');
-} else
-  $tpl->assign(PREVIEW, '');
+if (isset($imageurl) && !empty($imageurl))
+  $message = "<center><img src=\"$imageurl\"></center><p>" . $message;
+
+$tpl->parse(PREVIEW, 'previewa');
 
 if (isset($error) || isset($preview)) {
   $incfrompost = 1;
-  $action = $urlroot . "/post.phtml";
-
-  $directory = '';
+  $action = "post";
 
   include('post.inc');
+
+  $tpl->clear_dynamic('accept');
 } else {
   $flags[] = "NewStyle";
 
@@ -174,6 +214,7 @@ if (isset($error) || isset($preview)) {
     $flags[] = "Picture";
 
   $flagset = implode(",", $flags);
+echo "<!-- flagset: $flagset -->\n";
 
   if (!empty($imageurl))
     $message = "<center><img src=\"$imageurl\"></center><p>" . $message;
@@ -336,7 +377,9 @@ if (isset($error) || isset($preview)) {
   $tpl->assign(FORUM_SHORTNAME, $forum['shortname']);
   $tpl->assign(MID, $mid);
 
-  $tpl->parse(POST, 'postaccept');
+  $tpl->parse(ACCEPT, 'postaccept');
+
+  $tpl->clear_dynamic('form');
 }
 
 $tpl->parse(CONTENT, 'post');

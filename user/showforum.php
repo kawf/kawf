@@ -137,12 +137,7 @@ $tpl->assign(NUMPAGES, $numpages);
 
 function print_collapsed($thread, $msg)
 {
-  global $vmid, $user, $tthreads, $forum, $furlroot, $urlroot;
-
-  if (get_magic_quotes_gpc()) {
-    $msg['name'] = stripslashes($msg['name']);
-    $msg['subject'] = stripslashes($msg['subject']);
-  }
+  global $vmid, $user, $forum, $furlroot, $urlroot;
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
@@ -152,11 +147,6 @@ function print_collapsed($thread, $msg)
 
   $string = "<li>";
 
-  $new = (isset($tthreads[$msg['tid']]) &&
-      $tthreads[$msg['tid']]['tstamp'] < $msg['tstamp']);
-
-  if ($new)
-    $string .= "<i><b>";
   if ($vmid == $msg['mid'])
     $string .= "<font color=\"#ff0000\">" . $msg['subject'] . "</font>";
   else {
@@ -165,9 +155,6 @@ function print_collapsed($thread, $msg)
     else
       $string .= "<a href=\"$urlroot/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
   }
-
-  if ($new)
-    $string .= "</b></i>";
 
   if (isset($flags['NoText'])) {
     if (!isset($user['prefs.SimpleHTML']))
@@ -234,14 +221,9 @@ function print_collapsed($thread, $msg)
   return $string;
 }
 
-function print_subjects($msg)
+function print_subject($msg)
 {
-  global $vmid, $user, $tthreads, $forum, $furlroot, $urlroot;
-
-  if (get_magic_quotes_gpc()) {
-    $msg['name'] = stripslashes($msg['name']);
-    $msg['subject'] = stripslashes($msg['subject']);
-  }
+  global $vmid, $user, $tthreads_by_tid, $forum, $furlroot, $urlroot;
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
@@ -251,8 +233,8 @@ function print_subjects($msg)
 
   $string = "<li>";
 
-  $new = (isset($tthreads[$msg['tid']]) &&
-      $tthreads[$msg['tid']]['tstamp'] < $msg['tstamp']);
+  $new = (isset($tthreads_by_tid[$msg['tid']]) &&
+      $tthreads_by_tid[$msg['tid']]['tstamp'] < $msg['tstamp']);
 
   if ($new)
     $string .= "<i><b>";
@@ -362,7 +344,7 @@ function display_thread($thread)
         $messages[] = $message;
     }
 
-    $messagestr .= list_thread($messages, print_subjects, 0);
+    $messagestr .= list_thread($messages, print_subject, 0);
   }
 
   if (!$ulkludge || isset($user['prefs.SimpleHTML']))
@@ -382,6 +364,7 @@ $numshown = 0;
 if (isset($tthreads)) {
   reset($tthreads);
   while (list(, $tthread) = each($tthreads)) {
+echo "<!-- checking " . $tthread['tid'] . " -->\n";
     $index = find_thread_index($tthread['tid']);
     if ($index < 0) {
       echo "<!-- Warning: Invalid tthread! $index, " . $tthread['tid'] . " -->\n";
@@ -390,8 +373,11 @@ if (isset($tthreads)) {
 
     /* Some people have duplicate threads tracked, they'll eventually fall */
     /*  off, but for now this is a simple workaround */
-    if (isset($threadshown[$thread['tid']]))
+    if (isset($threadshown[$tthread['tid']]))
+{
+echo "<!-- " . $tthread['tid'] . " already checked -->\n";
       continue;
+}
 
     $sql = "select * from threads$index where tid = '" . addslashes($tthread['tid']) . "'";
     $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
@@ -504,7 +490,7 @@ if (!$numshown)
   echo "<font size=\"+1\">No messages in this forum</font><br>\n";
 */
 
-$directory = '../';
+$action = "post";
 
 include('post.inc');
 
