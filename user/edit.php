@@ -58,7 +58,7 @@ if ($msg['aid'] != $user->aid) {
 if (!isset($message)) {
   $preview = 1;
   $message = $msg['message'];
-  if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/", $message, $regs)) {
+  if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/s", $message, $regs)) {
     $imageurl = $regs[1];
     $message = $regs[2];
   }
@@ -68,7 +68,7 @@ if (!isset($message)) {
   $urltext = $msg['urltext'];
   $ExposeEmail = !empty($msg['email']);
 } else {
-  if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/", $message, $regs))
+  if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/s", $message, $regs))
     $message = $regs[2];
 }
 
@@ -156,7 +156,7 @@ if (isset($ExposeEmail) && $ExposeEmail) {
   $tpl->set_var("MSG_NAMEEMAIL", $user->name);
 
 if (!empty($imageurl))
-  $msg_message = "<center><img src=\"$imageurl\"></center><p>";
+  $msg_message = "<center><img src=\"$imageurl\"></center><p>\n";
 else
   $msg_message = "";
 $msg_message .= nl2br($message);
@@ -204,7 +204,7 @@ if (isset($error) || isset($preview)) {
   $flagset = implode(",", $flags);
 
   if (!empty($imageurl))
-    $message = "<center><img src=\"$imageurl\"></center><p>" . $message;
+    $message = "<center><img src=\"$imageurl\"></center><p>\n" . $message;
 
   /* Create a diff for the old message and the new message */
   $origfn = tempnam("/tmp", "kawf");
