@@ -305,7 +305,7 @@ if (isset($error) || isset($preview)) {
       mysql_query($sql) or sql_error($sql);
     }
 
-    $sql = "update u_forums set posts = posts + 1 where aid = " . $user->aid;
+    $sql = "update u_users set posts = posts + 1 where aid = " . $user->aid;
     mysql_query($sql);
   } else
     echo "<font color=#ff0000>Duplicate message detected, overwriting</font>";

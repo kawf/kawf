@@ -37,7 +37,7 @@ if (!empty($msg['flags'])) {
 }
 
 if (isset($flags['NewStyle']) && !isset($user->pref['HideSignatures'])) {
-  $sql = "select signature from u_forums where aid = " . $msg['aid'];
+  $sql = "select signature from u_users where aid = " . $msg['aid'];
   $result = mysql_query($sql) or sql_error($sql);
 
   list($signature) = mysql_fetch_row($result);
