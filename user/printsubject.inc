@@ -70,7 +70,9 @@ function print_subject($thread, $msg)
   if ($msg['state'] == 'OffTopic' && isset($user->pref['SimpleHTML']))
     $string .= " (OffTopic)";
 
-  if ($msg['state'] != "Active" && $msg['state'] != "OffTopic")
+  if ($msg['state'] == 'Deleted')
+    $string .= " (<font color=\"red\"><b>Deleted</b></font>)";
+  else if ($msg['state'] != "Active" && $msg['state'] != "OffTopic")
     $string .= " (" . $msg['state'] . ")";
 
   $page = $tpl->get_var("PAGE");
