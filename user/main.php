@@ -45,15 +45,6 @@ $scripts = array(
   "tracking.phtml" => "tracking.php",
 
   "redirect.phtml" => "redirect.php",
-
-  /* These will all be in the fscripts only soon */
-  "post.phtml" => "post.php",
-
-  "track.phtml" => "track.php",
-  "untrack.phtml" => "untrack.php",
-  "markuptodate.phtml" => "markuptodate.php",
-
-  "changestate.phtml" => "changestate.php",
 );
 
 /* If you have your own account management routines */
@@ -188,12 +179,6 @@ function find_thread_index($tid)
 
   return -1;
 }
-
-if (isset($forumname))
-  if (!find_forum($forumname)) {
-    echo "Unable to find forum $forumname<br>\n";
-    exit;
-  }
 
 /* Parse out the directory/filename */
 if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {

@@ -180,23 +180,23 @@ function print_collapsed($thread, $msg, $count)
   if ($user->moderator($forum['fid'])) {
     switch ($msg['state']) {
     case "Moderated":
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">um</a>";
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Active&mid=" . $msg['mid'] . "\">um</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Deleted&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     case "Deleted":
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Active&mid=" . $msg['mid'] . "\">ud</a>";
       break;
     case "Active":
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Moderated&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">mm</a>";
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Moderated&mid=" . $msg['mid'] . "\">mm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Deleted&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     }
 
     if ($forum['version'] >= 2) {
       if (isset($flags['Locked']))
-        $string .= " <a href=\"/unlock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ul</a>";
+        $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?mid=" . $msg['mid'] . "\">ul</a>";
       else
-        $string .= " <a href=\"/lock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">lm</a>";
+        $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?mid=" . $msg['mid'] . "\">lm</a>";
     }
   }
 
@@ -269,23 +269,23 @@ function print_subject($msg)
   if ($user->moderator($forum['fid'])) {
     switch ($msg['state']) {
     case "Moderated":
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">um</a>";
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Active&mid=" . $msg['mid'] . "\">um</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Deleted&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     case "Deleted":
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Active&mid=" . $msg['mid'] . "\">ud</a>";
       break;
     case "Active":
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Moderated&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">mm</a>";
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Moderated&mid=" . $msg['mid'] . "\">mm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Deleted&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     }
 
     if ($forum['version'] >= 2) {
       if (isset($flags['Locked']))
-        $string .= " <a href=\"/unlock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ul</a>";
+        $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?mid=" . $msg['mid'] . "\">ul</a>";
       else
-        $string .= " <a href=\"/lock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">lm</a>";
+        $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?mid=" . $msg['mid'] . "\">lm</a>";
     }
   }
 
@@ -364,14 +364,14 @@ if (isset($tthreads)) {
       $numshown++;
 
       /* If the thread is tracked, we know they are a user already */
-      $messagelinks = "<a href=\"/untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
+      $messagelinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
       if ($count > 1) {
         if (!isset($user->pref['Collapsed']))
           $messagelinks .= "<br>";
         else
           $messagelinks .= " ";
 
-        $messagelinks .= "<a href=\"/markuptodate.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#0000f0\">up</font></a>";
+        $messagelinks .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#0000f0\">up</font></a>";
       }
 
       $tpl->set_var("MESSAGES", $messagestr);
@@ -459,9 +459,9 @@ while ($numshown < $threadsperpage) {
 
     if ($user->valid()) {
       if (isset($tthreads_by_tid[$thread['tid']]))
-        $messagelinks = " <a href=\"/untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
+        $messagelinks = " <a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
       else
-        $messagelinks = " <a href=\"/track.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#00d000\">tt</font></a>";
+        $messagelinks = " <a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#00d000\">tt</font></a>";
     } else
       $messagelinks = "";
 
