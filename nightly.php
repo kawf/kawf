@@ -57,9 +57,12 @@ $res1 = sql_query("select * from f_forums order by fid");
 while ($forum = sql_fetch_array($res1)) {
   echo $forum['shortname'] . "\n";
 
+  $maxmid = sql_query1("select max(id) from f_unique where fid = " . $forum['fid'] . " and type = 'Message'");
+  $maxtid = sql_query1("select max(id) from f_unique where fid = " . $forum['fid'] . " and type = 'Thread'");
+
   /* Clean up the unique tables */
-  sql_query("delete from f_unique where fid = " . $forum['fid'] . " and type = 'Message' and id < max(id)");
-  sql_query("delete from f_unique where fid = " . $forum['fid'] . " and type = 'Thread' and id < max(id)");
+  sql_query("delete from f_unique where fid = " . $forum['fid'] . " and type = 'Message' and id < $maxmid");
+  sql_query("delete from f_unique where fid = " . $forum['fid'] . " and type = 'Thread' and id < $maxtid");
 
   unset($indexes);
 
