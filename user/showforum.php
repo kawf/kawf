@@ -262,7 +262,7 @@ while ($threadtable >= 0 && isset($indexes[$threadtable])) {
   $threadtable--;
 }
 
-if ($threadtable < 0 || !isset($indexes[$threadtable])) {
+if ($curpage != 1 && ($threadtable < 0 || !isset($indexes[$threadtable]))) {
   err_not_found("Page out of range");
   exit;
 }
