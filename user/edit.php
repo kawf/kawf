@@ -126,7 +126,7 @@ $url = stripcrap($url);
 $url = stripspaces($url);
 $url = preg_replace("/ /", "%20", $url);
 
-if (!empty($url) && !preg_match("^/[a-z]+:\/\//i", $url))
+if (!empty($url) && !preg_match("/^[a-z]+:\/\//i", $url))
   $url = "http://$url";
 
 $urltext = stripcrap($urltext);
@@ -137,7 +137,7 @@ $imageurl = stripcrap($imageurl);
 $imageurl = stripspaces($imageurl);
 $imageurl = preg_replace("/ /", "%20", $imageurl);
 
-if (!empty($imageurl) && !preg_match("^/[a-z]+:\/\//i", $imageurl))
+if (!empty($imageurl) && !preg_match("/^[a-z]+:\/\//i", $imageurl))
   $imageurl = "http://$imageurl";
 
 if (!empty($imageurl) && !isset($imgpreview))
