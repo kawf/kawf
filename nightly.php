@@ -57,6 +57,7 @@ $res1 = sql_query("select * from f_forums order by fid");
 while ($forum = sql_fetch_array($res1)) {
   echo $forum['shortname'] . "\n";
 
+  /* Figure out the maximums so we don't delete them */
   $maxmid = sql_query1("select max(id) from f_unique where fid = " . $forum['fid'] . " and type = 'Message'");
   $maxtid = sql_query1("select max(id) from f_unique where fid = " . $forum['fid'] . " and type = 'Thread'");
 
@@ -69,7 +70,7 @@ while ($forum = sql_fetch_array($res1)) {
   /* Grab all of the indexes for the forum */
   $res2 = sql_query("select * from f_indexes where fid = " . $forum['fid'] . " order by iid");
 
-  while ($index = mysql_fetch_array($result2))
+  while ($index = mysql_fetch_array($res2))
     $indexes[] = $index;
 
   $index = end($indexes);
@@ -83,7 +84,7 @@ while ($forum = sql_fetch_array($res1)) {
       echo "Tracking index < 0! (tid = " . $tracking['tid'] . ", aid = " . $tracking['aid'] . ", tstamp = " . $tracking['tstamp'] . ", options = '" . $tracking['options'] . "')\n";
       $delete = 1;
     } else
-      $delete = sql_query1("select * from f_threads$index where tid = " . $tracking['tid'] . " and TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14");
+      $delete = sql_query1("select tstamp from f_threads$index where tid = " . $tracking['tid'] . " and TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14");
 
     if ($delete)
       sql_query("delete from f_tracking where fid = " . $forum['fid'] . " and tid = " . $tracking['tid'] . " and aid = " . $tracking['aid']);
