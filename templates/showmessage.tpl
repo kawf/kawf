@@ -1,10 +1,16 @@
-{HEADER}
-
+<html>
+<head>
+<title>kawf.org Forums: {MSG_SUBJECT}</title>
 <style type="text/css">
 <!--
+body { font-family: verdana, arial, geneva }
 ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 -->
 </style>
+</head>
+<body bgcolor="#ffffff">
+
+{HEADER}
 
 <center>
 {AD}
@@ -21,8 +27,7 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 <font face="arial, geneva" size="-2">
 [ <a href="#thread">Thread</a> ]
 [ <a href="#postfp">Post Followup</a> ]
-[ <a href="http://pictureposter.audiworld.com/A4PICSnd.asp">Post Picture</a> ]
-[ <a href="http://www.audiworld.com/search/" target="_top">Search Forums</a> ]
+[ <a href="/search/" target="_top">Search Forums</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
 </font>
 
@@ -64,12 +69,14 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 <font face="arial, geneva" size="-2">
 [ <a href="#thread">Thread</a> ]
 [ <a href="#postfp">Post Followup</a> ]
-[ <a href="http://pictureposter.audiworld.com/A4PICSnd.asp">Post Picture</a> ]
-[ <a href="http://www.audiworld.com/search/" target="_top">Search Forums</a> ]
+[ <a href="/search/" target="_top">Search Forums</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
 </font>
 </td></tr>
 </table><br>
 
 {FOOTER}
+
+</body>
+</html>
 

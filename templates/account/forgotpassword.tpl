@@ -6,7 +6,7 @@
 <tr>
 <td>
 
-<img src="http://www.audiworld.com/pix/accounts.gif">
+<h1>Accounts - Forgot Password</h1><p>
 
 <p><font face="Verdana, Arial, Geneva"><h2>Password Retrieval</h2></font><p>
 
@@ -25,7 +25,6 @@ Email address: <input type="text" name="email" value="{EMAIL}"><br>
 
 <!-- BEGIN success -->
 We have sent a message detailing the remaining steps to {EMAIL}<br>
-The tracking number for this is <b>{TID}</b>. You can use it as a reference if there are problems, or you can check the <a href="pending.phtml?tracking={TID}">status</a>.
 <!-- END success -->
 
 </td>

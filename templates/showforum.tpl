@@ -1,7 +1,9 @@
-{HEADER}
-
+<html>
+<head>
+<title>kawf.org Forums: {FORUM_NAME}</title>
 <style type="text/css">
 <!--
+body { font-family: verdana, arial, geneva }
 .trow0 { background: #ddddff }
 .trow1 { background: #ccccee }
 .drow0 { background: #ddffdd }
@@ -13,6 +15,10 @@
 ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 -->
 </style>
+</head>
+<body bgcolor="#ffffff">
+
+{HEADER}
 
 <center>
 {AD}
@@ -31,7 +37,7 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
   <font face="Verdana, Arial, Geneva" size="-2">
   <b>Page:</b> {PAGES}
 
-  &nbsp; &nbsp;[<a href="http://www.audiworld.com/forum/tips.shtml">Reading Tips</a>] [<a href="http://www.audiworld.com/search/" target="_top">Search</a>] [<a href="http://pictureposter.audiworld.com/A4PICSnd.asp">Post Picture</a>]
+  &nbsp; &nbsp;[<a href="/tips.shtml">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>]
 
   </font>
 </td></tr>
@@ -68,7 +74,7 @@ Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
   <font face="Verdana, Arial, Geneva" size="-2">
   <b>Page:</b> {PAGES}
 
-  &nbsp; &nbsp;[<a href="/forum/tips.shtml">Reading Tips</a>] [<a href="http://www.audiworld.com/search/" target="_top">Search</a>] [<a href="http://pictureposter.audiworld.com/A4PICSnd.asp">Post Picture</a>]
+  &nbsp; &nbsp;[<a href="/forum/tips.shtml">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>]
 
   </font>
 </td></tr>
@@ -88,4 +94,7 @@ Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 <!-- b>{ACTIVE_USERS}</b> users and <b>{ACTIVE_GUESTS}</b> guests have been browsing the forums in the last 15 minutes<p -->
 
 {FOOTER}
+
+</body>
+</html>
 

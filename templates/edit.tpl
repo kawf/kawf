@@ -1,3 +1,14 @@
+<html>
+<head>
+<title>kawf.org Forums: Editing message</title>
+<style type="text/css">
+<!--
+body { font-family: verdana, arial, geneva }
+-->
+</style>
+</head>
+<body bgcolor="#ffffff">
+
 {HEADER}
 
 <center>
@@ -34,3 +45,7 @@
 <!-- END accept -->
 
 {FOOTER}
+
+</body>
+</html>
+

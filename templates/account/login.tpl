@@ -2,7 +2,7 @@
 
 <body bgcolor="#ffffff" text="#000000" link="#0000cc" vlink="#0000cc" alink="#0000cc" style="text-decoration: none">
 
-<img src="http://www.audiworld.com/pix/accounts.gif"><p>
+<h1>Accounts - Login</h1><p>
 
 <font face="verdana, arial, geneva" size="-1">
 
@@ -23,8 +23,7 @@
   <input type="submit" name="forgotpassword" value="Forgot my password">
 </form>
 
-<a href="create.phtml">Create a new account</a><br>
-<a href="pending.phtml">Have a tracking number and some problems?</a><br>
+<a href="create.phtml">Create a new account</a><p>
 
 </font>
 

@@ -6,7 +6,7 @@
 <tr>
 <td>
 
-<img src="http://www.audiworld.com/pix/accounts.gif">
+<h1>Accounts - Create</h1><p>
 
 <p><font face="Verdana, Arial, Geneva"><h2>Create Account</h2></font><p>
 
@@ -28,16 +28,12 @@
   <input type="submit" name="submit" value="Create Account">
 </form>
 
-<p><font face="Verdana, Arial, Geneva" size="-1"><b>Note:</b> AudiWorld Discussion Forums and PicturePoster use the same username/password.  If you already have an account for one, do not create another.<p>
-
 Use your browser's BACK button to return to the Login screen.</font><p>
 </font>
 <!-- END form -->
 
 <!-- BEGIN success -->
 <font size="-1" face="Verdana, Arial, Geneva">Thank you for creating an account with us. A confirmation e-mail has been sent and you should receive it shortly. Once you receive that e-mail, simply follow the instructions that are included and the account creation process will be complete.<p>
-
-A tracking number has also been assigned. You can use this tracking number to help follow the account creation process in case there are any problems. The tracking number is <b>{TID}</b>. You can also bookmark the <a href="pending.phtml?tracking={TID}">page</a>.</font><p>
 <!-- END success -->
 
 </td>

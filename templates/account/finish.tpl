@@ -6,7 +6,7 @@
 <tr>
 <td>
 
-<img src="http://www.audiworld.com/pix/accounts.gif"><p>
+<h1>Accounts - Finish</h1><p>
 
 <!-- BEGIN error -->
 <font color="red">{ERROR}</font><p>
@@ -26,12 +26,8 @@ Cookie <input type="text" name="cookie" length="15" maxlength="15"><br>
 <!-- BEGIN success -->
 <!-- BEGIN create -->
 
-<font face="verdana, arial, geneva" size="-1">Thank you for creating an account with AudiWorld.com.  To upload pictures you must go to your <a href="http://pictureposter.audiworld.com/">PicturePoster directory</a>.</font><p>
+<font face="verdana, arial, geneva" size="-1">Thank you for creating an account with kawf.org.</font><p>
 <!-- END create -->
-
-<!-- BEGIN email -->
-<font face="verdana, arial, geneva" size="-1">Your email address has been changed to {EMAIL}</font><p>
-<!-- END email -->
 
 <!-- BEGIN password -->
 <font face="verdana, arial, geneva" size="-1">Please proceed to edit account information to change your password</font><p>

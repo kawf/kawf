@@ -1,3 +1,14 @@
+<html>
+<head>
+<title>kawf.org Forums: Preferences</title>
+<style type="text/css">
+<!--
+body { font-family: verdana, arial, geneva }
+-->
+</style>
+</head>
+<body bgcolor="#ffffff">
+
 {HEADER}
 
 <img src="/pics/change.gif"><br>
@@ -74,3 +85,7 @@
 </form>
 
 {FOOTER}
+
+</body>
+</html>
+
