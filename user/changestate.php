@@ -38,7 +38,7 @@ default:
 }
 
 if (($state == 'Moderate' && !$user->capable($forum['fid'], 'Moderate')) ||
-    ($state == 'Delete' && !$user->capable($forum['fid'], 'Delete')) ||
+    ($state == 'Deleted' && !$user->capable($forum['fid'], 'Delete')) ||
     ($state == 'OffTopic' && !$user->capable($forum['fid'], 'OffTopic')) ||
     ($state == 'Active' && !$user->capable($forum['fid'], $astatus))) {
   if ($user->aid != $msg['aid']) {
