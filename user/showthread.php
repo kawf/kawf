@@ -39,6 +39,7 @@ $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) 
 $result = mysql_query($sql) or sql_error($sql);
 while ($message = mysql_fetch_array($result)) {
   $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
+  $message['pmid'] = $message['pid'];
   $messages[] = $message;
 }
 
@@ -48,6 +49,7 @@ if (isset($indexes[$index])) {
   $result = mysql_query($sql) or sql_error($sql);
   while ($message = mysql_fetch_array($result)) {
     $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
+    $message['pmid'] = $message['pid'];
     $messages[] = $message;
   }
 }
