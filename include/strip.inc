@@ -2,6 +2,8 @@
 
 function demoronize($string)
 {
+  $string = preg_replace("/\x09/", "        ", $string);
+
   /* Remove any and all non-ISO Microsoft extensions */
   $string = preg_replace("/\x82/", ",", $string);
   $string = preg_replace("/\x83/", "<em>f</em>", $string);
@@ -31,14 +33,26 @@ function demoronize($string)
   return $string;
 }
 
+/* For text strings */
 function stripcrap($string)
+{
+  global $no_tags;
+
+  // $string = preg_replace("/&/", "&amp;", $string);
+  $string = striptag($string, $no_tags);
+  $string = demoronize($string);
+  $string = stripspaces($string);
+
+  return $string;
+}
+
+/* For URL's */
+function stripcrapurl($string)
 {
   global $no_tags;
 
   $string = striptag($string, $no_tags);
   $string = stripspaces($string);
-  $string = ereg_replace("<", "&lt;", $string);
-  $string = ereg_replace(">", "&gt;", $string);
 
   return $string;
 }
@@ -110,9 +124,12 @@ function validate_null()
 }
 
 $subject_tags = array(
+/*
   "b" => array(array(), "/b"),
   "i" => array(array(), "/i"),
-  "em" => array(array(), "/em")
+  "em" => array(array(), "/em"),
+*/
+  "sub" => array(array(), "/sub"),
 );
 
 $standard_tags = array(
@@ -126,6 +143,9 @@ $standard_tags = array(
   "big" => array(array(), "/big"),
   "small" => array(array(), "/small"),
   "pre" => array(array(), "/pre"),
+  "sub" => array(array(), "/sub"),
+  "sup" => array(array(), "/sup"),
+  "center" => array(array(), "/center"),
 );
 
 $no_tags = array(
@@ -222,8 +242,20 @@ function parse_tag($str)
 
 function convert_brackets($string)
 {
+  /* Escape out some standard HTML */
+  $string = preg_replace("/&/", "&amp;", $string);
   $string = preg_replace("/</", "&lt;", $string);
   $string = preg_replace("/>/", "&gt;", $string);
+
+  /* Undo some "special" cases */
+  $string = preg_replace("/&amp;lt;/", "&lt;", $string);
+  $string = preg_replace("/&amp;gt;/", "&gt;", $string);
+  $string = preg_replace("/&amp;nbsp;/", "&nbsp;", $string);
+  $string = preg_replace("/&amp;copy;/", "&copy;", $string);
+  $string = preg_replace("/&amp;deg;/", "&deg;", $string);
+  $string = preg_replace("/&amp;frac12;/", "&frac12;", $string);
+  $string = preg_replace("/&amp;frac14;/", "&frac14;", $string);
+  $string = preg_replace("/&amp;amp;/", "&amp;", $string); // Always last
 
   return $string;
 }
