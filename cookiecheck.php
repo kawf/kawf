@@ -9,7 +9,7 @@ if (isset($ForumAccount) && isset($email)) {
   $result = mysql_query($sql) or sql_error($sql);
   if (mysql_num_rows($result) > 0) {
     $acct = mysql_fetch_array($result);
-    if ($acct['email'] == $email) {
+    if (strtolower($acct['email']) == strtolower($email)) {
       Header("Location: $page");
       exit;
     }
