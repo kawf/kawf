@@ -71,102 +71,123 @@ if (!isset($forum['opt.Post'])) {
 
 $tpl->set_var("disabled", "");
 
-/* Strip any tags from the data */
-$message = striptag($message, $standard_tags);
-$message = stripspaces($message);
-$message = demoronize($message);
+if (isset($postcookie)) {
+  /* Strip any tags from the data */
+  $message = striptag($message, $standard_tags);
+  $message = stripspaces($message);
+  $message = demoronize($message);
 
-$subject = stripcrap($subject);
-/*
-$subject = striptag($subject, $subject_tags);
-*/
-$subject = stripspaces($subject);
-$subject = demoronize($subject);
+  $subject = stripcrap($subject);
+//  $subject = striptag($subject, $subject_tags);
+  $subject = stripspaces($subject);
+  $subject = demoronize($subject);
 
-/* Sanitize the strings */
-$name = stripcrap($user->name);
-if (isset($ExposeEmail))
-  $email = stripcrap($user->email);
-else
-  $email = "";
+  /* Sanitize the strings */
+  $name = stripcrap($user->name);
+  if (isset($ExposeEmail))
+    $email = stripcrap($user->email);
+  else
+    $email = "";
 
-$url = stripcrap($url);
-$url = stripspaces($url);
-$url = preg_replace("/ /", "%20", $url);
+  $url = stripcrap($url);
+  $url = stripspaces($url);
+  $url = preg_replace("/ /", "%20", $url);
 
-if (!empty($url) && !preg_match("/^[a-z]+:\/\//i", $url))
-  $url = "http://$url";
+  if (!empty($url) && !preg_match("/^[a-z]+:\/\//i", $url))
+    $url = "http://$url";
 
-$urltext = stripcrap($urltext);
-$urltext = stripspaces($urltext);
-$urltext = demoronize($urltext);
+  $urltext = stripcrap($urltext);
+  $urltext = stripspaces($urltext);
+  $urltext = demoronize($urltext);
 
-$imageurl = stripcrap($imageurl);
-$imageurl = stripspaces($imageurl);
-$imageurl = preg_replace("/ /", "%20", $imageurl);
+  $imageurl = stripcrap($imageurl);
+  $imageurl = stripspaces($imageurl);
+  $imageurl = demoronize($imageurl);
+  $imageurl = preg_replace("/ /", "%20", $imageurl);
 
-if (!empty($imageurl) && !preg_match("/^[a-z]+:\/\//i", $imageurl))
-  $imageurl = "http://$imageurl";
+  if (!empty($imageurl) && !preg_match("/^[a-z]+:\/\//i", $imageurl))
+    $imageurl = "http://$imageurl";
 
-if (!isset($pmid) && isset($pid))
-  $pmid = $pid;
+  if (!isset($pmid) && isset($pid))
+    $pmid = $pid;
 
-if (isset($pmid)) {
-  $index = find_msg_index($pmid);
-  if ($index >= 0) {
-    $sql = "select * from f_messages$index where mid = '" . addslashes($pmid) . "'";
+  if (isset($pmid)) {
+    $index = find_msg_index($pmid);
+    if ($index >= 0) {
+      $sql = "select * from f_messages$index where mid = '" . addslashes($pmid) . "'";
+      $result = mysql_query($sql) or sql_error($sql);
+
+      if (mysql_num_rows($result))
+        $parent = mysql_fetch_array($result);
+    }
+  }
+
+  if (empty($subject)) {
+    /* Subject is required */
+    $error .= "Subject is required!<br>\n";
+  } elseif (isset($parent) && $subject == "Re: " . $parent['subject'] && empty($message) && empty($url)) {
+    $error .= "No change to subject or message, is this what you wanted?<br>\n";
+  } elseif (strlen($subject) > 100) {
+    /* Subject is too long */
+    $error .= "Subject line too long! Truncated to 100 characters<br>\n";
+    $subject = substr($subject, 0, 100);
+  }
+
+  if (!empty($imageurl) && !isset($imgpreview))
+    $preview = 1;
+
+  if ((isset($error) || isset($preview)) && (!empty($imageurl)))
+    $imgpreview = 1;
+  else
+    $tpl->set_var("image", "");
+
+  if (isset($ExposeEmail)) {
+    /* Lame spamification */
+    $_email = preg_replace("/@/", "&#" . ord('@') . ";", $user->email);
+    $msg_nameemail = "<a href=\"mailto:" . $_email . "\">" . $user->name . "</a>";
+  } else
+    $msg_nameemail = $user->name;
+
+  if (!empty($imageurl))
+    $msg_message = "<center><img src=\"$imageurl\"></center><p>";
+  else
+    $msg_message = "";
+
+  $msg_message .= nl2br($message);
+
+  if (!empty($url)) {
+    if (!empty($urltext))
+      $msg_message .= "<ul><li><a href=\"" . $url . "\" target=\"_top\">" . $urltext . "</a></ul>\n";
+     else
+      $msg_message .= "<ul><li><a href=\"" . $url . "\" target=\"_top\">" . $url . "</a></ul>\n";
+  }
+
+  if (!empty($user->signature))
+    $msg_message .= "<p>" . nl2br($user->signature) . "\n";
+
+  if (!isset($preview))
+    $tpl->set_var("preview", "");
+
+  $accepted = !isset($error);
+} else {
+  $message = $urltext = $imageurl = "";
+
+  if (isset($pid)) {
+    /* Grab the actual message */
+    $index = find_msg_index($pid);
+    $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messa
+ges$index where mid = '" . addslashes($pid) . "'";
     $result = mysql_query($sql) or sql_error($sql);
 
-    if (mysql_num_rows($result))
-      $parent = mysql_fetch_array($result);
-  }
+    $pmsg = mysql_fetch_array($result);
+
+    if (!ereg("^[Rr][Ee]:", $pmsg['subject'], $sregs))
+      $subject = "Re: " . $pmsg['subject'];
+     else
+      $subject = $pmsg['subject'];
+  } else
+    $subject = "";
 }
-
-if (empty($subject)) {
-  /* Subject is required */
-  $error .= "Subject is required!<br>\n";
-} elseif (isset($parent) && $subject == "Re: " . $parent['subject'] && empty($message) && empty($url)) {
-  $error .= "No change to subject or message, is this what you wanted?<br>\n";
-} elseif (strlen($subject) > 100) {
-  /* Subject is too long */
-  $error .= "Subject line too long! Truncated to 100 characters<br>\n";
-  $subject = substr($subject, 0, 100);
-}
-
-if (!empty($imageurl) && !isset($imgpreview))
-  $preview = 1;
-
-if ((isset($error) || isset($preview)) && (!empty($imageurl)))
-  $imgpreview = 1;
-else
-  $tpl->set_var("image", "");
-
-if (isset($ExposeEmail)) {
-  /* Lame spamification */
-  $_email = preg_replace("/@/", "&#" . ord('@') . ";", $user->email);
-  $msg_nameemail = "<a href=\"mailto:" . $_email . "\">" . $user->name . "</a>";
-} else
-  $msg_nameemail = $user->name;
-
-if (!empty($imageurl))
-  $msg_message = "<center><img src=\"$imageurl\"></center><p>";
-else
-  $msg_message = "";
-
-$msg_message .= nl2br($message);
-
-if (!empty($url)) {
-  if (!empty($urltext))
-    $msg_message .= "<ul><li><a href=\"" . $url . "\" target=\"_top\">" . $urltext . "</a></ul>\n";
-   else
-    $msg_message .= "<ul><li><a href=\"" . $url . "\" target=\"_top\">" . $url . "</a></ul>\n";
-}
-
-if (!empty($user->signature))
-  $msg_message .= "<p>" . nl2br($user->signature) . "\n";
-
-if (!isset($preview))
-  $tpl->set_var("preview", "");
 
 $date = strftime("%Y-%m-%d %H:%M:%S", time() - $user->tzoff);
 
