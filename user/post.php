@@ -328,7 +328,7 @@ if (isset($error) || isset($preview)) {
     }
   }
 
-  require("mailfrom.inc");
+  include_once("mailfrom.inc");
 
   $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and tid = '" . addslashes($tid) . "' and options = 'SendEmail' and aid != " . $user->aid;
   $result = mysql_query($sql) or sql_error($sql);

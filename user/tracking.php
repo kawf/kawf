@@ -9,8 +9,8 @@ include("ads.inc");
 $ad = ads_view("a4.org," . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
 
-require("listthread.inc");
-require("filter.inc");
+include_once("listthread.inc");
+include_once("filter.inc");
 
 $tpl->set_file(array(
   "header" => "header.tpl",

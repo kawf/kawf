@@ -1,7 +1,7 @@
 <?php
 
-require('listthread.inc');
-require('filter.inc');
+include_once('listthread.inc');
+include_once('filter.inc');
 
 $tpl->set_file(array(
   "header" => "header.tpl",
