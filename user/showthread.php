@@ -58,17 +58,17 @@ if (isset($indexes[$index])) {
 reset($messages);
 while (list($key, $message) = each($messages)) {
   $tree[$message['mid']][] = $key;
-  $tree[$message['pid']][] = $key;
+  $tree[$message['pmid']][] = $key;
 }
 
 /* Walk down from the viewed message to the root to find the path */
 /*
-$pid = $vmid;
+$pmid = $vmid;
 do {
-  $path[$pid] = 'true';
-  $key = reset($tree[$pid]);
-  $pid = $messages[$key]['pid'];
-} while ($pid);
+  $path[$pmid] = 'true';
+  $key = reset($tree[$pmid]);
+  $pmid = $messages[$key]['pmid'];
+} while ($pmid);
 */
 
 $messages = filter_messages($messages, $tree, reset($tree));
@@ -89,7 +89,10 @@ function print_message($msg)
 
   if ($user->moderator($forum['fid'])) {
     $tpl->set_var("MSG_AID", $msg['aid']);
-    $tpl->set_var("MSG_CHANGES", nl2br($msg['changes']));
+    $changes = preg_replace("/&/", "&amp;", $msg['changes']);
+    $changes = preg_replace("/</", "&lt;", $changes);
+    $changes = preg_replace("/>/", "&gt;", $changes);
+    $tpl->set_var("MSG_CHANGES", nl2br($changes));
     $tpl->set_var("MSG_IP", $msg['ip']);
   } else {
     $tpl->set_var("forum_admin", "");
@@ -121,15 +124,7 @@ function print_message($msg)
   } else
     $tpl->set_var("MSG_NAMEEMAIL", $msg['name']);
 
-  if ($msg['pid'] != 0) {
-    $tpl->set_var(array(
-      "PMSG_MID" => $pmsg['mid'],
-      "PMSG_SUBJECT" => $pmsg['subject'],
-      "PMSG_NAME" => $pmsg['name'],
-      "PMSG_DATE" => $pmsg['date'],
-    ));
-  } else
-    $tpl->set_var("parent", "");
+  $tpl->set_var("parent", "");
 
   $message = nl2br($msg['message']);
 
