@@ -467,9 +467,14 @@ if (!$accepted || isset($preview)) {
   unset($tpl->varkeys["PAGE"]);
   unset($tpl->varvals["PAGE"]);
 
+  $_domain = $tpl->get_var("DOMAIN");
+  unset($tpl->varkeys["DOMAIN"]);
+  unset($tpl->varvals["DOMAIN"]);
+
   $tpl->set_var(array(
     "MSG_MID" => $mid,
     "PAGE" => $_page,
+    "DOMAIN" => $_domain,
     "form" => "",
   ));
 }
