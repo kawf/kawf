@@ -14,7 +14,7 @@
 </table>
 <!-- END noacct -->
 <!-- BEGIN acct -->
-<form action="/{ACTION}.phtml" method="post">
+<form action="/{FORUM_SHORTNAME}/{ACTION}.phtml" method="post">
 <table width="600">
 <tr>
   <td bgcolor="#dfdfdf" align="right">
