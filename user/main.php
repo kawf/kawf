@@ -84,6 +84,8 @@ $fscripts = array(
   "untrack.phtml" => "untrack.php",
   "markuptodate.phtml" => "markuptodate.php",
 
+  "lock.phtml" => "lock.php",
+  "unlock.phtml" => "unlock.php",
   "changestate.phtml" => "changestate.php",
 );
 

@@ -1,21 +1,31 @@
+#!/usr/bin/php -q
 <?php
-
-require('../sql.inc');
-
-sql_open_admin();
-
 set_time_limit(0);
 
-$sql = "select * from forums";
-$res1 = mysql_db_query('a4', $sql) or sql_error($sql);
+function sql_error($sql)
+{
+  echo "<pre>$sql</pre>\n";
+  echo "Error #" . mysql_errno() . ": " . mysql_error() . "\n";
+  exit;
+}
+
+function sql_warn($sql)
+{
+  echo "<pre>$sql</pre>\n";
+  echo "Error #" . mysql_errno() . ": " . mysql_error() . "\n";
+}
+
+if (!mysql_connect("daytona", "root", "password"))
+  die("Unable to open local SQL server");
+
+$sql = "select * from f_forums";
+$res1 = mysql_query($sql) or sql_error($sql);
 
 while ($forum = mysql_fetch_array($res1)) {
   echo $forum['shortname'] . "\n";
 
-  $fdb = "forum_" . $forum['shortname'];
-
-  $sql = "select * from indexes";
-  $res2 = mysql_db_query($fdb, $sql) or sql_error($sql);
+  $sql = "select * from f_indexes where fid = " . $forum['fid'];
+  $res2 = mysql_query($sql) or sql_error($sql);
 
   while ($index = mysql_fetch_array($res2)) {
   }

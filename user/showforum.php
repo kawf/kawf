@@ -168,14 +168,14 @@ function print_collapsed($thread, $msg, $count)
       $string .= " (link)";
   }
 
-  if (isset($flags['Locked']))
-    $string .= " (locked)";
-
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $msg['name'] . "</b>&nbsp;&nbsp;<font size=\"-2\"><i>" . $msg['date'] . "</i>";
 
   $string .= " ($count " . ($count == 1 ? "reply" : "replies") . ")";
 
   $string .= "</font>";
+
+  if (isset($thread['flag.Locked']) && !$msg['pmid'])
+    $string .= " (locked)";
 
   if ($msg['state'] != "Active")
     $string .= " (" . $msg['state'] . ")";
@@ -197,11 +197,11 @@ function print_collapsed($thread, $msg, $count)
       break;
     }
 
-    if ($forum['version'] >= 2) {
-      if (isset($flags['Locked']))
-        $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?mid=" . $msg['mid'] . "\">ul</a>";
+    if (!$msg['pmid']) {
+      if (isset($thread['flag.Locked']))
+        $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?tid=" . $msg['tid'] . "&page=$page\">ul</a>";
       else
-        $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?mid=" . $msg['mid'] . "\">lm</a>";
+        $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?tid=" . $msg['tid'] . "&page=$page\">lt</a>";
     }
   }
 
@@ -210,7 +210,7 @@ function print_collapsed($thread, $msg, $count)
   return $string;
 }
 
-function print_subject($msg)
+function print_subject($thread, $msg)
 {
   global $user, $tthreads_by_tid, $forum, $tpl;
 
@@ -256,15 +256,15 @@ function print_subject($msg)
       $string .= " (link)";
   }
 
-  if (isset($flags['Locked']))
-    $string .= " (locked)";
-
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $msg['name'] . "</b>&nbsp;&nbsp;<font size=\"-2\"><i>" . $msg['date'] . "</i>";
 
   if ($msg['unixtime'] > 968889231)
     $string .= " (" . $msg['views'] . " view" . ($msg['views'] == 1 ? "" : "s") . ")";
 
   $string .= "</font>";
+
+  if (isset($thread['flag.Locked']) && !$msg['pmid'])
+    $string .= " (locked)";
 
   if ($msg['state'] != "Active")
     $string .= " (" . $msg['state'] . ")";
@@ -286,11 +286,11 @@ function print_subject($msg)
       break;
     }
 
-    if ($forum['version'] >= 2) {
-      if (isset($flags['Locked']))
-        $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?mid=" . $msg['mid'] . "\">ul</a>";
+    if (!$msg['pmid']) {
+      if (isset($thread['flag.Locked']))
+        $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?tid=" . $msg['tid'] . "&page=$page\">ul</a>";
       else
-        $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?mid=" . $msg['mid'] . "\">lm</a>";
+        $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?tid=" . $msg['tid'] . "&page=$page\">lt</a>";
     }
   }
 
@@ -303,6 +303,15 @@ function display_thread($thread)
 {
   global $user, $forum, $ulkludge;
 
+  if (!empty($thread['flags'])) {
+  $options = explode(",", $thread['flags']);
+  foreach ($options as $name => $value)
+{
+echo "<!-- setting $value -->\n";
+    $thread["flag.$value"] = true;
+}
+}
+
   list($messages, $tree) = fetch_thread($thread);
   if (!isset($messages) || !count($messages))
     return array(0, "", "");
@@ -312,7 +321,7 @@ function display_thread($thread)
   if (isset($user->pref['Collapsed']))
     $messagestr = print_collapsed($thread, reset($messages), $count - 1);
   else
-    $messagestr = list_thread(print_subject, $messages, $tree, reset($tree));
+    $messagestr = list_thread(print_subject, $messages, $tree, reset($tree), $thread);
 
   if (empty($messagestr))
     return array(0, "", "");
@@ -406,7 +415,7 @@ while ($numshown < $threadsperpage) {
     $mtable = "f_messages" . $index['iid'];
 
     /* Get some more results */
-    $sql = "select $ttable.tid, $ttable.mid, $mtable.state from $ttable, $mtable where" .
+    $sql = "select $ttable.tid, $ttable.mid, $ttable.flags, $mtable.state from $ttable, $mtable where" .
 	" $ttable.tid >= " . $index['mintid'] . " and" .
 	" $ttable.tid <= " . $index['maxtid'] . " and" .
 	" $ttable.mid >= " . $index['minmid'] . " and" .

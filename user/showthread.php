@@ -39,6 +39,10 @@ $result = mysql_query($sql) or sql_error($sql);
 
 $thread = mysql_fetch_array($result);
 
+$options = explode(",", $thread['flags']);
+foreach ($options as $name => $value)
+  $thread["flag.$value"] = true;
+
 $index = find_msg_index($thread['mid']);
 
 $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
@@ -79,7 +83,7 @@ do {
 
 $messages = filter_messages($messages, $tree, reset($tree));
 
-function print_message($msg)
+function print_message($thread, $msg)
 {
   global $tpl, $user, $forum;
 
@@ -141,7 +145,7 @@ function print_message($msg)
     $tpl->set_var("message_ip", "");
 */
 
-  if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid)
+  if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid && !$thread['flag.Locked']))
     $tpl->set_var("_owner", "");
   else
     $tpl->parse("_owner", "owner");
@@ -151,7 +155,7 @@ function print_message($msg)
   return $tpl->get_var("MESSAGE");
 }
 
-$messagestr = list_thread(print_message, $messages, $tree, reset($tree));
+$messagestr = list_thread(print_message, $messages, $tree, reset($tree), $thread);
 
 $tpl->set_var("MESSAGES", $messagestr);
 

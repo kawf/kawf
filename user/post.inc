@@ -8,8 +8,12 @@ $tpl->set_file("postform", "postform.tpl");
 
 $tpl->set_block("postform", "acct");
 $tpl->set_block("postform", "noacct");
+$tpl->set_block("postform", "locked");
 
-if (isset($user->aid)) {
+if (isset($thread) && isset($thread['flag.Locked'])) {
+  $tpl->set_var("acct", "");
+  $tpl->set_var("noacct", "");
+} else if (isset($user->aid)) {
   if (!isset($postcookie))
     $postcookie = md5("post" . microtime());
   $hidden = hidden("postcookie", $postcookie);
@@ -86,9 +90,11 @@ if (isset($user->aid)) {
 
   $tpl->set_var("ACTION", $action);
   $tpl->set_var("noacct", "");
+  $tpl->set_var("locked", "");
   $tpl->parse("acct", "acct");	/* This fixed URL and PAGE for some reason */
 } else {
   $tpl->set_var("acct", "");
+  $tpl->set_var("locked", "");
   $tpl->parse("noacct", "noacct");/* This fixed URL and PAGE for some reason */
 }
 

@@ -18,6 +18,7 @@ $tpl->set_file(array(
 ));
 
 $tpl->set_block("edit", "disabled");
+$tpl->set_block("edit", "locked");
 $tpl->set_block("edit", "image");
 $tpl->set_block("edit", "preview");
 $tpl->set_block("edit", "form");
@@ -81,6 +82,7 @@ $tpl->set_var("AD", $ad);
 
 if (!isset($forum['opt.Post'])) {
   $tpl->set_var(array(
+    "locked" => "",
     "image" => "",
     "preview" => "",
     "form" => "",
@@ -92,6 +94,28 @@ if (!isset($forum['opt.Post'])) {
 }
 
 $tpl->set_var("disabled", "");
+
+$index = find_thread_index($msg['tid']);
+$sql = "select * from f_threads$index where tid = '" . addslashes($msg['tid']) . "'";
+$result = mysql_query($sql) or sql_error($sql);
+
+$thread = mysql_fetch_array($result);
+
+$options = explode(",", $thread['flags']);
+foreach ($options as $name => $value)
+  $thread["flag.$value"] = true;
+
+if (isset($thread['flag.Locked'])) {
+  $tpl->set_var(array(
+    "image" => "",
+    "preview" => "",
+    "form" => "",
+    "accept" => "",
+  ));
+
+  $tpl->pparse("CONTENT", "post");
+  exit;
+}
 
 /* Sanitize the strings */
 $name = stripcrap($user->name);

@@ -67,6 +67,15 @@ if (isset($tthreads_by_tid[$msg['tid']]) &&
   mysql_query($sql) or sql_warn($sql);
 }
 
+$index = find_thread_index($msg['tid']);
+$sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$index where tid = '" . $msg['tid'] . "'";
+$result = mysql_query($sql) or sql_error($sql);
+$thread = mysql_fetch_array($result);
+
+$options = explode(",", $thread['flags']);
+foreach ($options as $name => $value)
+  $thread["flag.$value"] = true;
+
 $urlroot = "/ads";
 /* We get our money from ads, make sure it's there */
 require_once("ads.inc");
@@ -93,7 +102,7 @@ else
   $tpl->set_var("message_ip", "");
 */
 
-if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid)
+if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || isset($thread['flag.Locked']))
   $tpl->set_var("owner", "");
 
 $tpl->set_var(array(
@@ -146,14 +155,9 @@ if (!isset($urlset))
 
 $tpl->set_var("MSG_MESSAGE", $message . "<br>\n");
 
-$index = find_thread_index($msg['tid']);
-$sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$index where tid = '" . $msg['tid'] . "'";
-$result = mysql_query($sql) or sql_error($sql);
-$thread = mysql_fetch_array($result);
-
 list($messages, $tree) = fetch_thread($thread, $msg['mid']);
 
-function print_subject($msg)
+function print_subject($thread, $msg)
 {
   global $vmid, $user, $tthreads_by_tid, $forum, $tpl;
 
@@ -203,15 +207,15 @@ function print_subject($msg)
       $string .= " (link)";
   }
 
-  if (isset($flags['Locked']))
-    $string .= " (locked)";
-
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<font size=-2><i>".$msg['date']."</i>";
 
   if ($msg['unixtime'] > 968889231)
     $string .= " (" . $msg['views'] . " view" . ($msg['views'] == 1 ? "" : "s") . ")";
 
   $string .= "</font>";
+
+  if (isset($thread['flag.Locked']) && !$msg['pmid'])
+    $string .= " (locked)";
 
   if ($msg['state'] != "Active")
     $string .= " (" . $msg['state'] . ")";
@@ -233,11 +237,11 @@ function print_subject($msg)
       break;
     }
 
-    if ($forum['version'] >= 2) {
-      if (isset($flags['Locked']))
-        $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?mid=" . $msg['mid'] . "\">ul</a>";
+    if (!$msg['pmid']) {
+      if (isset($thread['flag.Locked']))
+        $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?tid=" . $msg['tid'] . "&page=$page\">ul</a>";
       else
-        $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?mid=" . $msg['mid'] . "\">lm</a>";
+        $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?tid=" . $msg['tid'] . "&page=$page\">lt</a>";
     }
   }
 
@@ -249,7 +253,7 @@ function print_subject($msg)
 $vmid = $mid;
 
 $threadmsg = "<ul class=\"thread\">\n";
-$threadmsg .= list_thread(print_subject, $messages, $tree, reset($tree));
+$threadmsg .= list_thread(print_subject, $messages, $tree, reset($tree), $thread);
 if (!$ulkludge)
   $threadmsg .= "</ul>\n";
 

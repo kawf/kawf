@@ -25,6 +25,7 @@ $tpl->set_file(array(
 ));
 
 $tpl->set_block("post", "disabled");
+$tpl->set_block("post", "locked");
 $tpl->set_block("post", "image");
 $tpl->set_block("post", "preview");
 $tpl->set_block("post", "form");
@@ -59,6 +60,7 @@ $tpl->set_var("AD", $ad);
 
 if (!isset($forum['opt.Post'])) {
   $tpl->set_var(array(
+    "locked" => "",
     "image" => "",
     "preview" => "",
     "form" => "",
@@ -70,6 +72,32 @@ if (!isset($forum['opt.Post'])) {
 }
 
 $tpl->set_var("disabled", "");
+
+if (isset($tid) && $tid) {
+  $index = find_thread_index($tid);
+  $sql = "select * from f_threads$index where tid = '" . addslashes($tid) . "'";
+  $result = mysql_query($sql) or sql_error($sql);
+
+  $thread = mysql_fetch_array($result);
+
+  $options = explode(",", $thread['flags']);
+  foreach ($options as $name => $value)
+    $thread["flag.$value"] = true;
+
+  if (isset($thread['flag.Locked'])) {
+    $tpl->set_var(array(
+      "image" => "",
+      "preview" => "",
+      "form" => "",
+      "accept" => "",
+    ));
+
+    $tpl->pparse("CONTENT", "post");
+    exit;
+  }
+}
+
+$tpl->set_var("locked", "");
 
 if (isset($postcookie)) {
   /* Strip any tags from the data */
@@ -347,13 +375,6 @@ if (!$accepted || isset($preview)) {
   $result = mysql_query($sql) or sql_error($sql);
 
   if (mysql_num_rows($result) > 0) {
-#    $index = find_thread_index($tid);
-    $index = $index['iid'];
-    $sql = "select * from f_threads$index where tid = '" . addslashes($tid) . "'";
-    $res2 = mysql_query($sql) or sql_error($sql);
-
-    $thread = mysql_fetch_array($res2);
-
 #    $index = find_msg_index($thread['mid']);
     $sql = "select subject from f_messages$index where mid = " . $thread['mid'];
     $res2 = mysql_query($sql) or sql_error($sql);
