@@ -282,7 +282,7 @@ $tpl->set_var("THREADLINKS", $threadlinks);
 
 $action = "post";
 
-if (!ereg("^[Rr][Ee]:", $msg['subject'], $sregs))
+if (!preg_match("/^Re:/i", $msg['subject'], $sregs))
   $subject = "Re: " . $msg['subject'];
  else
   $subject = $msg['subject'];

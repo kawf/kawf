@@ -93,9 +93,9 @@ else
 
 $url = stripcrap($url);
 $url = stripspaces($url);
-$url = ereg_replace(" ", "%20", $url);
+$url = preg_replace("/ /", "%20", $url);
 
-if (!empty($url) && !eregi("^[a-z]+://", $url))
+if (!empty($url) && !preg_match("^/[a-z]+:\/\//i", $url))
   $url = "http://$url";
 
 $urltext = stripcrap($urltext);
@@ -104,9 +104,9 @@ $urltext = demoronize($urltext);
 
 $imageurl = stripcrap($imageurl);
 $imageurl = stripspaces($imageurl);
-$imageurl = ereg_replace(" ", "%20", $imageurl);
+$imageurl = preg_replace("/ /", "%20", $imageurl);
 
-if (!empty($imageurl) && !eregi("^[a-z]+://", $imageurl))
+if (!empty($imageurl) && !preg_match("^/[a-z]+:\/\//i", $imageurl))
   $imageurl = "http://$imageurl";
 
 if (isset($pmid)) {
@@ -188,10 +188,10 @@ if (isset($error) || isset($preview)) {
   if (empty($message))
     $flags[] = "NoText";
 
-  if (!empty($url) || eregi("<[[:space:]]*a[[:space:]]+href", $message))
+  if (!empty($url) || preg_match("/<[[:space:]]*a[[:space:]]+href/i", $message))
     $flags[] = "Link";
 
-  if (!empty($imageurl) || eregi("<[[:space:]]*img[[:space:]]+src", $message))
+  if (!empty($imageurl) || preg_match("/<[[:space:]]*img[[:space:]]+src/i", $message))
     $flags[] = "Picture";
 
   $flagset = implode(",", $flags);

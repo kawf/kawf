@@ -54,7 +54,7 @@ if (isset($submit)) {
     $success .= "Updated signature<p>";
 */
 
-  if (!ereg("^[0-9]+$", $threadsperpage)) {
+  if (!preg_match("/^[0-9]+$/", $threadsperpage)) {
     $error .= "Threads per page set to non number, ignoring<p>\n";
     $threadsperpage = $user->threadsperpage;
   } elseif ($threadsperpage < 10) {
