@@ -3,12 +3,15 @@
 unset($user);
 
 if (isset($submit)) {
-  $user = new AdminUser($email);
-  if (!$user || !$user->checkpassword($password))
+  $user = new AdminUser();
+  $user->find_by_email($email);
+  if (!$user->valid())
+    $message = "Invalid email address '$email'\n";
+  else if (!$user->checkpassword($password))
     $message = "Invalid password for $email\n";
   else {
     $user->setcookie();
-    header("Location: $page");
+    header("Location: http://$url");
     exit;
   }
 }
@@ -17,7 +20,7 @@ page_header("Forum Admin Authentication");
 if (isset($message))
   echo "<font color=#ff0000>$message</font><br>\n";
 ?>
-  <form method="post" action="login.phtml?page=<?php echo $page;?>">
+  <form method="post" action="login.phtml?url=<?php echo $url;?>">
   <table>
    <tr>
     <td>Email:</td>

@@ -8,11 +8,11 @@ if (!empty($old_include_path))
 
 ini_set("include_path", $include_path);
 
-require("$config.inc");
-require("sql.inc");
-require("util.inc");
-require("page.inc");
-require("admin.inc");
+require_once("$config.inc");
+require_once("sql.inc");
+require_once("util.inc");
+require_once("page.inc");
+require_once("adminuser.inc");
 
 sql_open($database);
 
@@ -30,11 +30,12 @@ $scripts = array(
   "forumdelete.phtml" => "forumdelete.php",
 );
 
-$user = new AdminUser(true);
+$user = new AdminUser();
+$user->find_by_cookie();
 
 function find_forum($shortname)
 {
-  global $user, $forum, $indexes, $tthreads, $tthreads_by_tid;
+  global $forum, $indexes;
 
   $sql = "select * from f_forums where shortname = '" . addslashes($shortname) . "'";
   $result = mysql_query($sql) or sql_error($sql);
@@ -56,21 +57,6 @@ function find_forum($shortname)
 
   while ($index = mysql_fetch_array($result))
     $indexes[] = $index;
-
-  /* Grab all of the tracking data for the user */
-  if (isset($user)) {
-    $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc";
-    $result = mysql_query($sql) or sql_error($sql);
-
-    while ($tthread = mysql_fetch_array($result)) {
-      $tthreads[] = $tthread;
-      if (isset($tthreads_by_tid[$tthread['tid']])) {
-        if ($tthread['tstamp'] > $tthreads_by_tid[$tthread['tid']]['tstamp'])
-          $tthreads_by_tid[$tthread['tid']] = $tthread;
-      } else
-        $tthreads_by_tid[$tthread['tid']] = $tthread;
-    }
-  }
 
   return 1;
 }
