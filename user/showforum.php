@@ -11,6 +11,7 @@ $tpl->set_file(array(
   "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
 ));
 
+$tpl->set_block("showforum", "update_all");
 $tpl->set_block("showforum", "simple");
 $tpl->set_block("showforum", "normal");
 
@@ -375,6 +376,9 @@ if (isset($tthreads)) {
     }
   }
 }
+
+if (!$numshown)
+  $tpl->set_var("update_all", "");
 
 $skipthreads = ($curpage - 1) * $threadsperpage;
 
