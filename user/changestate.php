@@ -37,7 +37,7 @@ default:
   break;
 }
 
-if (($state == 'Moderate' && !$user->capable($forum['fid'], 'Moderate')) ||
+if (($state == 'Moderated' && !$user->capable($forum['fid'], 'Moderate')) ||
     ($state == 'Deleted' && !$user->capable($forum['fid'], 'Delete')) ||
     ($state == 'OffTopic' && !$user->capable($forum['fid'], 'OffTopic')) ||
     ($state == 'Active' && !$user->capable($forum['fid'], $astatus))) {
