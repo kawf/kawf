@@ -33,6 +33,8 @@ class ForumUser {
       $this->timezone = $local_timezone;
 
     $this->tzoff = $tz_to_offset[$local_timezone] - $tz_to_offset[$this->timezone];
+
+    return $this;
   }
 
   /* These functions are used to find a user */
@@ -41,19 +43,22 @@ class ForumUser {
     if (!is_int($aid))
       return;
 
-    ForumUser::find("aid = $aid");
+    $this = new ForumUser;
+    return $this->find("aid = $aid");
   }
 
   function find_by_email($email)
   {
-    ForumUser::find("email = '" . addslashes($email) . "'");
+    $this = new ForumUser;
+    return $this->find("email = '" . addslashes($email) . "'");
   }
 
   function find_by_cookie()
   {
     global $KawfAccount;
 
-    ForumUser::find("cookie = '" . addslashes($KawfAccount) . "'");
+    $this = new ForumUser;
+    return $this->find("cookie = '" . addslashes($KawfAccount) . "'");
   }
 
   /* Returns true if this variable is a valid user */

@@ -89,12 +89,11 @@ $fscripts = array(
 
 header("Cache-Control: private");
 
-$user = new ForumUser();
-$user->find_by_cookie();
+$user = ForumUser::find_by_cookie();
 
-if ($user->valid()) {
-  /* FIXME: This kills performance */
+/* FIXME: This kills performance */
 /*
+if ($user->valid()) {
   $sql = "update f_visits set tstamp = NOW() where aid = $user->aid";
   mysql_query($sql) or sql_error($sql);
 
@@ -102,10 +101,7 @@ if ($user->valid()) {
     $sql = "insert into f_visits ( aid, tstamp ) values ( $user->aid, NOW() )";
     mysql_query($sql) or sql_error($sql);
   }
-*/
 } else {
-  /* FIXME: This kills performance */
-/*
   $sql = "update f_visits set tstamp = NOW() where ip = '" . addslashes($REMOTE_ADDR) . "'";
   mysql_query($sql) or sql_error($sql);
 
@@ -113,8 +109,8 @@ if ($user->valid()) {
     $sql = "insert into f_visits ( ip, tstamp ) values ( '" . addslashes($REMOTE_ADDR) . "', NOW() )";
     mysql_query($sql) or sql_error($sql);
   }
-*/
 }
+*/
 
 function find_forum($shortname)
 {

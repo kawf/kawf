@@ -41,8 +41,7 @@ if (!empty($msg['flags'])) {
 }
 
 if (isset($flags['NewStyle']) && !isset($user->pref['HideSignatures'])) {
-  $uuser = new ForumUser();
-  $uuser->find_by_aid((int)$msg['aid']);
+  $uuser = ForumUser::find_by_aid((int)$msg['aid']);
 
   $signature = $uuser->signature;
 }
