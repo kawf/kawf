@@ -10,7 +10,7 @@ if (!empty($old_include_path))
   $include_path .= ":" . $old_include_path;
 ini_set("include_path", $include_path);
 
-require_once("$config.inc");
+include_once("$config.inc");
 require_once("sql.inc");
 require_once("util.inc");
 require_once("page.inc");
