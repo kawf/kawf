@@ -1,5 +1,48 @@
 <?php
 
+function demoronize($string)
+{
+  /* Remove any and all non-ISO Microsoft extensions */
+  $string = preg_replace("/\x82/", ",", $string);
+  $string = preg_replace("/\x83/", "<em>f</em>", $string);
+  $string = preg_replace("/\x84/", ",,", $string);
+  $string = preg_replace("/\x85/", "...", $string);
+
+  $string = preg_replace("/\x88/", "^", $string);
+  $string = preg_replace("/\x89/", " °/°°", $string);
+
+  $string = preg_replace("/\x8B/", "<", $string);
+  $string = preg_replace("/\x8C/", "Oe", $string);
+
+  $string = preg_replace("/\x91/", "`", $string);
+  $string = preg_replace("/\x92/", "'", $string);
+  $string = preg_replace("/\x93/", "\"", $string);
+  $string = preg_replace("/\x94/", "\"", $string);
+
+  $string = preg_replace("/\x95/", "*", $string);
+  $string = preg_replace("/\x96/", "-", $string);
+  $string = preg_replace("/\x97/", "--", $string);
+  $string = preg_replace("/\x98/", "<sup>~</sup>", $string);
+  $string = preg_replace("/\x99/", "<sup>TM</sup>", $string);
+
+  $string = preg_replace("/\x9B/", ">", $string);
+  $string = preg_replace("/\x9C/", "oe", $string);
+
+  return $string;
+}
+
+function stripcrap($string)
+{
+  global $no_tags;
+
+  $string = striptag($string, $no_tags);
+  $string = stripspaces($string);
+  $string = ereg_replace("<", "&lt;", $string);
+  $string = ereg_replace(">", "&gt;", $string);
+
+  return $string;
+}
+
 function stripspaces($string)
 {
   /* Beginning */
