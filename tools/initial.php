@@ -9,6 +9,7 @@ set_time_limit(0);
 sql_open();
 
 sql_query($create_forums_table);
+sql_query($create_visits_table);
 sql_query($create_index_table);
 sql_query($create_dupposts_table);
 sql_query($create_unique_table);

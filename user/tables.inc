@@ -39,6 +39,15 @@ $create_forums_table =
   "  primary key (fid)\n" .
   ")";
 
+$create_visits_table =
+  "create table f_visits (\n" .
+  "  ip varchar(20) not null,\n" .
+  "  aid int not null,\n" .
+  "  tstamp timestamp,\n" .
+  "  key (ip),\n" .
+  "  key (aid)\n" .
+  ")";
+
 $create_index_table =
   "create table f_indexes (\n" .
   "  iid int not null auto_increment,\n" .
