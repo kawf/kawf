@@ -107,6 +107,9 @@ $imageurl = preg_replace("/ /", "%20", $imageurl);
 if (!empty($imageurl) && !preg_match("^/[a-z]+:\/\//i", $imageurl))
   $imageurl = "http://$imageurl";
 
+if (!isset($pmid) && isset($pid))
+  $pmid = $pid;
+
 if (isset($pmid)) {
   $index = find_msg_index($pmid);
   if ($index >= 0) {
