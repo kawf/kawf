@@ -300,15 +300,18 @@ while ($forum = mysql_fetch_array($result)) {
 
     $thread = mysql_fetch_array($res3);
 
-    $forumcount++;
-    $numshown++;
-
     if ($thread['tstamp'] > $tthread['tstamp'])
       $tpl->set_var("CLASS", "trow" . ($forumcount % 2));
     else
       $tpl->set_var("CLASS", "row" . ($forumcount % 2));
 
     list($count, $messagestr) = display_thread($thread);
+
+    if (!$count)
+      continue;
+
+    $forumcount++;
+    $numshown++;
 
     /* If the thread is tracked, we know they are a user already */
     $messagelinks = "<a href=\"/untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";

@@ -481,9 +481,10 @@ while ($numshown < $threadsperpage) {
     if (isset($threadshown[$thread['tid']]))
       continue;
 
-    $numshown++;
-
     list($count, $messagestr, $state) = display_thread($thread);
+
+    if (!$count)
+      continue;
 
 /*
     if ($state == 'Deleted')
@@ -493,6 +494,8 @@ while ($numshown < $threadsperpage) {
     else
 */
       $tpl->set_var("CLASS", "row" . ($numshown % 2));
+
+    $numshown++;
 
     if ($user->valid()) {
       if (isset($tthreads_by_tid[$thread['tid']]))
