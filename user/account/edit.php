@@ -66,6 +66,12 @@ if (isset($submit)) {
 }
 
 if (empty($error)) {
+  if (($user->status == 'Suspended' || $user->status == 'Deleted') &&
+      (isset($user->update['name']) || isset($update_email))) {
+    echo "You are suspended or deleted and not allowed to change your screen name or email address\n";
+    exit;
+  }
+
   if (!$user->update()) {
     if (!$user->name)
       $error .= "The name '$name' is taken\n";
@@ -81,12 +87,6 @@ if (isset($update_email) && empty($error)) {
 }
 
 if (empty($error)) {
-  if (($user->status == 'Suspended' || $user->status == 'Deleted') &&
-      (isset($user->update['name']) || isset($update_email))) {
-    echo "You are suspended or deleted and not allowed to change your screen name or email address\n";
-    exit;
-  }
-
   if (!isset($user->update['name']))
     $tpl->set_var("name", "");
   if (!isset($user->update['password']))
