@@ -1,5 +1,6 @@
 <?php
-require("strip.inc");
+
+include_once("strip.inc");
 
 function mailfrom($fromaddr, $toaddr, $message)
 {
@@ -14,4 +15,5 @@ function mailfrom($fromaddr, $toaddr, $message)
 
   return true;
 }
+
 ?>
