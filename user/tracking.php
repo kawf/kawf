@@ -4,6 +4,7 @@ $user->req();
 
 require_once("listthread.inc");
 require_once("filter.inc");
+require_once("thread.inc");
 
 $tpl->set_file(array(
   "header" => "header.tpl",
@@ -89,23 +90,23 @@ function print_collapsed($thread, $msg, $count)
   if ($user->moderator($forum['fid'])) {
     switch ($msg['state']) {
     case "Moderated":
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">um</a>";
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Active&mid=" . $msg['mid'] . "\">um</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Deleted&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     case "Deleted":
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Active&mid=" . $msg['mid'] . "\">ud</a>";
       break;
     case "Active":
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Moderated&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">mm</a>";
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Moderated&mid=" . $msg['mid'] . "\">mm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Deleted&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     }
 
     if ($forum['version'] >= 2) {
       if (isset($flags['Locked']))
-        $string .= " <a href=\"/unlock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ul</a>";
+        $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?mid=" . $msg['mid'] . "\">ul</a>";
       else
-        $string .= " <a href=\"/lock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">lm</a>";
+        $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?mid=" . $msg['mid'] . "\">lm</a>";
     }
   }
 
@@ -178,23 +179,23 @@ function print_subject($msg)
   if ($user->moderator($forum['fid'])) {
     switch ($msg['state']) {
     case "Moderated":
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">um</a>";
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Active&mid=" . $msg['mid'] . "\">um</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Deleted&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     case "Deleted":
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Active&mid=" . $msg['mid'] . "\">ud</a>";
       break;
     case "Active":
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Moderated&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">mm</a>";
-      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Moderated&mid=" . $msg['mid'] . "\">mm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Deleted&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     }
 
     if ($forum['version'] >= 2) {
       if (isset($flags['Locked']))
-        $string .= " <a href=\"/unlock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ul</a>";
+        $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?mid=" . $msg['mid'] . "\">ul</a>";
       else
-        $string .= " <a href=\"/lock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">lm</a>";
+        $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?mid=" . $msg['mid'] . "\">lm</a>";
     }
   }
 
@@ -207,36 +208,9 @@ function display_thread($thread)
 {
   global $user, $forum, $ulkludge;
 
-  $index = find_msg_index($thread['mid']);
-  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
-  $result = mysql_query($sql) or sql_error($sql);
-  while ($message = mysql_fetch_array($result)) {
-    $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
-    $messages[] = $message;
-  }
-
-  /* We assume a thread won't span more than 1 index */
-  $index++;
-  if (isset($indexes[$index])) {
-    $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
-    $result = mysql_query($sql) or sql_error($sql);
-    while ($message = mysql_fetch_array($result)) {
-      $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
-      $messages[] = $message;
-    }
-  }
-
+  list($messages, $tree) = fetch_thread($thread);
   if (!isset($messages) || !count($messages))
     return "";
-
-  /* Filter out moderated or deleted messages, if necessary */
-  reset($messages);
-  while (list($key, $msg) = each($messages)) {
-    $tree[$msg['mid']][] = $key;
-    $tree[$msg['pid']][] = $key;
-  }
-
-  $messages = filter_messages($messages, $tree, reset($tree));
 
   $count = count($messages);
 
@@ -312,7 +286,7 @@ while ($forum = mysql_fetch_array($result)) {
     $numshown++;
 
     /* If the thread is tracked, we know they are a user already */
-    $messagelinks = "<a href=\"/untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
+    $messagelinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
     if ($count > 1) {
       if (!isset($user->pref['Collapsed']))
         $messagelinks .= "<br>";
@@ -320,7 +294,7 @@ while ($forum = mysql_fetch_array($result)) {
         $messagelinks .= " ";
 
       if ($thread['unixtime'] > $tthread['unixtime'])
-        $messagelinks .= "<a href=\"/markuptodate.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#0000f0\">up</font></a>";
+        $messagelinks .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#0000f0\">up</font></a>";
     }
 
     $tpl->set_var("MESSAGES", $messagestr);
