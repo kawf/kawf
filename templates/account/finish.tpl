@@ -56,7 +56,7 @@ You have now been logged in.<p>
 If you wish to change your password, use the "Edit account information" link below<p>
 <!-- END forgot_password -->
 
-<a href="edit.phtml">Edit account information</a>
+<a href="acctedit.phtml">Edit account information</a>
 <!-- END success -->
 
 <!-- BEGIN form -->
