@@ -12,6 +12,7 @@ $tpl->set_file(array(
 ));
 
 $tpl->set_var("FORUM_NAME", $forum['name']);
+$tpl->set_var("TITLE", $forum['name']);
 
 $tpl->parse("FORUM_HEADER", "forum_header");
 

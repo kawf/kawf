@@ -27,7 +27,7 @@ $result = mysql_query($sql) or sql_error($sql);
 
 $msg = mysql_fetch_array($result);
 
-$tpl->set_var(TITLE, $msg['subject']);
+$tpl->set_var("TITLE", $msg['subject']);
 
 $sql = "update f_messages$index set views = views + 1 where mid = '" . addslashes($mid) . "'";
 mysql_query($sql) or sql_warn($sql);
