@@ -144,6 +144,14 @@ if (isset($postcookie)) {
 
   $urltext = stripcrap($urltext);
 
+  /* Modify any tirerack links to include our referrer information so we get more money */
+  if (!preg_match("/^http:\/\/www\.tirerack\.com\/a\.jsp/", $url) && preg_match("/^http:\/\/www\.tirerack\.com(\/.*)/", $url, $regs)) {
+    if (empty($urltext))
+      $urltext = $url;
+
+    $url = "http://www.tirerack.com/a.jsp?a=AR4&url=" . urlencode($regs[1]);
+  }
+
   $imageurl = stripcrapurl($imageurl);
   $imageurl = preg_replace("/ /", "%20", $imageurl);
 
