@@ -21,7 +21,7 @@ if (isset($submit)) {
 
     $capabilities = join(",", $capabilities);
 
-    sql_query("update f_moderators set capabilities = '" . addslashes($capabilities) . "' where aid = " . addslashes($aid) . " and fid = " . addslashes($fid));
+    sql_query("update f_moderators set capabilities = '" . addslashes($capabilities) . "' where aid = " . addslashes($aid) . " and fid = " . addslashes($opts[$i]['fid']));
   }
 
   Header("Location: useracl.phtml?message=" . urlencode("User ACL Modified"));
