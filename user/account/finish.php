@@ -21,7 +21,7 @@ if (!$user) {
   else
     $tpl->set_var("COOKIE", $cookie);
 } else {
-  if ($user->status == 'Create') {
+  if ($user['status'] == 'Create') {
     $user = new AccountUser((int)$user['aid']);
     $user->status("Active");
     if (!$user->update())
