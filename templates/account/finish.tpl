@@ -47,7 +47,7 @@ Thank you for creating an account with {DOMAIN}.<p>
 <!-- END create -->
 
 <!-- BEGIN email -->
-Your email address has been changed to {EMAIL}.<p>
+Your email address has been changed from "{OLD_EMAIL}" to "{EMAIL}".<p>
 <!-- END email -->
  
 <!-- BEGIN forgot_password -->

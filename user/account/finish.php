@@ -53,13 +53,17 @@ if (!$pending) {
       $user->setcookie();
       break;
     case "ChangeEmail":
+      $old_email = $user->email;
       $user->email($pending['data']);
-      if (!$user->update())
+      if (!$user->update()) {
         $error = "dup_email";
-      else
+	$tpl->set_var("EMAIL", $pending{'data'});
+      } else {
+	$tpl->set_var("OLD_EMAIL", $old_email);
+	$tpl->set_var("EMAIL", $user->email);
         $success = "email";
+      }
 
-      $tpl->set_var("EMAIL", $user->email);
       break;
     case "ForgotPassword":
       /*
