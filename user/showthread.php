@@ -103,6 +103,9 @@ function print_message($thread, $msg)
     "MSG_AID" => $msg['aid'],
   ));
 
+  $uuser = new ForumUser;
+  $uuser->find_by_aid((int)$msg['aid']);
+
   if (!empty($msg['email'])) {
     /* Lame spamification */
     $email = preg_replace("/@/", "&#" . ord('@') . ";", $msg['email']);
@@ -121,8 +124,11 @@ function print_message($thread, $msg)
       $message .= "<ul><li><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['url'] . "</a></ul>\n";
   }
 
-  if (isset($signature))
-    $message .= "<p>" . nl2br($signature) . "\n";
+  if (isset($flags['NewStyle']) && !isset($user->pref['HideSignatures']) &&
+     isset($uuser->signature)) {
+    if (!empty($uuser->signature))
+      $message .= "<p>" . nl2br($uuser->signature) . "\n";
+  }
 
   $tpl->set_var("MSG_MESSAGE", $message . "<br><br>\n");
 
@@ -145,6 +151,7 @@ function print_message($thread, $msg)
       $tpl->parse("_advertiser", "advertiser");
     else
       $tpl->set_var("_advertiser", "");
+
     $tpl->parse("_forum_admin", "forum_admin");
   } else
     $tpl->set_var("_forum_admin", "");
@@ -163,10 +170,15 @@ function print_message($thread, $msg)
   if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')))
     $tpl->set_var("_owner", "");
   else {
-    if ($msg['state'] != 'UserDeleted')
-      $tpl->set_var("undelete", "");
-    if ($msg['state'] != 'Active')
-      $tpl->set_var("delete", "");
+    if ($msg['state'] == 'UserDeleted')
+      $tpl->set_var("_undelete", "");
+    else
+      $tpl->parse("_undelete", "undelete");
+
+    if ($msg['state'] == 'Active')
+      $tpl->set_var("_delete", "");
+    else
+      $tpl->parse("_delete", "delete");
 
     $tpl->parse("_owner", "owner");
   }
