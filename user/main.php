@@ -64,6 +64,7 @@ if (!isset($dont_use_account)) {
     "create.phtml" => "account/create.php",
     "acctedit.phtml" => "account/edit.php",
     "finish.phtml" => "account/finish.php",
+    "f" => "account/finish.php",
   );
 
   foreach ($account_scripts as $virtual => $real)
