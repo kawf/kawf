@@ -112,6 +112,11 @@ $message = striptag($message, $standard_tags);
 $message = stripspaces($message);
 $message = demoronize($message);
 
+/* $subject = stripcrap($subject); */
+$subject = striptag($subject, $subject_tags);
+$subject = stripspaces($subject);
+$subject = demoronize($subject);
+
 /* Sanitize the strings */
 $name = stripcrap($user['name']);
 if (isset($ExposeEmail))
@@ -119,14 +124,14 @@ if (isset($ExposeEmail))
 else
   $email = "";
 
-$subject = stripcrap($subject);
-$subject = demoronize($subject);
 $url = stripcrap($url);
 $urltext = stripcrap($urltext);
 $imageurl = stripcrap($imageurl);
 
+/*
 while (ereg("(.*)[[:space:]]$", $subject, $regs))
   $subject = $regs[1];
+*/
 
 if (isset($pid)) {
   $index = find_msg_index($pid);
