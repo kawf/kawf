@@ -21,6 +21,7 @@ $tpl->set_file(array(
   "post" => "post.tpl",
   "message" => "message.tpl",
   "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
+  "mail" => "mail/followup.tpl",
 ));
 
 $tpl->set_block("post", "disabled");
@@ -330,43 +331,40 @@ if (isset($error) || isset($preview)) {
 
     $thread = mysql_fetch_array($res2);
 
-    $index = find_msg_index($thread['mid']);
+#    $index = find_msg_index($thread['mid']);
     $sql = "select subject from f_messages$index where mid = " . $thread['mid'];
     $res2 = mysql_query($sql) or sql_error($sql);
 
     list($t_subject) = mysql_fetch_row($res2);
 
-    $e_message = "Subject: Followup to thread '$t_subject'\n" .
-	"From: accounts@audiworld.com\n" .
-	"X-Mailer: PHP/" . phpversion() . "\n\n" .
-
-	$user->name . " had posted a followup to a thread you are " .
-	"tracking. You can read the message by going to " .
-	"http://$_url/" . $forum['shortname'] . "/msgs/$mid.phtml\n\n" .
-
-	"The message that was just posted was:\n\n" .
-
-	"Subject: $subject\n\n" .
-
-	substr($message, 0, 1024);
-
+    $e_message = substr($message, 0, 1024);
     if (strlen($message) > 1024) {
       $bytes = strlen($message) - 1024;
       $plural = ($bytes == 1) ? '' : 's';
       $e_message .= "...\n\nMessage continues for another $bytes byte$plural\n";
     }
 
-    $foo = strlen($e_message);
-    $e_message = textwrap($e_message, 78, "\n");
-
-    $e_message .= "\n--\naudiworld.com\n";
+    $tpl->set_var(array(
+      "THREAD_SUBJECT" => $t_subject,
+      "USER_NAME" => $user->name,
+      "HOST" => $_url,
+      "FORUM_SHORTNAME" => $forum['shortname'],
+      "MSG_MID" => $mid,
+      "MSG_SUBJECT" => $subject,
+      "MSG_MESSAGE" => $e_message,
+    ));
 
     while ($track = mysql_fetch_array($result)) {
       $uuser = new ForumUser();
       $uuser->find_by_aid((int)$track['aid']);
 
-      mailfrom("followup-" . $track['aid'] . "@bounce.audiworld.com",
-	$uuser->email, "To: $email\n" . $e_message);
+      $tpl->set_var("EMAIL", $email);
+
+      $e_message = $tpl->parse("MAIL", "mail");
+      $e_message = textwrap($e_message, 78, "\n");
+
+      mailfrom("followup-" . $track['aid'] . "@" . $bounce_host,
+	$uuser->email, $e_message);
     }
   }
 
