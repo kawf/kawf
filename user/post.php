@@ -135,7 +135,7 @@ if (isset($postcookie)) {
   else
     $email = "";
 
-  $url = stripcrap($url);
+  $url = stripcrapurl($url);
   $url = preg_replace("/ /", "%20", $url);
 
   if (!empty($url) && !preg_match("/^[a-z]+:\/\//i", $url))
@@ -143,7 +143,7 @@ if (isset($postcookie)) {
 
   $urltext = stripcrap($urltext);
 
-  $imageurl = stripcrap($imageurl);
+  $imageurl = stripcrapurl($imageurl);
   $imageurl = preg_replace("/ /", "%20", $imageurl);
 
   if (!empty($imageurl) && !preg_match("/^[a-z]+:\/\//i", $imageurl))
