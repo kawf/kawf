@@ -220,6 +220,8 @@ $tid = $msg['tid'];
 unset($mid);
 unset($message);
 
+$parent = $msg;
+
 require_once("post.inc");
 
 $tpl->parse(MESSAGE, "message");
