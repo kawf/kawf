@@ -14,6 +14,7 @@ require_once("$config.inc");
 require_once("sql.inc");
 require_once("util.inc");
 require_once("forumuser.inc");
+require_once("timezone.inc");
 
 sql_open($database);
 
@@ -144,8 +145,7 @@ function find_forum($shortname)
 
   /* Grab all of the tracking data for the user */
   if ($user->valid()) {
-    $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc";
-    $result = mysql_query($sql) or sql_error($sql);
+    $result = sql_query("select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc");
 
     while ($tthread = mysql_fetch_array($result)) {
       $tthreads[] = $tthread;
@@ -156,6 +156,10 @@ function find_forum($shortname)
         $tthreads_by_tid[$tthread['tid']] = $tthread;
     }
   }
+
+  $options = explode(",", $forum['options']);
+  foreach ($options as $name => $value)
+    $forum["opt.$value"] = true;
 
   return 1;
 }

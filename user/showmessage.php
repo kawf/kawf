@@ -23,10 +23,12 @@ $tpl->parse("FORUM_HEADER", "forum_header");
 
 /* Grab the actual message */
 $index = find_msg_index($mid);
-$sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages$index where mid = '" . addslashes($mid) . "'";
+$sql = "select *, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime from f_messages$index where mid = '" . addslashes($mid) . "'";
 $result = mysql_query($sql) or sql_error($sql);
 
 $msg = mysql_fetch_array($result);
+
+$msg['date'] = strftime("%Y-%m-%d %H:%M:%S", $msg['unixtime']);
 
 $sql = "update f_messages$index set views = views + 1 where mid = '" . addslashes($mid) . "'";
 mysql_query($sql) or sql_warn($sql);
@@ -47,15 +49,16 @@ if (isset($flags['NewStyle']) && !isset($user->pref['HideSignatures'])) {
 /* Grab some information about the parent (if there is one) */
 if ($msg['pid'] != 0) {
   $index = find_msg_index($msg['pid']);
-  $sql = "select mid, subject, name, date from f_messages$index where mid = " . $msg['pid'];
+  $sql = "select mid, subject, name, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime from f_messages$index where mid = " . $msg['pid'];
   $result = mysql_query($sql) or sql_error($sql);
 
   $pmsg = mysql_fetch_array($result);
+  $pmsg['date'] = strftime("%Y-%m-%d %H:%M:%S", $pmsg['unixtime']);
 }
 
 /* Mark the thread as read if need be */
 if (isset($tthreads_by_tid[$msg['tid']]) &&
-    $tthreads_by_tid[$msg['tid']]['tstamp'] < $msg['tstamp']) {
+    $tthreads_by_tid[$msg['tid']]['unixtime'] < $msg['unixtime']) {
   $sql = "update f_tracking set tstamp = NOW() where fid = " . $forum['fid'] . " and tid = " . $msg['tid'] . " and aid = " . $user->aid;
   mysql_query($sql) or sql_warn($sql);
 }
@@ -140,17 +143,21 @@ $result = mysql_query($sql) or sql_error($sql);
 $thread = mysql_fetch_array($result);
 
 $index = find_msg_index($thread['mid']);
-$sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, views, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp, UNIX_TIMESTAMP(date) as unixtime from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
+$sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
 $result = mysql_query($sql) or sql_error($sql);
-while ($message = mysql_fetch_array($result))
+while ($message = mysql_fetch_array($result)) {
+  $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
   $messages[] = $message;
+}
 
 $index++;
 if (isset($indexes[$index])) {
-  $sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
+  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
   $result = mysql_query($sql) or sql_error($sql);
-  while ($message = mysql_fetch_array($result))
+  while ($message = mysql_fetch_array($result)) {
+    $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
     $messages[] = $message;
+  }
 }
 
 $vmid = $msg['mid'];
@@ -185,7 +192,7 @@ function print_subject($msg)
   $string = "<li>";
 
   $new = (isset($tthreads_by_tid[$msg['tid']]) &&
-      $tthreads_by_tid[$msg['tid']]['tstamp'] < $msg['tstamp']);
+      $tthreads_by_tid[$msg['tid']]['unixtime'] < $msg['unixtime']);
 
   if ($new)
     $string .= "<i><b>";
@@ -285,7 +292,7 @@ if ($user->valid()) {
   $threadlinks = "";
 
 if (isset($tthreads_by_tid[$msg['tid']]) &&
-   ($thread['tstamp'] > $tthreads_by_tid[$msg['tid']]['tstamp'])) {
+   ($thread['unixtime'] > $tthreads_by_tid[$msg['tid']]['unixtime'])) {
   $tpl->set_var("BGCOLOR", "#ccccee");
   if (count($messages) > 1)
     $threadlinks .= "<br><a href=\"/markuptodate.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#0000f0\">up</font></a>";
