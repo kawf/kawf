@@ -85,17 +85,22 @@ function print_message($msg)
   mysql_query($sql) or sql_warn($sql);
 
   $tpl->set_block("message", "forum_admin");
+  $tpl->set_block("message", "message_ip");
   $tpl->set_block("message", "parent");
   $tpl->set_block("message", "changes");
 
   if (isset($user->cap['Moderate'])) {
     $tpl->set_var("MSG_AID", $msg['aid']);
-    $tpl->set_var("MSG_IP", $msg['ip']);
     $tpl->set_var("MSG_CHANGES", preg_replace("/\n/", "<br>\n", $msg['changes']));
   } else {
     $tpl->set_var("forum_admin", "");
     $tpl->set_var("changes", "");
   }
+
+  if ($user->valid())
+    $tpl->set_var("MSG_IP", $msg['ip']);
+  else
+    $tpl->set_var("message_ip", "");
 
   $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
   $tpl->set_var(array(

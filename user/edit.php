@@ -24,6 +24,7 @@ $tpl->set_block("edit", "form");
 $tpl->set_block("edit", "accept");
 
 $tpl->set_block("message", "forum_admin");
+$tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "parent");
 $tpl->set_block("message", "changes");
 
@@ -33,7 +34,7 @@ $tpl->set_var(array(
   "changes" => "",
 ));
 
-$tpl->parse("FORUM_HEADER", 'forum_header');
+$tpl->parse("FORUM_HEADER", "forum_header");
 
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");
@@ -53,6 +54,11 @@ if ($msg['aid'] != $user->aid) {
 if (!isset($message)) {
   $preview = 1;
   $message = $msg['message'];
+  if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/", $message, $regs)) {
+    $imageurl = $regs[1];
+    $message = $regs[2];
+  }
+
   $subject = $msg['subject'];
   $url = $msg['url'];
   $urltext = $msg['urltext'];
@@ -75,25 +81,12 @@ function stripcrap($string) {
   return $string;
 }
 
-/* Strip any tags from the data */
-$message = striptag($message, $standard_tags);
-$message = stripspaces($message);
-
 /* Sanitize the strings */
 $name = stripcrap($user->name);
-if ($exposeemail)
+if ($ExposeEmail)
   $email = stripcrap($user->email);
 
 $subject = stripcrap($subject);
-$url = stripcrap($url);
-$urltext = stripcrap($urltext);
-$imageurl = stripcrap($imageurl);
-
-while (ereg("(.*)[[:space:]]$", $subject, $regs))
-  $subject = $regs[1];
-
-while (ereg("(.*)([[:space:]]|\n)$", $message, $regs))
-  $message = $regs[1];
 
 if (empty($subject)) {
   /* Subject is required */
@@ -108,14 +101,22 @@ if (strlen($subject) > 100) {
   $subject = substr($subject, 0, 100);
 }
 
-$url = stripspaces($url);
-$imageurl = stripspaces($imageurl);
+/* Strip any tags from the data */
+$message = striptag($message, $standard_tags);
+$message = stripspaces($message);
 
+$url = stripcrap($url);
+$url = stripspaces($url);
 $url = ereg_replace(" ", "%20", $url);
-$imageurl = ereg_replace(" ", "%20", $imageurl);
 
 if (!empty($url) && !eregi("^[a-z]+://", $url))
   $url = "http://$url";
+
+$urltext = stripcrap($urltext);
+
+$imageurl = stripcrap($imageurl);
+$imageurl = stripspaces($imageurl);
+$imageurl = ereg_replace(" ", "%20", $imageurl);
 
 if (!empty($imageurl) && !eregi("^[a-z]+://", $imageurl))
   $imageurl = "http://$imageurl";
@@ -139,7 +140,7 @@ if (!empty($imageurl))
   $msg_message = "<center><img src=\"$imageurl\"></center><p>";
 else
   $msg_message = "";
-$msg_message .= preg_replace("/\n/", "<br>\n", $message);
+$msg_message .= nl2br($message);
 if (!empty($user->signature))
   $msg_message .= $user->signature;
 
@@ -147,6 +148,7 @@ $tpl->set_var(array(
   "MSG_MESSAGE" => $msg_message,
   "MSG_SUBJECT" => $subject,
   "MSG_DATE" => $msg['date'],
+  "MSG_IP" => $REMOTE_ADDR,
 ));
 
 if (!isset($preview))

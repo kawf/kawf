@@ -13,6 +13,7 @@ $tpl->set_file(array(
 ));
 
 $tpl->set_block("message", "forum_admin");
+$tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "parent");
 $tpl->set_block("message", "changes");
 
@@ -74,12 +75,16 @@ if ($forum['shortname'] == "a4" || $forum['shortname'] == "performance")
 
 if ($user->moderator($forum['fid'])) {
   $tpl->set_var("MSG_AID", $msg['aid']);
-  $tpl->set_var("MSG_IP", $msg['ip']);
   $tpl->set_var("MSG_CHANGES", preg_replace("/\n/", "<br>\n", $msg['changes']));
 } else {
   $tpl->set_var("forum_admin", "");
   $tpl->set_var("changes", "");
 }
+
+if ($user->valid())
+  $tpl->set_var("MSG_IP", $msg['ip']);
+else
+  $tpl->set_var("message_ip", "");
 
 $tpl->set_var(array(
   "MSG_SUBJECT" => $msg['subject'],

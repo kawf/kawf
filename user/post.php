@@ -25,6 +25,7 @@ $tpl->set_block("post", "form");
 $tpl->set_block("post", "accept");
 
 $tpl->set_block("message", "forum_admin");
+$tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "parent");
 $tpl->set_block("message", "changes");
 
@@ -189,6 +190,7 @@ $tpl->set_var(array(
   "MSG_NAMEEMAIL" => $msg_nameemail,
   "MSG_SUBJECT" => $subject,
   "MSG_DATE" => $date,
+  "MSG_IP" => $REMOTE_ADDR,
 ));
 
 if (isset($error) || isset($preview)) {
