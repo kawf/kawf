@@ -7,7 +7,7 @@ $tpl->set_file("mail", "mail/offtopic.tpl");
 
 $user->req();
 
-if ($state != 'Active' && $state != 'OffTopic' && $state != 'Moderated' && $state != 'Deleted' && $state != 'UserDeleted') {
+if ($state != 'Active' && $state != 'OffTopic' && $state != 'Moderated' && $state != 'Deleted') {
   echo "Invalid state $state\n";
   exit;
 }
@@ -15,6 +15,12 @@ if ($state != 'Active' && $state != 'OffTopic' && $state != 'Moderated' && $stat
 $index = find_msg_index($mid);
 
 $msg = sql_querya("select mid, aid, pid, state, subject from f_messages$index where mid = '" . addslashes($mid) . "'");
+
+if (!empty($msg['flags'])) {
+  $flagexp = explode(",", $msg['flags']);
+  while (list(,$flag) = each($flagexp))
+    $flags[$flag] = true;
+}
 
 switch ($msg['state']) {
 case 'OffTopic':
@@ -40,18 +46,24 @@ if (($state == 'Moderate' && !$user->capable($forum['fid'], 'Moderate')) ||
     exit;
   }
 
-  if (($msg['state'] != 'Active' || $state != 'UserDeleted') &&
-      ($msg['state'] != 'UserDeleted' || $state != 'Active')) {
-    echo "You can't change to that state\n";
+  if (isset($flags['StateLocked'])) {
+    echo "You cannot change the state of this message anymore\n";
     exit;
   }
-}
+} else
+  $flags['StateLocked'] = true;
 
 if (!isset($msg['pmid']))
   $msg['pmid'] = $msg['pid'];
 
+foreach ($flags as $k => v)
+  $flagset[] = $k;
+
+$flagset = implode(",", $flagset);
+
 sql_query("update f_messages$index set " .
 	"changes = CONCAT(changes, 'Changed to $state from ', state, ' by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), '\n'), " .
+	"flags = '" . addslashes($flagset) . "', " .
 	"state = '$state' " .
 	"where mid = '" . addslashes($mid) . "'");
 
@@ -65,11 +77,6 @@ if ($nuser->valid()) {
 }
 
 /* For the purposes of these calculations */
-if ($state == 'UserDeleted')
-  $state = 'Deleted';
-if ($msg['state'] == 'UserDeleted')
-  $msg['state'] = 'Deleted';
-
 if (!empty($msg['state']) && $msg['pmid'] == 0)
   sql_query("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $state = $state + 1 where iid = $index");
 

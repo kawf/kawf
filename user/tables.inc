@@ -5,8 +5,8 @@ $create_message_table = "
     pmid int not null,
     tid int not null,
     aid int not null,
-    state enum('Active','Moderated','Deleted','OffTopic','UserDeleted') not null default 'Active',
-    flags set('NewStyle','NoText','Picture','Link') not null,
+    state enum('Active','Moderated','OffTopic','Deleted') not null default 'Active',
+    flags set('NewStyle','NoText','Picture','Link','StateLocked') not null,
     name varchar(50) not null,
     email varchar(50) not null,
     date datetime not null default '0000-00-00 00:00:00',
@@ -112,7 +112,7 @@ $create_upostcount_table = "
   create table f_upostcount (
     aid int not null,
     fid int not null,
-    status enum ('Active','Moderated','Deleted','OffTopic','UserDeleted') not null,
+    status enum ('Active','Moderated','Deleted','OffTopic') not null,
     count int not null,
     primary key (aid, fid, status)
   )";

@@ -28,8 +28,7 @@ function filter_messages(&$messages, $tree, $siblings, $path = array())
  (!$user->pref['ShowModerated'] && $messages[$s]['state'] == 'Moderated') ||
  (!$user->pref['ShowOffTopic'] && $messages[$s]['state'] == 'OffTopic') ||
   (!$user->capable($forum['fid'], 'Delete') &&
-  ($messages[$s]['state'] == 'Deleted' ||
-  $messages[$s]['state'] == 'UserDeleted'))
+  $messages[$s]['state'] == 'Deleted')
 ) &&
 (empty($path) || !isset($path[$messages[$s]['mid']])) &&
  $messages[$s]['aid'] != $user->aid;

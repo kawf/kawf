@@ -16,11 +16,15 @@ require_once("util.inc");
 require_once("forumuser.inc");
 require_once("timezone.inc");
 
+require_once("phpSniff.class.php");
+
+$ua = new phpSniff();
+
 # Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)
 # Mozilla/4.7 (Macintosh; U; PPC)
 $ulkludge =
-  preg_match("/^Mozilla\/[0-9]\.[0-9]+ \(compatible; MSIE .*/", $HTTP_USER_AGENT) ||
-  preg_match("/^Mozilla\/[0-9]\.[0-9]+ \(Macintosh; .*/", $HTTP_USER_AGENT);
+	($ua->property('browser') == "ns" && $ua->property('maj_ver') == 4 && $ua->property('platform') == "mac") ||
+	($ua->property('browser') == "ie" && $ua->property('maj_ver') == 5 && $ua->property('platform') == "win");
 
 sql_open($database);
 
@@ -30,6 +34,13 @@ $tpl->set_file(array(
   "header" => "header.tpl",
   "footer" => "footer.tpl",
 ));
+
+if ($ua->property('browser') == "ns" && $ua->property('maj_ver') == 4 && $ua->property('platform') == "mac")
+  $tpl->set_file("css", "css/ns4mac.tpl");
+else
+  $tpl->set_file("css", "css/standard.tpl");
+
+$tpl->parse("CSS", "css");
 
 $_page = $page;
 $tpl->set_var("PAGE", $SCRIPT_NAME . $PATH_INFO);
@@ -258,7 +269,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
   if ($index >= 0) {
     $sql = "select mid from f_messages$index where mid = '" . addslashes($mid) . "'";
     if (!$user->capable($forum['fid'], 'Delete')) {
-      $qual[] = "( state != 'Deleted' and state != 'UserDeleted' )";
+      $qual[] = "state != 'Deleted' ";
       if ($user->valid())
         $qual[] = "aid = " . $user->aid;
     }

@@ -8,7 +8,7 @@ if (isset($no)) {
 }
 
 if (isset($yes)) {
-  header("Location: changestate.phtml?state=UserDeleted&mid=$mid&page=$page");
+  header("Location: changestate.phtml?state=Deleted&mid=$mid&page=$page");
   exit;
 }
 

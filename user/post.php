@@ -26,9 +26,12 @@ $tpl->set_file(array(
 
 $tpl->set_block("post", "disabled");
 $tpl->set_block("post", "locked");
-$tpl->set_block("post", "image");
-$tpl->set_block("post", "preview");
 $tpl->set_block("post", "error");
+$tpl->set_block("error", "image");
+$tpl->set_block("error", "subject_req");
+$tpl->set_block("error", "subject_change");
+$tpl->set_block("error", "subject_too_long");
+$tpl->set_block("post", "preview");
 $tpl->set_block("post", "duplicate");
 $tpl->set_block("post", "form");
 $tpl->set_block("post", "accept");
@@ -41,6 +44,13 @@ $tpl->set_block("owner", "delete");
 $tpl->set_block("owner", "undelete");
 $tpl->set_block("message", "parent");
 $tpl->set_block("message", "changes");
+
+$errors = array(
+  "image",
+  "subject_req",
+  "subject_change",
+  "subject_too_long",
+);
 
 $tpl->set_var(array(
   "forum_admin" => "",
@@ -66,9 +76,8 @@ $tpl->set_var("AD", $ad);
 if (!isset($forum['opt.Post'])) {
   $tpl->set_var(array(
     "locked" => "",
-    "image" => "",
-    "preview" => "",
     "error" => "",
+    "preview" => "",
     "duplicate" => "",
     "form" => "",
     "accept" => "",
@@ -93,9 +102,8 @@ if (isset($tid) && $tid) {
 
   if (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')) {
     $tpl->set_var(array(
-      "image" => "",
-      "preview" => "",
       "error" => "",
+      "preview" => "",
       "duplicate" => "",
       "form" => "",
       "accept" => "",
@@ -158,24 +166,23 @@ if (isset($postcookie)) {
     }
   }
 
-  if (empty($subject)) {
-    /* Subject is required */
-    $error .= "Subject is required!<br>\n";
-  } elseif (isset($parent) && $subject == "Re: " . $parent['subject'] && empty($message) && empty($url)) {
-    $error .= "No change to subject or message, is this what you wanted?<br>\n";
-  } elseif (strlen($subject) > 100) {
+  if (empty($subject))
+    $error["subject_req"] = true;
+  elseif (isset($parent) && $subject == "Re: " . $parent['subject'] && empty($message) && empty($url))
+    $error["subject_change"] = true;
+  elseif (strlen($subject) > 100) {
     /* Subject is too long */
-    $error .= "Subject line too long! Truncated to 100 characters<br>\n";
+    $error["subject_too_long"] = true;
     $subject = substr($subject, 0, 100);
   }
 
   if (!empty($imageurl) && !isset($imgpreview))
     $preview = 1;
 
-  if ((isset($error) || isset($preview)) && (!empty($imageurl)))
+  if ((isset($error) || isset($preview)) && !empty($imageurl)) {
     $imgpreview = 1;
-  else
-    $tpl->set_var("image", "");
+    $error["image"] = true;
+  }
 
   if (isset($ExposeEmail)) {
     /* Lame spamification */
@@ -243,9 +250,12 @@ $tpl->set_var(array(
   "MSG_AID" => $user->aid,
 ));
 
-if (isset($error) && !empty($error))
-  $tpl->set_var("ERROR", $error);
-else
+if (isset($error)) {
+  foreach ($errors as $n => $e) {
+    if (!isset($error[$e]))
+      $tpl->set_var($e, "");
+  }
+} else
   $tpl->set_var("error", "");
     
 if (!$accepted || isset($preview)) {

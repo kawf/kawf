@@ -24,7 +24,10 @@ $tpl->set_file(array(
 
 $tpl->set_block("edit", "disabled");
 $tpl->set_block("edit", "locked");
-$tpl->set_block("edit", "image");
+$tpl->set_block("edit", "error");
+$tpl->set_block("error", "image");
+$tpl->set_block("error", "subject_req");
+$tpl->set_block("error", "subject_too_long");
 $tpl->set_block("edit", "preview");
 $tpl->set_block("edit", "form");
 $tpl->set_block("edit", "accept");
@@ -37,6 +40,12 @@ $tpl->set_block("owner", "delete");
 $tpl->set_block("owner", "undelete");
 $tpl->set_block("message", "parent");
 $tpl->set_block("message", "changes");
+
+$errors = array(
+  "image",
+  "subject_req",
+  "subject_too_long",
+);
 
 $tpl->set_var(array(
   "forum_admin" => "",
@@ -97,7 +106,7 @@ $tpl->set_var("AD", $ad);
 if (!isset($forum['opt.Post'])) {
   $tpl->set_var(array(
     "locked" => "",
-    "image" => "",
+    "error" => "",
     "preview" => "",
     "form" => "",
     "accept" => "",
@@ -121,7 +130,7 @@ foreach ($options as $name => $value)
 
 if (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')) {
   $tpl->set_var(array(
-    "image" => "",
+    "error" => "",
     "preview" => "",
     "form" => "",
     "accept" => "",
@@ -149,16 +158,11 @@ if ($msg['state'] == 'Active' && $OffTopic)
 else
   $status = $msg['state'];
 
-if (empty($subject)) {
-  /* Subject is required */
-  echo "<font face=\"Verdana, Arial, Geneva\" color=\"#ff0000\">Subject is required!</font><br>\n";
-  $error++;
-}
+if (empty($subject))
+  $error["subject_req"] = true;
 
 if (strlen($subject) > 100) {
-  /* Subject is too long */
-  echo "<font face=\"Verdana, Arial, Geneva\" color=\"#ff0000\">Subject line too long! Truncated to 100 characters</font><br>\n";
-  $error++;
+  $error["subject_too_long"] = true;
   $subject = substr($subject, 0, 100);
 }
 
@@ -188,10 +192,10 @@ if (!empty($imageurl) && !preg_match("/^[a-z]+:\/\//i", $imageurl))
 if (!empty($imageurl) && !isset($imgpreview))
   $preview = 1;
 
-if ((isset($error) || isset($preview)) && (!empty($imageurl)))
+if ((isset($error) || isset($preview)) && !empty($imageurl)) {
+  $error["image"] = true;
   $imgpreview = 1;
-else
-  $tpl->set_var("image", "");
+}
 
 if (isset($ExposeEmail) && $ExposeEmail) {
   /* Lame spamification */
@@ -225,11 +229,19 @@ $tpl->parse("PREVIEW", "message");
 if (isset($error) || isset($preview)) {
   $action = "edit";
 
+  foreach ($errors as $n => $e) {
+    if (!isset($error[$e]))
+      $tpl->set_var($e, "");
+  }
+
   require_once("post.inc");
 
   $tpl->set_var("accept", "");
 } else {
-  $tpl->set_var("form", "");
+  $tpl->set_var(array(
+    "error" => "",
+    "form" => "",
+  ));
 
   if (isset($ExposeEmail) && $ExposeEmail)
     $email = $user->email;

@@ -110,10 +110,10 @@ else
   $tpl->set_var("message_ip", "");
 */
 
-if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')))
+if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || isset($flags['StateLocked']) || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')))
   $tpl->set_var("owner", "");
 else {
-  if ($msg['state'] != 'UserDeleted')
+  if ($msg['state'] != 'Deleted')
     $tpl->set_var("undelete", "");
   if ($msg['state'] != 'Active')
     $tpl->set_var("delete", "");
@@ -224,9 +224,9 @@ $parent = $msg;
 
 require_once("post.inc");
 
-$tpl->parse(MESSAGE, "message");
+$tpl->parse("MESSAGE", "message");
 
-$tpl->parse(HEADER, "header");
-$tpl->parse(FOOTER, "footer");
-$tpl->pparse(CONTENT, "showmessage");
+$tpl->parse("HEADER", "header");
+$tpl->parse("FOOTER", "footer");
+$tpl->pparse("CONTENT", "showmessage");
 ?>

@@ -51,7 +51,14 @@ function print_collapsed($thread, $msg, $count)
       $string .= " (locked)";
   }
 
-  if ($msg['state'] != "Active")
+  if ($msg['state'] == 'OffTopic') {
+    if (!isset($user->pref['SimpleHTML']))
+      $string .= " <img src=\"/pics/ot.gif\">";
+    else
+      $string .= " (OffTopic)";
+  }
+
+  if ($msg['state'] != "Active" && $msg['state'] != "OffTopic")
     $string .= " (" . $msg['state'] . ")";
 
   $page = $tpl->get_var("PAGE");
@@ -69,7 +76,6 @@ function print_collapsed($thread, $msg, $count)
     if ($user->capable($forum['fid'], 'Delete'))
       $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Deleted&mid=" . $msg['mid'] . "\">dm</a>";
     break;
-  case "UserDeleted":
   case "Deleted":
     if ($user->capable($forum['fid'], 'Delete'))
       $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&state=Active&mid=" . $msg['mid'] . "\">ud</a>";

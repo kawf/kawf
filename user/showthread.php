@@ -91,6 +91,12 @@ function print_message($thread, $msg)
 {
   global $tpl, $user, $forum;
 
+  if (!empty($msg['flags'])) {
+    $flagexp = explode(",", $msg['flags']);
+    while (list(,$flag) = each($flagexp))
+      $flags[$flag] = true;
+  }
+
   $index = find_msg_index($msg['mid']);
   $sql = "update f_messages$index set views = views + 1 where mid = '" . addslashes($msg['mid']) . "'";
   mysql_query($sql) or sql_warn($sql);
@@ -167,10 +173,10 @@ function print_message($thread, $msg)
     $tpl->set_var("message_ip", "");
 */
 
-  if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')))
+  if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || isset($flags['StateLocked']) || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')))
     $tpl->set_var("_owner", "");
   else {
-    if ($msg['state'] == 'UserDeleted')
+    if ($msg['state'] == 'Deleted')
       $tpl->set_var("_undelete", "");
     else
       $tpl->parse("_undelete", "undelete");
