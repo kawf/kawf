@@ -157,7 +157,14 @@ class ForumUser {
 
   function post($fid, $status, $count)
   {
+    /* Keep the old count around for a bit */
     sql_query("update u_users set posts = posts + $count where aid = " . $this->aid);
+
+    sql_query("update f_upostcount set count = count + $count where aid = " . $this->aid . " and fid = " . $fid . " and status = '" . addslashes($status) . "'");
+    if (!mysql_affected_rows()) {
+      _sql_query("insert into f_upostcount ( aid, fid, status, count ) values ( " . $this->aid . ", " . $fid . ", '" . addslashes($status) . "', 0 )");
+      sql_query("update f_upostcount set count = count + $count where aid = " . $this->aid . " and fid = " . $fid . " and status = '" . addslashes($status) . "'");
+    }
   }
 
   function moderator($fid)
