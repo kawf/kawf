@@ -32,7 +32,7 @@ $scripts = array(
   "forumdelete.phtml" => "forumdelete.php",
 );
 
-$user = new AdminUser();
+$user = new AdminUser;
 $user->find_by_cookie();
 
 function find_forum($shortname)

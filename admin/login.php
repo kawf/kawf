@@ -3,7 +3,7 @@
 unset($user);
 
 if (isset($submit)) {
-  $user = new AdminUser();
+  $user = new AdminUser;
   $user->find_by_email($email);
   if (!$user->valid())
     $message = "Invalid email address '$email'\n";
