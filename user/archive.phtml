@@ -1,0 +1,223 @@
+<?
+require('sql.inc');
+
+/* Number of threads per page we're gonna list */
+/* $threadsperpage = 5; */
+$threadsperpage = 50;
+
+/* Open up the SQL database first */
+sql_open_readonly();
+
+require('listmessage.inc');
+require('ads.inc');
+
+if (isset($ForumAccount)) {
+  $sql = "select name from accounts where random='$ForumAccount';";
+  $result = mysql_query($sql);
+
+  if (!$result)
+    sql_error($sql);
+
+  if (mysql_num_rows($result) > 0) {
+    list($username) = mysql_fetch_row($result);
+    mysql_free_result($result);
+  }
+}
+
+$sql = "select shortname, picture from forums where fid = $fid;";
+$result = mysql_query($sql);
+
+if (!$result)
+  sql_error($sql);
+
+list($shortname, $picture) = mysql_fetch_row($result);
+?>
+
+<html>
+<head>
+<title>
+A4.Org Forums: Archives
+</title>
+</head>
+
+<body bgcolor=#ffffff>
+
+<?php
+/* We get our money from ads, make sure it's there */
+
+add_ad();
+?>
+
+<?php
+/* Is this user someone special? */
+if (isset($username)) {
+?>
+Logged in as <? echo $username; ?> Click <a href="/forum/logout.phtml">Here</a> to logout<br>
+<?php
+}
+?>
+
+<table width=600 border=0 cellpadding=5 cellspacing=5>
+<tr>
+<td width="50%" align="left">
+<img src="<?php echo $picture; ?>">
+</td>
+<td width="50%" align="right">
+<form method=post action="/redirect/redirect.cgi?">
+<select name="menuact" onchange="location=this.form.elements[0].options[this.form.elements[0].selectedIndex].value; return false;">
+
+<?php
+/* Create a listbox for easy jumping between forums */
+$sql = "select fid, shortname, name from forums where fid != '$fid' order by fid;";
+$result = mysql_query($sql);
+
+/* Check for an error */
+if (!$result)
+  sql_error($sql);
+
+while (list($tfid, $tshortname, $name) = mysql_fetch_row($result)) {
+?>
+<option value="/forum/m/<? echo $tshortname; ?>/"><? echo $name; ?></option>
+<?php
+}
+?>
+
+</select>
+
+<input name="submit" type=image src="/buyers/pix/go.gif" border="0" align=top>
+
+</form>
+
+<font face="arial, geneva" size=-2>
+[ <a href="/search/" target="_top">Search Forums</a> ]  
+[ <a href="http://131.107.68.28/A4PICSnd.asp">Picture Poster</a> ]
+</font>
+
+</td>
+</tr>
+</table>
+
+<hr size=7 width=75%>
+
+<?php /* Print the number of pages this forum spans */ ?>
+<table width="600" border=0><tr><td align="center">
+
+<?php
+$sql = "select count(*) from messages where fid = $fid and pid = 0;";
+$result = mysql_query($sql);
+
+if (!$result)
+  sql_error($sql);
+
+list($numthreads) = mysql_fetch_row($result);
+
+$numpages = ceil($numthreads / $threadsperpage);
+
+if ($numpages > 10)
+  $numpages = 10;
+
+if ($numpages > 1) {
+  for ($i = 1; $i < $numpages + 1; $i++) {
+?>
+[<a href="/forum/m/<?php echo $shortname; ?>/page<?php echo $i; ?>.phtml"><?php if ($i == $page) { ?><font size = +2><?php echo $i; ?></font><?php } else { echo $i; } ?></a>] 
+<?php
+  }
+}
+?>
+
+</td></tr></table>
+
+<font face="arial, geneva">
+<?php
+$num = list_messages(0, $threadsperpage, $page, $startdate, $enddate);
+
+if ($num == 0)
+  echo "<font size=+1>No messages available</font><br>\n";
+?>
+</font>
+
+<br>
+
+<?php /*
+<table width=600>
+<a name="post">
+<tr>
+<td align=center>
+<font size=+1>
+Post A Message!
+</font>
+</td>
+</tr>
+<tr>
+<td>
+
+<form action=/forum/postmessage.phtml method=post>
+
+<p>Your Name<br>
+<input type=name name=name value="" size=50>
+
+<p>Your Email<br>
+<input type=name name=email value="" size=50>
+
+<!-- <p>Your web page (URL)<br>
+<input type=name name=url value="" size=50>
+-->
+
+<p>Subject<br>
+<input type=name name=subject value="" size=50>
+
+<p>Message<br>
+<textarea wrap=virtual name=message rows=10 cols=50>
+</textarea>
+
+<p>Optional URL<br>
+<input type=name name=url value="" size=50>
+
+<p>Optional URL text<br>
+<input type=name name=urltext value="" size=50>
+
+<input type=hidden name=pid value="0">
+<input type=hidden name=fid value="<? echo $fid; ?>">
+
+<p><input type=submit value="Submit">
+
+</form>
+
+</td>
+</tr>
+
+<tr>
+<td>
+<hr size=7 width=75%>
+</td>
+</tr>
+</table>
+
+*/ ?>
+
+<?php /* Print the number of pages this forum spans */ ?>
+<table width="600" border=0><tr><td align="center">
+
+<?php
+if ($numpages > 1) {
+  for ($i = 1; $i < $numpages + 1; $i++) {
+?>
+[<a href="/forum/m/<?php echo $shortname; ?>/page<?php echo $i; ?>.phtml"><?php if ($i == $page) { ?><font size = +2><?php echo $i; ?></font><?php } else { echo $i; } ?></a>] 
+<?php
+  }
+}
+?>
+
+</td></tr></table>
+
+<table width=600>
+  <tr>
+    <td align="center"><a href="/copyright/"><font size="1" face="arial, geneva">Copyright</font></a><font size="1" face="arial, geneva"> (c) 1999 A4.Org</font>
+    </td>
+  </tr>
+</table>
+
+</body>
+
+</html>
+
