@@ -25,6 +25,7 @@ Better tracking (don't use timestamp, use individual mid's)
 Possibilities
 Use PEAR Cache.php for anonymous users
 Use PEAR Mail.php instead of mailfrom
-Use X-Forwarded-For header for more IP information?
+Use PEAR Image/Remote.php to will width/height info for remote pictures
+Use X-Forwarded-For header for more IP information
 Redesign message and thread database layout (too messy now)
 
