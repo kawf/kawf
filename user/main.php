@@ -93,16 +93,16 @@ function find_forum($shortname)
   $sql = "select * from indexes order by iid";
   $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 
-  while ($indexes[] = mysql_fetch_array($result))
-    ;
+  while ($index = mysql_fetch_array($result))
+    $indexes[] = $index;
 
   /* Grab all of the tracking data for the user */
   if (isset($user)) {
     $sql = "select * from tracking where aid = '" . $user['aid'] . "' order by tid desc";
     $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 
-    while ($tthreads[] = mysql_fetch_array($result))
-      ;
+    while ($tthread = mysql_fetch_array($result))
+      $tthreads[] = $tthread;
 
     reset($tthreads);
     while (list($key) = each($tthreads))
