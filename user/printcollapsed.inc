@@ -38,6 +38,9 @@ function print_collapsed($thread, $msg, $count)
       $string .= " (link)";
   }
 
+  if ($msg['state'] == 'OffTopic' && !isset($user->pref['SimpleHTML']))
+    $string .= " <img src=\"/pics/ot.gif\">";
+
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $msg['name'] . "</b>&nbsp;&nbsp;<font size=\"-2\"><i>" . $msg['date'] . "</i>";
 
   $string .= " ($count " . ($count == 1 ? "reply" : "replies") . ")";
@@ -51,12 +54,8 @@ function print_collapsed($thread, $msg, $count)
       $string .= " (locked)";
   }
 
-  if ($msg['state'] == 'OffTopic') {
-    if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/ot.gif\">";
-    else
-      $string .= " (OffTopic)";
-  }
+  if ($msg['state'] == 'OffTopic' && isset($user->pref['SimpleHTML']))
+    $string .= " (OffTopic)";
 
   if ($msg['state'] != "Active" && $msg['state'] != "OffTopic")
     $string .= " (" . $msg['state'] . ")";
