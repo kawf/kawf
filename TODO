@@ -8,8 +8,8 @@ Must be done
 
 ! user		tag	description
 - ------------- ------- -----------
-W jerdfelt	PEAR	Use PEAR for DB routines
-			Fix funky wrapper scripts. Use PEAR's Config.php as an example
+W jerdfelt	PEAR	Use PEAR DB.php for DB routines
+W jerdfelt	PEAR	Use PEAR Config.php for config routines
 W jerdfelt	INTERFACE Abstracted selectable interfaces
 -			Better HTML parsing
 			Cleanup API
@@ -21,12 +21,12 @@ W jerdfelt	INTERFACE Abstracted selectable interfaces
 -			Ignore user fearure
 W jerdfelt		Finish pid to pmid conversion
 -			Restrictions on screen names (prevent @audiworld.com, or moderator, etc)
+-			Set return address on follow up emails to followup, or perhaps post reply?
 
 Nice to be done
 ===============
 
 Use PEAR HTML/ITX.php for templates
-Use PEAR Config.php for config routines
 Pictureposter width/height auto fill (ties into previous HTML parsing cleanup)
 Swear word censoring (replace them with partial or full *'s, etc)
 Count number of edits and track last edit for displaying to users
