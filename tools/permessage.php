@@ -2,9 +2,7 @@
 
 require('../sql.inc');
 
-sql_open_readwrite();
-
-# mysql_pconnect("localhost", "root", "password");
+sql_open_admin();
 
 set_time_limit(0);
 

@@ -2,13 +2,7 @@
 
 require('../sql.inc');
 
-function sql_warn($sql) {
-  echo "<p>Error with SQL Query<br>\n";
-  echo "<pre>$sql</pre>\n";
-  echo "Error #", mysql_errno(), ": ", mysql_error(), "<br>\n";
-}
-
-mysql_pconnect("localhost", "root", "password");
+sql_open_admin();
 
 set_time_limit(0);
 
