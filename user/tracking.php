@@ -27,6 +27,7 @@ if (isset($user->pref['SimpleHTML'])) {
 }
 
 $tpl->set_block($table_block, "row", "_row");
+$tpl->set_block($table_block, "update_all", "_update_all");
 
 $urlroot = "/ads";
 /* We get our money from ads, make sure it's there */
@@ -248,7 +249,7 @@ while ($forum = mysql_fetch_array($result)) {
   $sql = "select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc";
   $res2 = mysql_query($sql) or sql_error($sql);
 
-  $forumcount = 0;
+  $forumcount = $forumupdated = 0;
 
   unset($tthreads_by_tid);
 
@@ -262,15 +263,16 @@ while ($forum = mysql_fetch_array($result)) {
     if (!$thread)
       continue;
 
-    if ($thread['unixtime'] > $tthread['unixtime'])
-      $tpl->set_var("CLASS", "trow" . ($forumcount % 2));
-    else
-      $tpl->set_var("CLASS", "row" . ($forumcount % 2));
-
     list($count, $messagestr) = display_thread($thread);
 
     if (!$count)
       continue;
+
+    if ($thread['unixtime'] > $tthread['unixtime']) {
+      $tpl->set_var("CLASS", "trow" . ($forumcount % 2));
+      $forumupdated++;
+    } else
+      $tpl->set_var("CLASS", "row" . ($forumcount % 2));
 
     $forumcount++;
     $numshown++;
@@ -292,6 +294,11 @@ while ($forum = mysql_fetch_array($result)) {
 
     $tpl->parse("_row", "row", true);
   }
+
+  if ($forumupdated)
+    $tpl->parse("_update_all", "update_all");
+  else
+    $tpl->set_var("_update_all", "");
 
   if ($forumcount) {
     /* HACK: ugly */
