@@ -28,7 +28,7 @@ if (!isset($curpage))
   $curpage = 1;
 
 /* Number of threads per page we're gonna list */
-if (isset($user->aid))
+if ($user->valid())
   $threadsperpage = $user->threadsperpage;
 else
   $threadsperpage = 50;
@@ -209,7 +209,7 @@ function print_collapsed($thread, $msg, $count)
     }
   }
 
-  if (isset($user->aid) && isset($flags['NewStyle']) && $msg['aid'] == $user->aid) {
+  if ($user->valid() && isset($flags['NewStyle']) && $msg['aid'] == $user->aid) {
     $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
     if (!isset($user->cap['Delete']) && $msg['state'] != 'Deleted')
       $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">delete</a>";
@@ -307,7 +307,7 @@ function print_subject($msg)
     }
   }
 
-  if (isset($user->aid) && isset($flags['NewStyle']) && $msg['aid'] == $user->aid) {
+  if ($user->valid() && isset($flags['NewStyle']) && $msg['aid'] == $user->aid) {
     $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
     if (!isset($user->cap['Delete']) && $msg['state'] != 'Deleted')
       $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">delete</a>";
@@ -467,7 +467,7 @@ while ($numshown < $threadsperpage) {
     else if (isset($user->pref['ShowModerated']))
       $sql .= "or $mtable.state = 'Moderated' ";
 
-    if (isset($user->aid))
+    if ($user->valid())
       $sql .= "or $mtable.aid = " . $user->aid;
 
     /* Sort all of the messages by date and descending order */
@@ -506,7 +506,7 @@ while ($numshown < $threadsperpage) {
 */
       $tpl->set_var("CLASS", "row" . ($numshown % 2));
 
-    if (isset($user->aid)) {
+    if ($user->valid()) {
       if (isset($tthreads_by_tid[$thread['tid']]))
         $messagelinks = " <a href=\"/untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
       else

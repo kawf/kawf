@@ -109,7 +109,7 @@ function print_collapsed($thread, $msg, $count)
     }
   }
 
-  if (isset($user->aid) && isset($flags['NewStyle']) && $msg['aid'] == $user->aid)
+  if ($user->valid() && isset($flags['NewStyle']) && $msg['aid'] == $user->aid)
     $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
 
   $string .= "</li>\n";
@@ -204,7 +204,7 @@ function print_subject($msg)
     }
   }
 
-  if (isset($user->aid) && isset($flags['NewStyle']) && $msg['aid'] == $user->aid)
+  if ($user->valid() && isset($flags['NewStyle']) && $msg['aid'] == $user->aid)
     $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
 
   $string .= "</li>\n";

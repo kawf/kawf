@@ -1,6 +1,6 @@
 <?php
 
-if (!isset($user->aid) || !isset($forum)) {
+if (!$user->valid() || !isset($forum)) {
   header("Location: " . $page);
   exit;
 }
