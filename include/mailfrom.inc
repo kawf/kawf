@@ -10,7 +10,7 @@ function mailfrom($fromaddr, $toaddr, $message)
 
   /* FIXME: Finish implementing this */
   if (isset($mail_executable) || 1) {
-    $fp = popen("/usr/lib/sendmail -f" . $fromaddr. " " . addslashes($toaddr), "w");
+    $fp = popen("/usr/sbin/sendmail -f" . $fromaddr. " " . addslashes($toaddr), "w");
     if (!$fp)
       return false;
 
