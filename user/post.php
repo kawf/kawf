@@ -175,8 +175,7 @@ if (isset($postcookie)) {
   if (isset($pid)) {
     /* Grab the actual message */
     $index = find_msg_index($pid);
-    $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messa
-ges$index where mid = '" . addslashes($pid) . "'";
+    $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages$index where mid = '" . addslashes($pid) . "'";
     $result = mysql_query($sql) or sql_error($sql);
 
     $pmsg = mysql_fetch_array($result);
