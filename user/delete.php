@@ -8,19 +8,7 @@ if (isset($no)) {
 }
 
 if (isset($yes)) {
-  $index = find_msg_index($mid);
-
-  $msg = sql_querya("select aid, pid, state from f_messages$index where mid = '" . addslashes($mid) . "'");
-
-  sql_query("update f_messages$index set " .
-        "changes = CONCAT(changes, 'Changed to Deleted from ', state, ' by " . $user->name . "/" . $user->aid . " at ', NOW(), '\n'), " .
-        "state = 'Deleted' " .
-        "where mid = '" . addslashes($mid) . "'");
-
-  if (!$msg['pid'])
-    sql_query("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, Deleted = Deleted + 1 where iid = $index");
-
-  header("Location: $page");
+  header("Location: changestate.phtml?state=Deleted&mid=$mid&page=$page");
   exit;
 }
 
