@@ -53,13 +53,13 @@ if ($msg['pid'] != 0) {
 
 echo "<!-- checking tthread " . $tthreads[$msg['tid']]['tstamp'] . ", " . $msg['tstamp'] . " -->\n";
 /* Mark the thread as read if need be */
-if (isset($tthreads[$msg['tid']]) &&
-      $tthreads[$msg['tid']]['tstamp'] < $msg['tstamp']) {
+if (isset($tthreads_by_tid[$msg['tid']]) &&
+      $tthreads_by_tid[$msg['tid']]['tstamp'] < $msg['tstamp']) {
   sql_open_readwrite();
 
   echo "<!-- updating tthread -->\n";
   $sql = "update tracking set tstamp = NOW() where tid = " . $msg['tid'] . " and aid = " . $user['aid'];
-  mysql_db_query("forum_" . $forum['shortname'], $sql) || sql_warn($sql);
+  mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_warn($sql);
 }
 /* We get our money from ads, make sure it's there */
 /*

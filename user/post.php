@@ -136,7 +136,7 @@ if (!empty($imageurl))
   $msg_message = "<center><img src=\"$imageurl\"></center><p>";
 else
   $msg_message = "";
-$msg_message = preg_replace("/\n/", "<br>\n", $message);
+$msg_message .= preg_replace("/\n/", "<br>\n", $message);
 if (!empty($user['signature']))
   $msg_message .= $user['signature'];
 $tpl->assign(MSG_MESSAGE, $msg_message);
@@ -267,8 +267,13 @@ if (isset($error) || isset($preview)) {
     if (!empty($EmailFollowup))
       $options = "SendEmail";
 
-    $sql = "insert into tracking ( tid, aid, options ) values ( '" . addslashes($tid) . "', '" . addslashes($user['aid']) . "', '$options' )";
-    mysql_db_query($forumdb, $sql) or sql_error($sql);
+    $sql = "select * from tracking where aid = '" . addslashes($user['aid']) . "' and tid = '" . addslashes($tid) . "'";
+    $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+
+    if (!mysql_num_rows($result)) {
+      $sql = "insert into tracking ( tid, aid, options ) values ( '" . addslashes($tid) . "', '" . addslashes($user['aid']) . "', '$options' )";
+      mysql_db_query($forumdb, $sql) or sql_error($sql);
+    }
   }
 
   require('mailfrom.inc');
@@ -327,6 +332,9 @@ if (isset($error) || isset($preview)) {
   }
 
   $tpl->assign(ACCEPT, "Message Added");
+
+  $tpl->assign(FORUM_SHORTNAME, $forum['shortname']);
+  $tpl->assign(MID, $mid);
 
   $tpl->parse(POST, 'postaccept');
 }

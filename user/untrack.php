@@ -9,7 +9,7 @@ if (!isset($user))
 sql_open_readwrite();
 
 $sql = "delete from tracking where tid = '" . addslashes($tid) . "' and aid = '" . addslashes($user['aid']) . "'";
-mysql_db_query("forum_" . addslashes($shortname), $sql) or sql_error($sql);
+mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 
 Header("Location: $page");
 ?>

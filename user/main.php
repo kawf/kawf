@@ -101,9 +101,11 @@ function find_forum($shortname)
     while ($tthread = mysql_fetch_array($result))
       $tthreads[] = $tthread;
 
-    reset($tthreads);
-    while (list($key) = each($tthreads))
-      $tthreads_by_tid[$tthreads[$key]['tid']] = $tthreads[$key];
+    if (isset($tthreads)) {
+      reset($tthreads);
+      while (list($key) = each($tthreads))
+        $tthreads_by_tid[$tthreads[$key]['tid']] = $tthreads[$key];
+    }
   }
 
   return 1;

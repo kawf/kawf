@@ -54,7 +54,10 @@ if (isset($user)) {
   $tpl->assign(USER_NAME, $user['name']);
   $tpl->assign(USER_EMAIL, $user['email']);
 
-  $checked = isset($ExposeEmail) ? $ExposeEmail : !isset($user['prefs.SecretEmai']);
+  if (isset($preview) || isset($post))
+    $checked = isset($ExposeEmail);
+  else
+    $checked = !isset($user['prefs.SecretEmail']);
   if ($checked)
     $tpl->assign(EXPOSEEMAIL, ' checked');
   else
@@ -62,7 +65,10 @@ if (isset($user)) {
 
   $tpl->assign(EMAILFOLLOWUP, '');
 
-  $checked = isset($TrackThread) ? $TrackThread : isset($user['prefs.AutoTrack']);
+  if (isset($preview) || isset($post))
+    $checked = isset($TrackThread);
+  else
+    $checked = isset($user['prefs.AutoTrack']);
   if ($checked)
     $tpl->assign(TRACKTHREAD, ' checked');
   else

@@ -380,15 +380,18 @@ $ulkludge =
 $numshown = 0;
 
 if (isset($tthreads)) {
-echo "<!-- tthreads set -->\n";
   reset($tthreads);
   while (list(, $tthread) = each($tthreads)) {
-echo "<!-- " . $tthread['tid'] . " -->\n";
     $index = find_thread_index($tthread['tid']);
     if ($index < 0) {
       echo "<!-- Warning: Invalid tthread! $index, " . $tthread['tid'] . " -->\n";
       continue;
     }
+
+    /* Some people have duplicate threads tracked, they'll eventually fall */
+    /*  off, but for now this is a simple workaround */
+    if (isset($threadshown[$thread['tid']]))
+      continue;
 
     $sql = "select * from threads$index where tid = '" . addslashes($tthread['tid']) . "'";
     $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
@@ -413,7 +416,7 @@ echo "<!-- " . $tthread['tid'] . " -->\n";
       $messagestr = display_thread($thread);
 
       /* If the thread is tracked, we know they are a user already */
-      $messagelinks = "<a href=\"$urlroot/untrack.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
+      $messagelinks = "<a href=\"$urlroot/untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
 
       $tpl->assign(MESSAGES, $messagestr);
       $tpl->assign(MESSAGELINKS, $messagelinks);
@@ -481,9 +484,9 @@ while ($numshown < $threadsperpage) {
 
     if (isset($user)) {
       if (isset($tthreads_by_tid[$thread['tid']]))
-        $messagelinks = " <a href=\"$urlroot/untrack.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
+        $messagelinks = " <a href=\"$urlroot/untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
       else
-        $messagelinks = " <a href=\"$urlroot/track.phtml?shortname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#00d000\">tt</font></a>";
+        $messagelinks = " <a href=\"$urlroot/track.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#00d000\">tt</font></a>";
     } else
       $messagelinks = "";
 

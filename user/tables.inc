@@ -16,7 +16,7 @@ $create_message_table =
   "  url varchar(250),\n" .
   "  urltext varchar(250),\n" .
   "  primary key (mid),\n" .
-  "  key (pid)\n" .
+  "  key (pid, tid)\n" .
   ")";
 
 $create_thread_table =
