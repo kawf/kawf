@@ -1,3 +1,15 @@
+<!-- BEGIN disabled -->
+<!-- BEGIN nonewthreads -->
+Posting new threads has been disabled on this forum.<br>
+<!-- END nonewthreads -->
+<!-- BEGIN noreplies -->
+Posting replies has been disabled on this forum.<br>
+<!-- END noreplies -->
+<!-- BEGIN locked -->
+This thread is locked. No replies are allowed.<br>
+<!-- END locked -->
+<!-- END disabled -->
+<!-- BEGIN enabled -->
 <!-- BEGIN noacct -->
 <table width="600">
 <tr><td bgcolor="#dfdfdf">
@@ -93,3 +105,4 @@ Track thread?<br><br>
 
 </form>
 <!-- END acct -->
+<!-- END enabled -->
