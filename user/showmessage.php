@@ -246,6 +246,8 @@ function print_subject($msg)
   return $string;
 }
 
+$vmid = $mid;
+
 $threadmsg = "<ul class=\"thread\">\n";
 $threadmsg .= list_thread(print_subject, $messages, $tree, reset($tree));
 if (!$ulkludge)
