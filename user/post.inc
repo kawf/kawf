@@ -6,15 +6,36 @@ function hidden($name, $value)
 
 $tpl->set_file("postform", "postform.tpl");
 
-$tpl->set_block("postform", "acct");
-$tpl->set_block("postform", "noacct");
-$tpl->set_block("postform", "locked");
+$tpl->set_block("postform", "disabled");
+$tpl->set_block("postform", "enabled");
+
+$tpl->set_block("disabled", "nonewthreads");
+$tpl->set_block("disabled", "noreplies");
+$tpl->set_block("disabled", "locked");
+
+$tpl->set_block("enabled", "acct");
+$tpl->set_block("enabled", "noacct");
 
 $tpl->set_block("acct", "offtopic");
 
-if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')) {
-  $tpl->set_var("acct", "");
-  $tpl->set_var("noacct", "");
+if (isset($thread) && !isset($forum['opt.PostReply']) && !$user->capable($forum['fid'], 'Delete')) {
+  $tpl->set_var(array(
+    "enabled" => "",
+    "locked" => "",
+    "nonewthreads" => "",
+  ));
+} else if (!isset($thread) && !isset($forum['opt.PostThread']) && !$user->capable($forum['fid'], 'Delete')) {
+  $tpl->set_var(array(
+    "enabled" => "",
+    "locked" => "",
+    "noreplies" => "",
+  ));
+} else if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')) {
+  $tpl->set_var(array(
+    "enabled" => "",
+    "nonewthreads" => "",
+    "noreplies" => "",
+  ));
 } else if (isset($user->aid)) {
   if (!isset($postcookie))
     $postcookie = md5("post" . microtime());
@@ -113,13 +134,17 @@ if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['f
   else
     $tpl->set_var("TRACKTHREAD", "");
 
-  $tpl->set_var("ACTION", $action);
-  $tpl->set_var("noacct", "");
-  $tpl->set_var("locked", "");
+  $tpl->set_var(array(
+    "ACTION" => $action,
+    "noacct" => "",
+    "disabled" => "",
+  ));
   $tpl->parse("acct", "acct");	/* This fixed URL and PAGE for some reason */
 } else {
-  $tpl->set_var("acct", "");
-  $tpl->set_var("locked", "");
+  $tpl->set_var(array(
+    "acct" => "",
+    "disabled" => "",
+  ));
   $tpl->parse("noacct", "noacct");/* This fixed URL and PAGE for some reason */
 }
 

@@ -81,35 +81,37 @@ require_once("ads.inc");
 $ad = ads_view("a4.org,aw_" . $forum['shortname'], "_top");
 $tpl->_set_var("AD", $ad);
 
-if (!isset($tid)) {
-  if (!isset($forum['opt.PostThread'])) {
-    $tpl->set_var(array(
-      "locked" => "",
-      "error" => "",
-      "preview" => "",
-      "duplicate" => "",
-      "form" => "",
-      "accept" => "",
-      "noreplies" => "",
-    ));
+if (!$user->capable($forum['fid'], 'Delete')) {
+  if (!isset($tid)) {
+    if (!isset($forum['opt.PostThread'])) {
+      $tpl->set_var(array(
+        "locked" => "",
+        "error" => "",
+        "preview" => "",
+        "duplicate" => "",
+        "form" => "",
+        "accept" => "",
+        "noreplies" => "",
+      ));
 
-    $tpl->pparse("CONTENT", "post");
-    exit;
-  }
-} else {
-  if (!isset($forum['opt.PostReply'])) {
-    $tpl->set_var(array(
-      "locked" => "",
-      "error" => "",
-      "preview" => "",
-      "duplicate" => "",
-      "form" => "",
-      "accept" => "",
-      "nonewthreads" => "",
-    ));
+      $tpl->pparse("CONTENT", "post");
+      exit;
+    }
+  } else {
+    if (!isset($forum['opt.PostReply'])) {
+      $tpl->set_var(array(
+        "locked" => "",
+        "error" => "",
+        "preview" => "",
+        "duplicate" => "",
+        "form" => "",
+        "accept" => "",
+        "nonewthreads" => "",
+      ));
 
-    $tpl->pparse("CONTENT", "post");
-    exit;
+      $tpl->pparse("CONTENT", "post");
+      exit;
+    }
   }
 }
 

@@ -367,6 +367,8 @@ $tpl->set_var(array(
 
 $action = "post";
 
+unset($thread);
+
 require_once("post.inc");
 
 $tpl->parse("HEADER", "header");
