@@ -75,7 +75,6 @@ $ad = ads_view("a4.org,aw_" . $forum['shortname'], "_top");
 $tpl->set_var("AD", $ad);
 
 if ($user->moderator($forum['fid'])) {
-  $tpl->set_var("MSG_AID", $msg['aid']);
   $changes = preg_replace("/&/", "&amp;", $msg['changes']);
   $changes = preg_replace("/</", "&lt;", $changes);
   $changes = preg_replace("/>/", "&gt;", $changes);
@@ -101,6 +100,7 @@ $tpl->set_var(array(
   "MSG_SUBJECT" => $msg['subject'],
   "MSG_DATE" => $msg['date'],
   "MSG_MID" => $msg['mid'],
+  "MSG_AID" => $msg['aid'],
 ));
 
 $_page = $tpl->get_var("PAGE");
