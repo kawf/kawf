@@ -4,8 +4,7 @@ include_once("strip.inc");
 
 $aid = $user->aid;
 
-$user = new AccountUser();
-$user->find_by_aid((int)$aid);
+$user = AccountUser::find_by_aid((int)$aid);
 
 $user->req();
 
