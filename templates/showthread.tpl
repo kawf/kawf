@@ -10,7 +10,7 @@
 
 <font face="arial, geneva" size="-2">
 [ <a href="http://pictureposter.audiworld.com/A4PICSnd.asp">Post Picture</a> ]
-[ <a href="/search/" target="_top">Search Forums</a> ]
+[ <a href="http://www.audiworld.com/search/" target="_top">Search Forums</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
 </font>
 
@@ -27,7 +27,7 @@
 <tr><td>
 <font face="arial, geneva" size="-2">
 [ <a href="http://pictureposter.audiworld.com/A4PICSnd.asp">Post Picture</a> ]
-[ <a href="/search/" target="_top">Search Forums</a> ]
+[ <a href="http://www.audiworld.com/search/" target="_top">Search Forums</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
 </font>
 </td></tr>

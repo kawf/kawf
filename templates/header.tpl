@@ -1,4 +1,10 @@
 <html>
-<head><title>AudiWorld Forums: {TITLE}</title></head>
+<head>
+<title>AudiWorld Forums: {TITLE}</title>
+<style type="text/css">
+<!--
+body { font: verdana, arial, geneva }
+-->
+</style>
+</head>
 <body bgcolor="#ffffff">
-<h1>We are testing a new rewritten version of the software, please be patient</h1>

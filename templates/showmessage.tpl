@@ -1,5 +1,11 @@
 {HEADER}
 
+<style type="text/css">
+<!--
+ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
+-->
+</style>
+
 <center>
 {AD}
 </center>
@@ -16,7 +22,7 @@
 [ <a href="#thread">Thread</a> ]
 [ <a href="#postfp">Post Followup</a> ]
 [ <a href="http://pictureposter.audiworld.com/A4PICSnd.asp">Post Picture</a> ]
-[ <a href="/search/" target="_top">Search Forums</a> ]
+[ <a href="http://www.audiworld.com/search/" target="_top">Search Forums</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
 </font>
 
@@ -48,7 +54,7 @@
 <table width="600">
 <tr><td align="center">
 <a name="post">
-<img src="/forum/pix/followup.gif">
+<img src="/pics/followup.gif">
 </td></tr>
 
 <tr><td>
@@ -59,11 +65,11 @@
 [ <a href="#thread">Thread</a> ]
 [ <a href="#postfp">Post Followup</a> ]
 [ <a href="http://pictureposter.audiworld.com/A4PICSnd.asp">Post Picture</a> ]
-[ <a href="/search/" target="_top">Search Forums</a> ]
+[ <a href="http://www.audiworld.com/search/" target="_top">Search Forums</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
 </font>
 </td></tr>
-</table>
+</table><br>
 
 {FOOTER}
 

@@ -1,12 +1,12 @@
 {HEADER}
 
-<img src="../pix/change.gif"><br>
+<img src="/pics/change.gif"><br>
 
-<!-- BEGIN DYNAMIC BLOCK: error -->
+<!-- BEGIN error -->
 <font face="Verdana, Arial, Geneva" size="-1" color="#ff0000">
 {ERROR}
 </font>
-<!-- END DYNAMIC BLOCK: error -->
+<!-- END error -->
 
 <form action="preferences.phtml?page={PAGE}" method="post">
 
@@ -18,35 +18,8 @@
     </td>
   </tr>
   <tr bgcolor="#cccccc">
-    <td align="right" width="175"><font face="Verdana, Arial, Geneva" size="-1">   
-      <b>Enter new password:</b>
-    </font></td>
-    <td width="425">
-      <input type="password" name="password1">
-    </td>
-  </tr>
-  <tr bgcolor="#cccccc">
-    <td align="right" width="175"><font face="Verdana, Arial, Geneva" size="-1">   
-      <b>Verify new password:</b>
-    </font></td>
-    <td width="425">
-      <input type="password" name="password2">
-    </td>
-  </tr>
-  <tr bgcolor="#cccccc">
-    <td align="right" width="175"><font face="Verdana, Arial, Geneva" size="-1">
-      <b>New Screen Name:</b>
-    </font></td>
-    <td width="425">
-      <input type="text" name="name">
-    </td>
-  </tr>
-  <tr bgcolor="#cccccc">
-    <td align="right" width="175"><font face="Verdana, Arial, Geneva" size="-1">
-      <b>New Email Address:</b>
-    </font></td>
-    <td width="425">
-      <input type="text" name="email">
+    <td colspan="2"><font face="Verdana, Arial, Geneva" size="-1">
+      <a href="http://account.audiworld.com/edit.phtml">Edit Password, Email Address or Screen Name</a>
     </td>
   </tr>
   <tr bgcolor="#cccccc">
@@ -57,6 +30,16 @@
       <textarea wrap="virtual" name="signature" rows=5 cols=40>{SIGNATURE}</textarea>
     </td>
   </tr>
+<!-- BEGIN signature -->
+  <tr bgcolor="#cccccc">
+    <td width="175">
+&nbsp;
+    </td>
+    <td width="425">
+{SIGNATURE}
+    </td>
+  </tr>
+<!-- END signature -->
   <tr bgcolor="#cccccc">
     <td align="right" width="175"><font face="Verdana, Arial, Geneva" size="-1">   
     <b>Preferences:
@@ -71,6 +54,7 @@
 <input type="checkbox" name="HideSignatures"{HIDESIGNATURES}> Hide signatures when viewing messages?<br>
 <input type="checkbox" name="AutoUpdateTracking"{AUTOUPDATETRACKING}> Automatically mark tracked threads as read when reading followups? (Not fully implemented yet)<br>
 <input type="checkbox" name="OldestFirst"{OLDESTFIRST}> Show oldest replies first?<br>
+<!-- input type="checkbox" name="SortbyActive"{SORTBYACTIVE}> Sort by active threads?<br -->
 
       Threads per page <input type="input" size="3" name="threadsperpage" value="{THREADSPERPAGE}"><br>
     </font></td>
