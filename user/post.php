@@ -31,6 +31,7 @@ $tpl->set_block("post", "preview");
 $tpl->set_block("post", "form");
 $tpl->set_block("post", "accept");
 
+$tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
 $tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "owner");

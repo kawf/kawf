@@ -29,6 +29,7 @@ $tpl->set_file(array(
 
 $tpl->set_block("delete", "disabled");
 
+$tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
 $tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "owner");

@@ -11,6 +11,7 @@ $tpl->set_file(array(
   "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
 ));
 
+$tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
 $tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "owner");
@@ -90,10 +91,15 @@ if ($user->moderator($forum['fid'])) {
   $tpl->set_var("MSG_CHANGES", nl2br($changes));
   $tpl->set_var("MSG_IP", $msg['ip']);
 } else {
-  $tpl->set_var("forum_admin", "");
   $tpl->set_var("changes", "");
   $tpl->set_var("message_ip", "");
 }
+
+if (!$user->moderator($forum['fid']) || !$msg['aid'])
+  $tpl->set_var("forum_admin", "");
+
+if (!$msg['aid'])
+  $tpl->set_var("account_id", "");
 
 /*
 if ($user->valid())

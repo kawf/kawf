@@ -9,6 +9,7 @@ $tpl->set_file(array(
   "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
 ));
 
+$tpl->set_block("message", "account_id", "_account_id");
 $tpl->set_block("message", "forum_admin", "_forum_admin");
 $tpl->set_block("message", "message_ip", "_message_ip");
 $tpl->set_block("message", "owner", "_owner");
@@ -129,15 +130,22 @@ function print_message($thread, $msg)
     $changes = preg_replace("/>/", "&gt;", $changes);
     $tpl->set_var("MSG_CHANGES", nl2br($changes));
     $tpl->set_var("MSG_IP", $msg['ip']);
-    $tpl->parse("_forum_admin", "forum_admin");
     $tpl->parse("_changes", "changes");
     $tpl->parse("_message_ip", "message_ip");
   } else {
-    $tpl->set_var("_forum_admin", "");
     $tpl->set_var("_changes", "");
     $tpl->set_var("_message_ip", "");
   }
 
+  if ($user->moderator($forum['fid']) && $msg['aid'])
+    $tpl->parse("_forum_admin", "forum_admin");
+  else
+    $tpl->set_var("_forum_admin", "");
+
+  if ($msg['aid'])
+    $tpl->parse("_account_id", "account_id");
+  else
+    $tpl->parse("_account_id", "");
 /*
   if ($user->valid())
     $tpl->set_var("MSG_IP", $msg['ip']);

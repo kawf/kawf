@@ -24,6 +24,7 @@ $tpl->set_block("edit", "preview");
 $tpl->set_block("edit", "form");
 $tpl->set_block("edit", "accept");
 
+$tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
 $tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "owner");
