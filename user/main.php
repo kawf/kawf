@@ -227,7 +227,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
     $sql = "select mid from f_messages$index where mid = '" . addslashes($mid) . "'";
     if (!isset($user->cap['Moderate'])) {
       $qual[] .= "state != 'Deleted'";
-      if (isset($user))
+      if (isset($user->aid))
         $qual[] .= "aid = " . $user->aid;
     }
 

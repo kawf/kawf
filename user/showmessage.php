@@ -262,7 +262,7 @@ function print_subject($msg)
     }
   }
 
-  if (isset($user) && isset($flags['NewStyle']) && $msg['aid'] == $user->aid)
+  if (isset($user->aid) && isset($flags['NewStyle']) && $msg['aid'] == $user->aid)
     $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
 
   $string .= "</li>\n";
@@ -277,7 +277,7 @@ if (!$ulkludge)
 
 $tpl->set_var("THREAD", $threadmsg);
 
-if (isset($user)) {
+if (isset($user->aid)) {
   if (isset($tthreads_by_tid[$msg['tid']])) {
     $threadlinks = "<a href=\"/untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
   } else {

@@ -4,7 +4,7 @@ if (!isset($forum)) {
   exit;
 }
 
-if (!isset($user))
+if (!isset($user->aid))
   Header("Location: $page");
 
 $index = find_thread_index($tid);

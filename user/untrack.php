@@ -4,7 +4,7 @@ if (!isset($forum)) {
   exit;
 }
 
-if (!isset($user))
+if (!isset($user->aid))
   Header("Location: $page");
 
 $sql = "delete from f_tracking where fid = " . $forum['fid'] . " and tid = '" . addslashes($tid) . "' and aid = '" . $user->aid . "'";
