@@ -61,45 +61,42 @@ function show_message($msg, $vmid = 0, $replies = -1)
   if (isset($flags['Locked']))
     $string .= " (locked)";
 
-  if ($msg['state'] == "Moderated" && !isset($user['cap.Moderate']))
-    $string .= " (moderated)";
-
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<i><font size=-2>".$msg['date']."</font></i>";
 
   if ($replies >= 0 && isset($user['prefs.Collapsed']))
     $string .= " ($replies replies)";
 
+  if ($msg['state'] != "Active")
+    $string .= " (" . $msg['state'] . ")";
+
   if (isset($user['cap.Moderate'])) {
     switch ($msg['state']) {
     case "Moderated":
-      $string .= " <a href=\"$urlroot/unmoderate.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">um</a>";
+      $string .= " <a href=\"$urlroot/unmoderate.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">um</a>";
       if (isset($user['cap.Delete']))
-        $string .= " <a href=\"$urlroot/delete.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">dm</a>";
+        $string .= " <a href=\"$urlroot/delete.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     case "Deleted":
       if (isset($user['cap.Delete']))
-        $string .= " <a href=\"$urlroot/undelete.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">ud</a>";
+        $string .= " <a href=\"$urlroot/undelete.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
       break;
     case "Active":
-      $string .= " <a href=\"$urlroot/moderate.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">mm</a>";
+      $string .= " <a href=\"$urlroot/moderate.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">mm</a>";
       if (isset($user['cap.Delete']))
-        $string .= " <a href=\"$urlroot/delete.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">dm</a>";
+        $string .= " <a href=\"$urlroot/delete.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     }
 
-if ($forum['shortname'] == "test") {
-    if (isset($flags['Locked']))
-      $string .= " <a href=\"$urlroot/unlock.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">ul</a>";
-    else
-      $string .= " <a href=\"$urlroot/lock.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">lm</a>";
-}
-
-    if ($msg['state'] != "Active")
-      $string .= " (".$msg['state'].")";
+    if ($forum['version'] >= 2) {
+      if (isset($flags['Locked']))
+        $string .= " <a href=\"$urlroot/unlock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ul</a>";
+      else
+        $string .= " <a href=\"$urlroot/lock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">lm</a>";
+    }
   }
 
   if (isset($user) && isset($flags['NewStyle']) && $msg['aid'] == $user['aid'])
-    $string .= " <a href=\"$urlroot/edit.phtml?shortname=".$forum['shortname']."&mid=".$msg['mid']."\">edit</a>";
+    $string .= " <a href=\"$urlroot/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
 
   $string .= "</li>\n";
 

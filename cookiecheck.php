@@ -1,8 +1,4 @@
 <?php
-require('sql.inc');
-
-require('config.inc');
-
 if (!isset($page))
   $page = $furlroot;
 

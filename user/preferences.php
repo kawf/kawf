@@ -1,8 +1,5 @@
 <?php
 
-require('sql.inc');
-require('account.inc');
-
 /* Open up the SQL database first */
 sql_open_readwrite();
 

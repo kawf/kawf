@@ -1,9 +1,5 @@
 <?php
 
-require('../sql.inc');
-require('../account.inc');
-
-require('config.inc');
 require('acct.inc');
 
 if (!forum_admin()) {
@@ -14,29 +10,25 @@ if (!forum_admin()) {
 /* Open up the SQL database first */
 sql_open_readwrite();
 
-$sql = "select * from forums where shortname = '$shortname'";
+$sql = "select * from forums where shortname = '" . addslashes($shortname) . "'";
 $result = mysql_db_query('a4', $sql) or sql_error($sql);
 
 $forum = mysql_fetch_array($result);
 
-require('indexes.inc');
-
 $index = find_msg_index($mid);
-$sql = "select state from messages$index where mid=$mid";
+$sql = "select state from messages$index where mid = '" . addslashes($mid) . "'";
 $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 
 list($state) = mysql_fetch_row($result);
 
-$sql = "update messages$index set state='Deleted' where mid=$mid";
+$sql = "update messages$index set state = 'Deleted' where mid = '" . addslashes($mid) . "'";
 mysql_query($sql) or sql_error($sql);
 
 $sql = "update indexes set $state = $state - 1, deleted = deleted + 1 where iid = $index";
 mysql_query($sql) or sql_error($sql);
+
+Header("Location: " . $page);
 ?>
 
-<html>
-
 Message <?php echo $mid; ?> has been deleted
-
-</html>
 

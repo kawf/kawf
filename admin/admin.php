@@ -1,9 +1,5 @@
 <?php
 
-require('../sql.inc');
-require('../account.inc');
-
-require('config.inc');
 require('acct.inc');
 
 if (!forum_admin()) {
@@ -43,47 +39,12 @@ function print_pages()
   echo "<br>\n";
 }
 
-print_pages();
-?>
-
-<br>
-
-<form action="showaccount.phtml" method="post">
-Search Email: <input type=text name="email">
-<input type=submit>
-</form>
-<br>
-
-<form action="showaccount.phtml" method="post">
-Search Name: <input type=text name="name">
-<input type=submit>
-</form>
-<br>
-
-<br>
-
-<?php
 $skipaccounts = ($page - 1) * $accountsperpage;
 
 $sql = "select * from accounts order by aid limit $skipaccounts,$accountsperpage";
 $result = mysql_query($sql) or sql_error($sql);
 
-echo "<table>\n";
-echo "<tr><td>aid</td><td>name</td><td>email</td><td>capabilities</td></tr>\n";
 while ($acct = mysql_fetch_array($result)) {
-?>
-  <tr>
-    <td><a href="showaccount.phtml?aid=<?php echo $acct['aid']; ?>"><?php echo $acct['aid']; ?></a></td>
-    <td><?php echo stripslashes($acct['name']); ?></td>
-    <td><?php echo stripslashes($acct['email']); ?></td>
-    <td><?php echo $acct['capabilities']; ?></td>
-  </tr>
-<?php
 }
-echo "</table>\n";
-
-echo "<br>\n";
-
-print_pages();
 
 ?>

@@ -1,49 +1,18 @@
 <?php
 
-require('../sql.inc');
-require('../account.inc');
-
 if (!isset($user)) {
   echo "No user account, no tracking\n";
   exit;
 }
 
-require('config.inc');
 require('acct.inc');
 
-/* Open up the SQL database first */
-sql_open_readonly();
-
-require('indexes.inc');
-
-?>
-
-<html>
-<head>
-<title>
-AudiWorld Forums: Tracked Threads
-</title>
-</head>
-
-<body bgcolor=#ffffff>
-
-<center>
-<?php
 /* We get our money from ads, make sure it's there */
 /*
 require('../ads.inc');
 
 add_ad();
 */
-?>
-</center>
-
-<hr width="100%" size="1">
-
-<br>
-<!-- img src="" -->
-
-<?php
 
 require('listthread.inc');
 
@@ -131,16 +100,3 @@ else
 if (!$numshown)
   echo "<font size=\"+1\">No updated threads</font><br>\n";
 ?>
-
-<br>
-
-<table border="0" cellpadding="0" cellspacing="0" width="600">
-<tr>
-        <td align="center"><font size="1" face="arial,geneva"><a href="/copyright/">Terms of Use</a> | Copyright © 1996-2000 by AudiWorld. All rights reserved.</font></td>
-</tr>
-</table>
-
-</body>
-
-</html>
-

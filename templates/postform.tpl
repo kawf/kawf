@@ -23,9 +23,7 @@
     <font size="-1" face="Verdana, Arial, Geneva"><b>Message:</b></font>
   </td>
   <td bgcolor="#dfdfdf"><font size="-1" face="Verdana, Arial, Geneva">
-    <textarea wrap="virtual" name="message" rows="10" cols="50">
-{MESSAGE}
-    </textarea>
+    <textarea wrap="virtual" name="message" rows="10" cols="50">{MESSAGE}</textarea>
   </font></td>
 </tr>
 

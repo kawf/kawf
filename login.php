@@ -1,8 +1,4 @@
 <?php
-require('sql.inc');
-require('account.inc');
-
-require('config.inc');
 
 $tpl->define(array(
   header => 'header.tpl',

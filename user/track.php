@@ -1,10 +1,9 @@
 <?php
+if (!isset($page))
+  $page = $furlroot;
 
-require('../sql.inc');
-require('../account.inc');
-
-require('config.inc');
-require('acct.inc');
+if (!isset($user))
+  Header("Location: $page");
 
 /* Open up the SQL database first */
 sql_open_readwrite();

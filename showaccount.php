@@ -1,9 +1,5 @@
 <?php
 
-require('../sql.inc');
-require('../account.inc');
-
-require('config.inc');
 require('acct.inc');
 
 if (!forum_admin()) {

@@ -1,6 +1,6 @@
 <?php
 
-require('../sql.inc');
+require('sql.inc');
 
 require('config.inc');
 

@@ -1,9 +1,10 @@
+{HEADER}
+
+<img src="../pix/finish.gif"><br>
+
+<font face="Verdana, Arial, Geneva">
+
 <?php
-
-require('striptag.inc');
-
-sql_open_readwrite();
-
 $sql = "select * from pending where cookie = '" . addslashes($cookie) . "'";
 $result = mysql_db_query('accounts', $sql) or sql_error($sql);
 
@@ -40,6 +41,15 @@ if ($pending['type'] == 'ChangeEmail') {
 
     include('./prefform.inc');
   } else {
+?>
+<?php echo $text; ?><p>
+
+Please <a href="<?php echo $urlroot; ?>/login.phtml">login</a> now<p>
+<?php
   }
 }
 ?>
+
+</font>
+
+{FOOTER}

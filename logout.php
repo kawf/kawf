@@ -1,7 +1,4 @@
 <?php
-require('sql.inc');
-require('account.inc');
-
 sql_open_readwrite();
 
 if (isset($user)) {

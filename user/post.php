@@ -1,5 +1,10 @@
 <?php
 
+if (!isset($user)) {
+  echo "No user account, no posting\n";
+  exit;
+}
+
 /* Check the data to make sure they entered stuff */
 if (!isset($postcookie)) {
   /* Hmm, how did this happen? Redirect them back to the main page */
@@ -12,11 +17,6 @@ require('striptag.inc');
 
 /* Open up the SQL database */
 sql_open_readwrite();
-
-if (empty($user)) {
-  Header("Location: " . $furlroot);
-  exit;
-}
 
 $forumdb = "forum_" . $forum['shortname'];
 
@@ -119,13 +119,13 @@ if ((isset($error) || isset($preview)) && (!empty($imageurl)))
 
 if (isset($preview)) {
   $tpl->assign(NAME, $user['name']);
-  if (empty($exposeemail))
+  if (empty($ExposeEmail))
     $tpl->assign(EMAIL, '<font color="#ff0000">(Hidden)</font>');
   else
     $tpl->assign(EMAIL, $user['email']);
 
   if (isset($imageurl) && !empty($imageurl))
-    $message = "<center><img src=\"$imageurl\"></center><p>";
+    $message = "<center><img src=\"$imageurl\"></center><p>" . $message;
 
   $tpl->parse(PREVIEW, 'preview');
 } else
@@ -163,11 +163,6 @@ $flagset = implode(",", $flags);
 if (!empty($imageurl))
   $message = "<center><img src=\"$imageurl\"></center><p>" . $message;
 
-/*
-if (!empty($user['signature']))
-  $message .= "<p>" . stripslashes($user['signature']);
-*/
-
 /* Add it into the database */
 /* Check to make sure this isn't a duplicate */
 $sql = "select mid from dupposts where cookie = '" . addslashes($postcookie) . "';";
@@ -176,9 +171,19 @@ $result = mysql_db_query($forumdb, $sql) or sql_error($sql);
 if (mysql_num_rows($result))
   list ($mid) = mysql_fetch_row($result);
 
-list($messagetable) = end($indexes);
-$mtable = "messages" . $indexes[$messagetable]['iid'];
-$ttable = "threads" . $indexes[$messagetable]['iid'];
+$mindex = end($indexes);
+
+echo "- $mindex -<br>\n";
+echo "- " . $indexes[$mindex]['iid'] . " -<br>\n";
+echo "- " . $indexes[2]['iid'] . " -<br>\n";
+
+$index = $indexes[$mindex];
+
+echo "-- " . $index['iid'] . ", " . $indexes[$mindex]['iid'] . " --<br>\n";
+
+$mtable = "messages" . $index['iid'];
+$ttable = "threads" . $index['iid'];
+
 if (isset($mid))
   $sql = "update $mtable set name='".addslashes($name)."', email='".addslashes($email)."', date=NOW(), ip='$REMOTE_ADDR', flags='$flagset', subject='".addslashes($subject)."', message='".addslashes($message)."', url='".addslashes($url)."', urltext='".addslashes($urltext)."' where mid='".addslashes($mid)."';";
 else
@@ -207,7 +212,7 @@ if (!isset($mid)) {
     $sql = "insert into $ttable ( tid, mid ) values ( $tid, '".addslashes($mid)."' )";
     mysql_db_query($forumdb, $sql) or sql_error($sql);
 
-    $sql = "update indexes set maxtid = $tid where iid = " . $indexes[$messagetable]['iid'] . " and maxtid < $tid";
+    $sql = "update indexes set maxtid = $tid where iid = " . $index['iid'] . " and maxtid < $tid";
     mysql_db_query($forumdb, $sql) or sql_error($sql);
 
     $sql = "update $mtable set tid = $tid where mid = $mid";
@@ -217,11 +222,11 @@ if (!isset($mid)) {
     mysql_db_query($forumdb, $sql) or sql_error($sql);
   }
 
-  $sql = "update indexes set maxmid = $mid where iid = " . $indexes[$messagetable]['iid'] . " and maxmid < $mid";
+  $sql = "update indexes set maxmid = $mid where iid = " . $index['iid'] . " and maxmid < $mid";
   mysql_db_query($forumdb, $sql) or sql_error($sql);
 
   if (!$pid) {
-    $sql = "update indexes set active = active + 1 where iid = " . $indexes[$messagetable]['iid'];
+    $sql = "update indexes set active = active + 1 where iid = " . $index['iid'];
     mysql_db_query($forumdb, $sql) or sql_error($sql);
   }
 } else
@@ -276,8 +281,6 @@ if (mysql_num_rows($result) > 0) {
   $e_message = textwrap($e_message, 78, "\n");
 
   $e_message .= "\n--\naudiworld.com\n";
-
-  echo "<!-- $e_message - - - " . strlen($e_message) . ", $foo -->\n";
 
   while ($track = mysql_fetch_array($result)) {
     $sql = "select email from accounts where aid = " . $track['aid'];
