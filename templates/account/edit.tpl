@@ -30,7 +30,7 @@ body { font-family: verdana, arial, geneva }
 <font face="verdana, arial, geneva" size="-1">Your password has been changed</font><p>
 <!-- END password -->
 <font face="verdana, arial, geneva" size="-1">
-<form action="edit.phtml" method="post">
+<form action="acctedit.phtml" method="post">
 New Screen Name: <input type="text" name="name" length="40"><br>
 New Email Address: <input type="text" name="email" length="40"><br>
 New Password: <input type="password" name="password1" length="20"><br>
