@@ -27,7 +27,7 @@ $tpl->set_file(array(
 ));
 
 $tpl->set_block("edit", "disabled");
-$tpl->set_block("edit", "locked");
+$tpl->set_block("edit", "edit_locked");
 $tpl->set_block("edit", "error");
 $tpl->set_block("error", "image");
 $tpl->set_block("error", "subject_req");
@@ -137,7 +137,7 @@ $tpl->_set_var("AD", $ad);
 
 if (!isset($forum['opt.PostEdit'])) {
   $tpl->set_var(array(
-    "locked" => "",
+    "edit_locked" => "",
     "error" => "",
     "preview" => "",
     "form" => "",
@@ -172,7 +172,7 @@ if (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')) {
   exit;
 }
 
-$tpl->set_var("locked", "");
+$tpl->set_var("edit_locked", "");
 
 /* Sanitize the strings */
 $name = stripcrap($user->name);
