@@ -33,22 +33,28 @@ if (isset($user)) {
 
   if (!isset($subject))
     $subject = "";
-  $tpl->assign(SUBJECT, ereg_replace("\"", "&quot;", $subject));
+  $subject = ereg_replace("&", "&amp;", $subject);
+  $subject = ereg_replace("\"", "&quot;", $subject);
+  $tpl->assign(SUBJECT, $subject);
 
   if (!isset($message))
     $message = "";
+  $message = ereg_replace("&", "&amp;", $message);
   $tpl->assign(MESSAGE, $message);
 
   if (!isset($url))
     $url = "";
+  $url = ereg_replace("&", "&amp;", $url);
   $tpl->assign(URL, $url);
 
   if (!isset($urltext))
     $urltext = "";
+  $urltext = ereg_replace("&", "&amp;", $urltext);
   $tpl->assign(URLTEXT, $urltext);
 
   if (!isset($imageurl))
     $imageurl = "";
+  $imageurl = ereg_replace("&", "&amp;", $imageurl);
   $tpl->assign(IMAGEURL, $imageurl);
 
   $tpl->assign(USER_NAME, $user['name']);
