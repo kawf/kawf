@@ -225,7 +225,7 @@ if (isset($error) || isset($preview)) {
     if (mysql_errno() != 1062)
       sql_error($sql);
 
-    $mid = sql_query1("select mid from f_dupposts where postcookie = '" . addslashes($postcookie) . "'");
+    $mid = sql_query1("select mid from f_dupposts where cookie = '" . addslashes($postcookie) . "'");
 echo "<!-- dup: $mid -->\n";
   } else {
     /* Grab a new mid, this should work reliably */
@@ -245,7 +245,7 @@ echo "<!-- dup: $mid -->\n";
     $newmessage = 1;
 echo "<!-- not dup: $mid -->\n";
 
-    sql_query("update f_dupposts set mid = $mid where postcookie = '" . addslashes($postcookie) . "'");
+    sql_query("update f_dupposts set mid = $mid where cookie = '" . addslashes($postcookie) . "'");
   }
 
   /* Add the message to the last index */
