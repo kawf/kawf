@@ -216,6 +216,13 @@ else
   $msg_message = "";
 $msg_message .= nl2br($message);
 
+if (!empty($url)) {
+  if (!empty($urltext))
+    $msg_message .= "<ul><li><a href=\"" . $url . "\" target=\"_top\">" . $urltext . "</a></ul>\n";
+   else
+    $msg_message .= "<ul><li><a href=\"" . $url . "\" target=\"_top\">" . $url . "</a></ul>\n";
+}
+
 if (!empty($user->signature))
   $msg_message .= "<p>" . nl2br($user->signature) . "\n";
 
