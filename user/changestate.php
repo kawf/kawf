@@ -4,7 +4,7 @@ $index = find_msg_index($mid);
 
 $msg = sql_querya("select aid, pid, state from f_messages$index where mid = '" . addslashes($mid) . "'");
 
-if ($msg['aid'] != $user->aid && !forum_admin()) {
+if ($msg['aid'] != $user->aid && !isset($user->cap['Delete'])) {
   echo "You are not allowed to change the state of this message\n";
   exit;
 }
