@@ -1,6 +1,7 @@
 <?php
 
 require_once("listthread.inc");
+require_once("thread.inc");
 require_once("filter.inc");
 require_once("strip.inc");
 
@@ -49,9 +50,12 @@ if (isset($flags['NewStyle']) && !isset($user->pref['HideSignatures'])) {
 }
 
 /* Grab some information about the parent (if there is one) */
-if ($msg['pid'] != 0) {
-  $index = find_msg_index($msg['pid']);
-  $sql = "select mid, subject, name, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime from f_messages$index where mid = " . $msg['pid'];
+if (!isset($msg['pmid']))
+  $msg['pmid'] = $msg['pid'];
+
+if ($msg['pmid'] != 0) {
+  $index = find_msg_index($msg['pmid']);
+  $sql = "select mid, subject, name, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime from f_messages$index where mid = " . $msg['pmid'];
   $result = mysql_query($sql) or sql_error($sql);
 
   $pmsg = mysql_fetch_array($result);
@@ -74,7 +78,10 @@ $tpl->set_var("AD", $ad);
 
 if ($user->moderator($forum['fid'])) {
   $tpl->set_var("MSG_AID", $msg['aid']);
-  $tpl->set_var("MSG_CHANGES", nl2br($msg['changes']));
+  $changes = preg_replace("/&/", "&amp;", $msg['changes']);
+  $changes = preg_replace("/</", "&lt;", $changes);
+  $changes = preg_replace("/>/", "&gt;", $changes);
+  $tpl->set_var("MSG_CHANGES", nl2br($changes));
   $tpl->set_var("MSG_IP", $msg['ip']);
 } else {
   $tpl->set_var("forum_admin", "");
@@ -110,7 +117,7 @@ if (!empty($msg['email'])) {
 } else
   $tpl->set_var("MSG_NAMEEMAIL", $msg['name']);
 
-if ($msg['pid'] != 0) {
+if (isset($pmsg)) {
   $tpl->set_var(array(
     "PMSG_MID" => $pmsg['mid'],
     "PMSG_SUBJECT" => $pmsg['subject'],
@@ -152,42 +159,7 @@ $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$index where 
 $result = mysql_query($sql) or sql_error($sql);
 $thread = mysql_fetch_array($result);
 
-$index = find_msg_index($thread['mid']);
-$sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
-$result = mysql_query($sql) or sql_error($sql);
-while ($message = mysql_fetch_array($result)) {
-  $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
-  $messages[] = $message;
-}
-
-$index++;
-if (isset($indexes[$index])) {
-  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, subject, flags, name, email, views from f_messages$index where tid = '" . $thread['tid'] . "' order by mid";
-  $result = mysql_query($sql) or sql_error($sql);
-  while ($message = mysql_fetch_array($result)) {
-    $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
-    $messages[] = $message;
-  }
-}
-
-$vmid = $msg['mid'];
-
-/* Filter out moderated or deleted messages, if necessary */
-reset($messages);
-while (list($key, $message) = each($messages)) {
-  $tree[$message['mid']][] = $key;
-  $tree[$message['pid']][] = $key;
-}
-
-/* Walk down from the viewed message to the root to find the path */
-$pid = $vmid;
-do {
-  $path[$pid] = true;
-  $key = reset($tree[$pid]);
-  $pid = $messages[$key]['pid'];
-} while ($pid);
-
-$messages = filter_messages($messages, $tree, reset($tree), $path);
+list($messages, $tree) = fetch_thread($thread, $msg['mid']);
 
 function print_subject($msg)
 {
@@ -315,7 +287,7 @@ if (!ereg("^[Rr][Ee]:", $msg['subject'], $sregs))
  else
   $subject = $msg['subject'];
 
-$pid = $msg['mid'];
+$pmid = $msg['mid'];
 $tid = $msg['tid'];
 unset($mid);
 unset($message);
