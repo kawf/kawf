@@ -3,7 +3,8 @@
 <title>{DOMAIN} Forums: {MSG_SUBJECT}</title>
 <style type="text/css">
 <!--
-body { font-family: verdana, arial, geneva }
+body { font-family: verdana, arial, geneva; font-size: smaller }
+td { font-family: verdana, arial, geneva; font-size: smaller }
 ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 -->
 </style>
@@ -24,7 +25,7 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 </tr>
 </table>
 
-<font face="arial, geneva" size="-2">
+<font size="-2">
 [ <a href="#thread">Thread</a> ]
 [ <a href="#postfp">Post Followup</a> ]
 [ <a href="/search/" target="_top">Search Forums</a> ]
@@ -40,13 +41,11 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 
 <a name="thread">
 
-<font face="Verdana, Arial, Geneva" size="-1"><b>Thread:</b></font><br>
+<b>Thread:</b><br>
 <table width="100%">
 <tr bgcolor="{BGCOLOR}">
 <td>
-<font face="Verdana, Arial, Geneva" size="-1">
 {THREAD}
-</font>
 </td>
 <td valign="top">
 {THREADLINKS}
@@ -66,7 +65,7 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 {FORM}
 </td></tr>
 <tr><td>
-<font face="arial, geneva" size="-2">
+<font size="-2">
 [ <a href="#thread">Thread</a> ]
 [ <a href="#postfp">Post Followup</a> ]
 [ <a href="/search/" target="_top">Search Forums</a> ]

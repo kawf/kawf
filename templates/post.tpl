@@ -3,7 +3,8 @@
 <title>{DOMAIN} Forums: Post a message</title>
 <style type="text/css">
 <!--
-body { font-family: verdana, arial, geneva }
+body { font-family: verdana, arial, geneva; font-size: smaller }
+td { font-family: verdana, arial, geneva; font-size: smaller }
 -->
 </style>
 </head>
@@ -72,12 +73,9 @@ Subject line too long! Truncated to 100 characters<br>
 
 <table width="600">
 <tr><td>
-<center><h2><font face="Verdana, Arial, Geneva" color="#000080">Message Added</font></h2></center><p>
-<font face="Verdana, Arial, Geneva" size="-1">
+<center><h2><font color="#000080">Message Added</font></h2></center><p>
 {PREVIEW}
 <center>[ <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml">Go to Your Message</a> ] [ <a href="/{FORUM_SHORTNAME}/">Go back to the forum</a> ]</center>
-
-</font>
 
 </td></tr>
 </table>

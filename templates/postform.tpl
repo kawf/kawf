@@ -15,11 +15,9 @@ This thread is locked. No replies are allowed.<br>
 <tr><td bgcolor="#dfdfdf">
   <table width="95%">
   <tr><td bgcolor="#dfdfdf">
-    <font face="Verdana, Arial, Geneva" size="-1">
     You must be registered and logged in to post. Please select an option:<p>
     <a href="/login.phtml?url={URL}">Login with existing account</a><br>
     <a href="/create.phtml?url={URL}">Create a new account</a><p>
-    </font>
   </td></tr>
   </table>
 </td></tr>
@@ -30,71 +28,69 @@ This thread is locked. No replies are allowed.<br>
 <table width="600">
 <tr>
   <td bgcolor="#dfdfdf" align="right">
-    <font size="-1" face="Verdana, Arial, Geneva"><b>Logged in as:</b></font>
+    <b>Logged in as:</b>
   </td>
   <td bgcolor="#dfdfdf">
-    <font size="-1" face="Verdana, Arial, Geneva">{USER_NAME} &nbsp; &nbsp; &nbsp;[ <a href="/logout.phtml?url={URL}">Logout</a> ] [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]</font>
+    {USER_NAME} &nbsp; &nbsp; &nbsp;[ <a href="/logout.phtml?url={URL}">Logout</a> ] [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
   </td>
 </tr>
 
 <tr>
   <td bgcolor="#dfdfdf" align="right">
-    <font size="-1" face="Verdana, Arial, Geneva"><b>Subject:</b></font>
+    <b>Subject:</b>
   </td>
-  <td bgcolor="#dfdfdf"><font size="-1" face="Verdana, Arial, Geneva">
+  <td bgcolor="#dfdfdf">
     <input type="text" name="subject" value="{SUBJECT}" size="50" maxlength="100">
-  </font></td>
+  </td>
 </tr>
 
 <tr>
   <td bgcolor="#dfdfdf" align="right" valign="top">
-    <font size="-1" face="Verdana, Arial, Geneva"><b>Message:</b></font>
-  </td>
-  <td bgcolor="#dfdfdf"><font size="-1" face="Verdana, Arial, Geneva">
-    <textarea wrap="virtual" name="message" rows="10" cols="50">{MESSAGE}</textarea>
-  </font></td>
-</tr>
-
-<tr>
-  <td bgcolor="#dfdfdf" align="right">
-    <font size="-1" face="Verdana, Arial, Geneva"><b>Optional Link URL:</b></font>
+    <b>Message:</b>
   </td>
   <td bgcolor="#dfdfdf">
-    <font size="-1" face="Verdana, Arial, Geneva"><input type="text" name="url" value="{URLLINK}" size="50"></font>
+    <textarea wrap="virtual" name="message" rows="10" cols="50">{MESSAGE}</textarea>
   </td>
 </tr>
 
 <tr>
   <td bgcolor="#dfdfdf" align="right">
-    <font size="-1" face="Verdana, Arial, Geneva"><b>Link Text:</b></font>
+    <b>Optional Link URL:</b>
   </td>
-  <td bgcolor="#dfdfdf"><font size="-1" face="Verdana, Arial, Geneva">
+  <td bgcolor="#dfdfdf">
+    <input type="text" name="url" value="{URLLINK}" size="50">
+  </td>
+</tr>
+
+<tr>
+  <td bgcolor="#dfdfdf" align="right">
+    <b>Link Text:</b>
+  </td>
+  <td bgcolor="#dfdfdf">
     <input type="text" name="urltext" value="{URLTEXT}" size=50>
-  </font></td>
+  </td>
 </tr>
 
 <tr>
   <td bgcolor="#dfdfdf" align="right">
-    <font size="-1" face="Verdana, Arial, Geneva"><b>Optional Image URL:</b></font>
+    <b>Optional Image URL:</b>
   </td>
-  <td bgcolor="#dfdfdf"><font size="-1" face="Verdana, Arial, Geneva">
+  <td bgcolor="#dfdfdf">
     <input type="text" name="imageurl" value="{IMAGEURL}" size="50">
-  </font></td>
+  </td>
 </tr>
 
 {HIDDEN}
 
 <tr>
-<td bgcolor="#dfdfdf" align="right" valign="top"><font size="-1" face="Verdana, Arial, Geneva"><b>Post Message:</b></font></td>
+<td bgcolor="#dfdfdf" align="right" valign="top"><b>Post Message:</b></td>
 <td bgcolor="#dfdfdf">
-<font size="-1" face="Verdana, Arial, Geneva">
 <input type="checkbox" name="ExposeEmail"{EXPOSEEMAIL}>
 Show email address in post?<br><br>
 <input type="checkbox" name="EmailFollowup"{EMAILFOLLOWUP}>
 Send email on followup replies?<br><br>
 <input type="checkbox" name="TrackThread"{TRACKTHREAD}>
 Track thread?<br><br>
-</font>
 <input type="submit" name="preview" value="Preview Message">
 <input type="submit" name="post" value="{SUBMITTEXT}"><br>
 <input type="reset" value="Reset">

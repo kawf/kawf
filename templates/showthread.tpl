@@ -3,7 +3,8 @@
 <title>{DOMAIN} Forums: {THREAD_SUBJECT}</title>
 <style type="text/css">
 <!--
-body { font-family: verdana, arial, geneva }
+body { font-family: verdana, arial, geneva; font-size: smaller }
+td { font-family: verdana, arial, geneva; font-size: smaller }
 -->
 </style>
 </head>
@@ -19,7 +20,7 @@ body { font-family: verdana, arial, geneva }
 </tr>
 </table>
 
-<font face="arial, geneva" size="-2">
+<font size="-2">
 [ <a href="/search/" target="_top">Search Forums</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
 </font>
@@ -35,7 +36,7 @@ body { font-family: verdana, arial, geneva }
 
 <table width="600">
 <tr><td>
-<font face="arial, geneva" size="-2">
+<font size="-2">
 [ <a href="/search/" target="_top">Search Forums</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
 </font>

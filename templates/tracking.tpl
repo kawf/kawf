@@ -3,7 +3,8 @@
 <title>{DOMAIN} Forums: Tracking</title>
 <style type="text/css">
 <!--
-body { font-family: verdana, arial, geneva }
+body { font-family: verdana, arial, geneva; font-size: smaller }
+td { font-family: verdana, arial, geneva; font-size: smaller }
 .trow1 { background: #ccccee }
 .trow2 { background: #ddddff }
 .row1 { background: #eeeeee }
@@ -24,13 +25,11 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 
 <table width="600">
 <tr><td>
-  <font face="Verdana, Arial, Geneva" size="-2">
+  <font size="-2">
   &nbsp; &nbsp;[<a href="/forum/tips.shtml">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>]
   </font>
 </td></tr>
 </table>
-
-<font face="Verdana, Arial, Geneva" size="-1">
 
 <!-- BEGIN normal -->
 <table width="100%">
@@ -47,9 +46,9 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 <table width="100%" border="0" cellpadding="2" cellspacing="2">
 <!-- BEGIN row -->
 <tr class="{CLASS}">
-  <td><font face="Verdana, Arial, Geneva" size="-1">
+  <td>
 {MESSAGES}
-  </font></td>
+  </td>
   <td valign="top">
 {MESSAGELINKS}
   </td>
@@ -75,11 +74,9 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 <!-- END row -->
 <!-- END simple -->
 
-</font>
-
 <table width="600">
 <tr><td>
-  <font face="Verdana, Arial, Geneva" size="-2">
+  <font size="-2">
   &nbsp; &nbsp;[<a href="/forum/tips.shtml">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>]
   </font>
 </td></tr>

@@ -3,7 +3,8 @@
 <title>{DOMAIN} Forums: Preferences</title>
 <style type="text/css">
 <!--
-body { font-family: verdana, arial, geneva }
+body { font-family: verdana, arial, geneva; font-size: smaller }
+td { font-family: verdana, arial, geneva; font-size: smaller }
 -->
 </style>
 </head>
@@ -14,7 +15,7 @@ body { font-family: verdana, arial, geneva }
 <img src="/pics/change.gif"><br>
 
 <!-- BEGIN error -->
-<font face="Verdana, Arial, Geneva" size="-1" color="#ff0000">
+<font color="#ff0000">
 {ERROR}
 </font>
 <!-- END error -->
@@ -24,19 +25,19 @@ body { font-family: verdana, arial, geneva }
 <table width="600" border="0" cellpadding="5" cellspacing="2">
 
   <tr bgcolor="#cccccc">
-    <td colspan="2"><font face="Verdana, Arial, Geneva" size="-1">
+    <td colspan="2">
       <p>{TEXT}
     </td>
   </tr>
   <tr bgcolor="#cccccc">
-    <td colspan="2"><font face="Verdana, Arial, Geneva" size="-1">
+    <td colspan="2">
       <a href="/acctedit.phtml">Edit Password, Email Address or Screen Name</a>
     </td>
   </tr>
   <tr bgcolor="#cccccc">
-    <td align="right" width="175"><font face="Verdana, Arial, Geneva" size="-1">
+    <td align="right" width="175">
       <b>Signature:</b>
-    </font></td>
+    </td>
     <td width="425">
       <textarea wrap="virtual" name="signature" rows=5 cols=40>{SIGNATURE}</textarea>
     </td>
@@ -52,10 +53,10 @@ body { font-family: verdana, arial, geneva }
   </tr>
 <!-- END signature -->
   <tr bgcolor="#cccccc">
-    <td align="right" width="175"><font face="Verdana, Arial, Geneva" size="-1">   
+    <td align="right" width="175">
     <b>Preferences:
-    </font></td>
-    <td width="425"><font face="Verdana, Arial, Geneva" size="-1"> 
+    </td>
+    <td width="425">
 <input type="checkbox" name="ShowOffTopic"{SHOWOFFTOPIC}> Show offtopic messages?<br>
 <!-- input type="checkbox" name="ShowModerated"{SHOWMODERATED}> Show moderated messages?<br -->
 <input type="checkbox" name="SecretEmail"{SECRETEMAIL}> Default to hide email address in postings?<br>
@@ -70,15 +71,15 @@ body { font-family: verdana, arial, geneva }
 <!-- input type="checkbox" name="SortbyActive"{SORTBYACTIVE}> Sort by active threads?<br -->
 
       Threads per page <input type="input" size="3" name="threadsperpage" value="{THREADSPERPAGE}"><br>
-    </font></td>
+    </td>
   </tr>
   <tr bgcolor="#cccccc">
-    <td colspan="2" align="center"><font face="Verdana, Arial, Geneva" size="-1">
+    <td colspan="2" align="center">
     <input type="submit" name="submit" value="Submit">
     </td>
   </tr>
   <tr bgcolor="#cccccc">
-    <td colspan="2" align="center"><font face="Verdana, Arial, Geneva" size="-1">
+    <td colspan="2" align="center">
     <p><a href="{PAGE}"><b>Click here to return to the {DOMAIN} Discussion Forums</a>
     </td>
   </tr>

@@ -3,7 +3,8 @@
 <title>{DOMAIN} Forums: {FORUM_NAME}</title>
 <style type="text/css">
 <!--
-body { font-family: verdana, arial, geneva }
+body { font-family: verdana, arial, geneva; font-size: smaller }
+td { font-family: verdana, arial, geneva; font-size: smaller }
 .trow0 { background: #ddddff }
 .trow1 { background: #ccccee }
 .drow0 { background: #ddffdd }
@@ -35,7 +36,7 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 
 <table width="600">
 <tr><td>
-  <font face="Verdana, Arial, Geneva" size="-2">
+  <font size="-2">
   <b>Page:</b> {PAGES}
 
   &nbsp; &nbsp;[<a href="/tips.shtml">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>]
@@ -44,7 +45,6 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 </td></tr>
 </table>
 
-<font face="Verdana, Arial, Geneva" size="-1">
 Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 
 <!-- BEGIN update_all -->
@@ -55,12 +55,12 @@ Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 <table width="100%" border="0" cellpadding="2" cellspacing="2">
 <!-- BEGIN row -->
 <tr class="{CLASS}">
-  <td><font face="Verdana, Arial, Geneva" size="-1">
+  <td>
 {MESSAGES}
-  </font></td>
-  <td valign="top"><font face="Verdana, Arial, Geneva" size="-1">
+  </td>
+  <td valign="top">
 {MESSAGELINKS}
-  </font></td>
+  </td>
 </tr>
 <!-- END row -->
 </table>
@@ -72,11 +72,9 @@ Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 <!-- END row -->
 <!-- END simple -->
 
-</font>
-
 <table width="600">
 <tr><td>
-  <font face="Verdana, Arial, Geneva" size="-2">
+  <font size="-2">
   <b>Page:</b> {PAGES}
 
   &nbsp; &nbsp;[<a href="/forum/tips.shtml">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>]
