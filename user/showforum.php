@@ -515,6 +515,8 @@ while ($numshown < $threadsperpage) {
 
     $tpl->parse("_row", "row", true);
   }
+
+  mysql_free_result($result);
 }
 
 if (!$numshown)

@@ -20,9 +20,9 @@ function filter_messages($messages, $tree, $siblings, $path = array())
    *
    * then hide this message and any children
    */
-  $hide = ((!forum_moderate() && !$user->pref['ShowModerated'] &&
+  $hide = ((!isset($user->cap['Moderate']) && !$user->pref['ShowModerated'] &&
             $messages[$s]['state'] == 'Moderated') ||
-	   (!forum_moderate() && $messages[$s]['state'] == 'Deleted')) &&
+	   (!isset($user->cap['Moderate']) && $messages[$s]['state'] == 'Deleted')) &&
 	    (empty($path) || !isset($path[$messages[$s]['mid']])) &&
 	  $messages[$s]['aid'] != $user->aid;
   if ($hide) {
