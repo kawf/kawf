@@ -1,4 +1,10 @@
 <?php
+$subject_tags = array(
+  array("b", "/b"),
+  array("i", "/i"),
+  array("em", "/em")
+);
+
 $standard_tags = array(
   array("a href=.*", "/a"),
   array("img src=.*"),
