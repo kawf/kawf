@@ -22,13 +22,6 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 
 <hr width="100%" size="1">
 
-<!-- table width="100%">
-<tr>
-{FORUM_HEADER}
-</tr>
-</table>
-<br -->
-
 <table width="600">
 <tr><td>
   <font face="Verdana, Arial, Geneva" size="-2">
@@ -40,6 +33,13 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 <font face="Verdana, Arial, Geneva" size="-1">
 
 <!-- BEGIN normal -->
+<table width="100%">
+<tr>
+{FORUM_HEADER}
+</tr>
+</table>
+<br>
+
 <table width="100%" border="0" cellpadding="2" cellspacing="2">
 <!-- BEGIN row -->
 <tr class="{CLASS}">
@@ -55,6 +55,13 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 <!-- END normal -->
 
 <!-- BEGIN simple -->
+<table width="100%">
+<tr>
+{FORUM_HEADER}
+</tr>
+</table>
+<br>
+
 <!-- BEGIN row -->
 {MESSAGES}
 <!-- END row -->
