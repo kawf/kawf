@@ -8,15 +8,15 @@ if (isset($submit)) {
   for ($i = 0; $i < $count; $i++) {
     $capabilities = Array();
 
-    if (isset($opt[$i]['Lock']))
+    if (isset($opts[$i]['Lock']))
       $capabilities[] = "Lock";
-    if (isset($opt[$i]['Moderate']))
+    if (isset($opts[$i]['Moderate']))
       $capabilities[] = "Moderate";
-    if (isset($opt[$i]['Delete']))
+    if (isset($opts[$i]['Delete']))
       $capabilities[] = "Delete";
-    if (isset($opt[$i]['OffTopic']))
+    if (isset($opts[$i]['OffTopic']))
       $capabilities[] = "OffTopic";
-    if (isset($opt[$i]['Advertise']))
+    if (isset($opts[$i]['Advertise']))
       $capabilities[] = "Advertise";
 
     $capabilities = join(",", $capabilities);
@@ -54,7 +54,7 @@ while ($acl = sql_fetch_array($result)) {
     $capabilities[$value] = true;
 ?>
 
-<input type="hidden" name="opt[<?php echo $count; ?>][fid]" value="<?php echo $acl['fid']; ?>">
+<input type="hidden" name="opts[<?php echo $count; ?>][fid]" value="<?php echo $acl['fid']; ?>">
 
  <tr bgcolor="#D0D0D0">
 <?php
