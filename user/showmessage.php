@@ -213,6 +213,7 @@ function unescape($string)
 {
   $string = preg_replace("/&lt;/", "<", $string);
   $string = preg_replace("/&gt;/", ">", $string);
+  $string = preg_replace("/&amp;/", "&", $string);
 
   return $string;
 }

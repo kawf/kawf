@@ -40,28 +40,34 @@ if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['f
 
   if (!isset($subject))
     $subject = "";
-  $subject = ereg_replace("&", "&amp;", $subject);
-  $subject = ereg_replace("\"", "&quot;", $subject);
+  $subject = preg_replace("/&lt;/", "<", $subject);
+  $subject = preg_replace("/&gt;/", ">", $subject);
+  $subject = preg_replace("/&amp;/", "&", $subject);
+  $subject = preg_replace("/\"/", "&quot;", $subject);
   $tpl->set_var("SUBJECT", $subject);
 
   if (!isset($message))
     $message = "";
-  $message = ereg_replace("&", "&amp;", $message);
+  $message = preg_replace("/&lt;/", "<", $message);
+  $message = preg_replace("/&gt;/", ">", $message);
+  $message = preg_replace("/&amp;/", "&", $message);
   $tpl->set_var("MESSAGE", $message);
 
   if (!isset($url))
     $url = "";
-  $url = ereg_replace("&", "&amp;", $url);
+  $url = preg_replace("/&/", "&amp;", $url);
   $tpl->set_var("URLLINK", $url);
 
   if (!isset($urltext))
     $urltext = "";
-  $urltext = ereg_replace("&", "&amp;", $urltext);
+  $urltext = preg_replace("/&lt;/", "<", $urltext);
+  $urltext = preg_replace("/&gt;/", ">", $urltext);
+  $urltext = preg_replace("/&amp;/", "&", $urltext);
   $tpl->set_var("URLTEXT", $urltext);
 
   if (!isset($imageurl))
     $imageurl = "";
-  $imageurl = ereg_replace("&", "&amp;", $imageurl);
+  $imageurl = preg_replace("/&amp;/", "&", $imageurl);
   $tpl->set_var("IMAGEURL", $imageurl);
 
   $tpl->set_var("USER_NAME", $user->name);

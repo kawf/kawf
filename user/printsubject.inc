@@ -18,9 +18,6 @@ function print_subject($thread, $msg)
   if ($new)
     $string .= "<i><b>";
 
-  /* Convert some bad characters */
-  $msg['subject'] = preg_replace("/&/", "&amp;", $msg['subject']);
-
   if ($vmid == $msg['mid'])
     $string .= "<font color=\"#ff0000\">" . $msg['subject'] . "</font>";
   else {
