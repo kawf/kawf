@@ -156,8 +156,8 @@ else
   $email = "";
 
 $subject = striptag($subject, $subject_tags);
-$subject = stripspaces($subject);
 $subject = demoronize($subject);
+$subject = stripspaces($subject);
 
 if ($msg['state'] == 'Active' && $OffTopic)
   $status = "OffTopic";
@@ -174,8 +174,8 @@ if (strlen($subject) > 100) {
 
 /* Strip any tags from the data */
 $message = striptag($message, $standard_tags);
-$message = stripspaces($message);
 $message = demoronize($message);
+$message = stripspaces($message);
 
 $url = stripcrap($url);
 $url = stripspaces($url);
@@ -185,8 +185,8 @@ if (!empty($url) && !preg_match("/^[a-z]+:\/\//i", $url))
   $url = "http://$url";
 
 $urltext = stripcrap($urltext);
-$urltext = stripspaces($urltext);
 $urltext = demoronize($urltext);
+$urltext = stripspaces($urltext);
 
 $imageurl = stripcrap($imageurl);
 $imageurl = stripspaces($imageurl);
