@@ -166,4 +166,18 @@ $create_offtopic_table = "
     key (fid)
   )";
 
+$create_pending_table = "
+  create table u_pending (
+    tid int not null,
+    aid int not null,
+    cookie varchar(15) not null,
+    type enum('NewAccount','ChangeEmail','ForgotPassword') not null,
+    data blob,
+    tstamp timestamp,
+    status enum('Sent','Bounce','Done') not null,
+    primary key (tid),
+    key (aid),
+    unique key (cookie)
+  )";
+
 ?>
