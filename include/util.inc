@@ -1,7 +1,7 @@
 <?php
 
 /* We use the templates for everything */
-require("template.inc");
+require_once("template.inc");
 
 function err_not_found($description = "")
 {
