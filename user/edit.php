@@ -130,7 +130,7 @@ if ((isset($error) || isset($preview)) && (!empty($imageurl))) {
   $imgpreview = 1;
 }
 
-if (empty($ExposeEmail)) {
+if (isset($ExposeEmail) && $ExposeEmail) {
   /* Lame spamification */
   $email = preg_replace("/@/", "&#" . ord('@') . ";", $user->email);
   $tpl->set_var("MSG_NAMEEMAIL", "<a href=\"mailto:" . $email . "\">" . $user->name . "</a>");
@@ -165,7 +165,7 @@ if (isset($error) || isset($preview)) {
 } else {
   $tpl->set_var("form", "");
 
-  if (isset($ExposeEmail))
+  if (isset($ExposeEmail) && $ExposeEmail)
     $email = $user->email;
   else
     $email = "";

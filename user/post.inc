@@ -64,7 +64,7 @@ if (isset($user)) {
   $tpl->set_var("USER_EMAIL", $user->email);
 
   if (isset($preview) || isset($post))
-    $checked = isset($ExposeEmail);
+    $checked = isset($ExposeEmail) && $ExposeEmail;
   else
     $checked = !isset($user->pref['SecretEmail']);
   if ($checked)
