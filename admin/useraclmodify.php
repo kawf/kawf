@@ -60,11 +60,11 @@ while ($acl = sql_fetch_array($result)) {
 <?php
   if ($acl['fid'] == -1) {
 ?>
-  <td>All Forums [<a href="useracldelete.phml?aid=<?php echo $aid; ?>&fid=<?php echo $acl['fid']; ?>]</td>
+  <td>All Forums [<a href="useracldelete.phml?aid=<?php echo $aid; ?>&fid=<?php echo $acl['fid']; ?></a>]</td>
 <?php
   } else {
 ?>
-  <td>Forum <?php echo $acl['fid']; ?> [<a href="useracldelete.phml?aid=<?php echo $aid; ?>&fid=<?php echo $acl['fid']; ?>]</td>
+  <td>Forum <?php echo $acl['fid']; ?> [<a href="useracldelete.phml?aid=<?php echo $aid; ?>&fid=<?php echo $acl['fid']; ?></a>]</td>
 <?php
   }
 ?>
