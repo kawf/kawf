@@ -1,7 +1,5 @@
 <?php
 
-require('acct.inc');
-
 if (!forum_admin()) {
   Header("Location: $furlroot/");
   exit;

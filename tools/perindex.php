@@ -2,9 +2,9 @@
 
 require('sql.inc');
 
-# sql_open_readwrite();
+sql_open_readwrite();
 
-mysql_pconnect("localhost", "root", "foundry");
+# mysql_pconnect("localhost", "root", "password");
 
 set_time_limit(0);
 
@@ -16,7 +16,10 @@ while ($forum = mysql_fetch_array($res1)) {
 
   $fdb = "forum_" . $forum['shortname'];
 
-  $sql = "alter table tracking add options set('SendEmail') not null after tstamp";
-  mysql_db_query($fdb, $sql) or sql_warn($sql);
+  $sql = "select * from indexes";
+  $res2 = mysql_db_query($fdb, $sql) or sql_error($sql);
+
+  while ($index = mysql_fetch_array($res2)) {
+  }
 }
 ?>

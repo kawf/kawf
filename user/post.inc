@@ -4,6 +4,9 @@ function hidden($name, $value)
   return "<input type=\"hidden\" name=\"$name\" value=\"$value\">\n";
 }
 
+$tpl->define_dynamic('acct', 'postform');
+$tpl->define_dynamic('noacct', 'postform');
+
 if (isset($user)) {
   $postcookie = md5("post" . microtime());
   $hidden = hidden('postcookie', $postcookie);
@@ -66,9 +69,9 @@ if (isset($user)) {
     $tpl->assign(TRACKTHREAD, '');
 
   $tpl->assign(DIRECTORY, $directory);
-
-  $tpl->parse(POST, 'postform');
+  $tpl->clear_dynamic('noacct');
 } else
-  $tpl->parse(POST, 'postform_noacct');
+  $tpl->clear_dynamic('acct');
 
+$tpl->parse(POST, 'postform');
 ?>

@@ -1,23 +1,18 @@
 <?php
 
-require('account.inc');
-
-/* Open up the SQL database first */
-sql_open_readonly();
-
-require('listthread.inc');
+require('listthread.new.inc');
 
 $tpl->define(array(
   header => 'header.tpl',
   footer => 'footer.tpl',
   showmessage => 'showmessage.tpl',
+  message => 'message.tpl',
   postform => 'postform.tpl',
-  postform_noacct => 'postform_noacct.tpl',
   forum_header => 'forum/' . $forum['shortname'] . '.tpl'
 ));
 
-$tpl->define_dynamic('posting_ip', 'showmessage');
-$tpl->define_dynamic('parent', 'showmessage');
+$tpl->define_dynamic('posting_ip', 'message');
+$tpl->define_dynamic('parent', 'message');
 
 $tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
 
@@ -98,10 +93,10 @@ if (!empty($msg['email'])) {
   $tpl->assign(MSG_NAMEEMAIL, $msg['name']);
 
 if ($msg['pid'] != 0) {
-  $tpl->assign(PID, $msg['pid']);
-  $tpl->assign(PSUBJECT, $pmsg['subject']);
-  $tpl->assign(PNAME, $pmsg['name']);
-  $tpl->assign(PDATE, $pmsg['date']);
+  $tpl->assign(PMSG_MID, $pmsg['mid']);
+  $tpl->assign(PMSG_SUBJECT, $pmsg['subject']);
+  $tpl->assign(PMSG_NAME, $pmsg['name']);
+  $tpl->assign(PMSG_DATE, $pmsg['date']);
 } else
   $tpl->clear_dynamic('parent');
 
@@ -121,20 +116,134 @@ if (isset($signature)) {
 
 $tpl->assign(MSG_MESSAGE, $message . "<br><br>\n");
 
-$sql = "select * from threads$index where tid = '" . $msg['tid'] . "'";
-
-$result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
-
-$thread = mysql_fetch_array($result);
-
 # Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)
 # Mozilla/4.7 (Macintosh; U; PPC)
 $ulkludge =
   ereg("^Mozilla/[0-9]\.[0-9]+ \(compatible; MSIE .*", $HTTP_USER_AGENT) ||
   ereg("^Mozilla/[0-9]\.[0-9]+ \(Macintosh; .*", $HTTP_USER_AGENT);
 
+$sql = "select * from threads$index where tid = '" . $msg['tid'] . "'";
+
+$result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+
+$thread = mysql_fetch_array($result);
+
+$index = find_msg_index($thread['mid']);
+
+$sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid desc";
+$result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+while ($message = mysql_fetch_array($result))
+  $messages[] = $message;
+
+$index++;
+if (isset($indexes[$index])) {
+  $sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid desc";
+  $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+  while ($message = mysql_fetch_array($result))
+    $messages[] = $message;
+}
+
+$vmid = $msg['mid'];
+
+function print_subjects($msg)
+{
+  global $vmid, $user, $tthreads, $forum, $furlroot, $urlroot;
+
+  if (get_magic_quotes_gpc()) {
+    $msg['name'] = stripslashes($msg['name']);
+    $msg['subject'] = stripslashes($msg['subject']);
+  }
+
+  if (!empty($msg['flags'])) {
+    $flagexp = explode(",", $msg['flags']);
+    while (list(,$flag) = each($flagexp))
+      $flags[$flag] = "true";
+  }
+
+  $string = "<li>";
+
+  $new = (isset($tthreads[$msg['tid']]) &&
+      $tthreads[$msg['tid']]['tstamp'] < $msg['tstamp']);
+
+  if ($new)
+    $string .= "<i><b>";
+  if ($vmid == $msg['mid'])
+    $string .= "<font color=\"#ff0000\">" . $msg['subject'] . "</font>";
+  else {
+    if (isset($user['prefs.FlatThread']))
+      $string .= "<a href=\"$urlroot/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
+    else
+      $string .= "<a href=\"$urlroot/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
+  }
+
+  if ($new)
+    $string .= "</b></i>";
+
+  if (isset($flags['NoText'])) {
+    if (!isset($user['prefs.SimpleHTML']))
+      $string .= " <img src=\"$furlroot/pix/nt.gif\">";
+    else
+      $string .= " (nt)";
+  }
+
+  if (isset($flags['Picture'])) {
+    if (!isset($user['prefs.SimpleHTML']))
+      $string .= " <img src=\"$furlroot/pix/pic.gif\">";
+    else
+      $string .= " (pic)";
+  }
+
+  if (isset($flags['Link'])) {
+    if (!isset($user['prefs.SimpleHTML']))
+      $string .= " <img src=\"$furlroot/pix/url.gif\">";
+    else
+      $string .= " (link)";
+  }
+
+  if (isset($flags['Locked']))
+    $string .= " (locked)";
+
+  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<i><font size=-2>".$msg['date']."</font></i>";
+
+  if ($msg['state'] != "Active")
+    $string .= " (" . $msg['state'] . ")";
+
+  if (isset($user['cap.Moderate'])) {
+    switch ($msg['state']) {
+    case "Moderated":
+      $string .= " <a href=\"$urlroot/changestate.phtml?state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">um</a>";
+      if (isset($user['cap.Delete']))
+        $string .= " <a href=\"$urlroot/changestate.phtml?state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      break;
+    case "Deleted":
+      if (isset($user['cap.Delete']))
+        $string .= " <a href=\"$urlroot/changestate.phtml?state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
+      break;
+    case "Active":
+      $string .= " <a href=\"$urlroot/changestate.phtml?state=Moderated&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">mm</a>";
+      if (isset($user['cap.Delete']))
+        $string .= " <a href=\"$urlroot/changestate.phtml?state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+      break;
+    }
+
+    if ($forum['version'] >= 2) {
+      if (isset($flags['Locked']))
+        $string .= " <a href=\"$urlroot/unlock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ul</a>";
+      else
+        $string .= " <a href=\"$urlroot/lock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">lm</a>";
+    }
+  }
+
+  if (isset($user) && isset($flags['NewStyle']) && $msg['aid'] == $user['aid'])
+    $string .= " <a href=\"$urlroot/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
+
+  $string .= "</li>\n";
+
+  return $string;
+}
+
 $threadmsg = "<ul>\n";
-$threadmsg .= list_thread($thread, $msg['mid']);
+$threadmsg .= list_thread($messages, print_subjects, 0);
 if (!$ulkludge)
   $threadmsg .= "</ul>\n";
 
@@ -153,6 +262,8 @@ unset($mid);
 unset($message);
 
 include('post.inc');
+
+$tpl->parse(MESSAGE, 'message');
 
 $tpl->parse(HEADER, 'header');
 $tpl->parse(FOOTER, 'footer');

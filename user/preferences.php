@@ -14,11 +14,10 @@ require('mailfrom.inc');
 $tpl->define(array(
   header => 'header.tpl',
   footer => 'footer.tpl',
-  preferences => 'preferences.tpl',
-  prefform => 'prefform.tpl'
+  preferences => 'preferences.tpl'
 ));
 
-$tpl->define_dynamic('error', 'prefform');
+$tpl->define_dynamic('error', 'preferences');
 
 $tpl->assign(PAGE, $SCRIPT_NAME . $PATH_INFO);
 $tpl->assign(TITLE, "Preferences");
@@ -26,7 +25,7 @@ $tpl->assign(TITLE, "Preferences");
 $success = "";
 $error = "";
 
-function do_option($name, $message)
+function option_changed($name, $message)
 {
   global $tpl, $user, $success, $prefs, $$name;
 
@@ -37,25 +36,32 @@ function do_option($name, $message)
   if ($value != isset($user['prefs.' . $name]))
     $success .= ($value ? "Enabled" : "Disabled") . " " . $message . "<p>\n";
 
-  if ($value) {
+  if ($value)
     $user['prefs.' . $name] = 1;
-    $tpl->assign(strtoupper($name), ' checked');
-  } else {
+  else
     unset($user['prefs.' . $name]);
-    $tpl->assign(strtoupper($name), '');
-  }
 }
 
-do_option('ShowModerated', "showing of moderated posts");
-do_option('Collapsed', "collapsed view of threads");
-do_option('SecretEmail', "hiding of email address in posts");
-do_option('SimpleHTML', "simple HTML page generation");
-do_option('FlatThread', "flat thread display");
-do_option('AutoTrack', "default tracking of threads");
-do_option('HideSignatures', "hiding of signatures");
-do_option('AutoUpdateTracking', "automatic updating of tracked threads");
+function do_option($name)
+{
+  global $tpl, $user;
+
+  if (isset($user['prefs.' . $name]))
+    $tpl->assign(strtoupper($name), ' checked');
+  else
+    $tpl->assign(strtoupper($name), '');
+}
 
 if (isset($submit)) {
+  option_changed('ShowModerated', "showing of moderated posts");
+  option_changed('Collapsed', "collapsed view of threads");
+  option_changed('SecretEmail', "hiding of email address in posts");
+  option_changed('SimpleHTML', "simple HTML page generation");
+  option_changed('FlatThread', "flat thread display");
+  option_changed('AutoTrack', "default tracking of threads");
+  option_changed('HideSignatures', "hiding of signatures");
+  option_changed('AutoUpdateTracking', "automatic updating of tracked threads");
+
   if (!empty($password1) && !empty($password2)) {
     if ($password1 == $password2) {
       $sql = "update accounts set password = encrypt('" . addslashes($password1) . "') where aid = '" . addslashes($user['aid']) . "'";
@@ -199,6 +205,15 @@ if (isset($submit)) {
   mysql_db_query('a4', $sql) or sql_error($sql);
 }
 
+do_option('ShowModerated', "showing of moderated posts");
+do_option('Collapsed', "collapsed view of threads");
+do_option('SecretEmail', "hiding of email address in posts");
+do_option('SimpleHTML', "simple HTML page generation");
+do_option('FlatThread', "flat thread display");
+do_option('AutoTrack', "default tracking of threads");
+do_option('HideSignatures', "hiding of signatures");
+do_option('AutoUpdateTracking', "automatic updating of tracked threads");
+
 if (!empty($error))
   $tpl->assign(ERROR, $error);
 else
@@ -214,8 +229,6 @@ if (empty($error))
   $tpl->clear_dynamic('error');
 else
   $tpl->assign(ERROR, $error);
-
-$tpl->parse(PREF, 'prefform');
 
 $tpl->assign(SIGNATURE, stripslashes($user['signature']));
 $tpl->assign(TEXT, $text);

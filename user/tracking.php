@@ -5,8 +5,6 @@ if (!isset($user)) {
   exit;
 }
 
-require('acct.inc');
-
 /* We get our money from ads, make sure it's there */
 /*
 require('../ads.inc');

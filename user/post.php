@@ -27,7 +27,6 @@ $tpl->define(array(
   postaccept => 'postaccept.tpl',
   preview => 'preview.tpl',
   postform => 'postform.tpl',
-  postform_noacct => 'postform_noacct.tpl',
   forum_header => 'forum/' . $forum['shortname'] . '.tpl'
 ));
 
@@ -35,7 +34,7 @@ $tpl->assign(TITLE, "Message Posting");
 
 $tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
 
-$tpl->assign(FORUM_HEADER, 'forum_header');
+$tpl->parse(FORUM_HEADER, 'forum_header');
 
 $tpl->parse(HEADER, 'header');
 $tpl->parse(FOOTER, 'footer');
@@ -50,11 +49,16 @@ add_ad();
 */
 
 /* If magic quotes are on, strip the slashes */
+/* FIXME: WTF? get_magic_quotes_gpc returns false, but it has magic quotes */
+/*
 if (get_magic_quotes_gpc()) {
+*/
   $subject = stripslashes($subject);
   $message = stripslashes($message);
   $urltext = stripslashes($urltext);
+/*
 }
+*/
 
 function stripcrap($string) {
   $string = striptag($string, $no_tags);

@@ -1,12 +1,5 @@
 <?php
 
-if (!isset($_account_inc_)) {
-$_account_inc_ = 1;
-
-require('sql.inc');
-
-sql_open_readonly();
-
 $COOKIE_FORUM = 1;
 $COOKIE_ADS = 2;
 
@@ -76,6 +69,18 @@ if (isset($account)) {
   }
 }
 
+function forum_admin()
+{
+  global $user;
+
+  return isset($user['cap.Delete']);
+}
+
+function forum_moderate()
+{
+  global $user;
+
+  return isset($user['cap.Moderate']);
 }
 
 ?>

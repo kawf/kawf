@@ -1,5 +1,7 @@
 <?php
 
+include('config.inc');
+
 require('class.FastTemplate.php3');
 
 $tpl = new FastTemplate('templates');
@@ -50,11 +52,7 @@ $scripts = array(
 
   "tracking.phtml" => "tracking.php",
 
-  "delete.phtml" => "delete.php",
-  "undelete.phtml" => "undelete.php",
-
-  "moderate.phtml" => "moderate.php",
-  "unmoderate.phtml" => "unmoderate.php"
+  "changestate.phtml" => "changestate.php"
 );
 
 $fscripts = array(

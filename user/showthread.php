@@ -1,17 +1,25 @@
 <?php
 
-require('account.inc');
+require('listthread.new.inc');
 
-/* Open up the SQL database first */
-sql_open_readonly();
+$tpl->define(array(
+  header => 'header.tpl',
+  footer => 'footer.tpl',
+  showthread => 'showthread.tpl',
+  showthread_row => 'showthread_row.tpl',
+  message => 'message.tpl',
+  forum_header => 'forum/' . $forum['shortname'] . '.tpl'
+));
 
-require('displaymsg.inc');
-require('listthreadmsg.inc');
+$tpl->define_dynamic('posting_ip', 'message');
+$tpl->define_dynamic('parent', 'message');
 
-?>
+$tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
 
-<html>
-<?php
+$tpl->assign(FORUM_NAME, $forum['name']);
+
+$tpl->parse(FORUM_HEADER, 'forum_header');
+
 /* Grab the actual message */
 $index = find_thread_index($tid);
 $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . addslashes($tid) . "'";
@@ -42,91 +50,99 @@ if (isset($tthreads[$msg['tid']]) &&
   $sql = "update tracking set tstamp = NOW() where tid = " . $msg['tid'] . " and aid = " . $user['aid'];
   mysql_db_query("forum_" . $forum['shortname'], $sql) || sql_warn($sql);
 }
-?>
-<head>
-<title>
-AudiWorld Forums: Thread <?php echo $tid; ?>
-</title>
-</head>
 
-<body bgcolor=#ffffff>
-
-<center>
-<?php
 /* We get our money from ads, make sure it's there */
 /*
 require('ads.inc');
 
 add_ad();
 */
-?>
-</center>
 
-<hr width="100%" size="1">
-
-<table width="100%">
-<tr>
-  <td width="50%" align="left">
-    <img src="<?php echo $forum['picture']; ?>">
-  </td>
-  <td width="50%" align="right">
-<?php
+/*
 if ($forum['shortname'] == "a4" || $forum['shortname'] == "performance")
   ads_view("carreview", "_top");
 if ($forum['shortname'] == "wheel") 
   echo "<a href=\"mailto:Eddie@Tirerack.com\"><img src=\"$furlroot/pix/tireracksponsor.gif\" border=\"0\"></a>\n";
-?>
-  </td>
-</tr>
-</table>
+*/
 
-<font face="arial, geneva" size="-2">[ <a href="#thread">Thread</a> ] [ <a href="#postfp">Post Followup</a> ]  [<a href="http://pictureposter.audiworld.com/A4PICSnd.asp">Post Picture</a>] [ <a href="/search/" target="_top">Search Forums</a> ] [ <a href="<?php echo $urlroot . "/" . $forum['shortname']; ?>/<?php echo $indexpage; ?>"><?php echo $forum['name']; ?></a> ]</font>
-
-<table width="600">
-<?php
 $sql = "select * from threads$index where tid = '" . $msg['tid'] . "'";
 
 $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 
 $thread = mysql_fetch_array($result);
 
-list_thread_msg($thread, $msg['mid']);
-?>
-</table>
+$index = find_msg_index($thread['mid']);
 
-<br>
+$sql = "select mid, tid, pid, aid, state, date, subject, message, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid desc";
+$result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+while ($message = mysql_fetch_array($result))
+  $messages[] = $message;
 
-<a name="postfp">
-<img src="<?php echo $furlroot; ?>/pix/followup.gif"><br>
+$index++;
+if (isset($indexes[$index])) {
+  $sql = "select mid, tid, pid, aid, state, date, subject, message, flags, name, email, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from messages$index where tid = '" . $thread['tid'] . "' order by mid desc";
+  $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+  while ($message = mysql_fetch_array($result))
+    $messages[] = $message;
+}
 
-<?php
+function print_messages($msg)
+{
+  global $tpl, $user;
+
+  if (isset($user['cap.Moderate']))
+    $tpl->assign(POSTING_IP, $msg['ip']);
+  else
+    $tpl->clear_dynamic('posting_ip');
+
+  $tpl->assign(MSG_SUBJECT, $msg['subject']);
+  $tpl->assign(MSG_DATE, $msg['date']);
+
+  if (!empty($msg['email'])) {
+    /* Lame spamification */
+    $email = preg_replace("/@/", "&#" . ord('@') . ";", $msg['email']);
+    $tpl->assign(MSG_NAMEEMAIL, "<a href=\"mailto:" . $email . "\">" . $msg['name'] . "</a>");
+  } else
+    $tpl->assign(MSG_NAMEEMAIL, $msg['name']);
+
+  if ($msg['pid'] != 0) {
+    $tpl->assign(PMSG_MID, $pmsg['mid']);
+    $tpl->assign(PMSG_SUBJECT, $pmsg['subject']);
+    $tpl->assign(PMSG_NAME, $pmsg['name']);
+    $tpl->assign(PMSG_DATE, $pmsg['date']);
+  } else
+    $tpl->clear_dynamic('parent');
+
+  $message = preg_replace("/\n/", "<br>\n", $msg['message']);
+
+  if (!empty($msg['url'])) {
+    if (!empty($msg['urltext']))
+      $message .= "<ul><li><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['urltext'] . "</a></ul>\n";
+     else
+      $message .= "<ul><li><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['url'] . "</a></ul>\n";
+  }
+
+  if (isset($signature)) {
+    $signature = preg_replace("/\n/", "<br>\n", $signature);
+    $message .= "<p>" . stripslashes($signature) . "\n";
+  }
+
+  $tpl->assign(MSG_MESSAGE, $message . "<br><br>\n");
+
+  $tpl->parse(MESSAGE, 'message');
+
+  $tpl->parse(MESSAGES, '.showthread_row');
+}
+
+list_thread($messages, print_messages, 0);
+
 if (!ereg("^[Rr][Ee]:", $msg['subject'], $sregs))
   $subject = "Re: " . $msg['subject'];
  else
   $subject = $msg['subject'];
 
-$message = "";
-$url = "";
-$urltext = "";
-$imageurl = "";
-$pid = $msg['mid'];
-$tid = $msg['tid'];
-
-unset($mid);
-$action = $urlroot . "/post.phtml";
-include('./postform.inc');
+$tpl->parse(HEADER, 'header');
+$tpl->parse(FOOTER, 'footer');
+$tpl->parse(CONTENT, 'showthread');
+$tpl->FastPrint(CONTENT);
 ?>
-
-<p>
-<table width="600">
-<tr><td>
-<font face="arial, geneva" size=-2>[ <a href="#thread">Thread</a> ] [ <a href="#postfp">Post Followup</a> ]  [<a href="http://pictureposter.audiworld.com/A4PICSnd.asp">Post Picture</a>] [ <a href="/search/" target="_top">Search Forums</a> ] [ <a href="<?php echo $urlroot . "/" . $forum['shortname']; ?>/<?php echo $indexpage; ?>"><?php echo $forum['name']; ?></a> ]</font><br><br>
-
-<tr><td align="center"><font size="1" face="arial,geneva"><a href="/copyright/">Terms of Use</a> | Copyright © 1996-2000 by AudiWorld. All rights reserved.</font>
-
-</td></tr>
-</table>
-</body>
-
-</html>
-
