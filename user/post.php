@@ -218,12 +218,15 @@ if (isset($error) || isset($preview)) {
 
   /* Add it into the database */
   /* Check to make sure this isn't a duplicate */
-  $sql = "select mid from f_dupposts where fid = " . $forum['fid'] . " and cookie = '" . addslashes($postcookie) . "'";
-  $result = mysql_query($sql) or sql_error($sql);
+  $sql = "insert into f_dupposts ( cookie, fid, mid, tstamp ) values ('" . addslashes($postcookie) . "', " . $forum['fid'] . ", $mid, NOW() )";
+  $result = mysql_query($sql);
 
-  if (mysql_num_rows($result))
-    list ($mid) = mysql_fetch_row($result);
-  else {
+  if (!$result) {
+    if (mysql_errno() != 1062)
+      sql_error($sql);
+
+    $mid = sql_query1("select mid from f_dupposts where postcookie = '" . addslashes($postcookie) . "'");
+  } else {
     /* Grab a new mid, this should work reliably */
     do {
       $sql = "select max(id) + 1 from f_unique where fid = " . $forum['fid'] . " and type = 'Message'";
@@ -261,14 +264,11 @@ if (isset($error) || isset($preview)) {
 	"where mid = '" . addslashes($mid) . "'";
   else
     $sql = "insert into $mtable " .
-	"(mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext) values ( '" . addslashes($mid) . "', '".addslashes($user->aid)."', '".addslashes($pid)."', '".addslashes($tid)."', '".addslashes($name)."', '".addslashes($email)."', NOW(), '$REMOTE_ADDR', '$flagset', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($url)."', '".addslashes($urltext)."');";
+	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext ) values ( '" . addslashes($mid) . "', '".addslashes($user->aid)."', '".addslashes($pid)."', '".addslashes($tid)."', '".addslashes($name)."', '".addslashes($email)."', NOW(), '$REMOTE_ADDR', '$flagset', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($url)."', '".addslashes($urltext)."');";
 
   $result = mysql_query($sql) or sql_error($sql);
 
   if (isset($newmessage)) {
-    $sql = "insert into f_dupposts ( cookie, fid, mid, tstamp ) values ('" . addslashes($postcookie) . "', " . $forum['fid'] . ", $mid, NOW() );";
-    mysql_query($sql) or sql_error($sql);
-
     if (!$pid) {
       /* Grab a new tid, this should work reliably */
       do {
