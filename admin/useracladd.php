@@ -43,7 +43,7 @@ page_header("Add User ACL");
  </tr>
  <tr>
   <td>fid:</td>
-  <td><input type="text" name="shortname" value=""></td>
+  <td><input type="text" name="shortname" value=""><br><small>(or -1 for All forums)</small></td>
  </tr>
  <tr>
   <td>Capabilities:</td>
