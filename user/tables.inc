@@ -103,6 +103,15 @@ $create_moderators_table =
   "  key (aid)\n" .
   ")";
 
+$create_upostcount_table = "
+  create table f_upostcount (
+    aid int not null,
+    fid int not null,
+    status enum ('Active','Moderated','Deleted') not null,
+    count int not null,
+    unique (aid, fid, status)
+  )";
+
 $create_users_table =
   "create table u_users (\n" .
   "  aid int not null auto_increment,\n" .
