@@ -44,6 +44,7 @@ page_header("Modify forum '" . $forum['name'] . "'");
 
 $result = sql_query("select * from f_moderators where aid = '" . addslashes($aid) . "'");
 
+$count = 0;
 while ($acl = sql_fetch_array($result)) {
   $capabilities = explode(",", $acl['capabilities']);
 
@@ -53,20 +54,21 @@ while ($acl = sql_fetch_array($result)) {
 
  <tr>
   <td>fid</td>
-  <td><input type="text" name="fid" value="<?php echo $acl['fid']; ?>"></td>
+  <td><input type="text" name="opts[$count][fid]" value="<?php echo $acl['fid']; ?>"></td>
  </tr>
  <tr>
   <td>Capabilities</td>
   <td>
-    <input type="checkbox" name="Lock"<?php if (isset($capabilities['Lock'])) echo " checked"; ?>> Lock Threads<br>
-    <input type="checkbox" name="Moderate"<?php if (isset($capabilities['Moderate'])) echo " checked"; ?>> Moderate Messages<br>
-    <input type="checkbox" name="Delete"<?php if (isset($capabilities['Delete'])) echo " checked"; ?>> Delete Messages<br>
-    <input type="checkbox" name="OffTopic"<?php if (isset($capabilities['OffTopic'])) echo " checked"; ?>> Mark Threads Off-Topic<br>
-    <input type="checkbox" name="Advertise"<?php if (isset($capabilities['Advertise'])) echo " checked"; ?>> Can Advertise<br>
+    <input type="checkbox" name="opts[$count][Lock]"<?php if (isset($capabilities['Lock'])) echo " checked"; ?>> Lock Threads<br>
+    <input type="checkbox" name="opts[$count][Moderate]"<?php if (isset($capabilities['Moderate'])) echo " checked"; ?>> Moderate Messages<br>
+    <input type="checkbox" name="opts[$count][Delete]"<?php if (isset($capabilities['Delete'])) echo " checked"; ?>> Delete Messages<br>
+    <input type="checkbox" name="opts[$count][OffTopic]"<?php if (isset($capabilities['OffTopic'])) echo " checked"; ?>> Mark Threads Off-Topic<br>
+    <input type="checkbox" name="opts[$count][Advertise]"<?php if (isset($capabilities['Advertise'])) echo " checked"; ?>> Can Advertise<br>
   </td>
  </tr>
 
 <?php
+  $count++;
 }
 ?>
 
