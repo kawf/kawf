@@ -1,21 +1,29 @@
-Stuff TODO $id$
+Stuff TODO
 
 -: noone actively working on this right now
 W: work in progress by NN
 
 Must be done
+============
+
+! user		tag	description
+- ------------- ------- -----------
 W jerdfelt	PEAR	Use PEAR for DB routines
 			Fix funky wrapper scripts. Use PEAR's Config.php as an example
 W jerdfelt	INTERFACE Abstracted selectable interfaces
--		Better HTML parsing
-		Cleanup API
-		Replace/Add options
-		Dynamic target replacement (ie always _top for this user, always _new for another one)
--		Move posts between forums
--		Merge re-post code into edit somehow
--		Rate limit posts (via f_duppost)
+-			Better HTML parsing
+			Cleanup API
+			Replace/Add options
+			Dynamic target replacement (ie always _top for this user, always _new for another one)
+-			Move posts between forums
+-			Merge re-post code into edit somehow
+-			Rate limit posts (via f_duppost)
+-			Ignore user fearure
+W jerdfelt		Finish pid to pmid conversion
 
 Nice to be done
+===============
+
 Use PEAR HTML/ITX.php for templates
 Use PEAR Config.php for config routines
 Pictureposter width/height auto fill (ties into previous HTML parsing cleanup)
@@ -24,6 +32,8 @@ Count number of edits and track last edit for displaying to users
 Better tracking (don't use timestamp, use individual mid's)
 
 Possibilities
+=============
+
 Use PEAR Cache.php for anonymous users
 Use PEAR Mail.php instead of mailfrom
 Use PEAR Image/Remote.php to will width/height info for remote pictures
