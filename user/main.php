@@ -63,6 +63,7 @@ if (!isset($user) || !isset($user->aid))
   unset($user);
 
 if (isset($user)) {
+/*
   $sql = "update f_visits set tstamp = NOW() where aid = $user->aid";
   mysql_query($sql) or sql_error($sql);
 
@@ -70,6 +71,7 @@ if (isset($user)) {
     $sql = "insert into f_visits ( aid, tstamp ) values ( $user->aid, NOW() )";
     mysql_query($sql) or sql_error($sql);
   }
+*/
 
   $sql = "select * from u_forums where aid = " . $user->aid;
   $result = mysql_query($sql) or sql_error($sql);
