@@ -31,6 +31,14 @@ $create_thread_table =
   "  primary key (tid)\n" .
   ")";
 
+$create_forums_table =
+  "create table f_forums (\n" .
+  "  fid int not null auto_increment,\n" .
+  "  name varchar(150) not null,\n" .
+  "  shortname varchar(20) not null,\n" .
+  "  primary key (fid)\n" .
+  ")";
+
 $create_index_table =
   "create table f_indexes (\n" .
   "  iid int not null auto_increment,\n" .
