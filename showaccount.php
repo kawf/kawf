@@ -8,17 +8,12 @@ if (!forum_admin()) {
 /* Open up the SQL database first */
 sql_open_readwrite();
 
-if (isset($aid))
-  $sql = "select * from accounts where aid = $aid order by aid";
-else if (isset($name))
-  $sql = "select * from accounts where name like '" . addslashes($name) . "' order by aid";
-else if (isset($email))
-  $sql = "select * from accounts where email like '" . addslashes($email) . "' order by aid";
-else {
+if (!isset($aid)) {
   echo "No search criteria\n";
   exit;
 }
 
+$sql = "select * from accounts where aid = $aid order by aid";
 $result = mysql_query($sql) or sql_error($sql);
 
 if (!mysql_num_rows($result)) {
@@ -26,30 +21,50 @@ if (!mysql_num_rows($result)) {
   exit;
 }
 
-if (mysql_num_rows($result) > 1) {
-  echo "<table>\n";
-  echo "<tr><td>aid</td><td>name</td><td>email</td><td>capabilities</td></tr>\n";
-  while ($acct = mysql_fetch_array($result)) {
-?>
-  <tr>
-    <td><a href="showaccount.phtml?aid=<?php echo $acct['aid']; ?>"><?php echo $acct['aid']; ?></a></td>
-    <td><?php echo stripslashes($acct['name']); ?></td>
-    <td><?php echo stripslashes($acct['email']); ?></td>
-    <td><?php echo $acct['capabilities']; ?></td>
-  </tr>
-<?php
-  }
-  echo "</table>\n";
-
-  exit;
-}
-
 $acct = mysql_fetch_array($result);
-
-echo "aid: " . $acct['aid'] . "<br>\n";
-echo "Name: " . stripslashes($acct['name']) . "<br>\n";
-echo "Email: " . stripslashes($acct['email']) . "<br>\n";
-echo "Capabilities: " . $acct['capabilities'] . "<br>\n";
-echo "Preferences: " . $acct['preferences'] . "<br>\n";
-
 ?>
+
+<form action="modifyaccount.phtml" method="post">
+
+<input type="hidden" name="aid" value="<?php echo $acct['aid']; ?>">
+
+<table>
+<tr bgcolor="#888888">
+<td>field</td>
+<td>value</td>
+<td>change</td>
+</tr>
+<tr>
+<td>aid</td>
+<td><?php echo $acct['aid']; ?></td>
+</tr>
+<tr>
+<td>name</td>
+<td><?php echo $acct['name']; ?></td>
+<td><input type="text" name="name"></td>
+</tr>
+<tr>
+<td>email</td>
+<td><?php echo $acct['email']; ?></td>
+<td><input type="text" name="email"></td>
+</tr>
+<tr>
+<td>status</td>
+<td><?php echo $acct['status']; ?></td>
+<td>
+<input type="radio" name="status" value="Active">Active
+<input type="radio" name="status" value="Deleted">Deleted
+<input type="radio" name="status" value="Suspended">Suspended
+</td>
+</tr>
+<tr>
+<td>preferences</td>
+<td><?php echo $acct['preferences']; ?></td>
+</tr>
+</table>
+
+<input type="submit" value="Change">
+
+</form>
+<br>
+
