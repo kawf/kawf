@@ -54,6 +54,8 @@ function threads($key)
   return $numthreads;
 }
 
+$tpl->set_var("FORUM_NAME", $forum['name']);
+
 $tpl->parse("FORUM_HEADER", "forum_header");
 
 $urlroot = "/ads";
