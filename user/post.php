@@ -1,9 +1,6 @@
 <?php
 
-if (!isset($user)) {
-  echo "No user account, no posting\n";
-  exit;
-}
+$user->req();
 
 /* Check the data to make sure they entered stuff */
 if (!isset($postcookie) || !isset($forum)) {
@@ -12,57 +9,41 @@ if (!isset($postcookie) || !isset($forum)) {
   exit;
 }
 
-require('textwrap.inc');
-require('striptag.inc');
+require("textwrap.inc");
+require("strip.inc");
 
-/* Open up the SQL database */
-sql_open_readwrite();
-
-$forumdb = "forum_" . $forum['shortname'];
-
-$tpl->define(array(
-  header => 'header.tpl',
-  footer => 'footer.tpl',
-  post => 'post.tpl',
-  postaccept => 'postaccept.tpl',
-  previewa => 'preview.tpl',
-  postform => 'postform.tpl',
-  forum_header => 'forum/' . $forum['shortname'] . '.tpl'
+$tpl->set_file(array(
+  "header" => "header.tpl",
+  "footer" => "footer.tpl",
+  "post" => "post.tpl",
+  "message" => "message.tpl",
+  "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
 ));
 
-$tpl->define_dynamic('preview', 'post');
-$tpl->define_dynamic('form', 'post');
-$tpl->define_dynamic('accept', 'post');
+$tpl->set_block("post", "preview");
+$tpl->set_block("post", "form");
+$tpl->set_block("post", "accept");
 
-$tpl->assign(TITLE, "Message Posting");
+$tpl->set_block("message", "forum_admin");
+$tpl->set_block("message", "parent");
 
-$tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
+$tpl->set_var(array(
+  "forum_admin" => "",
+  "parent" => "",
+));
 
-$tpl->parse(FORUM_HEADER, 'forum_header');
+$tpl->set_var("TITLE", "Message Posting");
 
-$tpl->parse(HEADER, 'header');
-$tpl->parse(FOOTER, 'footer');
+$tpl->parse("FORUM_HEADER", "forum_header");
+$tpl->parse("HEADER", "header");
+$tpl->parse("FOOTER", "footer");
 
-/*
-require('../ads.inc');
-*/
+$urlroot = "/ads";
+/* We get our money from ads, make sure it's there */
+include("ads.inc");
 
-/* Show the advertisement on errors as well :) */
-/*
-add_ad();
-*/
-
-/* If magic quotes are on, strip the slashes */
-/* FIXME: WTF? get_magic_quotes_gpc returns false, but it has magic quotes */
-/*
-if (get_magic_quotes_gpc()) {
-*/
-  $subject = stripslashes($subject);
-  $message = stripslashes($message);
-  $urltext = stripslashes($urltext);
-/*
-}
-*/
+$ad = ads_view("a4.org," . $forum['shortname'], "_top");
+$tpl->set_var("AD", $ad);
 
 function stripcrap($string)
 {
@@ -120,9 +101,9 @@ $subject = stripspaces($subject);
 $subject = demoronize($subject);
 
 /* Sanitize the strings */
-$name = stripcrap($user['name']);
+$name = stripcrap($user->name);
 if (isset($ExposeEmail))
-  $email = stripcrap($user['email']);
+  $email = stripcrap($user->email);
 else
   $email = "";
 
@@ -130,16 +111,11 @@ $url = stripcrap($url);
 $urltext = stripcrap($urltext);
 $imageurl = stripcrap($imageurl);
 
-/*
-while (ereg("(.*)[[:space:]]$", $subject, $regs))
-  $subject = $regs[1];
-*/
-
 if (isset($pid)) {
   $index = find_msg_index($pid);
   if ($index >= 0) {
-    $sql = "select * from messages$index where mid = '" . addslashes($pid) . "'";
-    $result = mysql_db_query($forumdb, $sql) or sql_error($sql);
+    $sql = "select * from f_messages$index where mid = '" . addslashes($pid) . "'";
+    $result = mysql_query($sql) or sql_error($sql);
 
     if (mysql_num_rows($result))
       $parent = mysql_fetch_array($result);
@@ -177,11 +153,12 @@ if ((isset($error) || isset($preview)) && (!empty($imageurl))) {
   $imgpreview = 1;
 }
 
-$tpl->assign(MSG_NAME, $user['name']);
-if (empty($ExposeEmail))
-  $tpl->assign(MSG_EMAIL, '<font color="#ff0000">(Hidden)</font>');
-else
-  $tpl->assign(MSG_EMAIL, $user['email']);
+if (isset($ExposeEmail)) {
+  /* Lame spamification */
+  $_email = preg_replace("/@/", "&#" . ord('@') . ";", $user->email);
+  $msg_nameemail = "<a href=\"mailto:" . $_email . "\">" . $user->name . "</a>";
+} else
+  $msg_nameemail = $user->name;
 
 if (!empty($imageurl))
   $msg_message = "<center><img src=\"$imageurl\"></center><p>";
@@ -190,32 +167,36 @@ else
 
 $msg_message .= preg_replace("/\n/", "<br>\n", $message);
 
-if (!empty($user['signature'])) {
-  $signature = preg_replace("/\n/", "<br>\n", $user['signature']);
-/*
-  if (get_magic_quotes_gpc())
-*/
-    $signature = stripslashes($signature);
+if (!empty($url)) {
+  if (!empty($urltext))
+    $msg_message .= "<ul><li><a href=\"" . $url . "\" target=\"_top\">" . $urltext . "</a></ul>\n";
+   else
+    $msg_message .= "<ul><li><a href=\"" . $url . "\" target=\"_top\">" . $url . "</a></ul>\n";
+}
+
+if (!empty($user->signature)) {
+  $signature = preg_replace("/\n/", "<br>\n", $user->signature);
   $msg_message .= "<p>" . $signature . "\n";
 }
-$tpl->assign(MSG_MESSAGE, $msg_message);
-
-$tpl->assign(MSG_SUBJECT, $subject);
-$tpl->assign(MSG_URL, $url);
-$tpl->assign(MSG_URLTEXT, $urltext);
-$tpl->assign(MSG_IMAGEURL, $imageurl);
 
 if (!isset($preview))
-  $tpl->clear_dynamic('preview');
+  $tpl->set_var("preview", "");
 
-$tpl->parse(PREVIEW, 'previewa');
+$date = date("Y-m-d H:i:s");
+
+$tpl->set_var(array(
+  "MSG_MESSAGE" => $msg_message,
+  "MSG_NAMEEMAIL" => $msg_nameemail,
+  "MSG_SUBJECT" => $subject,
+  "MSG_DATE" => $date,
+));
 
 if (isset($error) || isset($preview)) {
   $action = "post";
 
-  include('post.inc');
+  include("post.inc");
 
-  $tpl->clear_dynamic('accept');
+  $tpl->set_var("accept", "");
 } else {
   $flags[] = "NewStyle";
 
@@ -235,20 +216,25 @@ if (isset($error) || isset($preview)) {
 
   /* Add it into the database */
   /* Check to make sure this isn't a duplicate */
-  $sql = "select mid from dupposts where cookie = '" . addslashes($postcookie) . "';";
-  $result = mysql_db_query($forumdb, $sql) or sql_error($sql);
+  $sql = "select mid from f_dupposts where fid = " . $forum['fid'] . " and cookie = '" . addslashes($postcookie) . "'";
+  $result = mysql_query($sql) or sql_error($sql);
 
   if (mysql_num_rows($result))
     list ($mid) = mysql_fetch_row($result);
+  else {
+    /* Grab a new mid, this should work reliably */
+    do {
+      $sql = "select max(id) + 1 from f_unique where fid = " . $forum['fid'] . " and type = 'Message'";
+      $result = mysql_query($sql) or sql_error($sql);
 
-  if (!isset($mid)) {
-    $sql = "insert into umessage ( mid ) values ( NULL )";
-    mysql_query($sql) or sql_error($sql);
+      list ($mid) = mysql_fetch_row($result);
 
-    $sql = "select last_insert_id()";
-    $result = mysql_query($sql) or sql_error($sql);
+      $sql = "insert into f_unique ( fid, type, id ) values ( " . $forum['fid'] . ", 'Message', $mid )";
+      $result = mysql_query($sql);
+    } while (!$result && mysql_errno() == 1062);
 
-    list ($mid) = mysql_fetch_row($result);
+    if (!$result)
+      sql_error($sql);
 
     $newmessage = 1;
   }
@@ -256,8 +242,8 @@ if (isset($error) || isset($preview)) {
   /* Add the message to the last index */
   $index = end($indexes);
 
-  $mtable = "messages" . $index['iid'];
-  $ttable = "threads" . $index['iid'];
+  $mtable = "f_messages" . $index['iid'];
+  $ttable = "f_threads" . $index['iid'];
 
   if (!isset($newmessage))
     $sql = "update $mtable set " .
@@ -273,86 +259,101 @@ if (isset($error) || isset($preview)) {
 	"where mid = '" . addslashes($mid) . "'";
   else
     $sql = "insert into $mtable " .
-	"(mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext) values ( '" . addslashes($mid) . "', '".addslashes($user['aid'])."', '".addslashes($pid)."', '".addslashes($tid)."', '".addslashes($name)."', '".addslashes($email)."', NOW(), '$REMOTE_ADDR', '$flagset', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($url)."', '".addslashes($urltext)."');";
+	"(mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext) values ( '" . addslashes($mid) . "', '".addslashes($user->aid)."', '".addslashes($pid)."', '".addslashes($tid)."', '".addslashes($name)."', '".addslashes($email)."', NOW(), '$REMOTE_ADDR', '$flagset', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($url)."', '".addslashes($urltext)."');";
 
-  $result = mysql_db_query($forumdb, $sql) or sql_error($sql);
+  $result = mysql_query($sql) or sql_error($sql);
 
   if (isset($newmessage)) {
-    $sql = "insert into dupposts (cookie, mid, tstamp) values ('" . addslashes($postcookie) . "', '" . addslashes($mid) . "', NOW() );";
-    mysql_db_query($forumdb, $sql) or sql_error($sql);
+    $sql = "insert into f_dupposts ( cookie, fid, mid, tstamp ) values ('" . addslashes($postcookie) . "', " . $forum['fid'] . ", $mid, NOW() );";
+    mysql_query($sql) or sql_error($sql);
 
     if (!$pid) {
-      $sql = "insert into uthread ( tid ) values ( NULL )";
-      mysql_db_query($forumdb, $sql) or sql_error($sql);
+      /* Grab a new tid, this should work reliably */
+      do {
+        $sql = "select max(id) + 1 from f_unique where fid = " . $forum['fid'] . " and type = 'Thread'";
+        $result = mysql_query($sql) or sql_error($sql);
 
-      $sql = "select last_insert_id()";
-      $result = mysql_query($sql) or sql_error($sql);
+        list ($tid) = mysql_fetch_row($result);
 
-      list ($tid) = mysql_fetch_row($result);
+        $sql = "insert into f_unique ( fid, type, id ) values ( " . $forum['fid'] . ", 'Thread', $mid )";
+        $result = mysql_query($sql);
+      } while (!$result && mysql_errno() == 1062);
 
-      $sql = "insert into $ttable ( tid, mid ) values ( $tid, '" . addslashes($mid) . "' )";
-      mysql_db_query($forumdb, $sql) or sql_error($sql);
-
-      $sql = "update indexes set maxtid = $tid where iid = " . $index['iid'] . " and maxtid < $tid";
-      mysql_db_query($forumdb, $sql) or sql_error($sql);
+      if (!$result)
+        sql_error($sql);
 
       $sql = "update $mtable set tid = $tid where mid = $mid";
-      mysql_db_query($forumdb, $sql) or sql_error($sql);
+      mysql_query($sql) or sql_error($sql);
+
+      $sql = "insert into $ttable ( tid, mid ) values ( $tid, $mid )";
+      mysql_query($sql) or sql_error($sql);
+
+      $sql = "update f_indexes set maxtid = $tid where iid = " . $index['iid'] . " and maxtid < $tid";
+      mysql_query($sql) or sql_error($sql);
     } else {
       $sql = "update $ttable set replies = replies + 1 where tid = '" . addslashes($tid) . "'";
-      mysql_db_query($forumdb, $sql) or sql_error($sql);
+      mysql_query($sql) or sql_error($sql);
     }
 
-    $sql = "update indexes set maxmid = $mid where iid = " . $index['iid'] . " and maxmid < $mid";
-    mysql_db_query($forumdb, $sql) or sql_error($sql);
+    $sql = "update f_indexes set maxmid = $mid where iid = " . $index['iid'] . " and maxmid < $mid";
+    mysql_query($sql) or sql_error($sql);
 
     if (!$pid) {
-      $sql = "update indexes set active = active + 1 where iid = " . $index['iid'];
-      mysql_db_query($forumdb, $sql) or sql_error($sql);
+      $sql = "update f_indexes set active = active + 1 where iid = " . $index['iid'];
+      mysql_query($sql) or sql_error($sql);
     }
   } else
     echo "<font color=#ff0000>Duplicate message detected, overwriting</font>";
 
-  $sql = "insert into updates (mid) values ('" . addslashes($mid) . "')";
-  mysql_db_query($forumdb, $sql); 
+  $sql = "select date from $mtable where mid = $mid";
+  $result = mysql_query($sql) or sql_error($sql);
+
+  list($date) = mysql_fetch_row($result);
+
+  $sql = "insert into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($mid) . "' )";
+  mysql_query($sql);
 
   if (!empty($TrackThread)) {
-    $options = '';
+    $options = "";
 
-    if (!empty($EmailFollowup))
+    if (isset($EmailFollowup))
       $options = "SendEmail";
 
-    $sql = "select * from tracking where aid = '" . addslashes($user['aid']) . "' and tid = '" . addslashes($tid) . "'";
-    $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
+    $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and aid = '" . $user->aid . "' and tid = '" . addslashes($tid) . "'";
+    $result = mysql_query($sql) or sql_error($sql);
 
     if (!mysql_num_rows($result)) {
-      $sql = "insert into tracking ( tid, aid, options ) values ( '" . addslashes($tid) . "', '" . addslashes($user['aid']) . "', '$options' )";
-      mysql_db_query($forumdb, $sql) or sql_error($sql);
+      $sql = "insert into f_tracking ( fid, tid, aid, options ) values ( " . $forum['fid'] . ", '" . addslashes($tid) . "', '" . addslashes($user->aid) . "', '$options' )";
+      mysql_query($sql) or sql_error($sql);
     }
   }
 
-  require('mailfrom.inc');
+  require("mailfrom.inc");
 
-  $sql = "select * from tracking where tid = '" . addslashes($tid) . "' and options = 'SendEmail' and aid != " . $user['aid'];
-  $result = mysql_db_query($forumdb, $sql) or sql_error($sql);
+#  $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and tid = '" . addslashes($tid) . "' and options = 'SendEmail' and aid != " . $user->aid;
+  $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and tid = '" . addslashes($tid) . "' and options = 'SendEmail'";
+  $result = mysql_query($sql) or sql_error($sql);
 
   if (mysql_num_rows($result) > 0) {
     $index = find_thread_index($tid);
-    $sql = "select * from threads$index where tid = '" . addslashes($tid) . "'";
-    $res2 = mysql_db_query($forumdb, $sql) or sql_error($sql);
+    $sql = "select * from f_threads$index where tid = '" . addslashes($tid) . "'";
+    $res2 = mysql_query($sql) or sql_error($sql);
 
     $thread = mysql_fetch_array($res2);
 
     $index = find_msg_index($thread['mid']);
-    $sql = "select subject from messages$index where mid = " . $thread['mid'];
-    $res2 = mysql_db_query($forumdb, $sql) or sql_error($sql);
+    $sql = "select subject from f_messages$index where mid = " . $thread['mid'];
+    $res2 = mysql_query($sql) or sql_error($sql);
 
     list($t_subject) = mysql_fetch_row($res2);
 
-    $e_subject = "Followup to thread '$t_subject'";
-    $e_message = $user['name'] . " had posted a followup to a thread you are " .
+    $e_message = "Subject: Followup to thread '$t_subject'\n" .
+	"From: accounts@audiworld.com\n" .
+	"X-Mailer: PHP/" . phpversion() . "\n\n" .
+
+	$user->name . " had posted a followup to a thread you are " .
 	"tracking. You can read the message by going to " .
-	"http://$urlhost$urlroot/" . $forum['shortname'] . "/msgs/$mid.phtml\n\n" .
+	"http://$_url/" . $forum['shortname'] . "/msgs/$mid.phtml\n\n" .
 
 	"The message that was just posted was:\n\n" .
 
@@ -372,8 +373,8 @@ if (isset($error) || isset($preview)) {
     $e_message .= "\n--\naudiworld.com\n";
 
     while ($track = mysql_fetch_array($result)) {
-      $sql = "select email from accounts where aid = " . $track['aid'];
-      $res2 = mysql_db_query($database, $sql) or sql_error($sql);
+      $sql = "select email from u_users where aid = " . $track['aid'];
+      $res2 = mysql_query($sql) or sql_error($sql);
 
       if (!mysql_num_rows($res2))
         continue;
@@ -381,21 +382,17 @@ if (isset($error) || isset($preview)) {
       list($email) = mysql_fetch_row($res2);
 
       mailfrom("followup-" . $track['aid'] . "@bounce.audiworld.com", $email,
-	$e_subject, $e_message,
-	"From: accounts@audiworld.com\n" . "X-Mailer: PHP/" . phpversion());
+	"To: $email\n" . $e_message);
     }
   }
 
-  $tpl->assign(ACCEPT, "Message Added");
-
-  $tpl->assign(FORUM_SHORTNAME, $forum['shortname']);
-  $tpl->assign(MID, $mid);
-
-  $tpl->parse(ACCEPT, 'postaccept');
-
-  $tpl->clear_dynamic('form');
+  $tpl->set_var(array(
+    "FORUM_SHORTNAME" => $forum['shortname'],
+    "MSG_MID" => $mid,
+    "form" => "",
+  ));
 }
 
-$tpl->parse(CONTENT, 'post');
-$tpl->FastPrint(CONTENT);
+$tpl->parse("PREVIEW", "message");
+$tpl->pparse("CONTENT", "post");
 ?>
