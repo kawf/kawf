@@ -1,6 +1,6 @@
 <?php
 
-include_once("strip.inc");
+require_once("strip.inc");
 
 function mailfrom($fromaddr, $toaddr, $message)
 {
