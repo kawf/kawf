@@ -70,7 +70,7 @@ $create_dupposts_table =
   "  mid int not null,\n" .
   "  tstamp datetime not null,\n" .
   "  primary key (cookie)\n" .
-  ")
+  ")";
 
 $create_unique_table =
   "create table f_unique (\n" .
