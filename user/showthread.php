@@ -92,6 +92,7 @@ function print_message($msg)
     "MSG_SUBJECT" => $subject,
     "MSG_DATE" => $msg['date'],
     "MSG_MID" => $msg['mid'],
+    "MSG_AID" => $msg['aid'],
   ));
 
   if (!empty($msg['email'])) {
