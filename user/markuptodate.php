@@ -5,8 +5,24 @@ if (!$user->valid() || !isset($forum)) {
   exit;
 }
 
-$sql = "update f_tracking set tstamp = NOW() where fid = " . $forum['fid'] . " and tid = " . addslashes($tid) . " and aid = " . $user->aid;
-mysql_query($sql) or sql_warn($sql);
+if ($tid == "all") {
+  if (isset($tthreads)) {
+    reset($tthreads);
+    while (list(, $tthread) = each($tthreads)) {
+      $index = find_thread_index($tthread['tid']);
+      if ($index < 0)
+        continue;
+
+      $thread = sql_querya("select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_threads$index where tid = '" . addslashes($tthread['tid']) . "'");
+      if (!$thread)
+        continue;
+
+      if ($thread['unixtime'] > $tthread['unixtime'])
+        sql_query("update f_tracking set tstamp = NOW() where fid = " . $forum['fid'] . " and tid = " . $thread['tid'] . " and aid = " . $user->aid);
+    }
+  }
+} else
+  sql_query("update f_tracking set tstamp = NOW() where fid = " . $forum['fid'] . " and tid = " . addslashes($tid) . " and aid = " . $user->aid);
 
 Header("Location: " . $page);
 
