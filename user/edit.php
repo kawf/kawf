@@ -136,11 +136,13 @@ if (!empty($url) && !eregi("^[a-z]+://", $url))
 if (!empty($imageurl) && !eregi("^[a-z]+://", $imageurl))
   $imageurl = "http://$imageurl";
 
-if (!empty($imageurl) && !isset($frompost))
+if (!empty($imageurl) && !isset($imgpreview))
   $preview = 1;
 
-if ((isset($error) || isset($preview)) && (!empty($imageurl)))
+if ((isset($error) || isset($preview)) && (!empty($imageurl))) {
   echo "<font face=\"Verdana, Arial, Geneva\" color=\"#ff0000\"><i><b>Picture Verification:</b> If you see your picture below then please scroll down and hit Post Message to complete your posting. If no picture appears then your link was set incorrectly or your image is not valid a JPG or GIF file. Correct the image type or URL link to the picture in the box below and hit Preview Message to re-verify that your picture will be visible.</i></font><br>\n";
+  $imgpreview = 1;
+}
 
 $tpl->assign(MSG_NAME, $user['name']);
 if (empty($ExposeEmail))
