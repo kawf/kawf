@@ -66,6 +66,7 @@ create table tracking (
   tid int not null,
   aid int not null,
   tstamp timestamp,
+  options set('SendEmail') not null,
   key (aid)
 );
 
