@@ -78,6 +78,12 @@ if ($msg['aid'] != $user->aid) {
   exit;
 }
 
+if (!empty($msg['flags'])) {
+  $flagexp = explode(",", $msg['flags']);
+  while (list(,$flag) = each($flagexp))
+    $flags[$flag] = true;
+}
+
 if (!isset($message)) {
   $preview = 1;
   $message = $msg['message'];
@@ -248,18 +254,21 @@ if (isset($error) || isset($preview)) {
   else
     $email = "";
 
-  $flags[] = "NewStyle";
+  $flagset[] = "NewStyle";
+
+  if (isset($flags['StateLocked']))
+    $flagset[] = 'StateLocked';
 
   if (empty($message))
-    $flags[] = "NoText";
+    $flagset[] = "NoText";
 
   if (!empty($url) || preg_match("/<[[:space:]]*a[[:space:]]+href/i", $message))
-    $flags[] = "Link";
+    $flagset[] = "Link";
 
   if (!empty($imageurl) || preg_match("/<[[:space:]]*img[[:space:]]+src/i", $message))
-    $flags[] = "Picture";
+    $flagset[] = "Picture";
 
-  $flagset = implode(",", $flags);
+  $flagset = implode(",", $flagset);
 
   if (!empty($imageurl))
     $message = "<center><img src=\"$imageurl\"></center><p>\n" . $message;
