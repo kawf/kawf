@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>kawf.org Forums: {FORUM_NAME}</title>
+<title>{DOMAIN} Forums: Finish Validation</title>
 <style type="text/css">
 <!--
 body { font-family: verdana, arial, geneva }
@@ -36,7 +36,7 @@ Cookie <input type="text" name="cookie" length="15" maxlength="15"><br>
 <!-- BEGIN success -->
 <!-- BEGIN create -->
 
-<font face="verdana, arial, geneva" size="-1">Thank you for creating an account with kawf.org.</font><p>
+<font face="verdana, arial, geneva" size="-1">Thank you for creating an account with {DOMAIN}.</font><p>
 <!-- END create -->
 
 <!-- BEGIN password -->

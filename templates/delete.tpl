@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>kawf.org Forums: Delete Message</title>
+<title>{DOMAIN} Forums: Delete Message</title>
 <style type="text/css">
 <!--
 body { font-family: verdana, arial, geneva }

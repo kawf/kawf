@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>kawf.org Forums: Editing message</title>
+<title>{DOMAIN} Forums: Editing message</title>
 <style type="text/css">
 <!--
 body { font-family: verdana, arial, geneva }

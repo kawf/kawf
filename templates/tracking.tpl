@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>kawf.org Forums: Tracking</title>
+<title>{DOMAIN} Forums: Tracking</title>
 <style type="text/css">
 <!--
 body { font-family: verdana, arial, geneva }

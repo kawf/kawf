@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>kawf.org Forums: Preferences</title>
+<title>{DOMAIN} Forums: Preferences</title>
 <style type="text/css">
 <!--
 body { font-family: verdana, arial, geneva }

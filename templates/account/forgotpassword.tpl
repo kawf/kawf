@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>kawf.org Forums: {FORUM_NAME}</title>
+<title>{DOMAIN} Forums: Forgot Password</title>
 <style type="text/css">
 <!--
 body { font-family: verdana, arial, geneva }
