@@ -7,7 +7,7 @@ page_header("Forum User ACL");
 if (isset($message))
   page_show_message($message);
 
-$result = sql_query("select f_moderators.*, u_users.name from f_moderators. u_users where u_users.aid = f_moderators.aid order by aid");
+$result = sql_query("select f_moderators.*, u_users.name from f_moderators, u_users where u_users.aid = f_moderators.aid order by aid");
 ?>
 
 <a href="useracladd.phtml">Add new user ACL</a>
