@@ -13,7 +13,7 @@ ini_set("include_path", $include_path);
 require_once("$config.inc");
 require_once("sql.inc");
 require_once("util.inc");
-require_once("user.inc");
+require_once("forumuser.inc");
 
 sql_open($database);
 
@@ -86,8 +86,10 @@ $fscripts = array(
   "changestate.phtml" => "changestate.php"
 );
 
-$user = new User(true);
-if (isset($user->aid)) {
+$user = new ForumUser();
+$user->find_by_cookie();
+
+if ($user->valid()) {
   /* FIXME: This kills performance */
 /*
   $sql = "update f_visits set tstamp = NOW() where aid = $user->aid";
@@ -137,7 +139,7 @@ function find_forum($shortname)
     $indexes[] = $index;
 
   /* Grab all of the tracking data for the user */
-  if (isset($user->aid)) {
+  if ($user->valid()) {
     $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc";
     $result = mysql_query($sql) or sql_error($sql);
 
@@ -228,7 +230,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
     $sql = "select mid from f_messages$index where mid = '" . addslashes($mid) . "'";
     if (!isset($user->cap['Moderate'])) {
       $qual[] .= "state != 'Deleted'";
-      if (isset($user->aid))
+      if ($user->valid())
         $qual[] .= "aid = " . $user->aid;
     }
 
