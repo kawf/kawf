@@ -312,13 +312,10 @@ function display_thread($thread)
   global $user, $forum, $ulkludge;
 
   if (!empty($thread['flags'])) {
-  $options = explode(",", $thread['flags']);
-  foreach ($options as $name => $value)
-{
-echo "<!-- setting $value -->\n";
-    $thread["flag.$value"] = true;
-}
-}
+    $options = explode(",", $thread['flags']);
+    foreach ($options as $name => $value)
+      $thread["flag.$value"] = true;
+  }
 
   list($messages, $tree) = fetch_thread($thread);
   if (!isset($messages) || !count($messages))
