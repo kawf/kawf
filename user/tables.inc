@@ -1,8 +1,9 @@
 <?php
+#    pmid int not null,
 $create_message_table = "
   create table f_messages%d (
     mid int not null auto_increment,
-    pmid int not null,
+    pid int not null,
     tid int not null,
     aid int not null,
     state enum('Active','Moderated','OffTopic','Deleted') not null default 'Active',
