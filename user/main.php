@@ -2,10 +2,10 @@
 
 /* First setup the path */
 $include_path = "$srcroot/kawf:$srcroot/kawf/user";
-$old_include_path = ini_get("include_path");
 if (isset($include_append))
   $include_path .= ":" . $include_append;
 
+$old_include_path = ini_get("include_path");
 if (!empty($old_include_path))
   $include_path .= ":" . $old_include_path;
 ini_set("include_path", $include_path);
