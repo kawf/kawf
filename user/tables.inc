@@ -96,12 +96,12 @@ $create_update_table =
   "  primary key (fid)\n" .
   ")";
 
-$create_moderators_table =
-  "create table f_moderators (\n" .
-  "  aid int not null,\n" .
-  "  fid int not null,\n" .
-  "  key (aid)\n" .
-  ")";
+$create_moderators_table = "
+  create table f_moderators (
+    aid int not null,
+    fid int not null,
+    key (aid)
+  )";
 
 $create_upostcount_table = "
   create table f_upostcount (
