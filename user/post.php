@@ -165,12 +165,12 @@ if (isset($postcookie)) {
   if (!empty($user->signature))
     $msg_message .= "<p>" . nl2br($user->signature) . "\n";
 
-  if (!isset($preview))
-    $tpl->set_var("preview", "");
-
   $accepted = !isset($error);
 } else {
   $message = $urltext = $imageurl = "";
+
+  /* Guaranteed no picture */
+  $tpl->set_var("image", "");
 
   if (isset($pid)) {
     /* Grab the actual message */
@@ -188,6 +188,9 @@ if (isset($postcookie)) {
     $subject = "";
 }
 
+if (!isset($preview))
+  $tpl->set_var("preview", "");
+
 $date = strftime("%Y-%m-%d %H:%M:%S", time() - $user->tzoff);
 
 $tpl->set_var(array(
@@ -199,7 +202,7 @@ $tpl->set_var(array(
   "MSG_AID" => $user->aid,
 ));
 
-if (isset($error) || isset($preview)) {
+if (!$accepted || isset($preview)) {
   $action = "post";
 
   require_once("post.inc");
