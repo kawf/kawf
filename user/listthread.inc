@@ -13,7 +13,7 @@ function list_thread($callback, $messages, $tree, $siblings)
 
   next($siblings);
 
-  if ($messages[$s]['pid'])
+  if ($messages[$s]['pmid'])
     $string .= "<ul>\n";
 
   $string .= $callback($messages[$s]);
@@ -34,7 +34,7 @@ function list_thread($callback, $messages, $tree, $siblings)
     }
   }
 
-  if ($messages[$s]['pid'])
+  if ($messages[$s]['pmid'])
     $string .= "</ul>\n";
 
   return $string;

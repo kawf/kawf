@@ -2,7 +2,7 @@
 $create_message_table =
   "create table f_messages%d (\n" .
   "  mid int not null auto_increment,\n" .
-  "  pid int not null,\n" .
+  "  pmid int not null,\n" .
   "  tid int not null,\n" .
   "  aid int not null,\n" .
   "  state enum('Active','Moderated','Deleted') not null default 'Active',\n" .
@@ -18,7 +18,6 @@ $create_message_table =
   "  views int not null,\n" .
   "  changes text not null,\n" .
   "  primary key (mid),\n" .
-  "  key (pid),\n" .
   "  key (tid)\n" .
   ")";
 

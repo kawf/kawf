@@ -21,14 +21,14 @@ if (isset($user->aid)) {
     $hidden .= hidden("mid", $mid);
     $tpl->set_var("SUBMITTEXT", "Update Message");
   } else {
-    if (!isset($pid))
+    if (!isset($pmid))
       $tpl->set_var("SUBMITTEXT", "Post new thread");
     else
       $tpl->set_var("SUBMITTEXT", "Post reply");
   }
 
-  if (isset($pid))
-    $hidden .= hidden("pid", $pid);
+  if (isset($pmid))
+    $hidden .= hidden("pmid", $pmid);
   if (isset($tid))
     $hidden .= hidden("tid", $tid);
 

@@ -9,12 +9,15 @@ if (!$user->moderator($forum['fid'])) {
 
 $msg = sql_querya("select aid, pid, state from f_messages$index where mid = '" . addslashes($mid) . "'");
 
+if (!isset($msg['pmid']))
+  $msg['pmid'] = $msg['pid'];
+
 sql_query("update f_messages$index set " .
 	"changes = CONCAT(changes, 'Changed to $state from ', state, ' by " . $user->name . "/" . $user->aid . " at ', NOW(), '\n'), " .
 	"state = '$state' " .
 	"where mid = '" . addslashes($mid) . "'");
 
-if (!$msg['pid'])
+if ($msg['pmid'] == 0)
   sql_query("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $state = $state + 1 where iid = $index");
 
 Header("Location: $page");
