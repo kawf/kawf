@@ -52,8 +52,7 @@ if (isset($email) && isset($password)) {
 
     /* Expire in 5 years */
     $expire = time() + (60 * 60 * 24 * 365 * 5);
-    setcookie("ForumAccount", "", time() - 60, "$furlroot/");
-    setcookie("ForumAccount", $cookie, $expire, "$urlroot/", ".audiworld.com");
+    setcookie("ForumAccount", $cookie, $expire, "$urlroot/", $cookiedom);
 
     exit;
   }

@@ -13,6 +13,7 @@ $configdeclared=1;
 // header("Pragma: no-cache");
 
 $urlhost = "forum.donutzracing.com";
+$cookiedom = "forum.donutzracing.com";
 $furlroot = "/forum";
 $urlroot = $furlroot . "/m";
 }

@@ -1,5 +1,5 @@
 <?php
-require('../sql.inc');
+require('sql.inc');
 
 require('config.inc');
 
@@ -26,27 +26,23 @@ else if (!isset($email))
   $error = "This page should only be accessed from the login page";
 else
   $error = "Cookie was not set properly, old cookie still present?";
+
+require('class.FastTemplate.php3');
+
+$tpl = new FastTemplate('templates');
+$tpl->define(array(
+  header => 'header.tpl',
+  footer => 'footer.tpl',
+  cookie_fail => 'cookie_fail.tpl'
+));
+
+$tpl->assign(BODYTAGS, ' bgcolor="#ffffff"');
+
+$tpl->assign(ERROR, $error);
+$tpl->assign(EMAIL, $email);
+
+$tpl->parse(HEADER, 'header');
+$tpl->parse(FOOTER, 'footer');
+$tpl->parse(CONTENT, 'cookie_fail');
+$tpl->FastPrint(CONTENT);
 ?>
-<html>
-<head>
-<title>Log In Error</title>
-</head>
-
-<body bgcolor="#ffffff">
-
-<img src="<?php echo $furlroot; ?>/pix/login.gif"><br>
-
-<font color="#ff0000">
-<?php
-if (isset($email))
-  echo "An error occured while logging into account with email $email<p>\n";
-
-echo $error;
-?>
-<p>
-</font>
-
-<font size="1" face="arial,geneva"><a href="/copyright/">Terms of Use</a> | Copyright © 1996-2000 by AudiWorld. All rights reserved.</font>
-
-</body>
-</html>
