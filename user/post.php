@@ -235,6 +235,9 @@ if (isset($error) || isset($preview)) {
   $mtable = "f_messages" . $index['iid'];
   $ttable = "f_threads" . $index['iid'];
 
+  if (!isset($pid) && isset($pmid))
+    $pid = $pmid;
+
   if (!isset($newmessage))
     $sql = "update $mtable set " .
 	"name = '" . addslashes($name) . "', " .
