@@ -17,6 +17,7 @@ $tpl->set_block("message", "forum_admin");
 $tpl->set_block("forum_admin", "advertiser");
 $tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "owner");
+$tpl->set_block("owner", "statelocked");
 $tpl->set_block("owner", "delete");
 $tpl->set_block("owner", "undelete");
 $tpl->set_block("message", "parent");
@@ -110,13 +111,21 @@ else
   $tpl->set_var("message_ip", "");
 */
 
-if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || isset($flags['StateLocked']) || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')))
+if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')))
   $tpl->set_var("owner", "");
 else {
-  if ($msg['state'] != 'Deleted')
-    $tpl->set_var("undelete", "");
-  if ($msg['state'] != 'Active')
-    $tpl->set_var("delete", "");
+  if (isset($flags['StateLocked'])) {
+    $tpl->set_var(array(
+      "undelete" => "",
+      "delete" => "",
+    ));
+  } else {
+    $tpl->set_var("statelocked", "");
+    if ($msg['state'] != 'Deleted')
+      $tpl->set_var("undelete", "");
+    if ($msg['state'] != 'Active')
+      $tpl->set_var("delete", "");
+  }
 }
 
 $tpl->set_var(array(
