@@ -1,4 +1,5 @@
 <?php
+
 if (!isset($forum)) {
   echo "Invalid forum\n";
   exit;
@@ -11,4 +12,5 @@ $sql = "delete from f_tracking where fid = " . $forum['fid'] . " and tid = '" . 
 mysql_query($sql) or sql_error($sql);
 
 Header("Location: $page");
+
 ?>

@@ -9,4 +9,5 @@ $sql = "update f_tracking set tstamp = NOW() where fid = " . $forum['fid'] . " a
 mysql_query($sql) or sql_warn($sql);
 
 Header("Location: " . $page);
+
 ?>
