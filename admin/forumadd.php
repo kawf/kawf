@@ -15,7 +15,7 @@ if (isset($submit)) {
 		")");
   $fid = sql_query1("select last_insert_id()");
 
-  sql_query("insert into f_indexes ( fid, minmid, maxmid, mintid, maxtid, active, moderated, deleted ) values ( $fid, 0, 0, 0, 0, 0, 0, 0 )");
+  sql_query("insert into f_indexes ( fid, minmid, maxmid, mintid, maxtid, active, moderated, deleted ) values ( $fid, 1, 0, 1, 0, 0, 0, 0 )");
   $iid = sql_query1("select last_insert_id()");
 
   sql_query("insert into f_unique ( fid, type, id ) values ( $fid, 'Message', 0 )"
