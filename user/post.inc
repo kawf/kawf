@@ -4,89 +4,93 @@ function hidden($name, $value)
   return "<input type=\"hidden\" name=\"$name\" value=\"$value\">\n";
 }
 
-$tpl->define_dynamic('acct', 'postform');
-$tpl->define_dynamic('noacct', 'postform');
+$tpl->set_file("postform", "postform.tpl");
+
+$tpl->set_block("postform", "acct");
+$tpl->set_block("postform", "noacct");
 
 if (isset($user)) {
-  $postcookie = md5("post" . microtime());
-  $hidden = hidden('postcookie', $postcookie);
-  $hidden .= hidden('forumname', $forum['shortname']);
+  if (!isset($postcookie))
+    $postcookie = md5("post" . microtime());
+  $hidden = hidden("postcookie", $postcookie);
+  $hidden .= hidden("forumname", $forum['shortname']);
 
   if (isset($imgpreview))
-    $hidden .= hidden('imgpreview', 'true');
+    $hidden .= hidden("imgpreview", 'true');
   if (isset($mid)) {
-    $hidden .= hidden('mid', $mid);
-    $tpl->assign(SUBMITTEXT, 'Update Message');
+    $hidden .= hidden("mid", $mid);
+    $tpl->set_var("SUBMITTEXT", "Update Message");
   } else {
     if (!isset($pid))
-      $tpl->assign(SUBMITTEXT, 'Post new thread');
+      $tpl->set_var("SUBMITTEXT", "Post new thread");
     else
-      $tpl->assign(SUBMITTEXT, 'Post reply');
+      $tpl->set_var("SUBMITTEXT", "Post reply");
   }
 
   if (isset($pid))
-    $hidden .= hidden('pid', $pid);
+    $hidden .= hidden("pid", $pid);
   if (isset($tid))
-    $hidden .= hidden('tid', $tid);
+    $hidden .= hidden("tid", $tid);
 
-  $tpl->assign(HIDDEN, $hidden);
+  $tpl->set_var("HIDDEN", $hidden);
 
   if (!isset($subject))
     $subject = "";
   $subject = ereg_replace("&", "&amp;", $subject);
   $subject = ereg_replace("\"", "&quot;", $subject);
-  $tpl->assign(SUBJECT, $subject);
+  $tpl->set_var("SUBJECT", $subject);
 
   if (!isset($message))
     $message = "";
   $message = ereg_replace("&", "&amp;", $message);
-  $tpl->assign(MESSAGE, $message);
+  $tpl->set_var("MESSAGE", $message);
 
   if (!isset($url))
     $url = "";
   $url = ereg_replace("&", "&amp;", $url);
-  $tpl->assign(URL, $url);
+  $tpl->set_var("URLLINK", $url);
 
   if (!isset($urltext))
     $urltext = "";
   $urltext = ereg_replace("&", "&amp;", $urltext);
-  $tpl->assign(URLTEXT, $urltext);
+  $tpl->set_var("URLTEXT", $urltext);
 
   if (!isset($imageurl))
     $imageurl = "";
   $imageurl = ereg_replace("&", "&amp;", $imageurl);
-  $tpl->assign(IMAGEURL, $imageurl);
+  $tpl->set_var("IMAGEURL", $imageurl);
 
-  $tpl->assign(USER_NAME, $user['name']);
-  $tpl->assign(USER_EMAIL, $user['email']);
+  $tpl->set_var("USER_NAME", $user->name);
+  $tpl->set_var("USER_EMAIL", $user->email);
 
   if (isset($preview) || isset($post))
     $checked = isset($ExposeEmail);
   else
-    $checked = !isset($user['prefs.SecretEmail']);
+    $checked = !isset($user->pref['SecretEmail']);
   if ($checked)
-    $tpl->assign(EXPOSEEMAIL, ' checked');
+    $tpl->set_var("EXPOSEEMAIL", " checked");
   else
-    $tpl->assign(EXPOSEEMAIL, '');
+    $tpl->set_var("EXPOSEEMAIL", "");
 
-  $tpl->assign(EMAILFOLLOWUP, '');
+  $tpl->set_var("EMAILFOLLOWUP", "");
 
   if (isset($preview) || isset($post))
     $checked = isset($TrackThread);
   else
-    $checked = isset($user['prefs.AutoTrack']) ||
+    $checked = isset($user->pref['AutoTrack']) ||
                (isset($tid) && isset($tthreads_by_tid[$tid]));
   if ($checked)
-    $tpl->assign(TRACKTHREAD, ' checked');
+    $tpl->set_var("TRACKTHREAD", " checked");
   else
-    $tpl->assign(TRACKTHREAD, '');
+    $tpl->set_var("TRACKTHREAD", "");
 
-  $tpl->assign(ACTION, $action);
-  $tpl->clear_dynamic('noacct');
-} else
-  $tpl->clear_dynamic('acct');
+  $tpl->set_var("ACTION", $action);
+  $tpl->set_var("noacct", "");
+  $tpl->parse("acct", "acct");	/* This fixed URL and PAGE for some reason */
+} else {
+  $tpl->set_var("acct", "");
+  $tpl->parse("noacct", "noacct");/* This fixed URL and PAGE for some reason */
+}
 
-$tpl->assign(URLROOT, $urlroot);
-
-$tpl->parse(FORM, 'postform');
+$tpl->parse("FORM", "postform");
 ?>
