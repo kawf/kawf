@@ -69,7 +69,8 @@
 <input type="checkbox" name="FlatThread"{FLATTHREAD}> Show all of thread instead of single messages?<br>
 <input type="checkbox" name="AutoTrack"{AUTOTRACK}> Default to track threads you create or followup to?<br>
 <input type="checkbox" name="HideSignatures"{HIDESIGNATURES}> Hide signatures when viewing messages?<br>
-<input type="checkbox" name="AutoUpdateTracking"{AUTOUPDATETRACKING}> Automatically mark tracked threads as read when reading followups?<br>
+<input type="checkbox" name="AutoUpdateTracking"{AUTOUPDATETRACKING}> Automatically mark tracked threads as read when reading followups? (Not fully implemented yet)<br>
+<input type="checkbox" name="OldestFirst"{OLDESTFIRST}> Show oldest replies first?<br>
 
       Threads per page <input type="input" size="3" name="threadsperpage" value="{THREADSPERPAGE}"><br>
     </font></td>
@@ -81,7 +82,7 @@
   </tr>
   <tr bgcolor="#cccccc">
     <td colspan="2" align="center"><font face="Verdana, Arial, Geneva" size="-1">
-    <p><a href="{PAGE}"><b>Click here to return to the Donutz Racing Discussion Forums</a>
+    <p><a href="{PAGE}"><b>Click here to return to the AudiWorld Discussion Forums</a>
     </td>
   </tr>
 </table>

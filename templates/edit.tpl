@@ -8,14 +8,14 @@
 </tr>
 </table>
 
+<!-- BEGIN DYNAMIC BLOCK: preview -->
 {PREVIEW}
-
-{POST}
-
-<table width="600">
-<tr><td align="center">
-[ <a href="{FORUM_SHORTNAME}/{MID}.phtml">Go to Your Message</a> ] [ <a href="{FORUM_SHORTNAME}/">Go back to the forum</a> ]
-</td></tr>
-</table><br>
+<!-- END DYNAMIC BLOCK: preview -->
+<!-- BEGIN DYNAMIC BLOCK: form -->
+{FORM}
+<!-- END DYNAMIC BLOCK: form -->
+<!-- BEGIN DYNAMIC BLOCK: accept -->
+{FORM}
+<!-- END DYNAMIC BLOCK: accept -->
 
 {FOOTER}

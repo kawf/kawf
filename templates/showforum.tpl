@@ -1,5 +1,9 @@
 {HEADER}
 
+<center>
+{AD}
+</center>
+
 <hr width="100%" size="1">
 
 <table width="100%">
@@ -21,11 +25,16 @@
 
 <font face="Verdana, Arial, Geneva" size="-1">
 Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
-</font>
 
+<!-- BEGIN DYNAMIC BLOCK: normal -->
 <table width="100%" border="0" cellpadding="2" cellspacing="2">
+<!-- END DYNAMIC BLOCK: normal -->
 {MESSAGE_ROWS}
+<!-- BEGIN DYNAMIC BLOCK: normal -->
 </table>
+<!-- END DYNAMIC BLOCK: normal -->
+
+</font>
 
 <table width="600">
 <tr><td>
@@ -41,11 +50,11 @@ Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 <table width="600">
 <tr><td align="center">
 <a name="post">
-<img src="../../pix/post.gif">
+<img src="/forum/pix/post.gif">
 </td></tr>
 
 <tr><td>
-{POST}
+{FORM}
 </td></tr>
 </table>
 

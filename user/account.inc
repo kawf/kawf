@@ -53,7 +53,7 @@ if (isset($AdsAccount)) {
 }
 
 if (isset($account) && !empty($account)) {
-  $sql = "select * from accounts where $column = '" . addslashes($account) . "' and $column != ''";
+  $sql = "select * from accounts where $column = '" . addslashes($account) . "' and $column != '' and status = 'Active'";
 
   $result = mysql_query($sql) or sql_error($sql);
 

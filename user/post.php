@@ -201,11 +201,6 @@ $tpl->assign(MSG_IMAGEURL, $imageurl);
 if (!isset($preview))
   $tpl->clear_dynamic('preview');
 
-/*
-if (isset($imageurl) && !empty($imageurl))
-  $message = "<center><img src=\"$imageurl\"></center><p>" . $message;
-*/
-
 $tpl->parse(PREVIEW, 'previewa');
 
 if (isset($error) || isset($preview)) {

@@ -8,9 +8,15 @@
 </tr>
 </table>
 
+<!-- BEGIN DYNAMIC BLOCK: preview -->
 {PREVIEW}
-
-{POST}
+<!-- END DYNAMIC BLOCK: preview -->
+<!-- BEGIN DYNAMIC BLOCK: form -->
+{FORM}
+<!-- END DYNAMIC BLOCK: form -->
+<!-- BEGIN DYNAMIC BLOCK: accept -->
+{ACCEPT}
+<!-- END DYNAMIC BLOCK: accept -->
 
 {FOOTER}
 

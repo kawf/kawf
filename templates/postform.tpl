@@ -1,11 +1,27 @@
-<form action="{DIRECTORY}post.phtml" method="post">
+<!-- BEGIN DYNAMIC BLOCK: noacct -->
+<table width="600">
+<tr><td bgcolor="#dfdfdf">
+  <table width="95%">
+  <tr><td bgcolor="#dfdfdf">
+    <font face="Verdana, Arial, Geneva" size="-1">
+    You must be registered and logged in to post. Please select an option:<p>
+    <a href="{URLROOT}/login.phtml?page={THISPAGE}">Login with existing account</a><br>
+    <a href="{URLROOT}/createaccount.phtml?page={THISPAGE}">Create a new account</a><p>
+    </font>
+  </td></tr>
+  </table>
+</td></tr>
+</table>
+<!-- END DYNAMIC BLOCK: noacct -->
+<!-- BEGIN DYNAMIC BLOCK: acct -->
+<form action="{URLROOT}/{ACTION}.phtml" method="post">
 <table width="600">
 <tr>
   <td bgcolor="#dfdfdf" align="right">
     <font size="-1" face="Verdana, Arial, Geneva"><b>Logged in as:</b></font>
   </td>
   <td bgcolor="#dfdfdf">
-    <font size="-1" face="Verdana, Arial, Geneva">{USER_NAME} &nbsp; &nbsp; &nbsp;[ <a href="../logout.phtml?page={THISPAGE}">Logout</a> ] [ <a href="../preferences.phtml?page={THISPAGE}">Preferences</a> ]</font>
+    <font size="-1" face="Verdana, Arial, Geneva">{USER_NAME} &nbsp; &nbsp; &nbsp;[ <a href="{URLROOT}/logout.phtml?page={THISPAGE}">Logout</a> ] [ <a href="{URLROOT}/preferences.phtml?page={THISPAGE}">Preferences</a> ]</font>
   </td>
 </tr>
 
@@ -76,3 +92,4 @@ Track thread?<br><br>
 </table>
 
 </form>
+<!-- END DYNAMIC BLOCK: acct -->
