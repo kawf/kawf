@@ -1,6 +1,6 @@
 <?php
 
-require('forum/config.inc');
+require('config.inc');
 
 function list_thread_msg($thread)
 {

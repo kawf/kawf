@@ -1,10 +1,10 @@
 <?php
 
-require('sql.inc');
-require('account.inc');
+require('../sql.inc');
+require('../account.inc');
 
-require('forum/config.inc');
-require('forum/striptag.inc');
+require('config.inc');
+require('striptag.inc');
 
 sql_open_readwrite();
 ?>

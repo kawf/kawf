@@ -7,12 +7,12 @@ if (!isset($mid) || !isset($shortname)) {
   exit;
 }
 
-require('sql.inc');
-require('account.inc');
+require('../sql.inc');
+require('../account.inc');
 
-require('forum/config.inc');
-require('forum/textwrap.inc');
-require('forum/striptag.inc');
+require('config.inc');
+require('textwrap.inc');
+require('striptag.inc');
 
 /* Open up the SQL database */
 sql_open_readwrite();
@@ -38,7 +38,7 @@ $result = mysql_query($sql) or sql_error($sql);
 
 $forum = mysql_fetch_array($result);
 
-require('forum/indexes.inc');
+require('indexes.inc');
 
 $forumdb = "forum_" . $forum['shortname'];
 
@@ -71,7 +71,7 @@ AudiWorld Forums: Edit Message
 <body bgcolor=#ffffff>
 
 <?php
-require('ads.inc');
+require('../ads.inc');
 
 /* Show the advertisement on errors as well :) */
 add_ad();

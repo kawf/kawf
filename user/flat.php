@@ -1,6 +1,6 @@
 <?php
 
-require('forum/config.inc');
+require('config.inc');
 
 $fdb = "forum_" . $forum['shortname'];
 

@@ -69,7 +69,7 @@ $result = mysql_query($sql) or sql_error($sql);
 
 if (!mysql_num_rows($result)) {
   if (empty($aregs[2]) && !empty($scripts[$aregs[1]])) {
-    include('forum/' . $scripts[$aregs[1]]);
+    include($scripts[$aregs[1]]);
     exit;
   } else
     err_not_found();
@@ -93,20 +93,20 @@ if ($forum['version'] == 1) {
   exit;
 }
 
-include('account.inc');
+require('account.inc');
 
-$sql = "select * from tracking where aid = '" . $user['aid'] . "'";
+$sql = "select * from tracking where aid = '" . $user['aid'] . "' order by tid desc";
 $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 
 while ($tthread = mysql_fetch_array($result))
   $tthreads[$tthread['tid']] = $tthread;
 
-include('forum/indexes.inc');
+require('indexes.inc');
 
 /* Parse out the filename */
 /* The . "" is to workaround a bug in PHP4 */
 if (count($aregs) >= 4 && isset($fscripts[$aregs[3] . ""])) {
-  include('forum/' . $fscripts[$aregs[3] . ""]);
+  include($fscripts[$aregs[3] . ""]);
 } else if (ereg("^page([0-9]+)\.phtml$", $aregs[3], $fregs)) {
   if (isset($QUERY_STRING) && !empty($QUERY_STRING))
     Header("Location: pages/" . $fregs[1] . ".phtml?" . $QUERY_STRING);
@@ -115,7 +115,7 @@ if (count($aregs) >= 4 && isset($fscripts[$aregs[3] . ""])) {
 } else if (ereg("^pages/([0-9]+)\.phtml$", $aregs[3], $fregs)) {
   /* Now show that page */
   $curpage = $fregs[1];
-  include('forum/showforum.php');
+  include('showforum.php');
 } else if (ereg("^([0-9]+)\.phtml$", $aregs[3], $fregs)) {
   if (isset($QUERY_STRING) && !empty($QUERY_STRING))
     Header("Location: msgs/" . $fregs[1] . ".phtml?" . $QUERY_STRING);
@@ -131,7 +131,7 @@ if (count($aregs) >= 4 && isset($fscripts[$aregs[3] . ""])) {
   }
 
   if (isset($result) && mysql_num_rows($result)) {
-    include('forum/showmessage.php');
+    include('showmessage.php');
   } else
     err_not_found();
 } else if (ereg("^threads/([0-9]+)\.phtml$", $aregs[3], $fregs)) {
@@ -143,7 +143,7 @@ if (count($aregs) >= 4 && isset($fscripts[$aregs[3] . ""])) {
     $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
   }
   if (isset($result) && mysql_num_rows($result)) {
-    include('forum/showthread.php');
+    include('showthread.php');
   } else
     err_not_found();
 } else

@@ -1,15 +1,15 @@
 <?php
 
-require('sql.inc');
+require('../sql.inc');
 
-require('forum/config.inc');
+require('config.inc');
 
 if (isset($email)) {
   /* Open up the SQL database */
   sql_open_readwrite();
 
-  require('randomstring.inc');
-  require('forum/mailfrom.inc');
+  require('../randomstring.inc');
+  require('mailfrom.inc');
 
   $password = randomstring(10);
 

@@ -1,14 +1,14 @@
 <?php
-require('sql.inc');
-require('forum/config.inc');
+require('../sql.inc');
+require('../account.inc');
 
-require('account.inc');
+require('config.inc');
 
 if (!isset($page))
   $page = $furlroot;
 
 if (isset($email) && isset($password)) {
-  require('account/checkpassword.inc');
+  require('../account/checkpassword.inc');
 
   sql_open_readonly();
 

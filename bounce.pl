@@ -6,5 +6,5 @@ while (<>) {
 
 $ENV{'MESSAGE'} = $l;
 
-exec "/usr/local/bin/php", "/web/php.new/forum/bounce.php";
+exec "/usr/local/bin/php", "/web/php.new/kawf/bounce.php";
 

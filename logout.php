@@ -1,9 +1,8 @@
 <?php
+require('../sql.inc');
+require('../account.inc');
 
-require('forum/config.inc');
-require('sql.inc');
-
-require('account.inc');
+require('config.inc');
 
 sql_open_readwrite();
 

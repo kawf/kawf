@@ -1,10 +1,10 @@
 <?php
 
-require('sql.inc');
+require('../sql.inc');
 
-require('forum/config.inc');
+require('config.inc');
 
-require('forum/mailfrom.inc');
+require('mailfrom.inc');
 
 /* Open up the SQL database */
 sql_open_readwrite();

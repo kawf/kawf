@@ -1,10 +1,10 @@
 <?php
 
-require('sql.inc');
-require('account.inc');
+require('../sql.inc');
+require('../account.inc');
 
-require('forum/config.inc');
-require('forum/acct.inc');
+require('config.inc');
+require('acct.inc');
 
 if (!forum_admin()) {
   Header("Location: $furlroot/");
@@ -19,7 +19,7 @@ $result = mysql_db_query('a4', $sql) or sql_error($sql);
 
 $forum = mysql_fetch_array($result);
 
-require('forum/indexes.inc');
+require('indexes.inc');
 
 $index = find_msg_index($mid);
 $sql = "select state from messages$index where mid=$mid";

@@ -1,10 +1,10 @@
 <?php
 
-require('sql.inc');
-require('account.inc');
+require('../sql.inc');
+require('../account.inc');
 
-require('forum/config.inc');
-require('forum/striptag.inc');
+require('config.inc');
+require('striptag.inc');
 
 /*
 if (isset($user)) {
@@ -171,8 +171,8 @@ if (!isset($email) || !empty($error)) {
   exit;
 }
 
-require('randomstring.inc');
-require('forum/mailfrom.inc');
+require('../randomstring.inc');
+require('mailfrom.inc');
 
 sql_open_readwrite();
 

@@ -1,5 +1,5 @@
 <?php
-require('forum/acct.inc');
+require('acct.inc');
 ?>
 
 <form action="<?php echo $urlroot; ?>/preferences.phtml?page=<?php if (isset($page)) echo "$page"; else echo $furlroot . "/"; ?>" method=post>

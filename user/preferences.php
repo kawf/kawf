@@ -1,8 +1,9 @@
 <?php
 
-require('account.inc');
+require('../sql.inc');
+require('../account.inc');
 
-require('forum/config.inc');
+require('config.inc');
 
 /* Open up the SQL database first */
 sql_open_readwrite();
@@ -12,8 +13,8 @@ if (!isset($user)) {
   exit;
 }
 
-require('forum/striptag.inc');
-require('forum/mailfrom.inc');
+require('striptag.inc');
+require('mailfrom.inc');
 ?>
 <html>
 <head>

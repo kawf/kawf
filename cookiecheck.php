@@ -1,6 +1,7 @@
 <?php
-require('sql.inc');
-require('forum/config.inc');
+require('../sql.inc');
+
+require('config.inc');
 
 if (!isset($page))
   $page = $furlroot;

@@ -1,6 +1,6 @@
 <?php
 
-require('forum/config.inc');
+require('config.inc');
 
 function show_message($msg, $vmid = 0, $replies = -1)
 {

@@ -1,20 +1,20 @@
 <?php
 
-require('sql.inc');
-require('account.inc');
+require('../sql.inc');
+require('../account.inc');
 
 if (!isset($user)) {
   echo "No user account, no tracking\n";
   exit;
 }
 
-require('forum/config.inc');
-require('forum/acct.inc');
+require('config.inc');
+require('acct.inc');
 
 /* Open up the SQL database first */
 sql_open_readonly();
 
-require('forum/indexes.inc');
+require('indexes.inc');
 
 ?>
 
@@ -30,7 +30,7 @@ AudiWorld Forums: Tracked Threads
 <center>
 <?php
 /* We get our money from ads, make sure it's there */
-require('ads.inc');
+require('../ads.inc');
 
 add_ad();
 ?>
@@ -43,7 +43,7 @@ add_ad();
 
 <?php
 
-require('forum/listthread.inc');
+require('listthread.inc');
 
 /* Find the capabilities of the user */
 $moderate = isset($user['cap.Moderate']);

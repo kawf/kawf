@@ -1,0 +1,6 @@
+{HEADER}
+
+Hi, test
+
+{FOOTER}
+

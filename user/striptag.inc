@@ -11,7 +11,9 @@ $standard_tags = array(
   array("b", "/b"),
   array("i", "/i"),
   array("u", "/u"),
-  array("tt", "/tt")
+  array("tt", "/tt"),
+  array("big", "/big"),
+  array("small", "/small")
 );
 
 $no_tags = array(

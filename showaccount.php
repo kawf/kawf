@@ -1,10 +1,10 @@
 <?php
 
-require('sql.inc');
-require('account.inc');
+require('../sql.inc');
+require('../account.inc');
 
-require('forum/config.inc');
-require('forum/acct.inc');
+require('config.inc');
+require('acct.inc');
 
 if (!forum_admin()) {
   Header("Location: $furlroot/");

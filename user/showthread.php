@@ -2,13 +2,13 @@
 
 require('account.inc');
 
-require('forum/config.inc');
+require('kawf/config.inc');
 
 /* Open up the SQL database first */
 sql_open_readonly();
 
-require('forum/displaymsg.inc');
-require('forum/listthreadmsg.inc');
+require('kawf/displaymsg.inc');
+require('kawf/listthreadmsg.inc');
 
 ?>
 

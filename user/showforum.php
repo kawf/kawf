@@ -1,9 +1,15 @@
 <?php
 
+require('sql.inc');
 require('account.inc');
 
-require('forum/config.inc');
-require('forum/acct.inc');
+require('config.inc');
+require('acct.inc');
+
+require('class.FastTemplate.php3');
+
+$tpl = new FastTemplate('templates');
+$tpl->define(array(header => 'header.tpl', footer => 'footer.tpl', showforum => 'showforum.tpl'));
 
 /* Default it to the first page if none is specified */
 if (!isset($curpage))
@@ -31,25 +37,19 @@ function threads($key)
   return $numthreads;
 }
 
-?>
+$tpl->assign(TITLE, $forum['name']);
 
-<html>
-<head>
-<title>
-AudiWorld Forums: <?php echo $forum['name']; ?>
-</title>
-</head>
+$tpl->assign(BODYTAGS, ' bgcolor="#ffffff"');
 
-<body bgcolor="#ffffff">
-
-<center>
-<?php
 /* We get our money from ads, make sure it's there */
+/* FIXME: Ads write directly to output */
+/*
+echo "<center>\n";
 require('ads.inc');
-
 add_ad();
+echo "</center>\n";
+*/
 ?>
-</center>
 
 <hr width="100%" size="1">
 
@@ -138,7 +138,7 @@ echo "</font>\n";
 
 print_pages();
 
-require('forum/listthread.inc');
+require('listthread.inc');
 
 /* Find the capabilities of the user */
 $moderate = isset($user['cap.Moderate']);
@@ -321,13 +321,9 @@ include('./postform.inc');
 
 </table>
 
-<table border="0" cellpadding="0" cellspacing="0" width="600">
-<tr>
-        <td align="center"><font size="1" face="arial,geneva"><a href="/copyright/">Terms of Use</a> | Copyright © 1996-2000 by AudiWorld. All rights reserved.</font></td>
-</tr>
-</table>
-
-</body>
-
-</html>
-
+<?php
+$tpl->parse(HEADER, 'header');
+$tpl->parse(FOOTER, 'footer');
+$tpl->parse(CONTENT, 'showforum');
+$tpl->FastPrint(CONTENT);
+?>
