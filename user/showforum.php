@@ -74,7 +74,7 @@ $urlroot = "/ads";
 require_once("ads.inc");
 
 $ad = ads_view("a4.org,aw_" . $forum['shortname'], "_top");
-$tpl->set_var("AD", $ad);
+$tpl->_set_var("AD", $ad);
 
 /* Figure out how many total threads the user can see */
 $numthreads = 0;

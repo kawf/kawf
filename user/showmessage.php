@@ -83,7 +83,7 @@ $urlroot = "/ads";
 require_once("ads.inc");
 
 $ad = ads_view("a4.org,aw_" . $forum['shortname'], "_top");
-$tpl->set_var("AD", $ad);
+$tpl->_set_var("AD", $ad);
 
 if ($user->capable($forum['fid'], 'Moderate')) {
   $changes = preg_replace("/&/", "&amp;", $msg['changes']);

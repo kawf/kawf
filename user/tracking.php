@@ -38,7 +38,7 @@ $urlroot = "/ads";
 require_once("ads.inc");
 
 $ad = ads_view("a4.org", "_top");
-$tpl->set_var("AD", $ad);
+$tpl->_set_var("AD", $ad);
 
 function display_thread($thread)
 {

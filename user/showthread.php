@@ -37,7 +37,7 @@ $urlroot = "/ads";
 require_once("ads.inc");
 
 $ad = ads_view("a4.org,aw_" . $forum['shortname'], "_top");
-$tpl->set_var("AD", $ad);
+$tpl->_set_var("AD", $ad);
 
 $index = find_thread_index($tid);
 $sql = "select * from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tid) . "'";
