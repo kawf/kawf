@@ -23,8 +23,6 @@ if (isset($user->pref['SimpleHTML'])) {
 
 $tpl->set_block($table_block, "row", "_row");
 
-$relative = ".";
-
 /* Default it to the first page if none is specified */
 if (!isset($curpage))
   $curpage = 1;
@@ -88,19 +86,17 @@ $endpage = $startpage + 9;
 if ($endpage > $numpages)
   $endpage = $numpages;
 
-/*
 if ($endpage == $startpage)
   $endpage++;
-*/
 
 $pagestr = "";
 
 if ($curpage > 1) {
   $prevpage = $curpage - 1;
-  $pagestr .= "[<a href=\"$relative/pages/$prevpage.phtml\">&lt;&lt;&lt;</a>] ";
+  $pagestr .= "[<a href=\"/" . $forum['shortname'] . "/pages/$prevpage.phtml\">&lt;&lt;&lt;</a>] ";
 }
 
-$pagestr .= "[<a href=\"$relative/pages/1.phtml\">";
+$pagestr .= "[<a href=\"/" . $forum['shortname'] . "/pages/1.phtml\">";
 if ($curpage == 1)
   $pagestr .= "<font size=\"+1\"><b>1</b></font>";
 else
@@ -113,7 +109,7 @@ elseif ($startpage < $endpage)
   $pagestr .= " ... ";
 
 for ($i = $startpage; $i <= $endpage; $i++) {
-  $pagestr .= "[<a href=\"$relative/pages/" . $i . ".phtml\">";
+  $pagestr .= "[<a href=\"/" . $forum['shortname'] . "/pages/" . $i . ".phtml\">";
   if ($i == $curpage)
     $pagestr .= "<font size=\"+1\"><b>$i</b></font>";
   else
@@ -123,7 +119,7 @@ for ($i = $startpage; $i <= $endpage; $i++) {
 
 if ($curpage < $numpages) {
   $nextpage = $curpage + 1;
-  $pagestr .= "[<a href=\"$relative/pages/$nextpage.phtml\">&gt;&gt;&gt;</a>] ";
+  $pagestr .= "[<a href=\"/" . $forum['shortname'] . "/pages/$nextpage.phtml\">&gt;&gt;&gt;</a>] ";
 }
 
 $tpl->set_var("PAGES", $pagestr);
@@ -133,7 +129,7 @@ $tpl->set_var("NUMPAGES", $numpages);
 
 function print_collapsed($thread, $msg, $count)
 {
-  global $user, $forum, $tpl, $relative;
+  global $user, $forum, $tpl;
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
@@ -144,9 +140,9 @@ function print_collapsed($thread, $msg, $count)
   $string = "<li>";
 
   if (isset($user->pref['FlatThread']))
-    $string .= "<a href=\"$relative/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
+    $string .= "<a href=\"/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
   else
-    $string .= "<a href=\"$relative/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
+    $string .= "<a href=\"/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
 
   if (isset($flags['NoText'])) {
     if (!isset($user->pref['SimpleHTML']))
@@ -186,33 +182,33 @@ function print_collapsed($thread, $msg, $count)
   if (isset($user->cap['Moderate'])) {
     switch ($msg['state']) {
     case "Moderated":
-      $string .= " <a href=\"$relative/../changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">um</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">um</a>";
       if (isset($user->cap['Delete']))
-        $string .= " <a href=\"$relative/../changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+        $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     case "Deleted":
       if (isset($user->cap['Delete']))
-        $string .= " <a href=\"$relative/../changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
+        $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
       break;
     case "Active":
-      $string .= " <a href=\"$relative/../changestate.phtml?page=$page&state=Moderated&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">mm</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Moderated&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">mm</a>";
       if (isset($user->cap['Delete']))
-        $string .= " <a href=\"$relative/../changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+        $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     }
 
     if ($forum['version'] >= 2) {
       if (isset($flags['Locked']))
-        $string .= " <a href=\"$relative/../unlock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ul</a>";
+        $string .= " <a href=\"/unlock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ul</a>";
       else
-        $string .= " <a href=\"$relative/../lock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">lm</a>";
+        $string .= " <a href=\"/lock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">lm</a>";
     }
   }
 
   if (isset($user->aid) && isset($flags['NewStyle']) && $msg['aid'] == $user->aid) {
-    $string .= " <a href=\"$relative/../edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
+    $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
     if (!isset($user->cap['Delete']) && $msg['state'] != 'Deleted')
-      $string .= " <a href=\"$relative/../changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">delete</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">delete</a>";
   }
 
   $string .= "</li>\n";
@@ -222,7 +218,7 @@ function print_collapsed($thread, $msg, $count)
 
 function print_subject($msg)
 {
-  global $user, $tthreads_by_tid, $forum, $tpl, $relative;
+  global $user, $tthreads_by_tid, $forum, $tpl;
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
@@ -238,9 +234,9 @@ function print_subject($msg)
   if ($new)
     $string .= "<i><b>";
   if (isset($user->pref['FlatThread']))
-    $string .= "<a href=\"$relative/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
+    $string .= "<a href=\"/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
   else
-    $string .= "<a href=\"$relative/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
+    $string .= "<a href=\"/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
 
   if ($new)
     $string .= "</b></i>";
@@ -284,33 +280,33 @@ function print_subject($msg)
   if (isset($user->cap['Moderate'])) {
     switch ($msg['state']) {
     case "Moderated":
-      $string .= " <a href=\"$relative/../changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">um</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">um</a>";
       if (isset($user->cap['Delete']))
-        $string .= " <a href=\"$relative/../changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+        $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     case "Deleted":
       if (isset($user->cap['Delete']))
-        $string .= " <a href=\"$relative/../changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
+        $string .= " <a href=\"/changestate.phtml?page=$page&state=Active&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ud</a>";
       break;
     case "Active":
-      $string .= " <a href=\"$relative/../changestate.phtml?page=$page&state=Moderated&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">mm</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Moderated&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">mm</a>";
       if (isset($user->cap['Delete']))
-        $string .= " <a href=\"$relative/../changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
+        $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">dm</a>";
       break;
     }
 
     if ($forum['version'] >= 2) {
       if (isset($flags['Locked']))
-        $string .= " <a href=\"$relative/../unlock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ul</a>";
+        $string .= " <a href=\"/unlock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">ul</a>";
       else
-        $string .= " <a href=\"$relative/../lock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">lm</a>";
+        $string .= " <a href=\"/lock.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">lm</a>";
     }
   }
 
   if (isset($user->aid) && isset($flags['NewStyle']) && $msg['aid'] == $user->aid) {
-    $string .= " <a href=\"$relative/../edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
+    $string .= " <a href=\"/edit.phtml?forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">edit</a>";
     if (!isset($user->cap['Delete']) && $msg['state'] != 'Deleted')
-      $string .= " <a href=\"$relative/../changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">delete</a>";
+      $string .= " <a href=\"/changestate.phtml?page=$page&state=Deleted&forumname=" . $forum['shortname'] . "&mid=" . $msg['mid'] . "\">delete</a>";
   }
 
   $string .= "</li>\n";
@@ -416,14 +412,14 @@ if (isset($tthreads)) {
       $numshown++;
 
       /* If the thread is tracked, we know they are a user already */
-      $messagelinks = "<a href=\"$relative/../untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
+      $messagelinks = "<a href=\"/untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
       if ($count > 1) {
         if (!isset($user->pref['Collapsed']))
           $messagelinks .= "<br>";
         else
           $messagelinks .= " ";
 
-        $messagelinks .= "<a href=\"$relative/../markuptodate.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#0000f0\">up</font></a>";
+        $messagelinks .= "<a href=\"/markuptodate.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#0000f0\">up</font></a>";
       }
 
       $tpl->set_var("MESSAGES", $messagestr);
@@ -508,9 +504,9 @@ while ($numshown < $threadsperpage) {
 
     if (isset($user->aid)) {
       if (isset($tthreads_by_tid[$thread['tid']]))
-        $messagelinks = " <a href=\"$relative/../untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
+        $messagelinks = " <a href=\"/untrack.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
       else
-        $messagelinks = " <a href=\"$relative/../track.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#00d000\">tt</font></a>";
+        $messagelinks = " <a href=\"/track.phtml?forumname=" . $forum['shortname'] . "&tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#00d000\">tt</font></a>";
     } else
       $messagelinks = "";
 
