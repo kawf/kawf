@@ -3,8 +3,6 @@
 require_once("mailfrom.inc");
 require_once("textwrap.inc");
 
-$tpl->set_file("mail", "mail/offtopic.tpl");
-
 $user->req();
 
 if ($state != 'Active' && $state != 'OffTopic' && $state != 'Moderated' && $state != 'Deleted') {
@@ -83,20 +81,12 @@ if ($nuser->valid()) {
 if (!empty($msg['state']) && $msg['pmid'] == 0)
   sql_query("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $state = $state + 1 where iid = " . $indexes[$index]['iid']);
 
-if ($state == 'OffTopic' && $user->capable($forum['fid'], 'OffTopic')) {
-  $tpl->set_var(array(
-    "EMAIL" => $nuser->email,
-    "FORUM_SHORTNAME" => $forum['shortname'],
-    "MSG_MID" => $msg['mid'],
-    "PHPVERSION" => phpversion(),
-  ));
-
-  $e_message = $tpl->parse("MAIL", "mail");
-  $e_message = textwrap($e_message, 78, "\n");
-
-  mailfrom("followup-" . $nuser->aid . "@" . $bounce_host,
-    $nuser->email, $e_message);
-}
+if ($state == 'OffTopic' && $user->capable($forum['fid'], 'OffTopic'))
+  // We'll send the message in 10 minutes
+  sql_query("insert into f_offtopic ( fid, mid, aid ) values ( " . $forum['fid'] . ", " . $msg['mid'] . ", " . $msg['aid'] . " )");
+else if ($priv == 'OffTopic')
+  // Delete any queued messages
+  sql_query("delete from f_offtopic where mid = " . $forum['fid'] . " and mid = " . $msg['mid']);
 
 header("Location: $page");
 ?>
