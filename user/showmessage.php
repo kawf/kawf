@@ -4,6 +4,7 @@ sql_open_readwrite();
 
 require('listthread.inc');
 require('filter.inc');
+require('striptag.inc');
 
 $tpl->define(array(
   header => 'header.tpl',
@@ -14,7 +15,7 @@ $tpl->define(array(
   forum_header => 'forum/' . $forum['shortname'] . '.tpl'
 ));
 
-$tpl->define_dynamic('posting_ip', 'message');
+$tpl->define_dynamic('forum_admin', 'message');
 $tpl->define_dynamic('parent', 'message');
 
 $tpl->assign(THISPAGE, $SCRIPT_NAME . $PATH_INFO);
@@ -51,7 +52,7 @@ if (isset($flags['NewStyle']) && !isset($user['prefs.HideSignatures'])) {
 /* Grab some information about the parent (if there is one) */
 if ($msg['pid'] != 0) {
   $index = find_msg_index($msg['pid']);
-  $sql = "select subject, name, date from messages$index where mid='" . $msg['pid'] . "'";
+  $sql = "select mid, subject, name, date from messages$index where mid='" . $msg['pid'] . "'";
   $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 
   $pmsg = mysql_fetch_array($result);
@@ -76,10 +77,11 @@ if ($forum['shortname'] == "a4" || $forum['shortname'] == "performance")
   ads_view("carreview", "_top");
 */
 
-if (isset($user['cap.Moderate']))
+if (isset($user['cap.Moderate'])) {
+  $tpl->assign(MSG_AID, "<a href=\"$urlroot/showaccount.phtml?aid=" . $msg['aid'] . "\">" . $msg['aid'] . "</a>");
   $tpl->assign(MSG_IP, $msg['ip']);
-else
-  $tpl->clear_dynamic('posting_ip');
+} else
+  $tpl->clear_dynamic('forum_admin');
 
 $tpl->assign(MSG_SUBJECT, $msg['subject']);
 $tpl->assign(MSG_DATE, $msg['date']);
@@ -112,12 +114,14 @@ if (!empty($msg['url'])) {
 
 if (isset($signature)) {
   unset($urlset);
-  $signature = preg_replace("/\n/", "<br>\n", $signature);
+  $signature = stripspaces($signature);
 /*
   if (get_magic_quotes_gpc())
 */
     $signature = stripslashes($signature);
-  $message .= "<p>" . $signature . "\n";
+  $signature = preg_replace("/\n/", "<br>\n", $signature);
+  if (!empty($signature))
+    $message .= "<p>" . $signature . "\n";
 }
 
 if (!isset($urlset))
@@ -131,14 +135,12 @@ $ulkludge =
   ereg("^Mozilla/[0-9]\.[0-9]+ \(compatible; MSIE .*", $HTTP_USER_AGENT) ||
   ereg("^Mozilla/[0-9]\.[0-9]+ \(Macintosh; .*", $HTTP_USER_AGENT);
 
+$index = find_thread_index($msg['tid']);
 $sql = "select * from threads$index where tid = '" . $msg['tid'] . "'";
-
 $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
-
 $thread = mysql_fetch_array($result);
 
 $index = find_msg_index($thread['mid']);
-
 $sql = "select mid, tid, pid, aid, state, date, subject, flags, name, email, views, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp, UNIX_TIMESTAMP(date) as unixtime from messages$index where tid = '" . $thread['tid'] . "' order by mid";
 $result = mysql_db_query("forum_" . $forum['shortname'], $sql) or sql_error($sql);
 while ($message = mysql_fetch_array($result))
@@ -268,7 +270,7 @@ function print_subject($msg)
   return $string;
 }
 
-$threadmsg = "<ul>\n";
+$threadmsg = "<ul class=\"thread\">\n";
 $threadmsg .= list_thread(print_subject, $messages, $tree, reset($tree));
 if (!$ulkludge)
   $threadmsg .= "</ul>\n";
