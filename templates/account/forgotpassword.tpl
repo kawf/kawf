@@ -1,6 +1,16 @@
-{HEADER}
+<html>
+<head>
+<title>kawf.org Forums: {FORUM_NAME}</title>
+<style type="text/css">
+<!--
+body { font-family: verdana, arial, geneva }
+-->
+</style>
+</head>
 
 <body bgcolor="#ffffff" text="#000000" link="#0000cc" vlink="#0000cc" alink="#0000cc" style="text-decoration: none">
+
+{HEADER}
 
 <table width="600">
 <tr>
@@ -32,4 +42,7 @@ We have sent a message detailing the remaining steps to {EMAIL}<br>
 </table>
 
 {FOOTER}
+
+</body>
+</html>
 

@@ -5,8 +5,8 @@
   <tr><td bgcolor="#dfdfdf">
     <font face="Verdana, Arial, Geneva" size="-1">
     You must be registered and logged in to post. Please select an option:<p>
-    <a href="http://account.audiworld.com/login.phtml?url={URL}">Login with existing account</a><br>
-    <a href="http://account.audiworld.com/create.phtml?url={URL}">Create a new account</a><p>
+    <a href="/login.phtml?url={URL}">Login with existing account</a><br>
+    <a href="/create.phtml?url={URL}">Create a new account</a><p>
     </font>
   </td></tr>
   </table>
@@ -21,7 +21,7 @@
     <font size="-1" face="Verdana, Arial, Geneva"><b>Logged in as:</b></font>
   </td>
   <td bgcolor="#dfdfdf">
-    <font size="-1" face="Verdana, Arial, Geneva">{USER_NAME} &nbsp; &nbsp; &nbsp;[ <a href="http://account.audiworld.com/logout.phtml?url={URL}">Logout</a> ] [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]</font>
+    <font size="-1" face="Verdana, Arial, Geneva">{USER_NAME} &nbsp; &nbsp; &nbsp;[ <a href="/logout.phtml?url={URL}">Logout</a> ] [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]</font>
   </td>
 </tr>
 

@@ -30,7 +30,7 @@ body { font-family: verdana, arial, geneva }
   </tr>
   <tr bgcolor="#cccccc">
     <td colspan="2"><font face="Verdana, Arial, Geneva" size="-1">
-      <a href="http://account.audiworld.com/edit.phtml">Edit Password, Email Address or Screen Name</a>
+      <a href="/acctedit.phtml">Edit Password, Email Address or Screen Name</a>
     </td>
   </tr>
   <tr bgcolor="#cccccc">

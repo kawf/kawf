@@ -1,8 +1,18 @@
-{HEADER}
+<html>
+<head>
+<title>kawf.org Forums: {FORUM_NAME}</title>
+<style type="text/css">
+<!--
+body { font-family: verdana, arial, geneva }
+-->
+</style>
+</head>
 
 <body bgcolor="#ffffff" text="#000000" link="#0000cc" vlink="#0000cc" alink="#0000cc" style="text-decoration: none">
 
-<img src="http://www.audiworld.com/pix/accounts.gif"><p>
+{HEADER}
+
+<h1>Account - Edit</h1><p>
 
 <!-- BEGIN error -->
 <font color="red">{ERROR}</font><p>
@@ -90,5 +100,9 @@ Timezone:
 <input type="submit" name="submit" value="Update">
 </form>
 </font>
+
 {FOOTER}
+
+</body>
+</html>
 

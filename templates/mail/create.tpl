@@ -6,7 +6,7 @@ X-Mailer: PHP/{PHPVERSION}
 Thank you for creating an account with us. To finish creating your
 account, please visit this URL:
 
-http://{HOST}/finish.phtml?cookie={COOKIE}
+http://forums.kawf.org/finish.phtml?cookie={COOKIE}
 
 This email was requested from {REMOTE_ADDR}
 
