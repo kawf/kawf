@@ -9,8 +9,8 @@ if (!isset($postcookie) || !isset($forum)) {
   exit;
 }
 
-require("textwrap.inc");
-require("strip.inc");
+include_once("textwrap.inc");
+include_once("strip.inc");
 
 $tpl->set_file(array(
   "header" => "header.tpl",
