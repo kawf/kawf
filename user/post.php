@@ -203,7 +203,7 @@ if (isset($error) || isset($preview)) {
 
   /* Add it into the database */
   /* Check to make sure this isn't a duplicate */
-  $sql = "insert into f_dupposts ( cookie, fid, aid, tstamp ) values ('" . addslashes($postcookie) . "', $user->aid . ", " . $forum['fid'] . ", NOW() )";
+  $sql = "insert into f_dupposts ( cookie, fid, aid, tstamp ) values ('" . addslashes($postcookie) . "', " . $forum['fid'] . ", " . $user->aid . ", NOW() )";
   $result = mysql_query($sql);
 
   if (!$result) {
