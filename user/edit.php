@@ -98,8 +98,28 @@ if (!isset($message)) {
   $ExposeEmail = !empty($msg['email']);
   $OffTopic = ($msg['state'] == 'OffTopic');
 } else {
+  // Is this necessary anymore?
   if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/s", $message, $regs))
     $message = $regs[2];
+
+  /* Only do this if the client sent it to us */
+  $subject = preg_replace("/&/", "&amp;", $subject);
+  $subject = striptag($subject, $subject_tags);
+  $subject = demoronize($subject);
+  $subject = stripspaces($subject);
+
+  $message = preg_replace("/&/", "&amp;", $message);
+  $message = striptag($message, $standard_tags);
+  $message = demoronize($message);
+  $message = stripspaces($message);
+
+  $url = stripcrapurl($url);
+  $url = preg_replace("/ /", "%20", $url);
+
+  $urltext = stripcrap($urltext);
+
+  $imageurl = stripcrapurl($imageurl);
+  $imageurl = preg_replace("/ /", "%20", $imageurl);
 }
 
 $urlroot = "/ads";
@@ -155,11 +175,6 @@ if ($ExposeEmail)
 else
   $email = "";
 
-$subject = preg_replace("/&/", "&amp;", $subject);
-$subject = striptag($subject, $subject_tags);
-$subject = demoronize($subject);
-$subject = stripspaces($subject);
-
 if ($msg['state'] == 'Active' && $OffTopic)
   $status = "OffTopic";
 else
@@ -174,21 +189,9 @@ if (strlen($subject) > 100) {
 }
 
 /* Strip any tags from the data */
-$message = preg_replace("/&/", "&amp;", $message);
-$message = striptag($message, $standard_tags);
-$message = demoronize($message);
-$message = stripspaces($message);
-
-$url = stripcrapurl($url);
-$url = preg_replace("/ /", "%20", $url);
 
 if (!empty($url) && !preg_match("/^[a-z]+:\/\//i", $url))
   $url = "http://$url";
-
-$urltext = stripcrap($urltext);
-
-$imageurl = stripcrapurl($imageurl);
-$imageurl = preg_replace("/ /", "%20", $imageurl);
 
 if (!empty($imageurl) && !preg_match("/^[a-z]+:\/\//i", $imageurl))
   $imageurl = "http://$imageurl";

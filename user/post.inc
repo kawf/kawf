@@ -42,7 +42,6 @@ if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['f
     $subject = "";
   $subject = preg_replace("/&lt;/", "<", $subject);
   $subject = preg_replace("/&gt;/", ">", $subject);
-  $subject = preg_replace("/&amp;/", "&", $subject);
   $subject = preg_replace("/\"/", "&quot;", $subject);
   $tpl->set_var("SUBJECT", $subject);
 
@@ -50,7 +49,6 @@ if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['f
     $message = "";
   $message = preg_replace("/&lt;/", "<", $message);
   $message = preg_replace("/&gt;/", ">", $message);
-  $message = preg_replace("/&amp;/", "&", $message);
   $tpl->set_var("MESSAGE", $message);
 
   if (!isset($url))
@@ -63,7 +61,6 @@ if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['f
     $urltext = "";
   $urltext = preg_replace("/&lt;/", "<", $urltext);
   $urltext = preg_replace("/&gt;/", ">", $urltext);
-  $urltext = preg_replace("/&amp;/", "&", $urltext);
   $tpl->set_var("URLTEXT", $urltext);
 
   if (!isset($imageurl))

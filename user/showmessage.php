@@ -209,21 +209,12 @@ if (isset($tthreads_by_tid[$msg['tid']]) &&
 
 $tpl->set_var("THREADLINKS", $threadlinks);
 
-function unescape($string)
-{
-  $string = preg_replace("/&lt;/", "<", $string);
-  $string = preg_replace("/&gt;/", ">", $string);
-  $string = preg_replace("/&amp;/", "&", $string);
-
-  return $string;
-}
-
 $action = "post";
 
 if (!preg_match("/^Re:/i", $msg['subject'], $sregs))
-  $subject = "Re: " . unescape($msg['subject']);
+  $subject = "Re: " . $msg['subject'];
  else
-  $subject = unescape($msg['subject']);
+  $subject = $msg['subject'];
 
 $pmid = $msg['mid'];
 $tid = $msg['tid'];
