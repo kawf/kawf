@@ -33,10 +33,8 @@ if ($user->valid())
 else
   $threadsperpage = 50;
 
-if (!$threadsperpage) {
-  echo "<!-- threadsperpage == 0, resetting to 50 -->\n";
+if (!$threadsperpage)
   $threadsperpage = 50;
-}
 
 function threads($key)
 {
@@ -375,10 +373,8 @@ if (isset($tthreads)) {
   reset($tthreads);
   while (list(, $tthread) = each($tthreads)) {
     $index = find_thread_index($tthread['tid']);
-    if ($index < 0) {
-      echo "<!-- Warning: Invalid tthread! $index, " . $tthread['tid'] . " -->\n";
+    if ($index < 0)
       continue;
-    }
 
     /* Some people have duplicate threads tracked, they'll eventually fall */
     /*  off, but for now this is a simple workaround */

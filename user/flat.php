@@ -19,7 +19,7 @@ while (list($key) = each($indexes)) {
       if ($state == 'Deleted' || $state == 'Moderated')
         continue;
 ?>
-<a href="<?php echo "/" . $forum['shortname'] . "/msgs/" . $mid; ?>.phtml">&nbsp;</a><br>
+<a href="/<?php echo $forum['shortname'] . "/msgs/" . $mid; ?>.phtml">&nbsp;</a><br>
 <?php
     }
 
