@@ -1,11 +1,17 @@
 Use PEAR for DB routines (Done, check PEAR tag)
-Abstracted selectable interfaces (Done, need to create tag and checkin)
-Possibly use PEAR for template routines
-Move posts between forums
+- Fix funky wrapper scripts. Use PEAR's Config.php as an example
+Abstracted selectable interfaces (Done, check INTERFACE tag)
+Possibly use PEAR for template routines (HTML/ITX.php)
+Possibly use PEAR for config routines (Config.php)
 Better HTML parsing
-- Fixup API
+- Cleanup API
 - Replace/Add options
 - Dynamic target replacement (ie always _top for this user, always _new for another one)
-Pictureposter width/height auto fill
+Pictureposter width/height auto fill (ties into previous HTML parsing cleanup)
+Move posts between forums
 Swear word censoring (replace them with partial or full *'s, etc)
 Use X-Forwarded-For header for more IP information?
+Count number of edits and track last edit for displaying to users
+Merge re-post code into edit somehow
+Redesign message and thread database layout (too messy now)
+Better tracking (don't use timestamp, use individual mid's)
