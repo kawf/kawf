@@ -10,6 +10,8 @@ $tpl->set_block("postform", "acct");
 $tpl->set_block("postform", "noacct");
 $tpl->set_block("postform", "locked");
 
+$tpl->set_block("acct", "offtopic");
+
 if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')) {
   $tpl->set_var("acct", "");
   $tpl->set_var("noacct", "");
@@ -84,14 +86,18 @@ if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['f
   else
     $tpl->set_var("EXPOSEEMAIL", "");
 
-  if (isset($preview) || isset($post))
-    $checked = isset($OffTopic) && $OffTopic;
-  else
-    $checked = 0;
-  if ($checked)
-    $tpl->set_var("OFFTOPIC", " checked");
-  else
-    $tpl->set_var("OFFTOPIC", "");
+  if ($forum['shortname'] == 'other' || $forum['shortname'] == 'offtopic')
+    $tpl->set_var("offtopic", "");
+  else {
+    if (isset($preview) || isset($post))
+      $checked = isset($OffTopic) && $OffTopic;
+    else
+      $checked = 0;
+    if ($checked)
+      $tpl->set_var("OFFTOPIC", " checked");
+    else
+      $tpl->set_var("OFFTOPIC", "");
+  }
 
   $tpl->set_var("EMAILFOLLOWUP", "");
 
