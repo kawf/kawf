@@ -35,6 +35,9 @@ $fid = sql_query1("select last_insert_id()");
 sql_query("insert into f_indexes ( fid, minmid, maxmid, mintid, maxtid, active, moderated, deleted ) values ( $fid, 0, 0, 0, 0, 0, 0, 0 )");
 $iid = sql_query1("select last_insert_id()");
 
+sql_query("insert into f_unique ( fid, type, id ) values ( $fid, 'Message', 0 )");
+sql_query("insert into f_unique ( fid, type, id ) values ( $fid, 'Thread', 0 )");
+
 sql_query(sprintf($create_message_table, $iid));
 sql_query(sprintf($create_thread_table, $iid));
 
