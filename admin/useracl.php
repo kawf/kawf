@@ -7,7 +7,7 @@ page_header("Forum User ACL");
 if (isset($message))
   page_show_message($message);
 
-$result = sql_query("select * from f_moderators");
+$result = sql_query("select f_moderators.*, u_users.name from f_moderators where u_users.aid = f_moderators.aid order by aid");
 ?>
 
 <a href="useracladd.phtml">Add new user ACL</a>
@@ -31,18 +31,15 @@ $useraclhash = Array();
 
 while ($useracl = sql_fetch_array($result)) {
   if (!isset($useraclhash[$useracl['aid']])) {
-    if ($useracl['fid'] == -1)
-      $useracl['fids'] = Array("All");
-    else
-      $useracl['fids'] = Array($useracl['fid']);
+    $useracl['fids'] = Array();
     $useracls[] = $useracl;
     $useraclhash[$useracl['aid']] = $useracl;
-  } else {
-    if ($useracl['fid'] == -1)
-      $useraclhash[$useracl['aid']]['fids'][] = "All";
-    else
-      $useraclhash[$useracl['aid']]['fids'][] = $useracl['fid'];
   }
+
+  if ($useracl['fid'] == -1)
+    $useraclhash[$useracl['aid']]['fids'][] = "All";
+  else
+    $useraclhash[$useracl['aid']]['fids'][] = $useracl['fid'];
 }
 
 foreach ($useracls as $useracl) {
