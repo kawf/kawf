@@ -7,14 +7,16 @@ include_once("user/tables.inc");
 /* If submit is set, shove the data into the database (well, after some */
 /* error checking) */
 if (isset($submit)) {
-  if (isset($postedit))
-    $options[] = "PostEdit";
   if (isset($read))
     $options[] = "Read";
   if (isset($postthread))
     $options[] = "PostThread";
   if (isset($postreply))
     $options[] = "PostReply";
+  if (isset($postedit))
+    $options[] = "PostEdit";
+  if (isset($offtopic))
+    $options[] = "OffTopic";
 
   if (isset($options))
     $options = implode(",", $options);
@@ -60,10 +62,6 @@ page_header("Add Forum");
   <td><input type="text" name="shortname" value=""></td>
  </tr>
  <td>
-  <td>Edit Posts:<br><small>(includes deleting)</small></td>
-  <td valign="top"><input type="checkbox" name="postedit"></td>
- </tr>
- <td>
   <td>Read Messages:</td>
   <td><input type="checkbox" name="read"></td>
  </tr>
@@ -74,6 +72,14 @@ page_header("Add Forum");
  <td>
   <td>Posting new replies:</td>
   <td><input type="checkbox" name="postreply"></td>
+ </tr>
+ <td>
+  <td>Edit Posts:<br><small>(includes deleting)</small></td>
+  <td valign="top"><input type="checkbox" name="postedit"></td>
+ </tr>
+ <td>
+  <td>Off-Topic Posts:</td>
+  <td valign="top"><input type="checkbox" name="offtopic"></td>
  </tr>
  <tr>
   <td></td>
