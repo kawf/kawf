@@ -12,7 +12,7 @@ $include_append = "$srcroot/config:$srcroot/kawf/include:$srcroot/kawf/user/acco
 #$dont_use_account = true;
 
 /* This is used to set the DOMAIN variable in templates */
-#$domain = "kawf.org";
+$domain = "kawf.org";
 
 /*
  * At audiworld.com, we have different configs for production and development
