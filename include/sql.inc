@@ -1,16 +1,27 @@
 <?php
+/* Avoid reincluding the code */
+if (defined("__SQL_INC__"))
+  return;
+
+define("__SQL_INC__", "1");
 
 function sql_open($db = "")
 {
   global $sql_host, $sql_username, $sql_password;
+  global $sql_open;
+
+  if (isset($sql_open) && $sql_open == "$sql_hostname:$sql_username:$sql_password")
+    return;
 
   if (!isset($sql_host))
     $host = "localhost";
   else
     $host = $sql_host;
 
-  mysql_pconnect($host, $sql_username, $sql_password) or
+  mysql_connect($host, $sql_username, $sql_password) or
     sql_error("mysql_pconnect");
+
+  $sql_open = "$sql_hostname:$sql_username:$sql_password";
 
   if (!empty($db))
     sql_select_db($db);
@@ -18,24 +29,22 @@ function sql_open($db = "")
 
 function sql_select_db($db)
 {
-  mysql_select_db($db) or sql_error();
+  if (!empty($db))
+    mysql_select_db($db);
 }
 
 /* Useful function to print out a standard error message */
-function sql_warn($sql = "", $link = "")
+function sql_warn($sql, $link = "")
 {
-  if (!empty($sql)) {
-    echo "<p>Error with SQL Query<br>\n";
-    echo "<pre>$sql</pre>\n";
-  }
-
+  echo "<p>Error with SQL Query<br>\n";
+  echo "<pre>$sql</pre>\n";
   if (!empty($link))
     echo "Error #", mysql_errno($link), ": ", mysql_error($link), "<br>\n";
   else
     echo "Error #", mysql_errno(), ": ", mysql_error(), "<br>\n";
 }
 
-function sql_error($sql = "", $link = "")
+function sql_error($sql, $link = "")
 {
   sql_warn($sql, $link);
   exit;
@@ -73,9 +82,14 @@ function sql_querya($sql)
 
   $array = mysql_fetch_array($result);
 
-  mysql_free_result($result);
+  sql_free_result($result);
 
   return $array;
+}
+
+function sql_free_result($result)
+{
+  mysql_free_result($result);
 }
 
 function sql_num_rows($result)
@@ -91,5 +105,10 @@ function sql_fetch_array($result)
 function sql_last_insert_id()
 {
   return mysql_insert_id();
+}
+
+function sql_close()
+{
+  mysql_close();
 }
 ?>
