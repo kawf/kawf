@@ -117,6 +117,8 @@ if (isset($thread['flag.Locked'])) {
   exit;
 }
 
+$tpl->set_var("locked", "");
+
 /* Sanitize the strings */
 $name = stripcrap($user->name);
 if ($ExposeEmail)
