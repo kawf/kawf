@@ -325,7 +325,6 @@ if (!$accepted || isset($preview)) {
     $sql = "update $mtable set " .
 	"name = '" . addslashes($name) . "', " .
 	"email = '" . addslashes($email) . "', " .
-	"date = NOW(), " .
 	"ip = '$REMOTE_ADDR', " .
 	"flags = '$flagset', " .
 	"subject = '" . addslashes($subject) . "', " .
