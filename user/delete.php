@@ -22,8 +22,6 @@ if (!isset($mid) || !isset($forum)) {
 require_once("strip.inc");
 
 $tpl->set_file(array(
-  "header" => "header.tpl",
-  "footer" => "footer.tpl",
   "delete" => "delete.tpl",
   "message" => "message.tpl",
   "forum_header" => "forum/" . $forum['shortname'] . ".tpl",

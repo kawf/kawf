@@ -6,8 +6,6 @@ require_once("filter.inc");
 require_once("strip.inc");
 
 $tpl->set_file(array(
-  "header" => "header.tpl",
-  "footer" => "footer.tpl",
   "showmessage" => "showmessage.tpl",
   "message" => "message.tpl",
   "forum_header" => "forum/" . $forum['shortname'] . ".tpl",

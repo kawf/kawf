@@ -6,11 +6,7 @@ require_once("listthread.inc");
 require_once("filter.inc");
 require_once("thread.inc");
 
-$tpl->set_file(array(
-  "header" => "header.tpl",
-  "footer" => "footer.tpl",
-  "tracking" => "tracking.tpl",
-));
+$tpl->set_file("tracking", "tracking.tpl");
 
 if (isset($user->pref['SimpleHTML'])) {
   $tpl->set_block("tracking", "normal");

@@ -4,11 +4,7 @@ $user->req();
 
 require_once("strip.inc");
 
-$tpl->set_file(array(
-  "header" => "header.tpl",
-  "footer" => "footer.tpl",
-  "preferences" => "preferences.tpl",
-));
+$tpl->set_file("preferences", "preferences.tpl");
 
 $tpl->set_block("preferences", "error");
 $tpl->set_block("preferences", "signature");

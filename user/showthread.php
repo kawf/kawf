@@ -4,8 +4,6 @@ require_once("listthread.inc");
 require_once("filter.inc");
 
 $tpl->set_file(array(
-  "header" => "header.tpl",
-  "footer" => "footer.tpl",
   "showthread" => "showthread.tpl",
   "message" => "message.tpl",
   "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
