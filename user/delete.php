@@ -114,6 +114,7 @@ $tpl->set_var(array(
   "MSG_DATE" => $msg['date'],
   "MSG_IP" => $REMOTE_ADDR,
   "MSG_MID" => $msg['mid'],
+  "MSG_AID" => $msg['aid'],
   "PAGE" => $_page,
 ));
 
