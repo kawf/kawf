@@ -380,10 +380,10 @@ if (!$accepted || isset($preview)) {
     $user->post($forum['fid'], $status, 1);
     $tpl->set_var("duplicate", "");
   } else {
-    $user->post($forum['fid'], $omsg['status'], -1);
+    $user->post($forum['fid'], $omsg['state'], -1);
 
     if (!$pmid)
-      sql_query("update f_indexes set " . $omsg['status'] . " = " . $omsg['status'] . " - 1 where iid = " . $index['iid']);
+      sql_query("update f_indexes set " . $omsg['state'] . " = " . $omsg['state'] . " - 1 where iid = " . $index['iid']);
   }
 
   $sql = "insert into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($mid) . "' )";
