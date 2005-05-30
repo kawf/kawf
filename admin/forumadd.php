@@ -17,6 +17,8 @@ if (isset($submit)) {
     $options[] = "PostEdit";
   if (isset($offtopic))
     $options[] = "OffTopic";
+  if (isset($searchable))
+    $options[] = "Searchable";
 
   if (isset($options))
     $options = implode(",", $options);
@@ -80,6 +82,10 @@ page_header("Add Forum");
  <td>
   <td>Off-Topic Posts:</td>
   <td valign="top"><input type="checkbox" name="offtopic"></td>
+ </tr>
+ <td>
+  <td>Searchable:</td>
+  <td valign="top"><input type="checkbox" name="searchable"></td>
  </tr>
  <tr>
   <td></td>

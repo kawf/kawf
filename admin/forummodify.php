@@ -15,6 +15,8 @@ if (isset($submit)) {
     $options[] = "PostEdit";
   if (isset($offtopic))
     $options[] = "OffTopic";
+  if (isset($searchable))
+    $options[] = "Searchable";
 
   if (isset($options))
     $options = implode(",", $options);
@@ -85,6 +87,10 @@ page_header("Modify forum '" . $forum['name'] . "'");
  <td>
   <td>Off-Topic Posts:</td>
   <td valign="top"><input type="checkbox" name="offtopic"<?php if (isset($options['OffTopic'])) echo " checked"; ?>></td>
+ </tr>
+ <td>
+  <td>Searchable:</td>
+  <td valign="top"><input type="checkbox" name="searchable"<?php if (isset($options['Searchable'])) echo " checked"; ?>></td>
  </tr>
  <tr>
   <td></td>
