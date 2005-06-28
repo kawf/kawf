@@ -24,5 +24,6 @@ sql_query($create_unique_table);
 sql_query($create_tracking_table);
 sql_query($create_update_table);
 sql_query($create_users_table);
+sql_query($create_moderators_table);
 
 ?>
