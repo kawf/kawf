@@ -47,7 +47,7 @@ $tpl->set_var(array(
   "changes" => "",
 ));
 
-$tpl->set_var("FORUM_SHORTNAME", $forum['shortname'])
+$tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 $tpl->parse("FORUM_HEADER", "forum_header");
 
 $tpl->parse("HEADER", "header");
