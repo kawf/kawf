@@ -1,5 +1,7 @@
 <?php
 
+$user= new ForumUser;
+$user->find_by_cookie();
 $uuser= new ForumUser;
 
 if (preg_match("/^\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
@@ -33,7 +35,7 @@ if(mysql_num_rows($result)) {
 
 <html>
 <head>
-<title>AudiW0rld.com: Account Information for <?php echo "$uuser->name" ?></title>
+<title><?php echo "$domain"?>: Account Information for <?php echo "$uuser->name" ?></title>
 <style type="text/css">
 <!--
 body { font-family: verdana, arial, geneva; font-size: smaller }
@@ -44,9 +46,12 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
 
 <body bgcolor="#ffffff">
 
-<?php /* echo "$PATH_INFO $regs[1]\n" */ ?>
-
 <h1>Account information</h1>
+
+<!--
+<?php echo $user->name. ", ". $user->aid ."\n"; ?>
+<?php echo "$PATH_INFO $regs[1]\n" ?>
+-->
 
 <body>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
@@ -64,6 +69,7 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
 <?php
 if($deleted) echo "<td>deleted</td>\n";
 if($offtopic) echo "<td>offtopic</td>\n";
+if($user->aid == 1) echo "<td>email</td>\n";
 ?>
 </tr>
 
@@ -75,10 +81,10 @@ if($offtopic) echo "<td>offtopic</td>\n";
   echo "<td>" . $uuser->shortname . "</td>\n";
   echo "<td>" . $uuser->status . "</td>\n";
   echo "<td>" . $uuser->createdate . "</td>\n";
-  /* echo "<td>" . $uuser->email . "</td>\n"; */
   echo "<td>" . ($active+$deleted+$offtopic) . "</td>\n";
   if($deleted) echo "<td>" . $deleted . "</td>\n";
   if($offtopic) echo "<td>" . $offtopic . "</td>\n";
+  if($user->aid == 1) echo "<td>" . $uuser->email . "</td>\n";
   echo "</tr>\n";
   $count++;
 ?>
