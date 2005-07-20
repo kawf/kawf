@@ -6,7 +6,7 @@ require_once("template.inc");
 function err_not_found($description = "")
 {
   global $template_dir, $srcroot;
-  global $SCRIPT_NAME, $PATH_INFO, $SERVER_SOFTWARE, $SERVER_NAME, $SERVER_PORT;
+  global $HTTP_SERVER_VARS;
 
   Header("HTTP/1.0 404 Not found");
 
@@ -19,10 +19,10 @@ function err_not_found($description = "")
 
   $tpl->set_var(array(
     "DESCRIPTION" => $description,
-    "URL" => $SCRIPT_NAME . $PATH_INFO,
-    "SERVER_SOFTWARE" => $SERVER_SOFTWARE,
-    "SERVER_NAME" => $SERVER_NAME,
-    "SERVER_PORT" => $SERVER_PORT,
+    "URL" => $HTTP_SERVER_VARS['SCRIPT_NAME'] . $HTTP_SERVER_VARS['PATH_INFO'],
+    "SERVER_SOFTWARE" => $HTTP_SERVER_VARS['SERVER_SOFTWARE'],
+    "SERVER_NAME" => $HTTP_SERVER_VARS['SERVER_NAME'],
+    "SERVER_PORT" => $HTTP_SERVER_VARS['SERVER_PORT'],
   ));
 
   $tpl->pparse("content", "errnotfound");
