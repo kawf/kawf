@@ -1,7 +1,7 @@
 <?php
 
 /* First setup the path */
-$include_path = "$srcroot/kawf:$srcroot/kawf/user";
+$include_path = "$srcroot:$srcroot/user";
 if (isset($include_append))
   $include_path .= ":" . $include_append;
 
