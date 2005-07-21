@@ -2,7 +2,8 @@
 <?php
 
 /* First setup the path */
-$include_path = "..:../include:../../php";
+/* $include_path = "..:../include:../../php"; */
+$include_path = "..:../include:../config";
 $old_include_path = ini_get("include_path");
 if (!empty($old_include_path))
   $include_path .= ":" . $old_include_path;
