@@ -1,0 +1,62 @@
+Quick setup guide:
+------------------
+
+* unpack into a known location
+
+* OPTIONAL - copy the contents of the configuration directory into a place
+  where the apache server can get to (e.g. /var/www/forums/my.forum/config)
+
+  You may also leave it in place.
+
+* edit setup.inc
+   - point $srcroot to where the kawf tree resides (including the kawf directory itself)
+   - set $domain to the domain where your forums are
+
+* add a sql user in your sql db (e.g. "kawf" or "forums")
+   - add a password for that user (in mysql, make sure to use the PASSWORD
+     function to encrypt it!)
+
+* create a database (e.g. "kawf")
+
+* give the user above complete access to that database (including host
+  information!)
+
+* edit config/setup.inc (in the config directory apache will be pointing to)
+  - set $sql_username to the users you decided on above (e.g. "kawf" or
+    "forums")
+  - set $sql_password to the password you decided on above. note that this will     be in plaintext, so make sure setup.inc isn't world readable!
+  - set $database to the database you decided on above (e.g. "kawf")
+  - set $bounce_host to the server to which you want failed emails to go to
+  - set $cookie_host to to domain you want saved in cookies - it MUST match
+    a subset of the url host your users will use to access the forums!
+
+* edit tools/initial.php
+  - make sure $include_path contains the location of your config.inc
+  - go to the "tools" directory and type "./initial.php"
+
+* populate config/pics with the following gifs:
+    change.gif
+    followup.gif
+    lock.gif
+    nt.gif
+    ot.gif
+    pic.gif
+    post.gif
+    url.gif
+
+* copy/edit sample-apache.conf to reflect the path pointing to your /config directory.
+  - either "Include" your apache.conf file from the main http.conf, or
+    cut/paste it in directly
+
+* make sure your apache php.ini file has "register_globals = On"
+
+* restart apache and pray!
+
+ADVANCED TOPICS
+---------------
+
+Customizing forum templates:
+* add a .tpl file of the form [shortname].tpl to templates/forum - there
+  are samples in the templates/samples directory.
+* make a forum banner of the form [shortname].gif and put it in
+  config/pics/forum
