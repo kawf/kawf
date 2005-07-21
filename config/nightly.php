@@ -1,4 +1,4 @@
 <?php
 include('setup.inc');
-include('nightly.php');
+include("$srcroot/nightly.php");
 ?>

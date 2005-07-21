@@ -1,7 +1,7 @@
 <?php
 
 /* First setup the path */
-$include_path = "$srcroot:$srcroot/user";
+$include_path = "$srcroot/include:$srcroot/user";
 if (isset($include_append))
   $include_path .= ":" . $include_append;
 
