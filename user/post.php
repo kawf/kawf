@@ -23,7 +23,7 @@ require_once("strip.inc");
 $tpl->set_file(array(
   "post" => "post.tpl",
   "message" => "message.tpl",
-  "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
+  "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
   "mail" => "mail/followup.tpl",
 ));
 

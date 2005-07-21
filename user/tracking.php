@@ -151,7 +151,8 @@ while ($forum = mysql_fetch_array($result)) {
     unset($tpl->varkeys['forum_header']);
     unset($tpl->varvals['forum_header']);
 
-    $tpl->set_file("forum_header", "forum/" . $forum['shortname'] . ".tpl");
+    $tpl->set_file("forum_header",
+	array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"));
 
     $tpl->parse("FORUM_HEADER", "forum_header");
 

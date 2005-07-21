@@ -23,7 +23,7 @@ require_once("strip.inc");
 $tpl->set_file(array(
   "edit" => "edit.tpl",
   "message" => "message.tpl",
-  "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
+  "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
 ));
 
 $tpl->set_block("edit", "disabled");

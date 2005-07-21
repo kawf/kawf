@@ -6,7 +6,7 @@ require_once("filter.inc");
 $tpl->set_file(array(
   "showthread" => "showthread.tpl",
   "message" => "message.tpl",
-  "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
+  "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
 ));
 
 $tpl->set_block("message", "account_id", "_account_id");

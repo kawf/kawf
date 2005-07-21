@@ -24,7 +24,7 @@ require_once("strip.inc");
 $tpl->set_file(array(
   "undelete" => "undelete.tpl",
   "message" => "message.tpl",
-  "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
+  "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
 ));
 
 $tpl->set_block("undelete", "disabled");

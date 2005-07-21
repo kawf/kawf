@@ -296,12 +296,20 @@ class Template {
    * filename: name to be completed.
    */
   function filename($filename) {
+    if(is_array($filename)) {
+      while(list(,$f) = each($filename)) {
+	$ret=$this->filename($f);
+	if($ret) return $ret;
+      }
+      $this->halt("filename: file(s) ". join(", ",$filename). " do/does not exist.");
+    }
+
     if (substr($filename, 0, 1) != "/") {
       $filename = $this->root."/".$filename;
     }
     
-    if (!file_exists($filename))
-      $this->halt("filename: file $filename does not exist.");
+    if (!file_exists($filename)) 
+      return false;
 
     return $filename;
   }

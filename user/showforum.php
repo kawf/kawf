@@ -8,7 +8,7 @@ require_once("thread.inc");
 
 $tpl->set_file(array(
   "showforum" => "showforum.tpl",
-  "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
+  "forum_header" => array("forum/" . $forum['shortname'] . ".tpl","forum/generic.tpl"),
 ));
 
 $tpl->set_block("showforum", "update_all");

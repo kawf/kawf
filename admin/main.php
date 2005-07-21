@@ -1,9 +1,11 @@
 <?php
 
 /* First setup the path */
-$include_path = "$srcroot/kawf:$srcroot/kawf/admin";
+$include_path = "$srcroot/include:$srcroot/admin";
 if (isset($include_append))
   $include_path .= ":" . $include_append;
+if (!isset($dont_use_account))
+  $include_path .= ":" . "$srcroot/user/account";
 
 $old_include_path = ini_get("include_path");
 if (!empty($old_include_path))

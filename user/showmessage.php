@@ -9,7 +9,7 @@ require_once("strip.inc");
 $tpl->set_file(array(
   "showmessage" => "showmessage.tpl",
   "message" => "message.tpl",
-  "forum_header" => "forum/" . $forum['shortname'] . ".tpl",
+  "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
 ));
 
 $tpl->set_block("message", "account_id");

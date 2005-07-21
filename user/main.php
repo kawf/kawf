@@ -1,7 +1,10 @@
 <?php
 
 /* First setup the path */
-$include_path = "$srcroot/kawf:$srcroot/kawf/user";
+$include_path = "$srcroot:$srcroot/include:$srcroot/user";
+if (!isset($dont_use_account))
+  $include_path .= ":" . "$srcroot/user/account";
+
 if (isset($include_append))
   $include_path .= ":" . $include_append;
 

@@ -10,7 +10,7 @@ function sql_open($db = "")
   global $sql_host, $sql_username, $sql_password;
   global $sql_open;
 
-  if (isset($sql_open) && $sql_open == "$sql_hostname:$sql_username:$sql_password")
+  if (isset($sql_open) && $sql_open == "$sql_host:$sql_username:$sql_password")
     return;
 
   if (!isset($sql_host))
@@ -21,7 +21,7 @@ function sql_open($db = "")
   mysql_connect($host, $sql_username, $sql_password) or
     sql_error("mysql_pconnect");
 
-  $sql_open = "$sql_hostname:$sql_username:$sql_password";
+  $sql_open = "$sql_host:$sql_username:$sql_password";
 
   if (!empty($db))
     sql_select_db($db);
