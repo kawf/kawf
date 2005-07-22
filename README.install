@@ -21,7 +21,7 @@ Quick setup guide:
 * give the user above complete access to that database (including host
   information!)
 
-* edit config/setup.inc (in the config directory apache will be pointing to)
+* edit config.inc (in the config directory apache will be pointing to)
   - set $sql_username to the users you decided on above (e.g. "kawf" or
     "forums")
   - set $sql_password to the password you decided on above. note that this will     be in plaintext, so make sure setup.inc isn't world readable!
