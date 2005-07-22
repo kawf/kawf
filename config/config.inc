@@ -10,5 +10,6 @@ $bounce_host = "bounce.kawf.org";
 /* note that $cookie_host can also be an array to guarantee cookies are stored
  * for several domains at once: */
 /* $cookie_host = array(".kawf.org",".kawf.net"); */
+
 $cookie_host = ".kawf.org";
 ?>
