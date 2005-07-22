@@ -124,7 +124,7 @@ while ($forum = mysql_fetch_array($result)) {
     $numshown++;
 
     /* If the thread is tracked, we know they are a user already */
-    $messagelinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
+    $messagelinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "\"><font color=\"#d00000\">ut</font></a>";
     if ($count > 1) {
       if (!isset($user->pref['Collapsed']))
         $messagelinks .= "<br>";
@@ -132,7 +132,7 @@ while ($forum = mysql_fetch_array($result)) {
         $messagelinks .= " ";
 
       if ($thread['unixtime'] > $tthread['unixtime'])
-        $messagelinks .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "&time=$time\"><font color=\"#0000f0\">up</font></a>";
+        $messagelinks .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "&time=$time\"><font color=\"#0000f0\">up</font></a>";
     }
 
     $tpl->set_var("MESSAGES", $messagestr);

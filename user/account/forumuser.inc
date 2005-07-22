@@ -70,21 +70,21 @@ class ForumUser {
   function req()
   {
     global $account_host;
-    global $SCRIPT_NAME, $PATH_INFO, $SERVER_NAME, $SERVER_PORT, $HTTP_HOST;
+    global $script_name, $path_info, $server_name, $server_port, $http_host;
 
     if ($this->valid())
       return true;
 
-    if (isset($HTTP_HOST) && !empty($HTTP_HOST))
-      $url = $HTTP_HOST;
+    if (isset($http_host) && !empty($http_host))
+      $url = $http_host;
     else {
-      $url = $SERVER_NAME;
+      $url = $server_name;
 
-      if ($SERVER_PORT != 80)
-        $url .= ":" . $SERVER_PORT;
+      if ($server_port != 80)
+        $url .= ":" . $server_port;
     }
 
-    $url .= $SCRIPT_NAME . $PATH_INFO;
+    $url .= $script_name . $path_info;
     if (isset($account_host))
       header("Location: http://$account_host/login.phtml?url=$url");
     else
@@ -227,7 +227,7 @@ class AccountUser extends ForumUser {
 
   function send_email($pending)
   {
-    global $tpl, $bounce_host, $REMOTE_ADDR;
+    global $tpl, $bounce_host, $remote_addr;
 
     switch($pending['type']) {
     case 'NewAccount':
@@ -248,7 +248,7 @@ class AccountUser extends ForumUser {
     }
 
     $tpl->set_var(array(
-      "REMOTE_ADDR" => $REMOTE_ADDR,
+      "REMOTE_ADDR" => $remote_addr,
       "COOKIE" => $pending['cookie'],
       "TID" => $pending['tid'],
       "EMAIL" => $email,
@@ -264,7 +264,7 @@ class AccountUser extends ForumUser {
 
   function create()
   {
-    global $tpl, $bounce_host, $REMOTE_ADDR;
+    global $tpl, $bounce_host, $remote_addr;
 
     $cookie = md5("cookie" . $this->email . microtime());
 

@@ -13,7 +13,7 @@ if ($user->status != 'Active') {
 /* Check the data to make sure they entered stuff */
 if (!isset($forum)) {
   /* Hmm, how did this happen? Redirect them back to the main page */
-  Header("Location: http://$SERVER_NAME$SCRIPT_NAME/");
+  Header("Location: http://$server_name$script_name$path_info/");
   exit;
 }
 
@@ -281,7 +281,7 @@ $tpl->set_var(array(
   "MSG_NAMEEMAIL" => $msg_nameemail,
   "MSG_SUBJECT" => $subject,
   "MSG_DATE" => $date,
-  "MSG_IP" => $REMOTE_ADDR,
+  "MSG_IP" => $remote_addr,
   "MSG_AID" => $user->aid,
 ));
 
@@ -321,7 +321,7 @@ if (!$accepted || isset($preview)) {
 
   /* Add it into the database */
   /* Check to make sure this isn't a duplicate */
-  $sql = "insert into f_dupposts ( cookie, fid, aid, ip, tstamp ) values ('" . addslashes($postcookie) . "', " . $forum['fid'] . ", " . $user->aid . ", '" . addslashes($REMOTE_ADDR) . "', NOW() )";
+  $sql = "insert into f_dupposts ( cookie, fid, aid, ip, tstamp ) values ('" . addslashes($postcookie) . "', " . $forum['fid'] . ", " . $user->aid . ", '" . addslashes($remote_addr) . "', NOW() )";
   $result = mysql_query($sql);
 
   if (!$result) {
@@ -363,7 +363,7 @@ if (!$accepted || isset($preview)) {
     $sql = "update $mtable set " .
 	"name = '" . addslashes($name) . "', " .
 	"email = '" . addslashes($email) . "', " .
-	"ip = '" . addslashes($REMOTE_ADDR) . "', " .
+	"ip = '" . addslashes($remote_addr) . "', " .
 	"flags = '$flagset', " .
 	"subject = '" . addslashes($subject) . "', " .
 	"message = '" . addslashes($message) . "', " .
@@ -373,7 +373,7 @@ if (!$accepted || isset($preview)) {
 	"where mid = '" . addslashes($mid) . "' and state = 'Active'";
   } else
     $sql = "insert into $mtable " .
-	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, state ) values ( '" . addslashes($mid) . "', '".addslashes($user->aid)."', '".addslashes($pid)."', '".addslashes($tid)."', '".addslashes($name)."', '".addslashes($email)."', NOW(), '" . addslashes($REMOTE_ADDR) . "', '$flagset', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($url)."', '".addslashes($urltext)."', '$status' );";
+	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, state ) values ( '" . addslashes($mid) . "', '".addslashes($user->aid)."', '".addslashes($pid)."', '".addslashes($tid)."', '".addslashes($name)."', '".addslashes($email)."', NOW(), '" . addslashes($remote_addr) . "', '$flagset', '".addslashes($subject)."', '".addslashes($message)."', '".addslashes($url)."', '".addslashes($urltext)."', '$status' );";
 
   $result = mysql_query($sql) or sql_error($sql);
 

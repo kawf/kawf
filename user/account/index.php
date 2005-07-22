@@ -4,11 +4,11 @@ $user= new ForumUser;
 $user->find_by_cookie();
 $uuser= new ForumUser;
 
-if (preg_match("/^\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
+if (preg_match("/^\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
     $uuser->find_by_aid((int)$regs[1]);
-} else if(empty($PATH_INFO) || $PATH_INFO =="/") {
+} else if(empty($script_name.$path_info) || $script_name.$path_info =="/") {
     $uuser->find_by_cookie();
-    Header("Location: http://$SERVER_NAME$SCRIPT_NAME/$uuser->aid.phtml");
+    Header("Location: http://$server_name$script_name$path_info/$uuser->aid.phtml");
     exit;
 } else {
     err_not_found("Unknown path");
@@ -50,7 +50,7 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
 
 <!--
 <?php echo $user->name. ", ". $user->aid ."\n"; ?>
-<?php echo "$PATH_INFO $regs[1]\n" ?>
+<?php echo "$script_name$path_info $regs[1]\n" ?>
 -->
 
 <body>

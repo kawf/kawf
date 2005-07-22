@@ -200,9 +200,9 @@ $tpl->set_var("THREAD", $threadmsg);
 
 if ($user->valid()) {
   if (isset($tthreads_by_tid[$msg['tid']])) {
-    $threadlinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#d00000\">ut</font></a>";
+    $threadlinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "\"><font color=\"#d00000\">ut</font></a>";
   } else {
-    $threadlinks = "<a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "\"><font color=\"#00d000\">tt</font></a>";
+    $threadlinks = "<a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "\"><font color=\"#00d000\">tt</font></a>";
   }
 } else
   $threadlinks = "";
@@ -211,7 +211,7 @@ if (isset($tthreads_by_tid[$msg['tid']]) &&
    ($thread['unixtime'] > $tthreads_by_tid[$msg['tid']]['unixtime'])) {
   $tpl->set_var("BGCOLOR", "#ccccee");
   if (count($messages) > 1)
-    $threadlinks .= "<br><a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&page=" . $SCRIPT_NAME . $PATH_INFO . "&time=" . time() . "\"><font color=\"#0000f0\">up</font></a>";
+    $threadlinks .= "<br><a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "&time=" . time() . "\"><font color=\"#0000f0\">up</font></a>";
 } else
   $tpl->set_var("BGCOLOR", "#eeeeee");
 

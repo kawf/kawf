@@ -14,7 +14,7 @@ if ($user->status != 'Active') {
 /* Check the data to make sure they entered stuff */
 if (!isset($mid) || !isset($forum)) {
   /* Hmm, how did this happen? Redirect them back to the main page */
-  Header("Location: http://$SERVER_NAME$SCRIPT_NAME/");
+  Header("Location: http://$server_name$script_name$path_info/");
   exit;
 }
 
@@ -239,7 +239,7 @@ $tpl->set_var(array(
   "MSG_MESSAGE" => $msg_message,
   "MSG_SUBJECT" => $subject,
   "MSG_DATE" => $msg['date'],
-  "MSG_IP" => $REMOTE_ADDR,
+  "MSG_IP" => $remote_addr,
   "MSG_AID" => $user->aid,
 ));
 
@@ -336,7 +336,7 @@ if (isset($error) || isset($preview)) {
 	"message = '" . addslashes($message) . "', " .
 	"url = '" . addslashes($url) . "', " .
 	"urltext = '" . addslashes($urltext) . "', " .
-	"changes = CONCAT(changes, 'Edited by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), ' from $REMOTE_ADDR\n" . addslashes($diff) . "\n') " .
+	"changes = CONCAT(changes, 'Edited by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), ' from $remote_addr\n" . addslashes($diff) . "\n') " .
 	"where mid = '" . addslashes($mid) . "'";
   mysql_query($sql) or sql_error($sql);
 

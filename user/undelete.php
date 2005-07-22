@@ -15,7 +15,7 @@ if (isset($yes)) {
 /* Check the data to make sure they entered stuff */
 if (!isset($mid) || !isset($forum)) {
   /* Hmm, how did this happen? Redirect them back to the main page */
-  Header("Location: http://$SERVER_NAME$SCRIPT_NAME/");
+  Header("Location: http://$server_name$script_name$path_info/");
   exit;
 }
 
@@ -120,7 +120,7 @@ $tpl->set_var(array(
   "MSG_MESSAGE" => $msg_message,
   "MSG_SUBJECT" => $subject,
   "MSG_DATE" => $msg['date'],
-  "MSG_IP" => $REMOTE_ADDR,
+  "MSG_IP" => $remote_addr,
   "MSG_MID" => $msg['mid'],
   "MSG_AID" => $msg['aid'],
   "PAGE" => $_page,

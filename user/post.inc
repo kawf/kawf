@@ -45,7 +45,7 @@ if (isset($thread) && !isset($forum['opt.PostReply']) && !$user->capable($forum[
   if (isset($_page) && !empty($_page))
     $hidden .= hidden("page", $_page);
   else
-    $hidden .= hidden("page", $SCRIPT_NAME . $PATH_INFO);
+    $hidden .= hidden("page", $script_name . $path_info);
 
   if (isset($imgpreview))
     $hidden .= hidden("imgpreview", 'true');

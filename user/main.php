@@ -46,16 +46,16 @@ else
 $tpl->parse("CSS", "css");
 
 $_page = $page;
-$tpl->set_var("PAGE", $SCRIPT_NAME . $PATH_INFO);
-if (isset($HTTP_HOST) && !empty($HTTP_HOST))
-  $_url = $HTTP_HOST;
+$tpl->set_var("PAGE", $script_name . $path_info);
+if (isset($http_host) && !empty($http_host))
+  $_url = $http_host;
 else {
-  $_url = $SERVER_NAME;
+  $_url = $server_name;
 
-  if ($SERVER_PORT != 80)
-    $_url .= ":" . $SERVER_PORT;
+  if ($server_port != 80)
+    $_url .= ":" . $server_port;
 }
-$tpl->set_var("URL", $_url . $SCRIPT_NAME . $PATH_INFO);
+$tpl->set_var("URL", $_url . $script_name . $path_info);
 
 if (isset($domain) && strlen($domain))
   $tpl->set_var("DOMAIN", $domain);
@@ -205,27 +205,27 @@ function find_thread_index($tid)
 }
 
 /* Parse out the directory/filename */
-if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
+if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
   if (!isset($scripts[$regs[2]])) {
     if (find_forum($regs[2])) {
-      Header("Location: http://$SERVER_NAME$SCRIPT_NAME$PATH_INFO/");
+      Header("Location: http://$server_name$script_name$path_info/");
       exit;
     } else
       err_not_found("Unknown script " . $regs[2]);
   }
 
   include_once($scripts[$regs[2]]);
-} elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
-  if (isset($QUERY_STRING) && !empty($QUERY_STRING))
-    Header("Location: msgs/" . $regs[2] . ".phtml?" . $QUERY_STRING);
+} elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
+  if (isset($query_string) && !empty($query_string))
+    Header("Location: msgs/" . $regs[2] . ".phtml?" . $query_string);
   else
     Header("Location: msgs/" . $regs[2] . ".phtml");
-} elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/page([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
-  if (isset($QUERY_STRING) && !empty($QUERY_STRING))
-    Header("Location: pages/" . $regs[2] . ".phtml?" . $QUERY_STRING);
+} elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/page([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
+  if (isset($query_string) && !empty($query_string))
+    Header("Location: pages/" . $regs[2] . ".phtml?" . $query_string);
   else
     Header("Location: pages/" . $regs[2] . ".phtml");
-} elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/([0-9a-zA-Z_.-]*)$/", $PATH_INFO, $regs)) {
+} elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/([0-9a-zA-Z_.-]*)$/", $script_name.$path_info, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
@@ -233,14 +233,14 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
     err_not_found("Unknown script " . $regs[2]);
 
   include_once($fscripts[$regs[2] . ""]);
-} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/pages\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
+} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/pages\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
   /* Now show that page */
   $curpage = $regs[2];
   require_once("showforum.php");
-} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/msgs\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
+} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/msgs\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
@@ -265,7 +265,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $PATH_INFO, $regs)) {
     require_once("showmessage.php");
   } else
     err_not_found("Unknown message " . $mid . " in forum " . $forum['shortname']. "\n$sql");
-} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/threads\/([0-9]+)\.phtml$/", $PATH_INFO, $regs)) {
+} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/threads\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
