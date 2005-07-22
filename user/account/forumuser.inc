@@ -308,15 +308,17 @@ class AccountUser extends ForumUser {
   {
     global $cookie_host;
 
-    setcookie("KawfAccount", $this->cookie, time() + (60 * 60 * 24 * 365 * 5), "/", 
-$cookie_host);
+    foreach ($cookie_host as $host)
+	setcookie("KawfAccount", $this->cookie, time() + (60 * 60 * 24 * 365 * 5), "/", 
+$host);
   }
 
   function unsetcookie()
   {
     global $cookie_host;
 
-    setcookie("KawfAccount", "", time() - (60 * 60 * 24 * 365), "/", $cookie_host);
+    foreach ($cookie_host as $host)
+	setcookie("KawfAccount", "", time() - (60 * 60 * 24 * 365), "/", $host);
   }
 
   function checkpassword($password)
