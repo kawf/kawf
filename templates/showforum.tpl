@@ -41,7 +41,7 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 
   &nbsp; &nbsp;
   [<a href="/tips/">Reading Tips</a>]
-  [<a href="/search/" target="_top">Search</a>]
+  [<a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search</a>]
   [<a href="#post">Post New Thread</a>]
 
   </font>
@@ -82,7 +82,7 @@ Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 
   &nbsp; &nbsp;
   [<a href="/tips/">Reading Tips</a>]
-  [<a href="/search/" target="_top">Search</a>]
+  [<a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search</a>]
   [<a href="#post">Post New Thread</a>]
 
   </font>
