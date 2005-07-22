@@ -14,6 +14,9 @@ $template_dir = "/web/kawf.org/forums/dev/templates/";
 /* Comment this out if you want to add your own advertising stuff */
 $ad_generic = 1;
 
+/* Uncomment this if you want to temporarily disable logins */
+#$login_disabled = 1;
+
 /* This is used to set the DOMAIN variable in templates */
 $domain = "kawf.org";
 
