@@ -45,6 +45,11 @@ Use your browser's BACK button to return to the Login screen.<p>
 Thank you for creating an account with us. A confirmation e-mail has been sent and you should receive it shortly. Once you receive that e-mail, simply follow the instructions that are included and the account creation process will be complete.<p>
 <!-- END success -->
 
+<!-- BEGIN disabled -->
+Creation of new accounts has been temporarily disabled.<p>
+Use your browser's BACK button to return to the Login screen.<p>
+<!-- END disabled -->
+
 </td>
 </tr>
 </table>

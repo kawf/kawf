@@ -14,8 +14,14 @@ $tpl->set_file(array(
 ));
 
 $tpl->set_block("create", "form");
+$tpl->set_block("create", "disabled");
 $tpl->set_block("create", "success");
 $tpl->set_block("create", "error");
+
+if(isset($login_disabled))
+    $tpl->set_var("form", "");
+else
+    $tpl->set_var("disabled", "");
 
 if (!isset($page))
   $page = "";
