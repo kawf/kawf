@@ -9,7 +9,8 @@ Quick setup guide:
   You may also leave it in place.
 
 * edit setup.inc
-   - point $srcroot to where the kawf tree resides (including the kawf directory itself)
+   - point $srcroot to where the kawf tree resides (including the kawf
+     directory itself)
    - set $domain to the domain where your forums are
 
 * add a sql user in your sql db (e.g. "kawf" or "forums")
@@ -44,7 +45,8 @@ Quick setup guide:
     post.gif
     url.gif
 
-* copy/edit sample-apache.conf to reflect the path pointing to your /config directory.
+* copy/edit sample-apache.conf to reflect the path pointing to your /config
+  directory.
   - either "Include" your apache.conf file from the main http.conf, or
     cut/paste it in directly
 
