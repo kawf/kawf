@@ -1,7 +1,7 @@
 <?php
 
 /* First setup the path */
-$include_path = "$srcroot/include:$srcroot/admin";
+$include_path = "$srcroot:$srcroot/include:$srcroot/admin";
 if (isset($include_append))
   $include_path .= ":" . $include_append;
 if (!isset($dont_use_account))
@@ -99,12 +99,12 @@ function find_thread_index($tid)
   return -1;
 }
 
-if (ereg("^/([a-z\.]*)$", $path_info, $regs)) {
+if (!isset($path_info) || ereg("^/([a-z\.]*)$", $path_info, $regs)) {
   if (isset($scripts[$regs[1] . ""])) {
     include($scripts[$regs[1] . ""]);
   } else
-    err_not_found();
+    err_not_found("no script for '$regs[1]'");
 } else
-  err_not_found();
+  err_not_found("ereg '$path_info' failed");
 
 ?>
