@@ -19,13 +19,14 @@ function dump_env()
     global $server_name, $server_port, $remote_addr;
     global $http_host, $script_name, $path_info, $query_string;
 
-    echo "server_name = '$server_name'<br>\n";
-    echo "server_port = '$server_port'<br>\n";
-    echo "remote_addr = '$remote_addr'<br>\n";
-    echo "http_host = '$http_host'<br>\n";
-    echo "script_name = '$script_name'<br>\n";
-    echo "path_info = '$path_info'<br>\n";
-    echo "query_string = '$query_string'<br>\n";
+    $ret="server_name = '$server_name'\n";
+    $ret.="server_port = '$server_port'\n";
+    $ret.="remote_addr = '$remote_addr'\n";
+    $ret.="http_host = '$http_host'\n";
+    $ret.="script_name = '$script_name'\n";
+    $ret.="path_info = '$path_info'\n";
+    $ret.="query_string = '$query_string'\n";
+    return $ret;
 }
 
 function err_not_found($description = "")
@@ -47,7 +48,7 @@ function err_not_found($description = "")
   $tpl->set_file("errnotfound", "404.tpl");
 
   $tpl->set_var(array(
-    "DESCRIPTION" => $description,
+    "DESCRIPTION" => $description . "\n". dump_env(),
     "URL" => $script_name . $path_info,
     "SERVER_SOFTWARE" => $_SERVER['SERVER_SOFTWARE'],
     "SERVER_NAME" => $server_name,
