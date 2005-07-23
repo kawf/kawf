@@ -99,7 +99,7 @@ function find_thread_index($tid)
   return -1;
 }
 
-if (ereg("^/([a-z\.]*)$", $script_name.$path_info, $regs)) {
+if (ereg("^/([a-z\.]*)$", $path_info, $regs)) {
   if (isset($scripts[$regs[1] . ""])) {
     include($scripts[$regs[1] . ""]);
   } else
