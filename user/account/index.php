@@ -8,7 +8,7 @@ if (preg_match("/^\/([0-9]+)\.phtml$/", $path_info, $regs)) {
     $uuser->find_by_aid((int)$regs[1]);
 } else if(empty($path_info) || $path_info =="/") {
     $uuser->find_by_cookie();
-    Header("Location: http://$server_name$script_name$path_info/$uuser->aid.phtml");
+    Header("Location: http://$server_name$script_name/$uuser->aid.phtml");
     exit;
 } else {
     err_not_found("Unknown path");
