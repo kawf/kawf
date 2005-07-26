@@ -53,9 +53,11 @@ class ForumUser {
 
   function find_by_cookie()
   {
-    global $KawfAccount;
+    global $_COOKIE;
 
-    return $this->find("cookie = '" . addslashes($KawfAccount) . "'");
+    if(!isset($_COOKIE['KawfAccount'])) return;
+
+    return $this->find("cookie = '" . addslashes($_COOKIE['KawfAccount']) . "'");
   }
 
   /* Returns true if this variable is a valid user */
