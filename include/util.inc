@@ -1,5 +1,6 @@
 <?php
 
+error_reporting(E_ALL & ~E_NOTICE);
 /* We use the templates for everything */
 require_once("template.inc");
 
@@ -10,7 +11,7 @@ $remote_addr=$_SERVER['REMOTE_ADDR'];
 
 $http_host=$_SERVER['HTTP_HOST'];
 $script_name=$_SERVER['SCRIPT_NAME'];
-$path_info=$_SERVER['PATH_INFO'];
+$path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
 
 $query_string=$_SERVER['QUERY_STRING'];
 

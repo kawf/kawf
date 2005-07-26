@@ -25,8 +25,8 @@ function filter_messages(&$messages, $tree, $siblings, $path = array())
    */
   $hide = 
 (
- (!$user->pref['ShowModerated'] && $messages[$s]['state'] == 'Moderated') ||
- (!$user->pref['ShowOffTopic'] && $messages[$s]['state'] == 'OffTopic') ||
+ (!isset($user->pref['ShowModerated']) && $messages[$s]['state'] == 'Moderated') ||
+ (!isset($user->pref['ShowOffTopic']) && $messages[$s]['state'] == 'OffTopic') ||
   (!$user->capable($forum['fid'], 'Delete') &&
   $messages[$s]['state'] == 'Deleted')
 ) &&
