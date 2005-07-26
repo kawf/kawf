@@ -15,7 +15,7 @@ function mailfrom($fromaddr, $toaddr, $message)
       return false;
 
     fputs($fp, $message . "\n");
-    pclose($fp);
+    return pclose($fp);
   } else if (isset($smtp_server)) {
   } else {
     echo "No mail configuration specified\n";
