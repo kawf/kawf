@@ -12,17 +12,17 @@ function mailfrom($fromaddr, $toaddr, $message)
   if (isset($mail_executable) || 1) {
     $fp = popen("/usr/sbin/sendmail -f" . $fromaddr. " " . addslashes($toaddr), "w");
     if (!$fp)
-      return false;
+      return -1;
 
     fputs($fp, $message . "\n");
     return pclose($fp);
   } else if (isset($smtp_server)) {
   } else {
     echo "No mail configuration specified\n";
-    return false;
+    return -1;
   }
 
-  return true;
+  return -1;
 }
 
 ?>
