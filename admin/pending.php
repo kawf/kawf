@@ -43,22 +43,23 @@ while ($request = sql_fetch_array($result)) {
     $requestlist[] = &$requests[$key];
   }
 }
+if(isset($requestlist)) {
+    foreach ($requestlist as $request) {
+      $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
+      echo "<tr bgcolor=\"$bgcolor\">\n";
+      echo "<td>" . $request['tstamp'] . "</td>\n";
+      echo "<td>" . $request['aid'] . "</td>\n";
+      echo "<td>" . $request['name'] . "</td>\n";
+      echo "<td>" . $request['email'] . "</td>\n";
+      echo "<td>" . $request['type'] . "</td>\n";
+      echo "<td>" . $request['status'] . "</td>\n";
+      echo "<td><a href=\"/finish.phtml?cookie=" . $request['cookie'] . "\">" . $request['cookie'] . "</a></td>\n";
+      echo "<td>" . $request['data'] . "</td>\n";
+      echo "<td><a href=\"pendingdelete.phtml?aid=" . $request['aid'] . "&tid=" . $request['tid'] . "\">del</a></td>\n";
+      echo "</tr>\n";
 
-foreach ($requestlist as $request) {
-  $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
-  echo "<tr bgcolor=\"$bgcolor\">\n";
-  echo "<td>" . $request['tstamp'] . "</td>\n";
-  echo "<td>" . $request['aid'] . "</td>\n";
-  echo "<td>" . $request['name'] . "</td>\n";
-  echo "<td>" . $request['email'] . "</td>\n";
-  echo "<td>" . $request['type'] . "</td>\n";
-  echo "<td>" . $request['status'] . "</td>\n";
-  echo "<td><a href=\"/finish.phtml?cookie=" . $request['cookie'] . "\">" . $request['cookie'] . "</a></td>\n";
-  echo "<td>" . $request['data'] . "</td>\n";
-  echo "<td><a href=\"pendingdelete.phtml?aid=" . $request['aid'] . "&tid=" . $request['tid'] . "\">del</a></td>\n";
-  echo "</tr>\n";
-
-  $count++;
+      $count++;
+    }
 }
 ?>
 
