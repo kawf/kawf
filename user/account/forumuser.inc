@@ -261,8 +261,7 @@ class AccountUser extends ForumUser {
     $message = $tpl->parse("MAIL", "mail");
 
     $fromaddr = $fromprefix . "-" . $pending['tid'] . "@" . $bounce_host;
-    $ret=mailfrom($fromaddr, $email, $message);
-    if($ret) err_not_found("sendmail returned $ret");
+    mailfrom($fromaddr, $email, $message);
   }
 
   function create()
