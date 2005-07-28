@@ -206,8 +206,9 @@ if (isset($tthreads)) {
     /*  off, but for now this is a simple workaround */
     if (isset($threadshown[$tthread['tid']]))
       continue;
-
-    $sql = "select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tthread['tid']) . "'";
+    
+    $tzoff=isset($user->tzoff)?$user->tzoff:0;
+    $sql = "select *, (UNIX_TIMESTAMP(tstamp) - $tzoff) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tthread['tid']) . "'";
     $result = mysql_query($sql) or sql_error($sql);
 
     if (!mysql_num_rows($result))

@@ -30,7 +30,8 @@ $tpl->parse("FORUM_HEADER", "forum_header");
 
 /* Grab the actual message */
 $index = find_msg_index($mid);
-$sql = "select *, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'";
+$tzoff=isset($user->tzoff)?$user->tzoff:0;
+$sql = "select *, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'";
 $result = mysql_query($sql) or sql_error($sql);
 
 $msg = mysql_fetch_array($result);
@@ -55,7 +56,7 @@ if (!isset($msg['pmid']))
 
 if ($msg['pmid'] != 0) {
   $index = find_msg_index($msg['pmid']);
-  $sql = "select mid, subject, name, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime from f_messages" . $indexes[$index]['iid'] . " where mid = " . $msg['pmid'];
+  $sql = "select mid, subject, name, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime from f_messages" . $indexes[$index]['iid'] . " where mid = " . $msg['pmid'];
   $result = mysql_query($sql) or sql_error($sql);
 
   $pmsg = mysql_fetch_array($result);

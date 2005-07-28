@@ -52,7 +52,8 @@ foreach ($options as $name => $value)
   $thread["flag.$value"] = true;
 
 $index = find_msg_index($thread['mid']);
-$sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
+$tzoff=isset($user->tzoff)?$user->tzoff:0;
+$sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
 $result = mysql_query($sql) or sql_error($sql);
 while ($message = mysql_fetch_array($result)) {
   $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
@@ -62,7 +63,7 @@ while ($message = mysql_fetch_array($result)) {
 
 $index++;
 if (isset($indexes[$index])) {
-  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $user->tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
+  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
   $result = mysql_query($sql) or sql_error($sql);
   while ($message = mysql_fetch_array($result)) {
     $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);

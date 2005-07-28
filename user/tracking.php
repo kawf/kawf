@@ -78,6 +78,7 @@ $result = mysql_query($sql) or sql_error($sql);
 
 $numshown = 0;
 
+$tzoff=isset($user->tzoff)?$user->tzoff:0;
 while ($forum = mysql_fetch_array($result)) {
   $tpl->set_var("FORUM_NAME", $forum['name']);
   $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
@@ -92,7 +93,7 @@ while ($forum = mysql_fetch_array($result)) {
   for ($i = 0; $i < $numindexes; $i++)
     $indexes[$i] = mysql_fetch_array($res2);
 
-  $sql = "select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc";
+  $sql = "select *, (UNIX_TIMESTAMP(tstamp) - $tzoff) as unixtime from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc";
   $res2 = mysql_query($sql) or sql_error($sql);
 
   $forumcount = $forumupdated = 0;
@@ -105,7 +106,7 @@ while ($forum = mysql_fetch_array($result)) {
     $tthreads_by_tid[$tthread['tid']] = $tthread;
 
     $index = find_thread_index($tthread['tid']);
-    $thread = sql_querya("select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tthread['tid']) . "'");
+    $thread = sql_querya("select *, (UNIX_TIMESTAMP(tstamp) - $tzoff) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tthread['tid']) . "'");
     if (!$thread)
       continue;
 
