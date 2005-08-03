@@ -51,7 +51,7 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 
 <!-- BEGIN update_all -->
-<div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}">Update all</a></div>
+<div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}&time={TIME}">Update all</a></div>
 <!-- END update_all -->
 
 <!-- BEGIN normal -->

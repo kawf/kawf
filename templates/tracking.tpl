@@ -40,7 +40,7 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 <br>
 
 <!-- BEGIN update_all -->
-<div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}">Update all</a></div>
+<div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}&time={TIME}">Update all</a></div>
 <!-- END update_all -->
 
 <table width="100%" border="0" cellpadding="2" cellspacing="2">
@@ -66,7 +66,7 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 <br>
 
 <!-- BEGIN update_all -->
-<div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}">Update all</a></div>
+<div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}&time={TIME}">Update all</a></div>
 <!-- END update_all -->
 
 <!-- BEGIN row -->
