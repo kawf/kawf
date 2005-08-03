@@ -42,8 +42,7 @@ class ForumUser {
      even for invalid/non-existent users or tzoff wont ever get set! */
   function find_by_aid($aid)
   {
-    if (!is_int($aid)) /* FIXME tzoff wont be set */
-      return;
+    if (!is_int($aid)) return $this->find('0');
 
     return $this->find("aid = $aid");
   }
@@ -57,9 +56,9 @@ class ForumUser {
   {
     global $_COOKIE;
 
-    $cookie=isset($_COOKIE['KawfAccount'])?$_COOKIE['KawfAccount']:'';
+    if (!isset($_COOKIE['KawfAccount']) || $_COOKIE['KawfAccount']=='') return $this->find('0');
 
-    return $this->find("cookie = '" . addslashes($cookie) . "'");
+    return $this->find("cookie = '" . addslashes($_COOKIE['KawfAccount']) . "'");
   }
 
   /* Returns true if this variable is a valid user */
