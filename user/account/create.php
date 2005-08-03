@@ -18,7 +18,7 @@ $tpl->set_block("create", "disabled");
 $tpl->set_block("create", "success");
 $tpl->set_block("create", "error");
 
-if(isset($login_disabled))
+if(isset($create_disabled))
     $tpl->set_var("form", "");
 else
     $tpl->set_var("disabled", "");

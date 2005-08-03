@@ -11,11 +11,11 @@ $template_dir = "/web/kawf.org/forums/dev/templates/";
 /* Uncomment this if you have your own account management stuff */
 #$dont_use_account = true;
 
+/* Uncomment this if you want to temporarily creation of new accounts */
+#$create_disabled = 1;
+
 /* Comment this out if you want to add your own advertising stuff */
 $ad_generic = 1;
-
-/* Uncomment this if you want to temporarily disable logins */
-#$login_disabled = 1;
 
 /* This is used to set the DOMAIN variable in templates */
 $domain = "kawf.org";
