@@ -32,15 +32,17 @@ class ForumUser {
     } else
       $this->timezone = $local_timezone;
 
+    /* make sure this always happens */
     $this->tzoff = $tz_to_offset[$local_timezone] - $tz_to_offset[$this->timezone];
 
     return $this;
   }
 
-  /* These functions are used to find a user */
+  /* These functions are used to find a user - NOTE! always try to call find,
+     even for invalid/non-existent users or tzoff wont ever get set! */
   function find_by_aid($aid)
   {
-    if (!is_int($aid))
+    if (!is_int($aid)) /* FIXME tzoff wont be set */
       return;
 
     return $this->find("aid = $aid");
@@ -55,9 +57,9 @@ class ForumUser {
   {
     global $_COOKIE;
 
-    if(!isset($_COOKIE['KawfAccount'])) return;
+    $cookie=isset($_COOKIE['KawfAccount'])?$_COOKIE['KawfAccount']:'';
 
-    return $this->find("cookie = '" . addslashes($_COOKIE['KawfAccount']) . "'");
+    return $this->find("cookie = '" . addslashes($cookie) . "'");
   }
 
   /* Returns true if this variable is a valid user */
