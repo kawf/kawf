@@ -27,7 +27,7 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 
 <font size="-2">
 [ <a href="#thread">Thread</a> ]
-[ <a href="#postfp">Post Followup</a> ]
+[ <a href="#post">Post Followup</a> ]
 [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
 </font>
@@ -67,7 +67,7 @@ ul.thread { margin-top: 0.2em; margin-bottom: 0.3em }
 <tr><td>
 <font size="-2">
 [ <a href="#thread">Thread</a> ]
-[ <a href="#postfp">Post Followup</a> ]
+[ <a href="#post">Post Followup</a> ]
 [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
 </font>
