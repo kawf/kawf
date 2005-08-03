@@ -310,6 +310,15 @@ class AccountUser extends ForumUser {
   {
     global $cookie_host;
 
+    if(!isset($this->cookie) || $this->cookie=='') {
+        $this->cookie = md5("cookie" . $this->email . microtime());
+	$sql = "update u_users set cookie = '".$this->cookie."' where aid = " . $this->aid;
+	$result = _sql_query($sql);
+	if (!$result) {
+	  if (mysql_errno() != 1062)
+	    sql_error($sql);
+	}
+    }
     if(is_array($cookie_host)) {
       foreach ($cookie_host as $host)
 	setcookie("KawfAccount", $this->cookie, time() + (60 * 60 * 24 * 365 * 5), "/", $host);
@@ -322,6 +331,14 @@ class AccountUser extends ForumUser {
   {
     global $cookie_host;
 
+    if(isset($_GET['all'])) {
+	$sql = "update u_users set cookie = '' where aid = " . $this->aid;
+	$result = _sql_query($sql);
+	if (!$result) {
+	  if (mysql_errno() != 1062)
+	    sql_error($sql);
+	}
+    }
     if(is_array($cookie_host)) {
       foreach ($cookie_host as $host)
 	  setcookie("KawfAccount", "", time() - (60 * 60 * 24 * 365), "/", $host);

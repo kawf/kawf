@@ -31,7 +31,7 @@ This thread is locked. No replies are allowed.<br>
     <b>Logged in as:</b>
   </td>
   <td bgcolor="#dfdfdf">
-    {USER_NAME} &nbsp; &nbsp; &nbsp;[ <a href="/logout.phtml?url={URL}">Logout</a> ] [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
+    {USER_NAME} &nbsp; &nbsp; &nbsp;[ <a href="/logout.phtml?url={URL}">Logout</a> ] [ <a href="/logout.phtml?all&url={URL}">Logout ALL SESSIONS</a> ] [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
   </td>
 </tr>
 
