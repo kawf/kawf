@@ -29,8 +29,12 @@ class ForumUser {
         foreach ($preferences as $flag)
           $this->pref[$flag] = true;
       }
-    } else
-      $this->timezone = $local_timezone;
+    } else {
+	global $login_to_read;
+	if(isset($login_to_read)) $this->req();
+
+	$this->timezone = $local_timezone;
+    }
 
     /* make sure this always happens */
     $this->tzoff = $tz_to_offset[$local_timezone] - $tz_to_offset[$this->timezone];
@@ -88,6 +92,11 @@ class ForumUser {
     }
 
     $url .= $script_name . $path_info;
+
+    /* prevent recursion */
+    if ($script_name . $path_info == '/login.phtml')
+	return true;
+
     if (isset($account_host))
       header("Location: http://$account_host/login.phtml?url=$url");
     else
