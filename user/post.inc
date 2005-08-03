@@ -54,9 +54,9 @@ if (isset($thread) && !isset($forum['opt.PostReply']) && !$user->capable($forum[
     $tpl->set_var("SUBMITTEXT", "Update Message");
   } else {
     if (!isset($pmid))
-      $tpl->set_var("SUBMITTEXT", "Post new thread");
+      $tpl->set_var("SUBMITTEXT", "Post New Thread");
     else
-      $tpl->set_var("SUBMITTEXT", "Post reply");
+      $tpl->set_var("SUBMITTEXT", "Post Reply");
   }
 
   if (isset($pmid))
