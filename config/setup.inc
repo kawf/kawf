@@ -11,7 +11,7 @@ $template_dir = "/web/kawf.org/forums/dev/templates/";
 /* Uncomment this if you have your own account management stuff */
 #$dont_use_account = true;
 
-/* Uncomment this if you want to temporarily creation of new accounts */
+/* Uncomment this if you want to disable creation of new accounts */
 #$create_disabled = 1;
 
 /* Uncomment this if you want to force people to log in to read the forums */
