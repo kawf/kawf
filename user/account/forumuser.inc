@@ -95,7 +95,15 @@ class ForumUser {
 
     /* prevent recursion */
     if ($script_name . $path_info == '/login.phtml')
-	return true;
+      return true;
+
+    /* always allow people to create */	
+    if ($script_name . $path_info == '/create.phtml')
+      return true;
+
+    /* always allow people to request password */	
+    if ($script_name . $path_info == '/forgotpassword.phtml')
+      return true;
 
     if (isset($account_host))
       header("Location: http://$account_host/login.phtml?url=$url");
