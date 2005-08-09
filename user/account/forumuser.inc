@@ -101,6 +101,9 @@ class ForumUser {
     if ($script_name . $path_info == '/create.phtml')
       return true;
 
+    if ($script_name . $path_info == '/finish.phtml')
+      return true;
+
     /* always allow people to request password */	
     if ($script_name . $path_info == '/forgotpassword.phtml')
       return true;
