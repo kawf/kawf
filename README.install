@@ -53,8 +53,8 @@ Quick setup guide:
 * make sure your apache php.ini file has "register_globals = On" or that your
   apache virtual host configuration has a <Directory> or <DirectoryMatch>
   section with
-  "php_flag register globals On" (apache 1.3) or
-  "php_admin_flag register globals On" (apache 2.x)
+  "php_flag register_globals On" (apache 1.3) or
+  "php_admin_flag register_globals On" (apache 2.x)
 
 * restart apache and pray!
 
