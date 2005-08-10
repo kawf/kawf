@@ -353,7 +353,10 @@ class AccountUser extends ForumUser {
     global $cookie_host;
 
     if(isset($_GET['all'])) {
-	$sql = "update u_users set cookie = '' where aid = " . $this->aid;
+        /* generate a new random cookie but dont store it client side.
+	   also, DO NOT store a blank cookie in the db */
+        $this->cookie = md5("cookie" . $this->email . microtime());
+	$sql = "update u_users set cookie = '". $this->cookie ."' where aid = " . $this->aid;
 	$result = _sql_query($sql);
 	if (!$result) {
 	  if (mysql_errno() != 1062)
