@@ -14,7 +14,7 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
 .row0 { background: #ffffff }
 .row1 { background: #eeeeee }
 ul.thread { margin-top: 0.2em; margin-bottom: 0.3em; margin-left: 2em; padding-left: 2em; }
-ul {margin-left: .5em; padding-left: .5em;}
+ul {margin-left: .7em; padding-left: .7em;}
 -->
 </style>
 </head>
