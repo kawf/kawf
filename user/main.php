@@ -1,5 +1,13 @@
 <?php
 
+#if (file_exists("/data/search/sqldown.html")) {
+#  Header("HTTP/1.0 500 Internal Server Error");
+
+#  readfile("/data/search/sqldown.html");
+
+#  exit;
+#}
+
 /* First setup the path */
 $include_path = "$srcroot:$srcroot/include:$srcroot/user";
 if (!isset($dont_use_account))
@@ -80,7 +88,7 @@ if (!isset($dont_use_account)) {
     "forgotpassword.phtml" => "account/forgotpassword.php",
 
     "create.phtml" => "account/create.php",
-    "acctedit.phtml" => "account/edit.php",
+    "acctedit.phtml" => "account/acctedit.php",
     "finish.phtml" => "account/finish.php",
     "f" => "account/finish.php",
   );
