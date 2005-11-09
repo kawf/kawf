@@ -6,7 +6,7 @@
 body { font-family: verdana, arial, geneva; font-size: smaller }
 td { font-family: verdana, arial, geneva; font-size: smaller }
 ul.thread { margin-top: 0.2em; margin-bottom: 0.3em; margin-left: 2em; padding-left: 2em; }
-ul {margin-left: .7em; padding-left: .7em;}
+ul {margin-left: 1em; padding-left: 1em;}
 -->
 </style>
 </head>
