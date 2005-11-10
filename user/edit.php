@@ -67,6 +67,12 @@ $tpl->parse("FOOTER", "footer");
 
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
+/* UGLY hack, kludge, etc to workaround nasty ordering problem */
+$_domain = $tpl->get_var("DOMAIN");
+unset($tpl->varkeys["DOMAIN"]);
+unset($tpl->varvals["DOMAIN"]);
+$tpl->set_var("DOMAIN", $_domain);
+
 $index = find_msg_index($mid);
 
 $sql = "select * from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'";
