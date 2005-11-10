@@ -24,7 +24,7 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
 <font color="#ff0000">{MESSAGE}</font><p>
 <!-- END message -->
 
-  Email: <input type="text" name="email" value="{EMAIL}" size="40" maxlength="40"><br>
+  Email: <input type="text" name="email" value="{EMAIL}" size="80" maxlength="80"><br>
   Password: <input type="password" name="password" size="40" maxlength="40"><br>
   <br>
 
