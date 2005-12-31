@@ -24,7 +24,7 @@ ul {margin-left: 1em; padding-left: 1em; }
 
 <hr width="100%" size="1">
 
-<table width="600">
+<table>
 <tr><td>
   <font size="-2">
   &nbsp; &nbsp;[<a href="/tips/">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>] [<a href="/logout.phtml?url=/login.phtml">Logout</a>]
@@ -75,7 +75,7 @@ ul {margin-left: 1em; padding-left: 1em; }
 <!-- END row -->
 <!-- END simple -->
 
-<table width="600">
+<table>
 <tr><td>
   <font size="-2">
   &nbsp; &nbsp;[<a href="/tips/">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>] [<a href="/logout.phtml?url=/login.phtml">Logout</a>]

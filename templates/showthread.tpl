@@ -26,7 +26,7 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
 </font>
 
 <br>
-<table width="600">
+<table>
 <tr><td>
 {MESSAGES}
 </td></tr>
@@ -34,7 +34,7 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
 
 <br>
 
-<table width="600">
+<table>
 <tr><td>
 <font size="-2">
 [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]

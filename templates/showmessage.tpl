@@ -34,7 +34,7 @@ ul {margin-left: 1em; padding-left: 1em;}
 </font>
 
 <br>
-<table width="600">
+<table>
 <tr><td>
 {MESSAGE}
 </td></tr>
@@ -56,7 +56,7 @@ ul {margin-left: 1em; padding-left: 1em;}
 
 <br>
 
-<table width="600">
+<table>
 <tr><td align="center">
 <a name="post">
 <img src="/pics/followup.gif">
