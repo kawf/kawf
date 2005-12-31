@@ -25,7 +25,7 @@ This thread is locked. No replies are allowed.<br>
 <!-- END noacct -->
 <!-- BEGIN acct -->
 <form action="/{FORUM_SHORTNAME}/{ACTION}.phtml" method="post">
-<table width="600">
+<table>
 <tr>
   <td bgcolor="#dfdfdf" align="right">
     <b>Logged in as:</b>

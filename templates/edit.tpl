@@ -55,7 +55,7 @@ Subject is too long! Truncated to 100 characters<br>
 {FORM}
 <!-- END form -->
 <!-- BEGIN accept -->
-<table width="600">
+<table>
 <tr><td>
 <center><h2><font color="#000080">Message Updated</font></h2></center><p>
 {PREVIEW}
