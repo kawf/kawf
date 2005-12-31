@@ -22,7 +22,7 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
 
 <form action="preferences.phtml?page={PAGE}" method="post">
 
-<table width="600" border="0" cellpadding="5" cellspacing="2">
+<table border="0" cellpadding="5" cellspacing="2">
 
   <tr bgcolor="#cccccc">
     <td colspan="2">

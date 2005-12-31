@@ -11,7 +11,7 @@ This thread is locked. No replies are allowed.<br>
 <!-- END disabled -->
 <!-- BEGIN enabled -->
 <!-- BEGIN noacct -->
-<table width="600">
+<table>
 <tr><td bgcolor="#dfdfdf">
   <table width="95%">
   <tr><td bgcolor="#dfdfdf">

@@ -54,7 +54,7 @@ Subject line too long! Truncated to 100 characters<br>
 </font><p>
 <!-- END error -->
 <!-- BEGIN preview -->
-<table width="600">
+<table>
 <tr><td>
 {PREVIEW}
 </td></tr>
@@ -71,7 +71,7 @@ Subject line too long! Truncated to 100 characters<br>
 <!-- meta http-equiv="Refresh" content="10;url={PAGE}" -->
 <!-- END refresh_page -->
 
-<table width="600">
+<table>
 <tr><td>
 <center><h2><font color="#000080">Message Added</font></h2></center><p>
 {PREVIEW}

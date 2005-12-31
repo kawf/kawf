@@ -45,7 +45,7 @@ Subject is too long! Truncated to 100 characters<br>
 </font><p>
 <!-- END error -->
 <!-- BEGIN preview -->
-<table width="600">
+<table>
 <tr><td>
 {PREVIEW}
 </td></tr>
