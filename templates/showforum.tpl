@@ -35,7 +35,7 @@ ul {margin-left: 1em; padding-left: 1em;}
 </tr>
 </table>
 
-<table width="600">
+<table>
 <tr><td>
   <font size="-2">
   <b>Page:</b> {PAGES}
@@ -76,7 +76,7 @@ Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 <!-- END row -->
 <!-- END simple -->
 
-<table width="600">
+<table>
 <tr><td>
   <font size="-2">
   <b>Page:</b> {PAGES}
@@ -90,7 +90,7 @@ Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 </td></tr>
 </table>
 
-<table width="600">
+<table>
 <tr><td align="center">
 <a name="post">
 <img src="/pics/post.gif">
