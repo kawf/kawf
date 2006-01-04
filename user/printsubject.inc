@@ -18,7 +18,7 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
   if ($new)
     $string .= "<i><b>";
 
-  $msg['subject']=wordwrap($msg['subject'],40,"\n",1);
+  $msg['subject']=wordwrap($msg['subject'],40,'<wbr>',1);
 
   if ($vmid == $msg['mid'])
     $string .= "<font color=\"#ff0000\">" . $msg['subject'] . "</font>";
