@@ -12,6 +12,8 @@ function print_collapsed($thread, $msg, $replies)
 
   $string = "<li>";
 
+  $msg['subject']=wordwrap($msg['subject'],40,"\n",1);
+
   if (isset($user->pref['FlatThread']))
     $string .= "<a href=\"/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
   else
