@@ -166,7 +166,7 @@ if (isset($pmsg)) {
 } else
   $tpl->set_var("parent", "");
 
-$message = nl2br($msg['message']);
+$message = nl2br(wordwrap($msg['message'],78,"\n",1));
 
 if (!empty($msg['url'])) {
   $urlset = 1;
