@@ -69,10 +69,12 @@ function softbreaklongwords($String, $Maxlen = 78, $breakStr = "<wbr>", $skiptag
 		$prefix=substr($String,0,$startpos);
 		$longword=substr($String,$startpos,$i-$startpos-1);
 		$postfix=substr($String,$i-1);
+		//echo '<pre>';
 		//echo "prefix '$prefix'\n";
 		//echo "longword '$longword'\n";
 		//echo "postfix '$postfix'\n";
-		assert(strlen($longword)>$Maxlen);
+		//echo '<pre>';
+		assert(strlen($longword)>$Maxlen-1);
 		$correction=softbreakword($longword, $breakStr, $skiptags);
 		$String=$prefix.$longword.$postfix;
 		$i+=$correction;
