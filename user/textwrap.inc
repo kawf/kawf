@@ -27,13 +27,14 @@ function textwrap($String, $breaksAt = 78, $breakStr = "\n", $padStr = "")
   return $newString;
 }
 
-function softbreakword(&$Word, $breakStr = "<wbr>", $skiptags = 1)
+function softbreakword(&$Word, $breakStr = '<wbr>', $skiptags = 1)
 {
     $intag=0;
+    $len=strlen($Word);
 
     // echo "breaking $Word\n";
 
-    for($i=0;$i<strlen($Word);$i++) {
+    for($i=0;$i<$len;$i++) {
 	if($skiptags) {
 	    if($Word{$i}=='<') {
 		$intag++;
@@ -57,13 +58,18 @@ function softbreakword(&$Word, $breakStr = "<wbr>", $skiptags = 1)
     return $correction;
 }
 
-function softbreaklongwords($String, $Maxlen = 78, $breakStr = "<wbr>", $skiptags = 1)
+// add soft breaks after EVERY character in a long word to let browsers wrap
+// in the middle of the word.
+// by default, ignore tags, and do not treat them as printable parts of the 
+// string
+function softbreaklongwords($String, $Maxlen = 78, $breakStr = '<wbr>', $skiptags = 1)
 {
     $wordlen=0;
     $intag=0;
     $startpos=0;
-    for($i=0;$i<strlen($String);$i++) {
-	if((!$intag && ctype_space($String{$i})) || $i+1==strlen($String)) {
+    $len=strlen($String);
+    for($i=0;$i<$len;$i++) {
+	if((!$intag && ctype_space($String{$i})) || $i+1==$len) {
 	    if($long) {
 		// found the end of a long word, process 
 		$prefix=substr($String,0,$startpos);
@@ -78,6 +84,7 @@ function softbreaklongwords($String, $Maxlen = 78, $breakStr = "<wbr>", $skiptag
 		$correction=softbreakword($longword, $breakStr, $skiptags);
 		$String=$prefix.$longword.$postfix;
 		$i+=$correction;
+		$len+=$correction;
 	    }
 	    $wordlen=0;
 	    $long=0;
