@@ -30,6 +30,7 @@ function textwrap($String, $breaksAt = 78, $breakStr = "\n", $padStr = "")
 function softbreakword(&$Word, $breakStr = '<wbr>', $skiptags = 1)
 {
     $intag=0;
+    $inamp=0;
     $len=strlen($Word);
 
     // echo "breaking $Word\n";
@@ -47,6 +48,20 @@ function softbreakword(&$Word, $breakStr = '<wbr>', $skiptags = 1)
 		continue;
 	    }
 	    if($intag) {
+		$newword.=$Word{$i};
+		continue;
+	    }
+	    if($Word{$i}=='&' && !$inamp) {
+		$inamp=1;
+		$newword.=$Word{$i};
+		continue;
+	    }
+	    if($Word{$i}==';' && $inamp) {
+		$inamp=0;
+		$newword.=$Word{$i};
+		continue;
+	    }
+	    if($inamp) {
 		$newword.=$Word{$i};
 		continue;
 	    }
