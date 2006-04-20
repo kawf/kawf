@@ -58,6 +58,8 @@ Quick setup guide:
 
 * restart apache and pray!
 
+* run config/nightly.php often, or add it to a cronjob (cd config; php nightly.php)
+
 ADVANCED TOPICS
 ---------------
 
