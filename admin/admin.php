@@ -16,15 +16,15 @@ else
   $page = 1;
 
 $where = "";
-if (isset($email) && !empty($email)) {
-  echo "<h2>Searching for email like $email</h2><br>\n";
-  $where .= " email like '" . addslashes($email) . "'";
+if (isset($_GET['email'] && !empty($_GET['email'] {
+  echo "<h2>Searching for email like ".$_GET['email']."h2><br>\n";
+  $where .= " email like '" . addslashes($_GET['email'] . "'";
 }
-if (isset($name) && !empty($name)) {
-  echo "<h2>Searching for name like $name</h2><br>\n";
+if (isset($_GET['name'] && !empty($_GET['name'] {
+  echo "<h2>Searching for name like ".$_GET['name']."h2><br>\n";
   if (!empty($where))
     $where .= " and";
-  $where .= " name like '" . addslashes($name) . "'";
+  $where .= " name like '" . addslashes($_GET['name'] . "'";
 }
 
 $sql = "select count(*) from accounts";
