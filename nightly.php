@@ -46,21 +46,23 @@ function find_thread_index($tid)
 
 function count_threads($fid, $tag)
 {
-    $sql="select distinct f_messages".$fid.".tid from ".
+    $sql="select count(distinct f_messages".$fid.".tid) from ".
         "f_indexes,f_messages".$fid." where ".$fid."=f_indexes.fid and ".
         "f_messages".$fid.".mid>f_indexes.minmid and ".
         "f_messages".$fid.".mid<f_indexes.maxmid and ".
         "f_messages".$fid.".pid=0 and f_messages".$fid.".state='".$tag."'";
 
-    return mysql_num_rows(sql_query($sql));
+    return sql_query1($sql);
 }
 
 function verify_count(&$a,$forum,$tag)
 {
     $count=count_threads($forum['fid'],$tag);
     if($forum[$tag]!=$count) {
-	echo ", ". $forum[$tag]."!=".$count;
+	echo ", $tag:". $forum[$tag]."!=".$count;
 	$a[]=$tag." = ".$count;
+    } else if ($count) {
+	echo ", $tag: $count ok";
     }
 }
 
