@@ -44,25 +44,74 @@ function find_thread_index($tid)
   return -1;
 }
 
+function count_threads($fid, $tag)
+{
+    $sql="select distinct f_messages".$fid.".tid from ".
+        "f_indexes,f_messages".$fid." where ".$fid."=f_indexes.fid and ".
+        "f_messages".$fid.".mid>f_indexes.minmid and ".
+        "f_messages".$fid.".mid<f_indexes.maxmid and ".
+        "f_messages".$fid.".pid=0 and f_messages".$fid.".state='".$tag."'";
+
+    return mysql_num_rows(sql_query($sql));
+}
+
+function verify_count(&$a,$forum,$tag)
+{
+    $count=count_threads($forum['fid'],$tag);
+    if($forum[$tag]!=$count) {
+	echo ", ". $forum[$tag]."!=".$count;
+	$a[]=$tag." = ".$count;
+    }
+}
+
 if (0) {
 /* FIXME: move this to an account maintanence nightly script */
 /* First, delete any pending state older than 30 days */
+echo "Cleaning pending\n";
 $sql = "select * from pending where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 30";
 mysql_db_query($sql) or sql_error($sql);
 }
 
+echo "Cleaning dupposts\n";
 /* Clear out dupposts */
 sql_query("delete from f_dupposts where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14");
 
 
-$res1 = sql_query("select * from f_forums order by fid");
+echo "Cleaning forums:";
+$res1 = sql_query("select * from f_forums,f_indexes where f_forums.fid=f_indexes.fid order by f_forums.fid");
 while ($forum = sql_fetch_array($res1)) {
-  echo $forum['shortname'] . "\n";
+  echo "\n  ".$forum['shortname'].":";
+
+  echo " checking indexes";
+  $fixup=NULL;
+  // sql_query("lock tables f_indexes write");
+  verify_count(&$fixup,$forum,'active'); 
+  verify_count(&$fixup,$forum,'deleted'); 
+  verify_count(&$fixup,$forum,'offtopic'); 
+  verify_count(&$fixup,$forum,'moderated'); 
+
+  if(isset($fixup)) {
+      echo ": fixing up indexes";
+      $fixup=join($fixup,", ");
+      $sql = "update f_indexes set ". $fixup ." where fid = " . $forum['fid'];
+      sql_query($sql);
+  }
+  // sql_query("unlock tables");
+
+  // really slow, fixme
+  /*
+  echo ", cleaning '<sub>' and '</sub>'s";
+  $sql = "update f_messages" . $forum['fid'] . " set subject = replace(subject,'<sub>','&lt;sub&gt')";
+  sql_query($sql) or sql_error($sql);
+  $sql = "update f_messages" . $forum['fid'] . " set subject = replace(subject,'</sub>','&lt;/sub&gt')";
+  sql_query($sql) or sql_error($sql);
+  */
 
   /* Figure out the maximums so we don't delete them */
   $maxmid = sql_query1("select max(id) from f_unique where fid = " . $forum['fid'] . " and type = 'Message'");
   $maxtid = sql_query1("select max(id) from f_unique where fid = " . $forum['fid'] . " and type = 'Thread'");
 
+  echo ", cleaning up uniq tables";
   /* Clean up the unique tables */
   sql_query("delete from f_unique where fid = " . $forum['fid'] . " and type = 'Message' and id < $maxmid");
   sql_query("delete from f_unique where fid = " . $forum['fid'] . " and type = 'Thread' and id < $maxtid");
@@ -77,10 +126,12 @@ while ($forum = sql_fetch_array($res1)) {
 
   $index = end($indexes);
 
+  echo ", cleaning up tracking";
   /* Clear out tracking */
   $res2 = sql_query("select * from f_tracking where fid = " . $forum['fid'] . " and TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14");
 
   while ($tracking = mysql_fetch_array($res2)) {
+    echo ".";
     $index = find_thread_index($tracking['tid']);
     if ($index < 0) {
       echo "Tracking index < 0! (tid = " . $tracking['tid'] . ", aid = " . $tracking['aid'] . ", tstamp = " . $tracking['tstamp'] . ", options = '" . $tracking['options'] . "')\n";
@@ -92,7 +143,7 @@ while ($forum = sql_fetch_array($res1)) {
       sql_query("delete from f_tracking where fid = " . $forum['fid'] . " and tid = " . $tracking['tid'] . " and aid = " . $tracking['aid']);
   }
 
-  echo "Done scrubbing support tables\n";
+  echo " OK";
 
   /* Kludge for now */
   continue;
@@ -267,4 +318,5 @@ echo $sql . "\n";
     }
   }
 }
+echo "\n";
 ?>
