@@ -4,18 +4,29 @@ $user->req("ForumAdmin");
 
 /* If submit is set, shove the data into the database (well, after some */
 /* error checking) */
-if (isset($submit)) {
+if (isset($_POST['submit'])) {
+
+  if(is_valid_integer($_POST['aid']) && is_valid_signed_integer($_POST['fid'])) {
+      $aid=$_POST['aid'];
+      $fid=$_POST['fid'];
+  } else {
+    Header("Location: useracl.phtml?message=" . urlencode("Bad aid/fid"));
+    exit;
+  }
+
+  if($fid<=0) $fid=-1;
+
   $capabilities = Array();
 
-  if (isset($Lock))
+  if (isset($_POST['Lock']))
     $capabilities[] = "Lock";
-  if (isset($Moderate))
+  if (isset($_POST['Moderate']))
     $capabilities[] = "Moderate";
-  if (isset($Delete))
+  if (isset($_POST['Delete']))
     $capabilities[] = "Delete";
-  if (isset($OffTopic))
+  if (isset($_POST['OffTopic']))
     $capabilities[] = "OffTopic";
-  if (isset($Advertise))
+  if (isset($_POST['Advertise']))
     $capabilities[] = "Advertise";
 
   $capabilities = join(",", $capabilities);

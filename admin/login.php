@@ -2,7 +2,9 @@
 
 unset($user);
 
-if (isset($submit)) {
+$message = $_GET['message'];
+
+if (isset($_POST['submit'])) {
   $user = new AdminUser;
   $user->find_by_email($email);
   if (!$user->valid())

@@ -10,7 +10,9 @@ sql_open_readwrite();
 
 $accountsperpage = 100;
 
-if (!isset($page))
+if (is_valid_integer($_GET['page']));
+  $page=$_GET['page'];
+else
   $page = 1;
 
 $where = "";

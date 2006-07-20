@@ -4,13 +4,13 @@ $user->req("ForumAdmin");
 
 page_header("Pending Requests");
 
-if (isset($message))
-  page_show_message($message);
+if (isset($_GET['message']))
+  page_show_message($_GET['message']);
 
 $result = sql_query("select u_pending.*, u_users.name, u_users.email from u_pending, u_users where u_users.aid = u_pending.aid order by tstamp");
 ?>
 
-<a href="pendingdelete.phtml?clean=1">Delete Completed requests</a>
+<a href="pendingdelete.phtml?clean=1">Delete completed or old requests</a>
 
 <p>
 

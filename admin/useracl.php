@@ -4,8 +4,8 @@ $user->req("ForumAdmin");
 
 page_header("Forum User ACL");
 
-if (isset($message))
-  page_show_message($message);
+if (isset($_GET['message']))
+  page_show_message($_GET['message']);
 
 $result = sql_query("select f_moderators.*, u_users.name from f_moderators, u_users where u_users.aid = f_moderators.aid order by aid");
 ?>

@@ -2,9 +2,18 @@
 
 $user->req("ForumAdmin");
 
+if(is_valid_integer($_POST['aid'])) {
+    $aid=$_POST['aid'];
+} else if(is_valid_integer($_GET['aid'])) {
+    $aid=$_GET['aid'];
+} else {
+    err_not_found("invalid fid or aid");
+}
+
 /* If submit is set, shove the data into the database (well, after some */
 /* error checking) */
-if (isset($submit)) {
+if (isset($_POST['submit'])) {
+  $opts=$_POST['opts'];
   for ($i = 0; $i < $count; $i++) {
     $capabilities = Array();
 
