@@ -16,4 +16,18 @@ function strip_filename($filename)
 
   return $newfilename;
 }
+
+function is_valid_signed_integer($integer)
+{
+    if(!is_numeric($integer)) return 0;
+    if($integer!=floor($integer)) return 0;
+    return 1;
+}
+
+function is_valid_integer($integer)
+{
+    if(!is_valid_signed_integer($integer)) return 0;
+    if($integer!=abs($integer)) return 0;
+    return 1;
+}
 ?>
