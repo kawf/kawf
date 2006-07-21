@@ -6,18 +6,18 @@ include_once("user/tables.inc");
 
 /* If submit is set, shove the data into the database (well, after some */
 /* error checking) */
-if (isset($submit)) {
-  if (isset($read))
+if (isset($_POST['submit'])) {
+  if (isset($_POST['read']))
     $options[] = "Read";
-  if (isset($postthread))
+  if (isset($_POST['postthread']))
     $options[] = "PostThread";
-  if (isset($postreply))
+  if (isset($_POST['postreply']))
     $options[] = "PostReply";
-  if (isset($postedit))
+  if (isset($_POST['postedit']))
     $options[] = "PostEdit";
-  if (isset($offtopic))
+  if (isset($_POST['offtopic']))
     $options[] = "OffTopic";
-  if (isset($searchable))
+  if (isset($_POST['searchable']))
     $options[] = "Searchable";
 
   if (isset($options))
@@ -28,9 +28,9 @@ if (isset($submit)) {
   sql_query("insert into f_forums " .
 		"( name, shortname, options ) " .
 		"values " .
-		"( '" . addslashes($name) . "', " .
-		"'" . addslashes($shortname) . "', " .
-		"'" . addslashes($options) . "'" .
+		"( '" . addslashes($_POST['name']) . "', " .
+		"'" . addslashes($_POST['shortname']) . "', " .
+		"'" . addslashes($_POST['options']) . "'" .
 		")");
   $fid = sql_query1("select last_insert_id()");
 
