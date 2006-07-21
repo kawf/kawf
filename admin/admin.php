@@ -10,17 +10,17 @@ sql_open_readwrite();
 
 $accountsperpage = 100;
 
-if (is_valid_integer($_GET['page']));
+if (is_valid_integer($_GET['page']))
   $page=$_GET['page'];
 else
   $page = 1;
 
 $where = "";
-if (isset($_POST['email'] && !empty($_POST['email']))) {
+if (isset($_POST['email']) && !empty($_POST['email'])) {
   echo "<h2>Searching for email like ".$_POST['email']."h2><br>\n";
   $where .= " email like '" . addslashes($_POST['email']) . "'";
 }
-if (isset($_POST['name'] && !empty($_POST['name']))) {
+if (isset($_POST['name']) && !empty($_POST['name'])) {
   echo "<h2>Searching for name like ".$_POST['name']."h2><br>\n";
   if (!empty($where))
     $where .= " and";
