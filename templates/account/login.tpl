@@ -28,13 +28,13 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
   Password: <input type="password" name="password" size="40" maxlength="40"><br>
   <br>
 
-  <input type="submit" name="login" value="Login"">
+  <input type="submit" name="login" value="Login">
   <input type="submit" name="forgotpassword" value="Forgot my password">
 </form>
 
 <a href="create.phtml">Create a new account</a><p>
 
-<script language="JavaScript">
+<script language="JavaScript" type="text/javascript">
 <!--
 // Thanks to www.google.com for this one :)
 document.form.email.focus();
