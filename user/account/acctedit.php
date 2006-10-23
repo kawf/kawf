@@ -43,9 +43,13 @@ if (isset($submit)) {
   }
 
   if (!empty($email)) {
-    $email = stripspaces($email);
+    if(strstr($email,'@') ) {
+	$email = stripspaces($email);
 
-    $update_email = $email;
+	$update_email = $email;
+    } else {
+	$error .= "Please supply a valid email address\n";
+    }
   }
 
   if (!empty($password1) || !empty($password2)) {
