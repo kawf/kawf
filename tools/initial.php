@@ -28,5 +28,7 @@ sql_query($create_users_table);
 sql_query($create_moderators_table);
 sql_query($create_pending_table);
 sql_query($create_upostcount_table);
+sql_query($create_offtopic_table);
+
 
 ?>

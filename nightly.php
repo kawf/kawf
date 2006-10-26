@@ -1,7 +1,9 @@
 <?php
 
 /* First setup the path */
-$include_path = "$srcroot/include:$srcroot/user";
+$srcroot="/var/www/kawf";
+$config="config";
+$include_path = "$srcroot/include:$srcroot/user:$srcroot/config";
 if (isset($include_append))
   $include_path .= ":" . $include_append;
 
@@ -48,8 +50,8 @@ function count_threads($fid, $tag)
 {
     $sql="select count(distinct f_messages".$fid.".tid) from ".
         "f_indexes,f_messages".$fid." where ".$fid."=f_indexes.fid and ".
-        "f_messages".$fid.".mid>f_indexes.minmid and ".
-        "f_messages".$fid.".mid<f_indexes.maxmid and ".
+        "f_messages".$fid.".mid>=f_indexes.minmid and ".
+        "f_messages".$fid.".mid<=f_indexes.maxmid and ".
         "f_messages".$fid.".pid=0 and f_messages".$fid.".state='".$tag."'";
 
     return sql_query1($sql);

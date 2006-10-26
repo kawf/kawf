@@ -2,7 +2,7 @@
 # f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
 $create_message_table = "
-  create table f_messages%d (
+  create table if not exists f_messages%d (
     mid int not null auto_increment,
     pid int not null,
     tid int not null,
@@ -25,7 +25,7 @@ $create_message_table = "
   )";
 
 $create_thread_table = "
-  create table f_threads%d (
+  create table if not exists f_threads%d (
     tid int not null auto_increment,
     mid int not null,
     replies int not null,
@@ -36,7 +36,7 @@ $create_thread_table = "
 
 # Unused
 $create_visits_table = "
-  create table f_visits (
+  create table if not exists f_visits (
     ip varchar(20) not null,
     aid int not null,
     tstamp timestamp,
@@ -46,7 +46,7 @@ $create_visits_table = "
 
 # Create all of these by hand
 $create_forums_table = "
-  create table f_forums (
+  create table if not exists f_forums (
     fid int not null auto_increment,
     name varchar(150) not null,
     shortname varchar(20) not null,
@@ -55,7 +55,7 @@ $create_forums_table = "
   )";
 
 $create_index_table = "
-  create table f_indexes (
+  create table if not exists f_indexes (
     iid int not null auto_increment,
     fid int not null, 
     minmid int not null,
@@ -71,7 +71,7 @@ $create_index_table = "
   )";
 
 $create_dupposts_table = "
-  create table f_dupposts (
+  create table if not exists f_dupposts (
     fid int not null,
     cookie varchar(40) not null,
     mid int not null,
@@ -84,7 +84,7 @@ $create_dupposts_table = "
   )";
 
 $create_unique_table = "
-  create table f_unique (
+  create table if not exists f_unique (
     fid int not null,
     type enum('Message','Thread') not null,
     id int not null,
@@ -92,7 +92,7 @@ $create_unique_table = "
   )";
 
 $create_tracking_table = "
-  create table f_tracking (
+  create table if not exists f_tracking (
     fid int not null,
     tid int not null,
     aid int not null,
@@ -102,14 +102,14 @@ $create_tracking_table = "
   )";
 
 $create_update_table = "
-  create table f_updates (
+  create table if not exists f_updates (
     fid int not null,
     mid int not null,
     primary key (fid)
   )";
 
 $create_moderators_table = "
-  create table f_moderators (
+  create table if not exists f_moderators (
     aid int not null,
     fid int not null,
     capabilities set('Lock','Moderate','Delete','OffTopic','Advertise') not null,
@@ -117,7 +117,7 @@ $create_moderators_table = "
   )";
 
 $create_upostcount_table = "
-  create table f_upostcount (
+  create table if not exists f_upostcount (
     aid int not null,
     fid int not null,
     status enum ('Active','Moderated','Deleted','OffTopic') not null,
@@ -126,7 +126,7 @@ $create_upostcount_table = "
   )";
 
 $create_users_table = "
-  create table u_users (
+  create table if not exists u_users (
     aid int not null auto_increment,
     name varchar(50) not null,
     shortname varchar(50) not null,
@@ -148,7 +148,7 @@ $create_users_table = "
   )";
 
 $create_global_messages_table = "
-  create table f_global_messages (
+  create table if not exists f_global_messages (
     gid int not null,
     subject text not null,
     url varchar(200) not null,
@@ -158,7 +158,7 @@ $create_global_messages_table = "
   )";
 
 $create_offtopic_table = "
-  create table f_offtopic (
+  create table if not exists f_offtopic (
     fid int not null,
     mid int not null,
     aid int not null,
@@ -167,7 +167,7 @@ $create_offtopic_table = "
   )";
 
 $create_pending_table = "
-  create table u_pending (
+  create table if not exists u_pending (
     tid int not null,
     aid int not null,
     cookie varchar(15) not null,
