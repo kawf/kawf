@@ -1,5 +1,10 @@
 <?php
 
+if (!isset($srcroot)) {
+    echo "Please run config/nightly.php, not this one.\n";	
+    exit(1);
+}
+
 /* First setup the path */
 $include_path = "$srcroot/include:$srcroot/user";
 if (isset($include_append))
