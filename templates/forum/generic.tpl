@@ -1,3 +1,3 @@
   <td width="50%" align="left">
-    <img src="/pics/forum/generic.gif">
+    <a href="/{FORUM_SHORTNAME}/"><img border="0" src="/pics/forum/generic.gif"></a>
   </td>
