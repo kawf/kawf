@@ -42,6 +42,7 @@ $scripts = array(
   "pendingdelete.phtml" => "pendingdelete.php",
 
   "su.phtml" => "su.php",
+  "admin.phtml" => "admin.php",
 );
 
 $user = new AdminUser;
