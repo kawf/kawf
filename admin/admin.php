@@ -1,12 +1,8 @@
 <?php
 
-if (!forum_admin()) {
-  Header("Location: $furlroot/");
-  exit;
-}
+$user->req("ForumAdmin");
 
-/* Open up the SQL database first */
-sql_open_readwrite();
+page_header("User list");
 
 $accountsperpage = 100;
 
@@ -16,18 +12,18 @@ else
   $page = 1;
 
 $where = "";
-if (isset($_POST['email']) && !empty($_POST['email'])) {
-  echo "<h2>Searching for email like ".$_POST['email']."h2><br>\n";
-  $where .= " email like '" . addslashes($_POST['email']) . "'";
+if (isset($_GET['email']) && !empty($_GET['email'])) {
+  echo "<h2>Searching for email like ".$_GET['email']."h2><br>\n";
+  $where .= " email like '" . addslashes($_GET['email']) . "'";
 }
-if (isset($_POST['name']) && !empty($_POST['name'])) {
-  echo "<h2>Searching for name like ".$_POST['name']."h2><br>\n";
+if (isset($_GET['name']) && !empty($_GET['name'])) {
+  echo "<h2>Searching for name like ".$_GET['name']."h2><br>\n";
   if (!empty($where))
     $where .= " and";
-  $where .= " name like '" . addslashes($_POST['name']) . "'";
+  $where .= " name like '" . addslashes($_GET['name']) . "'";
 }
 
-$sql = "select count(*) from accounts";
+$sql = "select count(*) from u_users";
 if (!empty($where))
   $sql .= " where $where";
 $result = mysql_db_query($database, $sql) or sql_error($sql);
@@ -78,21 +74,22 @@ Search Name: <input type="text" name="name">
 <?php
 $skipaccounts = ($page - 1) * $accountsperpage;
 
-$sql = "select * from accounts";
+$sql = "select * from u_users";
 if (!empty($where))
   $sql .= " where $where";
 $sql .= " order by aid limit $skipaccounts,$accountsperpage";
 $result = mysql_db_query($database, $sql) or sql_error($sql);
 
-echo "<table>\n";
-echo "<tr><td>aid</td><td>name</td><td>email</td><td>status</td></tr>\n";
+echo "<table bgcolor=\"#99999\" width=\"100%\" cellpadding=\"3\" cellspacing=\"1\" border=\"0\">\n";
+echo "<tr bgcolor=\"#D0D0D0\"><td>aid</td><td>name</td><td>email</td><td>status</td></tr>\n";
 while ($acct = mysql_fetch_array($result)) {
+  $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
+  echo "<tr bgcolor=\"$bgcolor\"\n>";
 ?>
-  <tr>
-    <td><a href="showaccount.phtml?aid=<?php echo $acct['aid']; ?>"><?php echo $acct['aid']; ?></a></td>
+    <td><a href="/account/<?php echo $acct['aid']; ?>.phtml"><?php echo $acct['aid']; ?></a></td>
     <td><?php echo stripslashes($acct['name']); ?></td>
     <td><?php echo stripslashes($acct['email']); ?></td>
-    <td><?php echo $acct['status']; ?></td>
+    <td><?php echo $acct['status']; $count++ ?></td>
   </tr>
 <?php
 }

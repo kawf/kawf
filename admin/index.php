@@ -10,6 +10,7 @@ if (isset($_GET['message']))
 $result = sql_query("select * from f_forums,f_indexes where f_forums.fid=f_indexes.fid order by f_forums.fid");
 ?>
 
+<a href="admin.phtml">Administer user database</a>
 <a href="forumadd.phtml">Add new forum</a>
 <a href="useracl.phtml">User ACLs</a>
 <a href="pending.phtml">Administer pending requests</a>
