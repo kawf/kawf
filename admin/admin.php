@@ -13,11 +13,11 @@ else
 
 $where = "";
 if (isset($_GET['email']) && !empty($_GET['email'])) {
-  echo "<h2>Searching for email like ".$_GET['email']."h2><br>\n";
+  echo "<h2>Searching for email like \"".$_GET['email']."\"</h2><br>\n";
   $where .= " email like '" . addslashes($_GET['email']) . "'";
 }
 if (isset($_GET['name']) && !empty($_GET['name'])) {
-  echo "<h2>Searching for name like ".$_GET['name']."h2><br>\n";
+  echo "<h2>Searching for name like \"".$_GET['name']."\"</h2><br>\n";
   if (!empty($where))
     $where .= " and";
   $where .= " name like '" . addslashes($_GET['name']) . "'";
