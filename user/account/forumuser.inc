@@ -49,9 +49,6 @@ class ForumUser {
     // $this->tzoff = $tz_to_offset[$local_timezone] - $tz_to_offset[$this->timezone];
     $this->tzoff = 0;
 
-    $tpl->set_var("timezone", $this->timezone);
-    $tpl->set_var("default_timezone", date_default_timezone_get());
-
     return $this;
   }
 
