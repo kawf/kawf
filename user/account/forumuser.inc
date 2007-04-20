@@ -17,27 +17,40 @@ class ForumUser {
   /* You shouldn't call this directly */
   function find($where)
   {
-    global $tz_to_offset, $local_timezone;
+    global $tpl, $tz_to_name;
+
+    $options="";
+    $this->timezone = date_default_timezone_get();
 
     $user = sql_querya("select * from u_users where $where");
     if ($user) {
-      foreach ($user as $type => $value)
+      foreach ($user as $type => $value) {
         $this->$type = $value;
+	$options.="[$type]=[$value]\n";
+      }
 
       if (!empty($this->preferences)) {
         $preferences = explode(",", $this->preferences);
         foreach ($preferences as $flag)
           $this->pref[$flag] = true;
       }
+
+      if(isset($this->timezone) && strlen($this->timezone)<6)
+	$this->timezone = $tz_to_name[$this->timezone];
+
+      date_default_timezone_set($this->timezone);
+
     } else {
 	global $login_to_read;
 	if(isset($login_to_read)) $this->req();
-
-	$this->timezone = $local_timezone;
     }
 
-    /* make sure this always happens */
-    $this->tzoff = $tz_to_offset[$local_timezone] - $tz_to_offset[$this->timezone];
+    /* historical tzoff, leave in place */
+    // $this->tzoff = $tz_to_offset[$local_timezone] - $tz_to_offset[$this->timezone];
+    $this->tzoff = 0;
+
+    $tpl->set_var("timezone", $this->timezone);
+    $tpl->set_var("default_timezone", date_default_timezone_get());
 
     return $this;
   }
@@ -158,6 +171,16 @@ class ForumUser {
       else
         $this->update_f['preferences'] = "";
     }
+  }
+
+  function set_timezone($timezone)
+  {
+    if ($timezone != $this->timezone)
+      $this->update_f['timezone'] = $timezone;
+
+    $this->timezone = $timezone;
+
+    return true;
   }
 
   function update()

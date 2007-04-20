@@ -68,6 +68,16 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
 <input type="checkbox" name="HideSignatures"{HIDESIGNATURES}> Hide signatures when viewing messages?<br>
 <input type="checkbox" name="AutoUpdateTracking"{AUTOUPDATETRACKING}> Automatically mark tracked threads as read when reading followups? (Not fully implemented yet)<br>
 <input type="checkbox" name="OldestFirst"{OLDESTFIRST}> Show oldest replies first?<br>
+
+Timezone
+<select name="timezone">
+<option value="US/Eastern"{US_Eastern}>US/Eastern</option>
+<option value="US/Central"{US_Central}>US/Central</option>
+<option value="US/Mountain"{US_Mountain}>US/Mountain</option>
+<option value="US/Pacific"{US_Pacific}>US/Pacific</option>
+<option value="GMT"{GMT}>GMT</option>
+</select><br>
+
 <!-- input type="checkbox" name="SortbyActive"{SORTBYACTIVE}> Sort by active threads?<br -->
 
       Threads per page <input type="input" size="3" name="threadsperpage" value="{THREADSPERPAGE}"><br>

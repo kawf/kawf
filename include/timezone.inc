@@ -1,6 +1,15 @@
 <?php
 
 $tz_to_name = array(
+    "US/Ea" => "US/Eastern",
+    "US/Ce" => "US/Central",
+    "US/Mo" => "US/Mountain",
+    "US/Pa" => "US/Pacific",
+    "GMT" => "GMT"
+);
+
+/*
+$tz_to_name = array(
   "ndt" => "Newfoundland Daylight",
   "adt" => "Atlantic Daylight",
   "edt" => "Eastern Daylight",
@@ -121,5 +130,6 @@ $tz_to_offset = array(
   "idt" => 10800,
   "iss" => 7200,
 );
+*/
 
 ?>

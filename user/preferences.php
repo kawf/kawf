@@ -63,6 +63,7 @@ if (isset($submit)) {
     $threadsperpage = 100;
   }
 
+  $user->set_timezone($timezone);
   $user->threadsperpage($threadsperpage);
 
 /*
@@ -104,6 +105,9 @@ $tpl->set_var("SIGNATURE", $user->signature);
 $tpl->set_var("THREADSPERPAGE", $user->threadsperpage);
 $tpl->set_var("TEXT", $text);
 $tpl->set_var("PAGE", $page);
+
+if(isset($user->timezone))
+    $tpl->set_var(str_replace("/","_",$user->timezone), " selected=\"1\"");
 
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");
