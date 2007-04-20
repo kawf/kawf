@@ -5,6 +5,7 @@ $tz_to_name = array(
     "US/Ce" => "US/Central",
     "US/Mo" => "US/Mountain",
     "US/Pa" => "US/Pacific",
+    "US/Ha" => "US/Hawaii",
     "GMT" => "GMT"
 );
 

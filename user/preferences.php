@@ -108,6 +108,9 @@ $tpl->set_var("PAGE", $page);
 
 if(isset($user->timezone))
     $tpl->set_var(str_replace("/","_",$user->timezone), " selected=\"1\"");
+/* todo: translate date_default_timezone_get() into something we know */
+else
+    $tpl->set_var("US_Pacific", " selected=\"1\"");
 
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");

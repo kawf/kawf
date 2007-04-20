@@ -75,6 +75,7 @@ Timezone
 <option value="US/Central"{US_Central}>US/Central</option>
 <option value="US/Mountain"{US_Mountain}>US/Mountain</option>
 <option value="US/Pacific"{US_Pacific}>US/Pacific</option>
+<option value="US/Hawaii"{US_Hawaii}>US/Hawaii</option>
 <option value="GMT"{GMT}>GMT</option>
 </select><br>
 
