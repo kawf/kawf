@@ -17,10 +17,11 @@ class ForumUser {
   /* You shouldn't call this directly */
   function find($where)
   {
-    global $tpl, $tz_to_name;
+    global $tz_to_name;
 
     $options="";
-    $this->timezone = date_default_timezone_get();
+
+    $this->tzoff = 0;
 
     $user = sql_querya("select * from u_users where $where");
     if ($user) {
@@ -35,19 +36,24 @@ class ForumUser {
           $this->pref[$flag] = true;
       }
 
-      if(isset($this->timezone) && strlen($this->timezone)<6)
+      if(isset($this->timezone) && strlen($this->timezone)<6) {
 	$this->timezone = $tz_to_name[$this->timezone];
 
-      date_default_timezone_set($this->timezone);
+	$zoneUser= new DateTimeZone($this->timezone);
+	$zoneLocal= new DateTimeZone(date_default_timezone_get());
+
+	$timeLocal = new DateTime("now", $zoneLocal);
+
+	$this->tzoff =  $zoneUser->getOffset($timeLocal)-
+			$zoneLocal->getOffset($timeLocal);
+      } else {
+	$this->timezone = date_default_timezone_get();
+      }
 
     } else {
 	global $login_to_read;
 	if(isset($login_to_read)) $this->req();
     }
-
-    /* historical tzoff, leave in place */
-    // $this->tzoff = $tz_to_offset[$local_timezone] - $tz_to_offset[$this->timezone];
-    $this->tzoff = 0;
 
     return $this;
   }
