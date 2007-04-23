@@ -19,15 +19,12 @@ class ForumUser {
   {
     global $tz_to_name;
 
-    $options="";
-
     $this->tzoff = 0;
 
     $user = sql_querya("select * from u_users where $where");
     if ($user) {
       foreach ($user as $type => $value) {
         $this->$type = $value;
-	$options.="[$type]=[$value]\n";
       }
 
       if (!empty($this->preferences)) {
@@ -36,7 +33,7 @@ class ForumUser {
           $this->pref[$flag] = true;
       }
 
-      if(isset($this->timezone) && strlen($this->timezone)<6) {
+      if(strlen($this->timezone) && strlen($this->timezone)<6) {
 	$this->timezone = $tz_to_name[$this->timezone];
 
 	$zoneUser= new DateTimeZone($this->timezone);
