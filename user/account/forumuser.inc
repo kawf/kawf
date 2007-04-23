@@ -7,6 +7,7 @@ require_once("sql.inc");
 require_once("validate.inc");
 require_once("mailfrom.inc");
 require_once("strip.inc");
+require_once("timezone.inc");
 
 /* This is the standard ForumUser class */
 class ForumUser {
