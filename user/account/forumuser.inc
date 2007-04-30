@@ -42,8 +42,8 @@ class ForumUser {
 
 	$timeLocal = new DateTime("now", $zoneLocal);
 
-	$this->tzoff =  $zoneUser->getOffset($timeLocal)-
-			$zoneLocal->getOffset($timeLocal);
+	$this->tzoff =  $zoneLocal->getOffset($timeLocal)-
+			$zoneUser->getOffset($timeLocal);
       } else {
 	$this->timezone = date_default_timezone_get();
       }
