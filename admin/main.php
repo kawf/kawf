@@ -41,6 +41,8 @@ $scripts = array(
   "pending.phtml" => "pending.php",
   "pendingdelete.phtml" => "pendingdelete.php",
 
+  "showvisits.phtml" => "showvisits.php",
+
   "su.phtml" => "su.php",
   "admin.phtml" => "admin.php",
 );
