@@ -121,26 +121,23 @@ header("Cache-Control: private");
 $user = new ForumUser;
 $user->find_by_cookie();
 
-/* FIXME: This kills performance */
-/*
-if ($user->valid()) {
-  $sql = "update f_visits set tstamp = NOW() where aid = $user->aid";
+function update_visits()
+{
+  global $user, $REMOTE_ADDR;
+  $ip = "'" . addslashes($REMOTE_ADDR) . "'";
+  $aid = -1;
+
+  if($user->valid())
+    $aid=$user->aid;
+
+  $sql = "update f_visits set tstamp = NOW() where aid = $aid and ip = $ip";
   mysql_query($sql) or sql_error($sql);
 
   if (!mysql_affected_rows()) {
-    $sql = "insert into f_visits ( aid, tstamp ) values ( $user->aid, NOW() )";
-    mysql_query($sql) or sql_error($sql);
-  }
-} else {
-  $sql = "update f_visits set tstamp = NOW() where ip = '" . addslashes($REMOTE_ADDR) . "'";
-  mysql_query($sql) or sql_error($sql);
-
-  if (!mysql_affected_rows()) {
-    $sql = "insert into f_visits ( ip, tstamp ) values ( '" . addslashes($REMOTE_ADDR) . "', NOW() )";
+    $sql = "insert into f_visits ( aid, ip, tstamp ) values ( $aid, $ip, NOW() )";
     mysql_query($sql) or sql_error($sql);
   }
 }
-*/
 
 function find_forum($shortname)
 {
@@ -291,6 +288,10 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
     err_not_found("Unknown thread " . $tid . " in forum " . $forum['shortname']);
 } else
   err_not_found("Unknown path");
+
+
+/* FIXME: This kills performance */
+// update_visits();
 
 sql_close();
 ?>
