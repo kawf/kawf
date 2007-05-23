@@ -40,8 +40,7 @@ $create_visits_table = "
     ip varchar(20) not null,
     aid int not null,
     tstamp timestamp,
-    key (ip),
-    key (aid)
+    primary key (ip, aid),
   )";
 
 # Create all of these by hand
