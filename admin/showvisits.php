@@ -13,7 +13,7 @@ $result = sql_query("select f_visits.*, u_users.name, u_users.email FROM f_visit
 <p>
 
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr><td bgcolor="#99999" width="800">
+<tr><td bgcolor="#99999">
 <table width="100%" cellpadding="3" cellspacing="1" border="0">
 
 <tr bgcolor="#D0D0D0">
@@ -37,10 +37,10 @@ if(isset($requestlist)) {
       $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
       echo "<tr bgcolor=\"$bgcolor\">\n";
       echo "<td>" . $request['ip'] . "</td>\n";
-      echo "<td>" . $request['aid'] . "</td>\n";
+      echo "<td><a href=\"/account/" . $request['aid'] . ".phtml\">" . $request['aid'] . "</td>\n";
       echo "<td>" . $request['tstamp'] . "</td>\n";
       echo "<td>" . $request['name'] . "</td>\n";
-      echo "<td>" . $request['email'] . "</td>\n";
+      echo "<td><a href=\"mailto:" . $request['email'] . "\">" . $request['email'] . "</a></td>\n";
       echo "</tr>\n";
       $count++;
     }
@@ -51,5 +51,6 @@ if(isset($requestlist)) {
 </table>
 
 <?php
+echo "$count active user/ip pairs<br>\n";
 page_footer();
 ?>

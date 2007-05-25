@@ -15,7 +15,7 @@ $result = sql_query("select u_pending.*, u_users.name, u_users.email from u_pend
 <p>
 
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr><td bgcolor="#99999" width="600">
+<tr><td bgcolor="#99999">
 <table width="100%" cellpadding="3" cellspacing="1" border="0">
 
 <tr bgcolor="#D0D0D0">
