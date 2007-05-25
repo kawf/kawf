@@ -37,7 +37,7 @@ if(isset($requestlist)) {
       $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
       echo "<tr bgcolor=\"$bgcolor\">\n";
       echo "<td>" . $request['ip'] . "</td>\n";
-      echo "<td><a href=\"/account/" . $request['aid'] . ".phtml\">" . $request['aid'] . "</td>\n";
+      echo "<td><a href=\"/account/" . $request['aid'] . ".phtml?verbose=1\">" . $request['aid'] . "</td>\n";
       echo "<td>" . $request['tstamp'] . "</td>\n";
       echo "<td>" . $request['name'] . "</td>\n";
       echo "<td><a href=\"mailto:" . $request['email'] . "\">" . $request['email'] . "</a></td>\n";

@@ -43,6 +43,11 @@ if(mysql_num_rows($result)) {
 <!--
 body { font-family: verdana, arial, geneva; font-size: smaller }
 td { font-family: verdana, arial, geneva; font-size: smaller }
+
+table.outer { border-width: 0; border-spacing: 3; }
+td.outer { border-width: 0; padding: 0; vertical-align: top; }
+table.inner { border-width: 1px; border-color: #999990; border-style: none solid solid none; border-spacing: 0; }
+td.inner { border-width: 1px; border-color: #999990; border-style: solid none none solid; padding: 3; }
 -->
 </style>
 </head>
@@ -58,7 +63,7 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
 
 <body>
 <table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr><td bgcolor="#99999">
+<tr><td bgcolor="#999990">
 <table width="100%" cellpadding="3" cellspacing="1" border="0">
 
 <tr bgcolor="#D0D0D0">
@@ -99,5 +104,27 @@ if($user->aid == 1) echo "<td>email</td>\n";
 <?php
 echo "<p>\n" . $uuser->signature . "\n</p>\n";
 ?>
+<?php
+  if($user->aid == 1 && $_GET['verbose']) {
+    echo "<h2>IP addresses</h2>\n";
+    echo "<table class=\"outer\">\n <tr>\n";
+    $res1 = sql_query("select fid,shortname from f_forums order by fid");
+    while ($forum = sql_fetch_array($res1)) {
+      echo " <td class=\"outer\"><table class=\"inner\">\n";
+      $fmsg="f_messages".$forum['fid'];
+      $res2 = sql_query("select DISTINCT ip from `$fmsg` where `aid` = ".$uuser->aid);
+      if(mysql_num_rows($res2)>0) {
+	echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
+	while ($msg = sql_fetch_array($res2)) {
+	  echo "  <tr bgcolor=\"#ECECFF\"><td class=\"inner\">".$msg['ip']."</td></tr>\n";
+	}
+      }
+      echo " </table></td>\n";
+    }
+    echo "</tr>\n";
+    echo "</table>\n";
+  }
+?>
+
 </body>
 </html>
