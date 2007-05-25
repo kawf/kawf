@@ -1,5 +1,6 @@
 <?php
 
+require_once("util.inc");	/* for getmicrotime() */
 /* Seed the random number generator */
 mt_srand(getmicrotime());
 
