@@ -104,7 +104,7 @@ $tpl->set_var("SIGNATURE_COOKED", nl2br($user->signature));
 $tpl->set_var("SIGNATURE", $user->signature);
 $tpl->set_var("THREADSPERPAGE", $user->threadsperpage);
 $tpl->set_var("TEXT", $text);
-$tpl->set_var("PAGE", $page);
+$tpl->set_var("PAGE", htmlspecialchars($page, ENT_QUOTES));
 
 if(isset($user->timezone))
     $tpl->set_var(str_replace("/","_",$user->timezone), " selected=\"1\"");

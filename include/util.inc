@@ -50,7 +50,7 @@ function err_not_found($description = "")
 
   $tpl->set_var(array(
     "DESCRIPTION" => $description . "\n". dump_env(),
-    "URL" => $script_name . $path_info,
+    "URL" => htmlspecialchars($script_name . $path_info, ENT_QUOTES),
     "SERVER_SOFTWARE" => $_SERVER['SERVER_SOFTWARE'],
     "SERVER_NAME" => $server_name,
     "SERVER_PORT" => $server_port,
