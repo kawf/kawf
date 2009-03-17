@@ -377,8 +377,10 @@ class AccountUser extends ForumUser {
   {
     global $cookie_host;
 
-    if(!isset($_GET['cookie']) || md5($this->cookie) != $_GET['cookie'])
-	return false;
+    if(isset($this->cookie) && $this->cookie) {
+	if(!isset($_GET['cookie']) || md5($this->cookie) != $_GET['cookie'])
+	    return false;
+    }
 
     if(isset($_GET['all'])) {
         /* generate a new random cookie but dont store it client side.
