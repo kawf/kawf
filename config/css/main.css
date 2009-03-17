@@ -1,0 +1,26 @@
+/* general, for everything */
+body { font-family: verdana, arial, geneva; font-size: smaller }
+td { font-family: verdana, arial, geneva; font-size: smaller }
+
+/* thread stuff */
+.trow0 { background: #ddddff }
+.trow1 { background: #ccccee }
+.drow0 { background: #ddffdd }
+.drow1 { background: #cceecc }
+.mrow0 { background: #ffdddd }
+.mrow1 { background: #eecccc }
+.row0 { background: #ffffff }
+.row1 { background: #eeeeee }
+ul {margin-left: 1em; padding-left: 1em;}
+
+ul.thread {
+    margin-top: 0.2em;
+    margin-bottom: 0.3em;
+    margin-left: 2em;
+    padding-left: 2em;
+}
+
+ul.thread li {
+    list-style: circle outside none;
+    /* list-style-image: url('/pics/arrow.gif'); */
+}
