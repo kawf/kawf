@@ -35,16 +35,6 @@ Quick setup guide:
   - make sure $include_path contains the location of your config.inc
   - go to the "tools" directory and type "./initial.php"
 
-* populate config/pics with the following gifs:
-    change.gif
-    followup.gif
-    lock.gif
-    nt.gif
-    ot.gif
-    pic.gif
-    post.gif
-    url.gif
-
 * copy/edit sample-apache.conf to reflect the path pointing to your /config
   directory.
   - either "Include" your apache.conf file from the main http.conf, or
