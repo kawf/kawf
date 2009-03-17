@@ -164,6 +164,8 @@ while ($forum = mysql_fetch_array($result)) {
 if (!$numshown)
   $tpl->set_var("_block", "<font size=\"+1\">No updated threads</font><br>");
 
+$tpl->set_var("LCOOKIE", md5($user->id));
+
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");
 $tpl->pparse("CONTENT", "tracking");

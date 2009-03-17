@@ -100,7 +100,7 @@ Track thread?<br><br>
 <td bgcolor="#dfdfdf" align="right"><b>Logout:</b></td>
 <td bgcolor="#dfdfdf">
 <br>
-&nbsp;[ <a href="/logout.phtml?url={URL}">Logout this session</a> ] [ <a href="/logout.phtml?all&url={URL}">Logout ALL SESSIONS</a> ]<br><br>
+&nbsp;[ <a href="/logout.phtml?url={URL}&cookie={LCOOKIE}">Logout this session</a> ] [ <a href="/logout.phtml?all&url={URL}&cookie={LCOOKIE}">Logout ALL SESSIONS</a> ]<br><br>
 </td>
 </tr>
 

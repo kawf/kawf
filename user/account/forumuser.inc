@@ -377,6 +377,9 @@ class AccountUser extends ForumUser {
   {
     global $cookie_host;
 
+    if(!isset($_GET['cookie']) || md5($this->cookie) != $_GET['cookie'])
+	return false;
+
     if(isset($_GET['all'])) {
         /* generate a new random cookie but dont store it client side.
 	   also, DO NOT store a blank cookie in the db */
@@ -394,6 +397,8 @@ class AccountUser extends ForumUser {
     } else {
 	  setcookie("KawfAccount", "", time() - (60 * 60 * 24 * 365), "/", $cookie_host);
     }
+
+    return true;
   }
 
   function checkpassword($password)

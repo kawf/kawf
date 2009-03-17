@@ -146,6 +146,7 @@ if (isset($thread) && !isset($forum['opt.PostReply']) && !$user->capable($forum[
     "noacct" => "",
     "disabled" => "",
   ));
+  $tpl->set_var("LCOOKIE", md5($user->cookie));
   $tpl->parse("acct", "acct");	/* This fixed URL and PAGE for some reason */
 } else {
   $tpl->set_var(array(

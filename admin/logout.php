@@ -5,7 +5,8 @@ $aid = $user->aid;
 $user = new AccountUser;
 $user->find_by_aid((int)$aid);
 
-$user->unsetcookie();
+if (!$user->unsetcookie())
+    err_not_found();
 
 header("Location: login.phtml?message=" . urlencode("You have been logged out"));
 
