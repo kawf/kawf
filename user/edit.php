@@ -295,38 +295,45 @@ if (isset($error) || isset($preview)) {
   if (!empty($imageurl))
     $message = "<center><img src=\"$imageurl\"></center><p>\n" . $message;
 
-  /* Create a diff for the old message and the new message */
-  $origfn = tempnam("/tmp", "kawf");
-  $newfn = tempnam("/tmp", "kawf");
+  if(ini_get('safe_mode')) {
+    // FIXME
+    $diff = "";
+  } else {
+    /* Create a diff for the old message and the new message */
+    $origfn = tempnam("/tmp/kawf", "kawf");
+    $newfn = tempnam("/tmp/kawf", "kawf");
 
-  $origfd = fopen($origfn, "w+");
-  $newfd = fopen($newfn, "w+");
+    $origfd = fopen($origfn, "w+");
+    $newfd = fopen($newfn, "w+");
 
-  /* Dump the \r's, we don't want them */
-  $msg['message'] = preg_replace("/\r/", "", $msg['message']);
-  $message = preg_replace("/\r/", "", $message);
+    if($origfd && $newfd) {
+      /* Dump the \r's, we don't want them */
+      $msg['message'] = preg_replace("/\r/", "", $msg['message']);
+      $message = preg_replace("/\r/", "", $message);
 
-  fwrite($origfd, "Subject: " . $msg['subject'] . "\n");
-  fwrite($origfd, $msg['message'] . "\n");
-  if (!empty($msg['url'])) {
-    fwrite($origfd, "urltext: " . $msg['urltext'] . "\n");
-    fwrite($origfd, "url: " . $msg['url'] . "\n");
+      fwrite($origfd, "Subject: " . $msg['subject'] . "\n");
+      fwrite($origfd, $msg['message'] . "\n");
+      if (!empty($msg['url'])) {
+	fwrite($origfd, "urltext: " . $msg['urltext'] . "\n");
+	fwrite($origfd, "url: " . $msg['url'] . "\n");
+      }
+
+      fwrite($newfd, "Subject: " . $subject . "\n");
+      fwrite($newfd, $message . "\n");
+      if (!empty($url)) {
+	fwrite($newfd, "urltext: " . $urltext . "\n");
+	fwrite($newfd, "url: " . $url . "\n");
+      }
+
+      fclose($origfd);
+      fclose($newfd);
+
+      $diff = `diff -u $origfn $newfn`;
+    }
+
+    unlink($origfn);
+    unlink($newfn);
   }
-
-  fwrite($newfd, "Subject: " . $subject . "\n");
-  fwrite($newfd, $message . "\n");
-  if (!empty($url)) {
-    fwrite($newfd, "urltext: " . $urltext . "\n");
-    fwrite($newfd, "url: " . $url . "\n");
-  }
-
-  fclose($origfd);
-  fclose($newfd);
-
-  $diff = `diff -u $origfn $newfn`;
-
-  unlink($origfn);
-  unlink($newfn);
 
   /* The first 2 lines don't mean anything to us since it's just temporary */
   /*  filenames */
