@@ -13,6 +13,7 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
 
 {HEADER}
 
+<center>
 <h1>Account - Edit</h1><p>
 
 <!-- BEGIN error -->
@@ -31,15 +32,17 @@ An email has been sent to your new email address of {NEWEMAIL} to confirm the ch
 Your password has been changed<p>
 <!-- END password -->
 <form action="acctedit.phtml" method="post">
-<table cellpadding="0">
-<tr><td>New Screen Name:</td><td><input type="text" name="name" length="40"></td></tr>
-<tr><td>New Email Address:</td><td><input type="text" name="email" length="40"></td></tr>
-<tr><td>New Password:</td><td><input type="password" name="password1" length="20"></td></tr>
-<tr><td>Re-enter Password:</td><td><input type="password" name="password2" length="20"></td></tr>
-<tr><td align="center" colspan="2"><input type="submit" name="submit" value="Update"</td></tr>
+<table cellpadding="2">
+<tr><td bgcolor="#dfdfdf" align="center" colspan="2"><b>Leave items you want unchanged blank.<b></td></tr>
+<tr><td bgcolor="#dfdfdf" align="right"><b>&nbsp;New Screen Name:</b></td><td><input type="text" name="name" length="40"></td></tr>
+<tr><td bgcolor="#dfdfdf" align="right"><b>&nbsp;New Email Address:</b></td><td><input type="text" name="email" length="40"></td></tr>
+<tr><td bgcolor="#dfdfdf" align="right"><b>&nbsp;New Password:</b></td><td><input type="password" name="password1" length="20"></td></tr>
+<tr><td bgcolor="#dfdfdf" align="right"><b>&nbsp;Re-enter Password:</b></td><td><input type="password" name="password2" length="20"></td></tr>
+<tr><td bgcolor="#dfdfdf" align="center" colspan="2"><input type="submit" name="submit" value="Update"</td></tr>
 </table>
 <input type="hidden" name="cookie" value={LCOOKIE}>
 </form>
+</center>
 
 {FOOTER}
 
