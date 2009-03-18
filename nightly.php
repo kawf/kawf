@@ -71,13 +71,11 @@ function verify_count(&$a,$forum,$tag)
     }
 }
 
-if (0) {
 /* FIXME: move this to an account maintanence nightly script */
 /* First, delete any pending state older than 30 days */
 echo "Cleaning pending\n";
 $sql = "select * from pending where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 30";
 mysql_db_query($sql) or sql_error($sql);
-}
 
 echo "Cleaning dupposts\n";
 /* Clear out dupposts */
