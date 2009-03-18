@@ -31,13 +31,14 @@ An email has been sent to your new email address of {NEWEMAIL} to confirm the ch
 Your password has been changed<p>
 <!-- END password -->
 <form action="acctedit.phtml" method="post">
-New Screen Name: <input type="text" name="name" length="40"><br>
-New Email Address: <input type="text" name="email" length="40"><br>
-New Password: <input type="password" name="password1" length="20"><br>
-Re-enter Password: <input type="password" name="password2" length="20"><br>
-
+<table cellpadding="0">
+<tr><td>New Screen Name:</td><td><input type="text" name="name" length="40"></td></tr>
+<tr><td>New Email Address:</td><td><input type="text" name="email" length="40"></td></tr>
+<tr><td>New Password:</td><td><input type="password" name="password1" length="20"></td></tr>
+<tr><td>Re-enter Password:</td><td><input type="password" name="password2" length="20"></td></tr>
+<tr><td align="center" colspan="2"><input type="submit" name="submit" value="Update"</td></tr>
+</table>
 <input type="hidden" name="cookie" value={LCOOKIE}>
-<input type="submit" name="submit" value="Update">
 </form>
 
 {FOOTER}
