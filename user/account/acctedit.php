@@ -30,6 +30,10 @@ if (!isset($password2))
   $password2 = "";
 
 if (isset($submit)) {
+
+  if (!isset($_POST['cookie']) || $_POST['cookie'] != md5($user->cookie))
+    err_not_found();
+
   if (!empty($name)) {
     $name = striptag($name, $no_tags);
     $name = stripspaces($name);
@@ -117,6 +121,7 @@ if (empty($error)) {
   $tpl->set_var("password", "");
   $tpl->set_var("ERROR", nl2br($error));
 }
+$tpl->set_var("LCOOKIE", md5($user->cookie));
 
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");

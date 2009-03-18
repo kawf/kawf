@@ -36,6 +36,7 @@ New Email Address: <input type="text" name="email" length="40"><br>
 New Password: <input type="password" name="password1" length="20"><br>
 Re-enter Password: <input type="password" name="password2" length="20"><br>
 
+<input type="hidden" name="cookie" value={LCOOKIE}>
 <input type="submit" name="submit" value="Update">
 </form>
 
