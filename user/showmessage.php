@@ -222,7 +222,8 @@ $tpl->set_var("THREADLINKS", $threadlinks);
 $action = "post";
 
 if (!preg_match("/^Re:/i", $msg['subject'], $sregs))
-  $subject = "Re: " . $msg['subject'];
+  // screw this, lets not let noobs be lame
+  $subject = ""; // "Re: " . $msg['subject'];
  else
   $subject = $msg['subject'];
 

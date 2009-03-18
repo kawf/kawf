@@ -264,7 +264,8 @@ if (isset($postcookie)) {
     $pmsg = mysql_fetch_array($result);
 
     if (!ereg("^[Rr][Ee]:", $pmsg['subject'], $sregs))
-      $subject = "Re: " . $pmsg['subject'];
+      // screw this, lets not help noobs be lame
+      $subject = ""; // "Re: " . $pmsg['subject'];
      else
       $subject = $pmsg['subject'];
   } else
