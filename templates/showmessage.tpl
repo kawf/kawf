@@ -1,6 +1,6 @@
 <html>
 <head>
-<title>{DOMAIN} Forums: {TMSG_SUBJECT}</title>
+<title>{DOMAIN} Forums: {MSG_SUBJECT}</title>
 <link rel=StyleSheet href="/css/main.css" type="text/css">
 </head>
 <body bgcolor="#ffffff">
