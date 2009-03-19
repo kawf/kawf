@@ -5,6 +5,8 @@ require_once("printsubject.inc");
 require_once("listthread.inc");
 require_once("filter.inc");
 require_once("thread.inc");
+require_once("textwrap.inc");
+require_once("notices.inc");
 
 $tpl->set_file(array(
   "showforum" => "showforum.tpl",
@@ -67,6 +69,7 @@ function threads($key)
 $tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
+$tpl->set_var("FORUM_NOTICES", get_notices_html($forum, $user->aid));
 $tpl->parse("FORUM_HEADER", "forum_header");
 
 if (isset($ad_generic)) {
@@ -184,7 +187,7 @@ if ($curpage == 1 && $user->gmsgswait != 0) {
 
       $tpl->set_var("CLASS", "grow" . ($numshown % 2));
 
-      $tpl->set_var("MESSAGES", "<ul class=\"thread\"><li><a href=\"/gmessage.phtml?gid=" . $gmsg['gid'] . "\" target=\"_top\">" . $gmsg['subject'] . "</a>&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $gmsg['name'] . "</b>&nbsp;&nbsp;<font size=-2><i>" . $gmsg['date'] . "</i></font></ul>");
+      $tpl->set_var("MESSAGES", "<ul class=\"thread\"><li><a href=\"/gmessage.phtml?gid=" . $gmsg['gid'] . "\" target=\"_top\">" . softbreaklongwords($gmsg['subject'],40) . "</a>&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $gmsg['name'] . "</b>&nbsp;&nbsp;<font size=-2><i>" . $gmsg['date'] . "</i></font></ul>");
       $tpl->set_var("MESSAGELINKS", "&nbsp;");
 
       $tpl->parse("_row", "row", true);
@@ -299,8 +302,13 @@ while ($numshown < $threadsperpage) {
     if ($user->valid())
       $sql .= "or $mtable.aid = " . $user->aid;
 
+    $sql .= " )";
+    
+    if ($user->aid != 996) 
+      $sql .= " and $mtable.aid != 996";
+
     /* Sort all of the messages by date and descending order */
-    $sql .= ") order by $ttable.tid desc";
+    $sql .= " order by $ttable.tid desc";
 
     /* Limit to the maximum number of threads per page */
     $sql .= " limit $skipthreads," . ($threadsperpage - $numshown);

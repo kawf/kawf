@@ -33,6 +33,7 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
   Email: <input type="text" name="email" value="{EMAIL}" size="40" maxlength="40"><br>
   Password: <input type="password" name="password1" size="40" maxlength="40"><br>
   Re-enter Password: <input type="password" name="password2" size="40" maxlength="40"><br>
+  Secret Key: <input type="key" name="key" size="40" maxlength="40"><br>
   <br>
 
   <input type="submit" name="submit" value="Create Account">

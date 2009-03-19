@@ -1,4 +1,5 @@
 <?php
+require_once("textwrap.inc");
 
 function print_subject($thread, $msg, $hiddenreplies = -1)
 {
@@ -18,7 +19,7 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
   if ($new)
     $string .= "<i><b>";
 
-  // $msg['subject']=wordwrap($msg['subject'],40,'<wbr>',1);
+  $msg['subject']=softbreaklongwords($msg['subject'],40);
 
   if ($vmid == $msg['mid'])
     $string .= "<font color=\"#ff0000\">" . $msg['subject'] . "</font>";
@@ -55,6 +56,31 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
 
   if ($msg['state'] == 'OffTopic' && !isset($user->pref['SimpleHTML']))
     $string .= " <img src=\"/pics/ot.gif\">";
+	
+// FIXME: BEGIN strawtarget abuse of power
+/*if ($msg['aid'] == 23) {
+    
+    // this is shitty on so many levels
+    $ip_prefixes = array(
+      "71." => "Hoenle", 
+      "70." => "Hoenle", 
+      "76." => "Hoenle", 
+      "68." => "Hoenle", 
+      "99." => "Hoenle", 
+      "12." => "Hoenle", 
+      "128." => "HS", 
+      "129." => "HS", 
+      "66." => "HS", 
+      "67." => "HS");
+  
+    foreach ($ip_prefixes as $ip_k => $ip_v) {
+      if (substr($msg['ip'], 0, strlen($ip_k)) == $ip_k) {
+        $msg['name'] .= " ($ip_v)";
+        break;
+      }
+    }
+}*/
+// END strawtarget abuse of power
 
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<font size=-2><i>".$msg['date']."</i>";
 

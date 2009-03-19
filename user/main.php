@@ -29,6 +29,14 @@ require_once("timezone.inc");
 
 require_once("phpSniff.class.php");
 
+if($_SERVER['HTTP_REFERER']) {
+    $a=split("/", $_SERVER['HTTP_REFERER']);
+    if($a[2]=='forums.audiworld.com') {
+        err_not_found();
+	exit;
+    }
+}
+
 $ua = new phpSniff();
 
 # Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)
@@ -38,6 +46,7 @@ $ulkludge =
 	($ua->property('browser') == "ie" && $ua->property('maj_ver') == 5 && $ua->property('platform') == "win");
 
 sql_open($database);
+mysql_query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
 
 $tpl = new Template($template_dir, "comment");
 
@@ -120,6 +129,7 @@ header("Cache-Control: private");
 
 $user = new ForumUser;
 $user->find_by_cookie();
+$tpl->set_var("AID", $user->aid);
 
 function update_visits()
 {
@@ -130,8 +140,8 @@ function update_visits()
   if($user->valid())
     $aid=$user->aid;
 
-    $sql = "insert into f_visits ( aid, ip ) values ( $aid, $ip ) on duplicate key update tstamp=NOW()";
-    mysql_query($sql) or sql_error($sql);
+  $sql = "insert into f_visits ( aid, ip ) values ( $aid, $ip ) on duplicate key update tstamp=NOW()";
+  mysql_query($sql) or sql_error($sql);
 }
 
 function find_forum($shortname)
@@ -255,6 +265,9 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
         $qual[] = "aid = " . $user->aid;
     }
 
+    if($user->aid != 996)
+      $sql .= " and aid != 996";
+
     if (isset($qual))
       $sql .= " and ( " . implode(" or ", $qual) . " )";
 
@@ -286,7 +299,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
 
 
 /* FIXME: This kills performance */
-// update_visits();
+update_visits();
 
 sql_close();
 ?>

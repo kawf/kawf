@@ -31,7 +31,8 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
   </tr>
   <tr bgcolor="#cccccc">
     <td colspan="2">
-      <a href="/acctedit.phtml">Edit Password, Email Address or Screen Name</a>
+      <a href="/acctedit.phtml">Edit Password, Email Address or Screen Name</a> | 
+      <a href="http://boty.wayot.org/notices/?page={PAGE}">Manage Notices</a>
     </td>
   </tr>
   <tr bgcolor="#cccccc">

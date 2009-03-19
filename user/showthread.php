@@ -2,6 +2,8 @@
 
 require_once("listthread.inc");
 require_once("filter.inc");
+require_once("textwrap.inc");
+require_once("notices.inc");
 
 $tpl->set_file(array(
   "showthread" => "showthread.tpl",
@@ -12,6 +14,7 @@ $tpl->set_file(array(
 $tpl->set_block("message", "account_id", "_account_id");
 $tpl->set_block("message", "forum_admin", "_forum_admin");
 $tpl->set_block("message", "advertiser", "_advertiser");
+$tpl->set_block("message", "sponsor", "_sponsor");
 $tpl->set_block("message", "message_ip", "_message_ip");
 $tpl->set_block("message", "owner", "_owner");
 $tpl->set_block("owner", "statelocked", "_statelocked");
@@ -23,6 +26,7 @@ $tpl->set_block("message", "changes", "_changes");
 $tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
+$tpl->set_var("FORUM_NOTICES", get_notices_html($forum, $user->aid));
 $tpl->parse("FORUM_HEADER", "forum_header");
 
 /* Mark the thread as read if need be */
@@ -105,7 +109,7 @@ function print_message($thread, $msg)
   $sql = "update f_messages" . $indexes[$index]['iid'] . " set views = views + 1 where mid = '" . addslashes($msg['mid']) . "'";
   mysql_query($sql) or sql_warn($sql);
 
-  $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
+  $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . softbreaklongwords($msg['subject'],40) . "</a>";
   $tpl->set_var(array(
     "MSG_SUBJECT" => $subject,
     "MSG_DATE" => $msg['date'],
@@ -149,6 +153,7 @@ function print_message($thread, $msg)
     $changes = preg_replace("/>/", "&gt;", $changes);
     $tpl->set_var("MSG_CHANGES", nl2br($changes));
     $tpl->set_var("MSG_IP", $msg['ip']);
+    $tpl->set_var("MSG_EMAIL", $uuser->email);
     $tpl->parse("_changes", "changes");
     $tpl->parse("_message_ip", "message_ip");
   } else {
@@ -165,6 +170,11 @@ function print_message($thread, $msg)
     $tpl->parse("_advertiser", "advertiser");
   else
     $tpl->set_var("_advertiser", "");
+
+  if ($uuser->capable($forum['fid'], 'Sponsor'))
+    $tpl->parse("_sponsor", "sponsor");
+  else
+    $tpl->set_var("_sponsor", "");
 
   if ($msg['aid'])
     $tpl->parse("_account_id", "account_id");

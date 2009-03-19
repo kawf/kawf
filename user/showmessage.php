@@ -5,6 +5,8 @@ require_once("listthread.inc");
 require_once("thread.inc");
 require_once("filter.inc");
 require_once("strip.inc");
+require_once("textwrap.inc");	// for softbreaklongwords
+require_once("notices.inc");
 
 $tpl->set_file(array(
   "showmessage" => "showmessage.tpl",
@@ -15,6 +17,7 @@ $tpl->set_file(array(
 $tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
 $tpl->set_block("message", "advertiser");
+$tpl->set_block("message", "sponsor");
 $tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "owner");
 $tpl->set_block("owner", "statelocked");
@@ -26,6 +29,7 @@ $tpl->set_block("message", "changes");
 $tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
+$tpl->set_var("FORUM_NOTICES", get_notices_html($forum, $user->aid));
 $tpl->parse("FORUM_HEADER", "forum_header");
 
 /* Grab the actual message */
@@ -104,6 +108,8 @@ if (!$user->capable($forum['fid'], 'Moderate') || !$msg['aid'])
   $tpl->set_var("forum_admin", "");
 if (!$uuser->capable($forum['fid'], 'Advertise'))
   $tpl->set_var("advertiser", "");
+if (!$uuser->capable($forum['fid'], 'Sponsor'))
+  $tpl->set_var("sponsor", "");
 
 if (!$msg['aid'])
   $tpl->set_var("account_id", "");
@@ -132,7 +138,8 @@ else {
 }
 
 $tpl->set_var(array(
-  "MSG_SUBJECT" => $msg['subject'],
+  "TMSG_SUBJECT" => $msg['subject'],
+  "MSG_SUBJECT" => softbreaklongwords($msg['subject'],40),
   "MSG_DATE" => $msg['date'],
   "MSG_MID" => $msg['mid'],
   "MSG_AID" => $msg['aid'],
@@ -156,18 +163,19 @@ if ($user->valid() && !empty($msg['email'])) {
 } else
   $tpl->set_var("MSG_NAMEEMAIL", $msg['name']);
 
+// parent message
 if (isset($pmsg)) {
   $tpl->set_var(array(
     "PMSG_MID" => $pmsg['mid'],
-    "PMSG_SUBJECT" => $pmsg['subject'],
+    "PMSG_SUBJECT" => softbreaklongwords($pmsg['subject'],40),
     "PMSG_NAME" => $pmsg['name'],
     "PMSG_DATE" => $pmsg['date'],
   ));
 } else
   $tpl->set_var("parent", "");
 
-// $message = nl2br(wordwrap($msg['message'],78,'<wbr>',1));
-$message = nl2br($msg['message']);
+$message = nl2br(softbreaklongwords($msg['message'],78));
+// $message = nl2br($msg['message']);
 
 if (!empty($msg['url'])) {
   $urlset = 1;

@@ -1,14 +1,7 @@
 <html>
 <head>
-<title>{DOMAIN} Forums: {MSG_SUBJECT}</title>
-<style type="text/css">
-<!--
-body { font-family: verdana, arial, geneva; font-size: smaller }
-td { font-family: verdana, arial, geneva; font-size: smaller }
-ul.thread { margin-top: 0.2em; margin-bottom: 0.3em; margin-left: 2em; padding-left: 2em; }
-ul {margin-left: 1em; padding-left: 1em;}
--->
-</style>
+<title>{DOMAIN} Forums: {TMSG_SUBJECT}</title>
+<link rel=StyleSheet href="/css/main.css" type="text/css">
 </head>
 <body bgcolor="#ffffff">
 

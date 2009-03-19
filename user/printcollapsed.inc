@@ -1,4 +1,5 @@
 <?php
+require_once("textwrap.inc");
 
 function print_collapsed($thread, $msg, $replies)
 {
@@ -12,7 +13,7 @@ function print_collapsed($thread, $msg, $replies)
 
   $string = "<li>";
 
-  // $msg['subject']=wordwrap($msg['subject'],40,'<wbr>',1);
+  $msg['subject']=softbreaklongwords($msg['subject'],40);
 
   if (isset($user->pref['FlatThread']))
     $string .= "<a href=\"/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";

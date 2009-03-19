@@ -32,6 +32,7 @@ $tpl->set_block("undelete", "disabled");
 $tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
 $tpl->set_block("message", "advertiser");
+$tpl->set_block("message", "sponsor");
 $tpl->set_block("message", "message_ip");
 $tpl->set_block("message", "owner");
 $tpl->set_block("owner", "delete_");
@@ -42,12 +43,14 @@ $tpl->set_block("message", "changes");
 $tpl->set_var(array(
   "forum_admin" => "",
   "advertiser" => "",
+  "sponsor" => "",
   "owner" => "",
   "parent" => "",
   "changes" => "",
 ));
 
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
+$tpl->set_var("FORUM_NOTICES", "");
 $tpl->parse("FORUM_HEADER", "forum_header");
 
 $tpl->parse("HEADER", "header");

@@ -1,22 +1,7 @@
 <html>
 <head>
 <title>{DOMAIN} Forums: {FORUM_NAME}</title>
-<style type="text/css">
-<!--
-body { font-family: verdana, arial, geneva; font-size: smaller }
-td { font-family: verdana, arial, geneva; font-size: smaller }
-.trow0 { background: #ddddff }
-.trow1 { background: #ccccee }
-.drow0 { background: #ddffdd }
-.drow1 { background: #cceecc }
-.mrow0 { background: #ffdddd }
-.mrow1 { background: #eecccc }
-.row0 { background: #ffffff }
-.row1 { background: #eeeeee }
-ul.thread { margin-top: 0.2em; margin-bottom: 0.3em; margin-left: 2em; padding-left: 2em; }
-ul {margin-left: 1em; padding-left: 1em;}
--->
-</style>
+<link rel=StyleSheet href="/css/main.css" type="text/css">
 </head>
 
 <body bgcolor="#ffffff">
@@ -49,7 +34,29 @@ ul {margin-left: 1em; padding-left: 1em;}
 </td></tr>
 </table>
 
+<font face="Verdana, Arial, Geneva" size="-1">
 Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
+
+<form method="get" action="/redirect.phtml">
+<select name="url" onChange="if (this.selectedIndex) { location = this.options[this.selectedIndex].value; }">
+<option value=""><b>Choose Discussion Forum</b>
+<option value="/other/">Miscellaneous Forum
+<option value="/pr0n/">Pr0n Forum
+<option value="/swapmeet/">Ye Olde Ghetto Swapmeet
+<option value="/photos/">Photo Forum
+<option value="/s4/">B5 S4 Forum
+<option value="/food/">Piehole Stuffing Forum
+<option value="/flames/">FYYFF Forum
+<option value="/wit/">Investment Forum
+<option value="">---
+<option value="/test/">Test Forum
+<option value="">---
+<option value="/tracking.phtml">Your tracked threads
+</select>
+<noscript>
+<input type="submit" value="GO">
+</noscript>
+</form>
 
 <!-- BEGIN update_all -->
 <div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}&time={TIME}">Update all</a></div>

@@ -10,6 +10,9 @@
 <!-- BEGIN advertiser -->
      <b>Advertiser</b>
 <!-- END advertiser -->
+<!-- BEGIN sponsor -->
+     <b><a href="http://kawf.sourceforge.net/">Circle of Trust</a></b>
+<!-- END sponsor -->
      <br>
 <!-- BEGIN message_ip -->
      Posting IP Address: {MSG_IP}<br>
