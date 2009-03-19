@@ -5,9 +5,6 @@ $sql_password = "Hugnewm0";
 $sql_host = "localhost";
 $database = "kawf";
 
-
-$create_key = "9Schiaty";
-
 $bounce_host = "curtis.curtisfong.org";
 
 /* note that $cookie_host can also be an array to guarantee cookies are stored

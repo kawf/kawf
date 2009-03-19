@@ -1,6 +1,6 @@
 <?php
 /* Where the kawf tree sits in the filesystem */
-$srcroot = "/usr/local/kawf";
+$srcroot = "/home/nyet/src/kawf-beta";
 
 /* Where all of the templates reside */
 $template_dir = "$srcroot/templates/";
@@ -11,8 +11,8 @@ $template_dir = "$srcroot/templates/";
 /* Uncomment this if you have your own account management stuff */
 #$dont_use_account = true;
 
-/* Uncomment this if you want to temporarily creation of new accounts */
-// $create_disabled = 1;
+/* Uncomment this if you want to disable creation of new accounts */
+$create_disabled = 1;
 
 /* Uncomment this if you want to force people to log in to read the forums */
 $login_to_read = 1;
