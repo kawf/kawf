@@ -1,22 +1,7 @@
 <html>
 <head>
 <title>{DOMAIN} Forums: {FORUM_NAME}</title>
-<style type="text/css">
-<!--
-body { font-family: verdana, arial, geneva; font-size: smaller }
-td { font-family: verdana, arial, geneva; font-size: smaller }
-.trow0 { background: #ddddff }
-.trow1 { background: #ccccee }
-.drow0 { background: #ddffdd }
-.drow1 { background: #cceecc }
-.mrow0 { background: #ffdddd }
-.mrow1 { background: #eecccc }
-.row0 { background: #ffffff }
-.row1 { background: #eeeeee }
-ul.thread { margin-top: 0.2em; margin-bottom: 0.3em; margin-left: 2em; padding-left: 2em; }
-ul {margin-left: 1em; padding-left: 1em;}
--->
-</style>
+<link rel=StyleSheet href="/css/main.css" type="text/css">
 </head>
 
 <body bgcolor="#ffffff">
