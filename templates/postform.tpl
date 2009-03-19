@@ -32,6 +32,7 @@ This thread is locked. No replies are allowed.<br>
   </td>
   <td bgcolor="#dfdfdf">
     {USER_NAME} &nbsp; &nbsp; &nbsp;[ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
+    [ <a href="/tips/"><b>Posting Tips</b></a> ]
   </td>
 </tr>
 
