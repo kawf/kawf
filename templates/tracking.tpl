@@ -16,7 +16,7 @@
 <table>
 <tr><td>
   <font size="-2">
-  &nbsp; &nbsp;[<a href="/tips/">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>] [<a href="/logout.phtml?url=/login.phtml&cookie={LCOOKIE}">Logout</a>]
+  &nbsp; &nbsp;[<a href="/tips/"><b>Forum Tips</b></a>] [<a href="/search/" target="_top">Search</a>] [<a href="/logout.phtml?url=/login.phtml&cookie={LCOOKIE}">Logout</a>]
   </font>
 </td></tr>
 </table>
@@ -67,7 +67,7 @@
 <table>
 <tr><td>
   <font size="-2">
-  &nbsp; &nbsp;[<a href="/tips/">Reading Tips</a>] [<a href="/search/" target="_top">Search</a>] [<a href="/logout.phtml?url=/login.phtml&cookie={LCOOKIE}">Logout</a>]
+  &nbsp; &nbsp;[<a href="/tips/"><b>Forum Tips</b></a>] [<a href="/search/" target="_top">Search</a>] [<a href="/logout.phtml?url=/login.phtml&cookie={LCOOKIE}">Logout</a>]
   </font>
 </td></tr>
 </table>

@@ -26,7 +26,7 @@
   <b>Page:</b> {PAGES}
 
   &nbsp; &nbsp;
-  [<a href="/tips/">Reading Tips</a>]
+  [<a href="/tips/"><b>Forum Tips</b></a>]
   [<a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search</a>]
   [<a href="#post">Post New Thread</a>]
 
@@ -89,7 +89,7 @@ Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
   <b>Page:</b> {PAGES}
 
   &nbsp; &nbsp;
-  [<a href="/tips/">Reading Tips</a>]
+  [<a href="/tips/"><b>Forum Tips</b></a>]
   [<a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search</a>]
   [<a href="#post">Post New Thread</a>]
 
