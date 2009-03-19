@@ -1,0 +1,66 @@
+--- index.php.orig	Tue Aug  9 16:23:28 2005
++++ index.php	Tue Aug  9 16:30:02 2005
+@@ -114,7 +114,7 @@
+ mysql_connect($sql_host,$sql_username,$sql_password);
+ @mysql_select_db($database) or die( "Unable to select database");
+ 
+-$searchTxt=addslashes($_GET['searchTxt']);
++$searchTxt=$_GET['searchTxt'];
+ $searchMsg=$_GET['searchMsg']?1:0;
+ $searchUrl=$_GET['searchUrl']?1:0;
+ 
+@@ -332,25 +332,25 @@
+ 					$sql2 .= " (";
+ 					if ($useIndexedSearch) {
+ 						if ($searchSubj == "1" && $searchMsg == "1") {
+-							$sql2  .= " match (m.subject,m.message) AGAINST ('" . $searchArr[$i] . "')";
++							$sql2  .= " match (m.subject,m.message) AGAINST ('" . addslashes($searchArr[$i]) . "')";
+ 						} else if ($searchSubj == "1") {
+-							$sql2  .= " match (m.subject) AGAINST ('" . $searchArr[$i] . "')";
++							$sql2  .= " match (m.subject) AGAINST ('" .  addslashes($searchArr[$i]) . "')";
+ 						} else if ($searchMsg == "1") {
+-							$sql2  .= " match (m.message) AGAINST ('" . $searchArr[$i] . "')";
++							$sql2  .= " match (m.message) AGAINST ('" .  addslashes($searchArr[$i]) . "')";
+ 						}				
+ 						if ($searchUrl == "1") {
+ 							if ($searchSubj == "1" || $searchMsg == "1")
+ 								$sql2  .= " or ";
+-							$sql2  .= " url like '%" . $searchTxt . "%' or urltext like '%" . $searchTxt . "%' ";
++							$sql2  .= " url like '%" . addslashes($searchTxt) . "%' or urltext like '%" . addslashes($searchTxt) . "%' ";
+ 						}
+ 					} else {
+ 						if ($searchSubj == "1" && $searchMsg == "1") {
+-							$sql2  .= " m.subject like '%" . $searchArr[$i] . "%' ";
+-							$sql2  .= " or m.message like '%" . $searchArr[$i] . "%' ";
++							$sql2  .= " m.subject like '%" . addslashes($searchArr[$i]) . "%' ";
++							$sql2  .= " or m.message like '%" . addslashes($searchArr[$i]) . "%' ";
+ 						} else if ($searchSubj == "1") {
+-							$sql2  .= " m.subject like '%" . $searchArr[$i] . "%' ";
++							$sql2  .= " m.subject like '%" . addslashes($searchArr[$i]) . "%' ";
+ 						} else if ($searchMsg == "1") {
+-							$sql2  .= " m.message like '%" . $searchArr[$i] . "%' ";
++							$sql2  .= " m.message like '%" . addslashes($searchArr[$i]) . "%' ";
+ 						}
+ 					}
+ 					$sql2 .= ")";
+@@ -386,6 +386,9 @@
+ 				
+ 				$sql = "";
+ 				for($i=0;$i < count($forumID);$i++) {
++					if (!is_numeric($forumID[$i]))
++						continue;
++
+ 					if ($sql!="")
+ 						$sql .= " UNION ";
+ 					$sql .= "(" . $sql1 . " from f_forums f, f_messages" . $forumID[$i] . " m ";
+@@ -393,8 +396,8 @@
+ 					$sql .= ")";
+ 				}
+ 				
+-				if ($sortBy != "")
+-					$sql .= " order by " . $sortBy . " " . $sortDir;
++				if (preg_match("/^[a-zA-Z_]+$/", $sortBy))
++					$sql .= " order by " . $sortBy . " " . (preg_match("/^(asc|desc)/i", $sortDir) ? $sortDir : "");
+ 				
+ 				
+ 				//echo $sql . "<hr>";
