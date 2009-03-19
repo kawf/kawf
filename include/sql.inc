@@ -18,9 +18,6 @@ function sql_open($db = "")
   else
     $host = $sql_host;
 
-//    echo "<pre>Down for maint</pre>\n";
-//    exit;
-
 //  mysql_connect($host, $sql_username, $sql_password) or
 //    sql_error("mysql_pconnect");
   if(!mysql_connect($host, $sql_username, $sql_password)) {
@@ -35,7 +32,8 @@ function sql_open($db = "")
 }
 
 function sql_select_db($db)
-{ if (!empty($db))
+{
+  if (!empty($db))
     mysql_select_db($db);
 }
 

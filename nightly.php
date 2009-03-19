@@ -83,7 +83,7 @@ sql_query("delete from f_dupposts where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14");
 
 
 echo "Cleaning visits\n";
-/* Clear out dupposts */
+/* Clear out visits */
 sql_query("delete from f_visits where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14");
 
 
