@@ -129,7 +129,7 @@ header("Cache-Control: private");
 
 $user = new ForumUser;
 $user->find_by_cookie();
-$tpl->set_var("AID", $user->aid);
+$tpl->set_var("AID", $user->aid);	// for hidden section in footer.tpl
 
 function update_visits()
 {
