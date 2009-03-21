@@ -8,28 +8,33 @@ Quick setup guide:
 
   You may also leave it in place.
 
-* edit setup.inc
-   - point $srcroot to where the kawf tree resides (including the kawf
-     directory itself)
-   - set $domain to the domain where your forums are
+* edit config/setup.inc or create config/setup-local.inc to override setup.inc
+  - point $srcroot to where the kawf tree resides (including the kawf directory
+    itself)
+  - set $domain to the domain where your forums are
+  - you may way to create setup-local.inc to avoid merge problems if you using
+    source control on a live tree.
 
 * add a sql user in your sql db (e.g. "kawf" or "forums")
-   - add a password for that user (in mysql, make sure to use the PASSWORD
-     function to encrypt it!)
+  - add a password for that user (in mysql, make sure to use the PASSWORD
+    function to encrypt it!)
 
 * create a database (e.g. "kawf")
 
 * give the user above complete access to that database (including host
   information!)
 
-* edit config.inc (in the config directory apache will be pointing to)
+* edit config/config.inc or create config/config-local.inc
   - set $sql_username to the users you decided on above (e.g. "kawf" or
     "forums")
-  - set $sql_password to the password you decided on above. note that this will     be in plaintext, so make sure setup.inc isn't world readable!
+  - set $sql_password to the password you decided on above. note that this will
+    be in plaintext, so make sure setup.inc isn't world readable!
   - set $database to the database you decided on above (e.g. "kawf")
   - set $bounce_host to the server to which you want failed emails to go to
-  - set $cookie_host to to domain you want saved in cookies - it MUST match
-    a subset of the url host your users will use to access the forums!
+  - set $cookie_host to to domain you want saved in cookies - it MUST match a
+    subset of the url host your users will use to access the forums!
+  - you may way to create config-local.inc to avoid merge problems if you are
+    using source control on a live tree.
 
 * edit tools/initial.php
   - make sure $include_path contains the location of your config.inc

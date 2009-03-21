@@ -1,9 +1,9 @@
 <?php
 /* Where the kawf tree sits in the filesystem */
-$srcroot = "/home/jerdfelt/software/kawf";
+$srcroot = "/usr/local/kawf/kawf";
 
 /* Where all of the templates reside */
-$template_dir = "/web/kawf.org/forums/dev/templates/";
+$template_dir = "/var/www/vhosts/kawf.org/forums/templates/";
 
 /* This is optional. Don't declare the variable if you don't want it added */
 #$include_append = "$srcroot/config:$srcroot/include:$srcroot/user/account";
