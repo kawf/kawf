@@ -12,4 +12,7 @@ $bounce_host = "bounce.kawf.org";
 /* $cookie_host = array(".kawf.org",".kawf.net"); */
 
 $cookie_host = ".kawf.org";
+
+if (is_file("config-local.inc") )
+    include_once "config-local.inc";
 ?>
