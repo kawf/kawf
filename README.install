@@ -27,8 +27,11 @@ Quick setup guide:
 * edit config/config.inc or create config/config-local.inc
   - set $sql_username to the users you decided on above (e.g. "kawf" or
     "forums")
-  - set $sql_password to the password you decided on above. note that this will
-    be in plaintext, so make sure setup.inc isn't world readable!
+  - set $sql_password to the password you decided on above.
+    ***********************************************************************
+    * Note that this will be in plaintext, so make sure config.inc and/or
+    * config-local.inc isn't world readable!
+    ***********************************************************************
   - set $database to the database you decided on above (e.g. "kawf")
   - set $bounce_host to the server to which you want failed emails to go to
   - set $cookie_host to to domain you want saved in cookies - it MUST match a
@@ -44,6 +47,8 @@ Quick setup guide:
   directory.
   - either "Include" your apache.conf file from the main http.conf, or
     cut/paste it in directly
+  - for plesk vhosts, you can copy it directly into the vhosts.conf after
+    removing the <VirtualHosts> tags.
 
 * make sure your apache php.ini file has "register_globals = On" or that your
   apache virtual host configuration has a <Directory> or <DirectoryMatch>
