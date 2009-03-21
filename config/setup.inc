@@ -28,4 +28,7 @@ $domain = "kawf.org";
  * sites, so we can have correct URL's, etc
  */
 $config = "config";
+
+if (is_file("setup-local.inc") )
+    include_once "setup-local.inc";
 ?>
