@@ -29,6 +29,8 @@ $domain = "kawf.org";
  */
 $config = "config";
 
+/* allow user to override default in a separate file (prevents merge problems
+   when using source control */
 if (is_file("setup-local.inc") )
     include_once "setup-local.inc";
 ?>
