@@ -86,15 +86,15 @@ This thread is locked. No replies are allowed.<br>
 <tr>
 <td bgcolor="#dfdfdf" align="right" valign="top"><b>Post Message:</b></td>
 <td bgcolor="#dfdfdf">
-<input type="submit" name="preview" value="Preview Message">
-<input type="submit" name="post" value="{SUBMITTEXT}"><br><br>
+<!-- <input type="reset" value="Reset Message"><br> -->
 <input type="checkbox" name="ExposeEmail"{EXPOSEEMAIL}>
 Show email address in post?<br>
 <input type="checkbox" name="EmailFollowup"{EMAILFOLLOWUP}>
 Send email on followup replies?<br>
 <input type="checkbox" name="TrackThread"{TRACKTHREAD}>
 Track thread?<br><br>
-<input type="reset" value="Reset Message">
+<input type="submit" name="preview" value="Preview Message">
+<input type="submit" name="post" value="{SUBMITTEXT}">
 </td>
 </tr>
 <tr>
