@@ -1,4 +1,8 @@
 <html>
+<head>
+<title>Forum Tips</title>
+<link rel=StyleSheet href="/css/main.css" type="text/css">
+</head>
 <body>
 
 <h1>Posting Tips</h1>
