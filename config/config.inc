@@ -15,6 +15,6 @@ $cookie_host = ".kawf.org";
 
 /* allow user to override default in a separate file (prevents merge problems
    when using source control */
-if (is_file("config-local.inc") )
-    include_once "config-local.inc";
+if (is_file(dirname(__FILE__) . "/config-local.inc") )
+    include_once dirname(__FILE__) . "/config-local.inc";
 ?>
