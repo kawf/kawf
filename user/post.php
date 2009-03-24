@@ -75,6 +75,7 @@ $tpl->parse("FORUM_HEADER", "forum_header");
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");
 
+$tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
 if (isset($ad_generic)) {
@@ -469,6 +470,7 @@ if (!$accepted || isset($preview)) {
       "THREAD_SUBJECT" => $t_subject,
       "USER_NAME" => $user->name,
       "HOST" => $_url,
+      "FORUM_NAME" => $forum['name'],
       "FORUM_SHORTNAME" => $forum['shortname'],
       "MSG_MID" => $mid,
       "MAIL_MSG_SUBJECT" => $subject,
