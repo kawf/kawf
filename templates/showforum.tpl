@@ -24,17 +24,16 @@
 <tr><td>
   <font size="-2">
   <b>Page:</b> {PAGES}
-
   &nbsp; &nbsp;
   [<a href="/tips/"><b>Forum Tips</b></a>]
   [<a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search</a>]
   [<a href="#post">Post New Thread</a>]
-
+  &nbsp; &nbsp;
+  Total threads: {NUMTHREADS}, total pages: {NUMPAGES}
   </font>
 </td></tr>
 </table>
 
-Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 
 <!-- BEGIN update_all -->
 <div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}&time={TIME}">Update all</a></div>
