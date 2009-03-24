@@ -24,17 +24,16 @@
 <tr><td>
   <font size="-2">
   <b>Page:</b> {PAGES}
-
   &nbsp; &nbsp;
   [<a href="/tips/"><b>Forum Tips</b></a>]
   [<a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search</a>]
   [<a href="#post">Post New Thread</a>]
-
+  &nbsp; &nbsp;
+  Total threads: {NUMTHREADS}, total pages: {NUMPAGES}
   </font>
 </td></tr>
 </table>
 
-Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 
 <form method="get" action="/redirect.phtml">
 <select name="url" onChange="if (this.selectedIndex) { location = this.options[this.selectedIndex].value; }">
