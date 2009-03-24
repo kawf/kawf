@@ -34,7 +34,6 @@
 </td></tr>
 </table>
 
-<font face="Verdana, Arial, Geneva" size="-1">
 Total threads: {NUMTHREADS}, total pages: {NUMPAGES}<br>
 
 <form method="get" action="/redirect.phtml">
