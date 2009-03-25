@@ -19,6 +19,7 @@ if (!isset($mid) || !isset($forum)) {
 }
 
 require_once("strip.inc");
+require_once("diff.inc");
 
 $tpl->set_file(array(
   "edit" => "edit.tpl",
@@ -295,49 +296,26 @@ if (isset($error) || isset($preview)) {
   if (!empty($imageurl))
     $message = "<center><img src=\"$imageurl\"></center><p>\n" . $message;
 
-  if(ini_get('safe_mode')) {
-    // FIXME
-    $diff = "";
-  } else {
-    /* Create a diff for the old message and the new message */
-    $origfn = tempnam("/tmp/kawf", "kawf");
-    $newfn = tempnam("/tmp/kawf", "kawf");
+  /* Create a diff for the old message and the new message */
 
-    $origfd = fopen($origfn, "w+");
-    $newfd = fopen($newfn, "w+");
+  /* Dump the \r's, we don't want them */
+  $msg['message'] = preg_replace("/\r/", "", $msg['message']);
+  $message = preg_replace("/\r/", "", $message);
 
-    if($origfd && $newfd) {
-      /* Dump the \r's, we don't want them */
-      $msg['message'] = preg_replace("/\r/", "", $msg['message']);
-      $message = preg_replace("/\r/", "", $message);
-
-      fwrite($origfd, "Subject: " . $msg['subject'] . "\n");
-      fwrite($origfd, $msg['message'] . "\n");
-      if (!empty($msg['url'])) {
-	fwrite($origfd, "urltext: " . $msg['urltext'] . "\n");
-	fwrite($origfd, "url: " . $msg['url'] . "\n");
-      }
-
-      fwrite($newfd, "Subject: " . $subject . "\n");
-      fwrite($newfd, $message . "\n");
-      if (!empty($url)) {
-	fwrite($newfd, "urltext: " . $urltext . "\n");
-	fwrite($newfd, "url: " . $url . "\n");
-      }
-
-      fclose($origfd);
-      fclose($newfd);
-
-      $diff = `diff -u $origfn $newfn`;
-    }
-
-    unlink($origfn);
-    unlink($newfn);
+  $old[]="Subject: " . $msg['subject'];
+  $old = array_merge($old, explode("\n", $msg['message']));
+  if (!empty($msg['url'])) {
+    $old[]="urltext: " . $msg['urltext'];
+    $old[]="url: " . $msg['url'];
+  }
+  $new[]="Subject: " . $subject;
+  $new = array_merge($new, explode("\n", $message));
+  if (!empty($url)) {
+    $new[]="urltext: " . $urltext;
+    $new[]="url: " . $url;
   }
 
-  /* The first 2 lines don't mean anything to us since it's just temporary */
-  /*  filenames */
-  $diff = preg_replace("/^--- [^\n]+\n\+\+\+ [^\n]+\n/", "", $diff);
+  $diff = diff($old, $new);
 
   /* Add it into the database */
   $sql = "update f_messages" . $indexes[$index]['iid'] . " set " .
