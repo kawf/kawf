@@ -9,7 +9,7 @@ $template_dir = "$srcroot/forums/templates/";
 #$template_dir = "/var/www/vhosts/kawf.org/forums/templates/";
 
 /* This is optional. Don't declare the variable if you don't want it added */
-#$include_append = "$srcroot/config:$srcroot/include:$srcroot/user/account";
+#$include_append = "$srcroot/lib:$srcroot/config:$srcroot/include:$srcroot/user/account";
 
 /* Uncomment this if you have your own account management stuff */
 #$dont_use_account = true;

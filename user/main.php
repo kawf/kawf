@@ -9,7 +9,7 @@
 #}
 
 /* First setup the path */
-$include_path = "$srcroot:$srcroot/include:$srcroot/user";
+$include_path = "$srcroot:$srcroot/lib:$srcroot/include:$srcroot/user";
 if (!isset($dont_use_account))
   $include_path .= ":" . "$srcroot/user/account";
 
