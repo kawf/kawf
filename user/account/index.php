@@ -1,4 +1,5 @@
 <?php
+include 'noob.inc';
 
 $user= new ForumUser;
 $user->find_by_cookie();
@@ -33,6 +34,11 @@ if(mysql_num_rows($result)) {
 	if($index['status'] == "Deleted") $deleted+=(int)$index['count'];
 	if($index['status'] == "OffTopic") $offtopic+=(int)$index['count'];
     }
+}
+
+if(array_key_exists('noob', $_GET)) {
+    noob($_GET['noob'], $uuser->aid, $active);
+    return;
 }
 ?>
 

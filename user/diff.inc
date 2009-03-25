@@ -16,8 +16,8 @@ function diff($old, $new)
   */
 
   if(!ini_get('safe_mode')) {
-    $origfn = tempnam("/tmp/kawf", "kawf");
-    $newfn = tempnam("/tmp/kawf", "kawf");
+    $origfn = tempnam("/tmp", "kawf");
+    $newfn = tempnam("/tmp", "kawf");
 
     $origfd = fopen($origfn, "w+");
     $newfd = fopen($newfn, "w+");
