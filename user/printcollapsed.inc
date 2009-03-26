@@ -21,27 +21,27 @@ function print_collapsed($thread, $msg, $replies)
 
   if (isset($flags['NoText'])) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/nt.gif\">";
+      $string .= " <img src=\"/pics/nt.gif\" alt=\"no text\">";
     else
       $string .= " (nt)";
   }
 
   if (isset($flags['Picture'])) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/pic.gif\">";
+      $string .= " <img src=\"/pics/pic.gif\" alt=\"contains picture\">";
     else
       $string .= " (pic)";
   }
 
   if (isset($flags['Link'])) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/url.gif\">";
+      $string .= " <img src=\"/pics/url.gif\" alt=\"contains url\">";
     else
       $string .= " (link)";
   }
 
   if ($msg['state'] == 'OffTopic' && !isset($user->pref['SimpleHTML']))
-    $string .= " <img src=\"/pics/ot.gif\">";
+    $string .= " <img src=\"/pics/ot.gif\" alt=\"off topic\">";
 
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $msg['name'] . "</b>&nbsp;&nbsp;<font size=\"-2\"><i>" . $msg['date'] . "</i>";
 
@@ -51,7 +51,7 @@ function print_collapsed($thread, $msg, $replies)
 
   if (isset($thread['flag.Locked']) && !$msg['pmid']) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/lock.gif\">";
+      $string .= " <img src=\"/pics/lock.gif\" alt=\"locked\">";
     else
       $string .= " (locked)";
   }
