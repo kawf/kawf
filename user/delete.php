@@ -1,7 +1,6 @@
 <?php
 
 $user->req();
-$stoken = md5('token' . $user->aid . $user->password);
 
 if (isset($no)) {
   header("Location: $page");
@@ -9,7 +8,7 @@ if (isset($no)) {
 }
 
 if (isset($yes)) {
-  header("Location: changestate.phtml?state=Deleted&mid=$mid&page=$page&token=$stoken");
+  header("Location: changestate.phtml?state=Deleted&mid=$mid&page=$page&token=$user->token()");
   exit;
 }
 

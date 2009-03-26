@@ -83,7 +83,7 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
 
   $page = $tpl->get_var("PAGE");
 
-  $stoken = md5('token' . $user->aid . $user->password);
+  $stoken = $user->token();
   switch ($msg['state']) {
   case "":
     if ($user->capable($forum['fid'], 'OffTopic'))

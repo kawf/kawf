@@ -41,7 +41,7 @@ function page_footer()
   if (isset($user)) {
 ?>
         <tr bgcolor="#000099"> 
-          <td><span class="footing"><a class="footing" href="logout.phtml?cookie=<? echo md5($user->cookie) ?>">Logout</a></span></td>
+          <td><span class="footing"><a class="footing" href="logout.phtml?token=<? echo $user->token() ?>">Logout</a></span></td>
         </tr>
 <?php
   }

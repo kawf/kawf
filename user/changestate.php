@@ -4,15 +4,13 @@ require_once("mailfrom.inc");
 require_once("textwrap.inc");
 
 $user->req();
-$stoken = md5('token' . $user->aid . $user->password);
 
 if ($state != 'Active' && $state != 'OffTopic' && $state != 'Moderated' && $state != 'Deleted') {
   echo "Invalid state $state\n";
   exit;
 }
-if ($_REQUEST['token'] != $stoken) {
-  echo "Invalid token\n";
-  exit;
+if ($_REQUEST['token'] != $user->token()) {
+  err_not_found();
 }
 
 $index = find_msg_index($mid);

@@ -64,7 +64,7 @@ function print_collapsed($thread, $msg, $replies)
 
   $page = $tpl->get_var("PAGE");
 
-  $stoken = md5('token' . $user->aid . $user->password);
+  $stoken = $user->token();
   switch ($msg['state']) {
   case "Moderated":
     if ($user->capable($forum['fid'], 'Moderate'))

@@ -1,7 +1,7 @@
 <?php
 
 $user->req();
-$stoken = md5('token' . $user->aid . $user->password);
+$stoken = $user->token();
 
 if (isset($no)) {
   header("Location: $page");

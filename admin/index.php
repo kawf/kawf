@@ -15,7 +15,7 @@ $result = sql_query("select * from f_forums,f_indexes where f_forums.fid=f_index
 <a href="useracl.phtml">User ACLs</a>
 <a href="pending.phtml">Administer pending requests</a>
 <a href="showvisits.phtml">Show visits</a>
-<a href="logout.phtml?cookie=<? echo md5($user->cookie) ?>">Logout</a>
+<a href="logout.phtml?token=<? echo $user->token() ?>">Logout</a>
 
 <p>
 
