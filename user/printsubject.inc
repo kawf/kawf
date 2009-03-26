@@ -56,7 +56,7 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
 
   if ($msg['state'] == 'OffTopic' && !isset($user->pref['SimpleHTML']))
     $string .= " <img src=\"/pics/ot.gif\" alt=\"off topic\">";
-	
+
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<font size=-2><i>".$msg['date']."</i>";
 
   if ($hiddenreplies >= 0)
