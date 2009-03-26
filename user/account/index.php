@@ -45,16 +45,7 @@ if(array_key_exists('noob', $_GET)) {
 <html>
 <head>
 <title><?php echo "$domain"?>: Account Information for <?php echo "$uuser->name" ?></title>
-<style type="text/css">
-<!--
-body { font-family: verdana, arial, geneva; font-size: smaller }
-td { font-family: verdana, arial, geneva; font-size: smaller }
-
-table.outer { border-width: 0; border-spacing: 3; }
-td.outer { border-width: 0; padding: 0; vertical-align: top; }
-table.inner { border-width: 1px; border-color: #999990; border-style: none solid solid none; border-spacing: 0; }
-td.inner { border-width: 1px; border-color: #999990; border-style: solid none none solid; padding: 3; }
--->
+<link rel=StyleSheet href="/css/account.css" type="text/css">
 </style>
 </head>
 

@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>{DOMAIN} Forums: Tracking</title>
-<LINK REL=StyleSheet HREF="/css/main.css" TYPE="text/css" MEDIA=screen>
+<link rel=StyleSheet href="/css/main.css" type="text/css" media="screen">
 </head>
 <body bgcolor="#ffffff">
 
