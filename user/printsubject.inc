@@ -122,7 +122,7 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
 
   // FIXME
   // dont close <li>'s so we can open sub threads with <ul>'s legally
-  // $string .= "</li>\n";
+  $string .= "</li>\n";
 
   return $string;
 }
