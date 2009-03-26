@@ -14,6 +14,10 @@ if (!$user->capable($forum['fid'], 'Lock')) {
   exit;
 }
 
+if ($_REQUEST['token'] != $user->token()) {
+  err_not_found();
+}
+
 $index = find_thread_index($tid);
 if (!isset($index)) {
   echo "Invalid thread!\n";

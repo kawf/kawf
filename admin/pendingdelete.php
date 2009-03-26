@@ -2,6 +2,10 @@
 
 $user->req("ForumAdmin");
 
+if($_REQUEST['token'] != $user->token()) {
+    err_not_found();
+}
+
 if($_GET['clean'] == 1) {
     $sql="delete from u_pending where status = 'Done'";
     sql_query($sql) or sql_error($sql);

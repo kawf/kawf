@@ -9,6 +9,9 @@ if ($state != 'Active' && $state != 'OffTopic' && $state != 'Moderated' && $stat
   echo "Invalid state $state\n";
   exit;
 }
+if ($_REQUEST['token'] != $user->token()) {
+  err_not_found();
+}
 
 $index = find_msg_index($mid);
 

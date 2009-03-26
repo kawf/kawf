@@ -249,6 +249,11 @@ class ForumUser {
 
     return isset($this->capable[$fid][$type]);
   }
+
+  function token($salt = 'token')
+  {
+    return md5($salt . $this->email . $this->password);
+  }
 }
 
 /* This is the class to change the user stuff */
@@ -378,7 +383,7 @@ class AccountUser extends ForumUser {
     global $cookie_host;
 
     if(isset($this->cookie) && $this->cookie) {
-	if(!isset($_GET['cookie']) || md5($this->cookie) != $_GET['cookie'])
+	if(!isset($_REQUEST['token']) || $this->token() != $_REQUEST['token'])
 	    return false;
     }
 

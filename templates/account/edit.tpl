@@ -40,7 +40,7 @@ Your password has been changed<p>
 <tr><td bgcolor="#dfdfdf" align="right"><b>&nbsp;Re-enter Password:</b></td><td><input type="password" name="password2" length="20"></td></tr>
 <tr><td bgcolor="#dfdfdf" align="center" colspan="2"><input type="submit" name="submit" value="Update"</td></tr>
 </table>
-<input type="hidden" name="cookie" value={LCOOKIE}>
+<input type="hidden" name="token" value={token}>
 </form>
 </center>
 

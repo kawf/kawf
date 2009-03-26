@@ -121,7 +121,7 @@ if (empty($error)) {
   $tpl->set_var("password", "");
   $tpl->set_var("ERROR", nl2br($error));
 }
-$tpl->set_var("LCOOKIE", md5($user->cookie));
+$tpl->set_var("token", $user->token());
 
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");
