@@ -97,8 +97,7 @@
 
 <table>
 <tr><td align="center">
-<a name="post">
-<img src="/pics/post.gif">
+<a name="post"><img src="/pics/post.gif" alt="post message"></a>
 </td></tr>
 
 <tr><td>

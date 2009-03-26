@@ -34,9 +34,7 @@
 </td></tr>
 </table>
 
-<a name="thread">
-
-<b>Thread:</b><br>
+<a name="thread"><b>Thread:</b></a><br>
 <table width="100%">
 <tr bgcolor="{BGCOLOR}">
 <td>
@@ -52,8 +50,7 @@
 
 <table>
 <tr><td align="center">
-<a name="post">
-<img src="/pics/followup.gif">
+<a name="post"><img src="/pics/followup.gif" alt="post follow up"></a>
 </td></tr>
 
 <tr><td>
