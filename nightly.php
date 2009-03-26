@@ -23,7 +23,8 @@ require_once("user/tables.inc");
 
 sql_open($database);
 
-set_time_limit(0);
+if(!ini_get('safe_mode'))
+    set_time_limit(0);
 
 function find_msg_index($mid)
 {

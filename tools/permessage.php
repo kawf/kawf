@@ -4,7 +4,8 @@ require('../sql.inc');
 
 sql_open_admin();
 
-set_time_limit(0);
+if(!ini_get('safe_mode'))
+    set_time_limit(0);
 
 $sql = "select * from forums";
 $res1 = mysql_db_query('a4', $sql) or sql_error($sql);

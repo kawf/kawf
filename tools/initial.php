@@ -13,7 +13,8 @@ include("config.inc");
 include("sql.inc");
 include("user/tables.inc");
 
-set_time_limit(0);
+if(!ini_get('safe_mode'))
+    set_time_limit(0);
 
 sql_open($database);
 

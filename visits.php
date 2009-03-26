@@ -15,7 +15,8 @@ require_once("sql.inc");
 
 sql_open($database);
 
-set_time_limit(0);
+if(!ini_get('safe_mode'))
+    set_time_limit(0);
 
 /* Delete any entries that haven't been updated in > 30 minutes */
 sql_query("delete from f_visits where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) > 30 * 60");

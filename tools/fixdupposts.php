@@ -1,6 +1,8 @@
 #!/usr/bin/php -q
 <?php
-set_time_limit(0);
+
+if(!ini_get('safe_mode'))
+    set_time_limit(0);
 
 function sql_error($sql)
 {
