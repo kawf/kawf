@@ -119,7 +119,9 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
       $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?tid=" . $msg['tid'] . "&page=$page\">lt</a>";
   }
 
-  $string .= "</li>\n";
+  // FIXME
+  // dont close <li>'s so we can open sub threads with <ul>'s legally
+  // $string .= "</li>\n";
 
   return $string;
 }
