@@ -18,8 +18,10 @@ function sql_open($db = "")
   else
     $host = $sql_host;
 
-  mysql_connect($host, $sql_username, $sql_password) or
-    sql_error("mysql_pconnect");
+  if(!mysql_connect($host, $sql_username, $sql_password)) {
+    echo "<pre>Down for maintainance</pre>\n";
+    exit;
+  }
 
   $sql_open = "$sql_host:$sql_username:$sql_password";
 

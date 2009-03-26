@@ -81,6 +81,9 @@ echo "Cleaning dupposts\n";
 /* Clear out dupposts */
 sql_query("delete from f_dupposts where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14");
 
+echo "Cleaning visits\n";
+/* Clear out visits */
+sql_query("delete from f_visits where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 30");
 
 echo "Cleaning forums:";
 $res1 = sql_query("select * from f_forums,f_indexes where f_forums.fid=f_indexes.fid order by f_forums.fid");

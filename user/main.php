@@ -130,8 +130,8 @@ function update_visits()
   if($user->valid())
     $aid=$user->aid;
 
-    $sql = "insert into f_visits ( aid, ip ) values ( $aid, $ip ) on duplicate key update tstamp=NOW()";
-    mysql_query($sql) or sql_error($sql);
+  $sql = "insert into f_visits ( aid, ip ) values ( $aid, $ip ) on duplicate key update tstamp=NOW()";
+  mysql_query($sql) or sql_error($sql);
 }
 
 function find_forum($shortname)
