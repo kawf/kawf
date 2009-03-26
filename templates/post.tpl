@@ -1,12 +1,7 @@
 <html>
 <head>
 <title>{DOMAIN} Forums: Post a message</title>
-<style type="text/css">
-<!--
-body { font-family: verdana, arial, geneva; font-size: smaller }
-td { font-family: verdana, arial, geneva; font-size: smaller }
--->
-</style>
+<link rel=StyleSheet href="/css/main.css" type="text/css">
 </head>
 <body bgcolor="#ffffff">
 

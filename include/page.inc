@@ -7,15 +7,7 @@ function page_header($title)
 <html>
 <head>
 <title><?echo $title;?></title>
-<style type="text/css">
-<!--
-body {  font-family: Arial, Helvetica, sans-serif; font-size: 10pt; }
-table { font-family: Arial, Helvetica, sans-serif; font-size: 10pt; }
-td { font-family: Arial, Helvetica, sans-serif; font-size: 10pt; }
-.heading { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 14pt; font-weight: bold; color: white; margin-bottom: 0px; }
-.footing { font-family: Verdana, Arial, Helvetica, sans-serif; font-size: 10pt; font-weight: bold; color: white; text-decoration: none; margin-bottom: 0px; }
--->
-</style>
+<link rel=StyleSheet href="/css/main.css" type="text/css">
 </head>
 
 <body bgcolor="#FFFFFF">

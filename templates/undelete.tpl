@@ -1,11 +1,7 @@
 <html>
 <head>
 <title>{DOMAIN} Forums: Undelete Message</title>
-<style type="text/css">
-<!--
-body { font-family: verdana, arial, geneva }
--->
-</style>
+<link rel=StyleSheet href="/css/main.css" type="text/css">
 </head>
 
 <body bgcolor="#ffffff">
