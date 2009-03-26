@@ -1,6 +1,7 @@
 <?php
 
 $user->req("ForumAdmin");
+$stoken = md5('token' . $user->aid . $user->password);
 
 page_header("Pending Requests");
 
@@ -10,7 +11,7 @@ if (isset($_GET['message']))
 $result = sql_query("select u_pending.*, u_users.name, u_users.email from u_pending, u_users where u_users.aid = u_pending.aid order by tstamp");
 ?>
 
-<a href="pendingdelete.phtml?clean=1">Delete completed or old requests</a>
+<a href="pendingdelete.phtml?clean=1&token=<?php echo $stoken; ?>">Delete completed or old requests</a>
 
 <p>
 
@@ -55,7 +56,7 @@ if(isset($requestlist)) {
       echo "<td>" . $request['status'] . "</td>\n";
       echo "<td><a href=\"/finish.phtml?cookie=" . $request['cookie'] . "\">" . $request['cookie'] . "</a></td>\n";
       echo "<td>" . $request['data'] . "</td>\n";
-      echo "<td><a href=\"pendingdelete.phtml?aid=" . $request['aid'] . "&tid=" . $request['tid'] . "\">del</a></td>\n";
+      echo "<td><a href=\"pendingdelete.phtml?aid=" . $request['aid'] . "&tid=" . $request['tid'] . "&token=$stoken\">del</a></td>\n";
       echo "</tr>\n";
 
       $count++;
