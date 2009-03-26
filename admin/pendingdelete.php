@@ -1,6 +1,12 @@
 <?php
 
 $user->req("ForumAdmin");
+$stoken = md5('token' . $user->aid . $user->password);
+
+if($_REQUEST['token'] != $stoken) {
+  echo "Invalid token\n";
+  exit;
+}
 
 if($_GET['clean'] == 1) {
     $sql="delete from u_pending where status = 'Done'";
