@@ -1,7 +1,7 @@
 <?php
 
 $user->req("ForumAdmin");
-$stoken = md5('token' . $user->aid . $user->password);
+$stoken = $user->token();
 
 page_header("Pending Requests");
 

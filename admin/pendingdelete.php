@@ -1,11 +1,9 @@
 <?php
 
 $user->req("ForumAdmin");
-$stoken = md5('token' . $user->aid . $user->password);
 
-if($_REQUEST['token'] != $stoken) {
-  echo "Invalid token\n";
-  exit;
+if($_REQUEST['token'] != $user->token()) {
+    err_not_found();
 }
 
 if($_GET['clean'] == 1) {
