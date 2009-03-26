@@ -35,53 +35,28 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
 
   if (isset($flags['NoText'])) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/nt.gif\">";
+      $string .= " <img src=\"/pics/nt.gif\" alt=\"no text\">";
     else
       $string .= " (nt)";
   }
 
   if (isset($flags['Picture'])) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/pic.gif\">";
+      $string .= " <img src=\"/pics/pic.gif\" alt=\"contains picture\">";
     else
       $string .= " (pic)";
   }
 
   if (isset($flags['Link'])) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/url.gif\">";
+      $string .= " <img src=\"/pics/url.gif\" alt=\"contains url\">";
     else
       $string .= " (link)";
   }
 
   if ($msg['state'] == 'OffTopic' && !isset($user->pref['SimpleHTML']))
-    $string .= " <img src=\"/pics/ot.gif\">";
+    $string .= " <img src=\"/pics/ot.gif\" alt=\"off topic\">";
 	
-// FIXME: BEGIN strawtarget abuse of power
-/*if ($msg['aid'] == 23) {
-    
-    // this is shitty on so many levels
-    $ip_prefixes = array(
-      "71." => "Hoenle", 
-      "70." => "Hoenle", 
-      "76." => "Hoenle", 
-      "68." => "Hoenle", 
-      "99." => "Hoenle", 
-      "12." => "Hoenle", 
-      "128." => "HS", 
-      "129." => "HS", 
-      "66." => "HS", 
-      "67." => "HS");
-  
-    foreach ($ip_prefixes as $ip_k => $ip_v) {
-      if (substr($msg['ip'], 0, strlen($ip_k)) == $ip_k) {
-        $msg['name'] .= " ($ip_v)";
-        break;
-      }
-    }
-}*/
-// END strawtarget abuse of power
-
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<font size=-2><i>".$msg['date']."</i>";
 
   if ($hiddenreplies >= 0)
@@ -94,7 +69,7 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
 
   if (isset($thread['flag.Locked']) && !$msg['pmid']) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/lock.gif\">";
+      $string .= " <img src=\"/pics/lock.gif\" alt=\"locked\">";
     else
       $string .= " (locked)";
   }
