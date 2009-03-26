@@ -14,6 +14,12 @@ if (!$user->capable($forum['fid'], 'Lock')) {
   exit;
 }
 
+$stoken = md5('token' . $user->aid . $user->password);
+if ($_REQUEST['token'] != $stoken) {
+  echo "Invalid token\n";
+  exit;
+}
+
 $index = find_thread_index($tid);
 if (!isset($index)) {
   echo "Invalid thread!\n";
