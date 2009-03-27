@@ -22,16 +22,18 @@
 
 <table width="100%">
 <tr>
-  <td colspan="2"><font size="-2">Total threads: {NUMTHREADS}, total pages: {NUMPAGES}</font></td>
-</tr>
-<tr>
-  <td align="left" valign="bottom"><font size="-2"><b>Page:</b> {PAGES}</font></td>
-  <td align="right" valign="bottom">
+  <td colspan="2">
   <font size="-2">
   [ <a href="/tips/"><b>Forum Tips</b></a> ]
   [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
   [ <a href="#post">Post New Thread</a> ]
   </font>
+  </td>
+</tr>
+<tr>
+  <td align="left" valign="bottom"><font size="-2"><b>Page:</b> {PAGES}</font></td>
+  <td align="right" valign="bottom">
+  <font size="-2">Total threads: {NUMTHREADS}, total pages: {NUMPAGES}</font>
   </td>
 </tr>
 </table>
@@ -87,11 +89,7 @@
 <tr>
   <td align="left" valign="bottom"><font size="-2"><b>Page:</b> {PAGES}</font></td>
   <td align="right" valign="bottom">
-  <font size="-2">
-  [ <a href="/tips/"><b>Forum Tips</b></a> ]
-  [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
-  [ <a href="#post">Post New Thread</a> ]
-  </font>
+  <font size="-2">Total threads: {NUMTHREADS}, total pages: {NUMPAGES}</font>
   </td>
 </tr>
 </table>
