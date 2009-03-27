@@ -149,6 +149,7 @@ function print_message($thread, $msg)
     $changes = preg_replace("/>/", "&gt;", $changes);
     $tpl->set_var("MSG_CHANGES", nl2br($changes));
     $tpl->set_var("MSG_IP", $msg['ip']);
+    $tpl->set_var("MSG_EMAIL", $uuser->email);
     $tpl->parse("_changes", "changes");
     $tpl->parse("_message_ip", "message_ip");
   } else {
