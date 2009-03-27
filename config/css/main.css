@@ -9,8 +9,8 @@ td { font-family: verdana, arial, geneva; font-size: smaller }
 .drow1 { background: #cceecc }
 .mrow0 { background: #ffdddd }
 .mrow1 { background: #eecccc }
-.row0 { background: #ffffff }
-.row1 { background: #eeeeee }
+.row0 { background: #fcfcfc }
+.row1 { background: #e4e4e4 }
 ul {margin-left: 1em; padding-left: 1em;}
 
 ul.thread {
