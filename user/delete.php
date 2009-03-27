@@ -1,6 +1,7 @@
 <?php
 
 $user->req();
+$stoken = $user->token();
 
 if (isset($no)) {
   header("Location: $page");
@@ -8,7 +9,7 @@ if (isset($no)) {
 }
 
 if (isset($yes)) {
-  header("Location: changestate.phtml?state=Deleted&mid=$mid&page=$page&token=$user->token()");
+  header("Location: changestate.phtml?state=Deleted&mid=$mid&page=$page&token=$stoken");
   exit;
 }
 
