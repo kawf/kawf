@@ -20,18 +20,20 @@
 </tr>
 </table>
 
-<table>
-<tr><td>
+<table width="100%">
+<tr>
+  <td colspan="2"><font size="-2">Total threads: {NUMTHREADS}, total pages: {NUMPAGES}</font></td>
+</tr>
+<tr>
+  <td align="left" valign="bottom"><font size="-2"><b>Page:</b> {PAGES}</font></td>
+  <td align="right" valign="bottom">
   <font size="-2">
-  <b>Page:</b> {PAGES}
-  &nbsp; &nbsp;
-  [<a href="/tips/"><b>Forum Tips</b></a>]
-  [<a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search</a>]
-  [<a href="#post">Post New Thread</a>]
-  &nbsp; &nbsp;
-  Total threads: {NUMTHREADS}, total pages: {NUMPAGES}
+  [ <a href="/tips/"><b>Forum Tips</b></a> ]
+  [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
+  [ <a href="#post">Post New Thread</a> ]
   </font>
-</td></tr>
+  </td>
+</tr>
 </table>
 
 
@@ -81,18 +83,17 @@
 <!-- END row -->
 <!-- END simple -->
 
-<table>
-<tr><td>
+<table width="100%">
+<tr>
+  <td align="left" valign="bottom"><font size="-2"><b>Page:</b> {PAGES}</font></td>
+  <td align="right" valign="bottom">
   <font size="-2">
-  <b>Page:</b> {PAGES}
-
-  &nbsp; &nbsp;
-  [<a href="/tips/"><b>Forum Tips</b></a>]
-  [<a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search</a>]
-  [<a href="#post">Post New Thread</a>]
-
+  [ <a href="/tips/"><b>Forum Tips</b></a> ]
+  [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
+  [ <a href="#post">Post New Thread</a> ]
   </font>
-</td></tr>
+  </td>
+</tr>
 </table>
 
 <table>
