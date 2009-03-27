@@ -109,7 +109,7 @@ $tpl->set_var("TEXT", $text);
 $tpl->set_var("PAGE", htmlspecialchars($page, ENT_QUOTES));
 
 foreach($tz_to_name as $tz) {
-  $selected = "";
+  $selected = " ";	/* sadly, "" means unset */
   if($user->timezone == $tz) $selected = " selected=\"1\"";
   $tpl->set_var("TIMEZONE", $tz);
   $tpl->set_var("TIMEZONE_SELECTED", $selected);
