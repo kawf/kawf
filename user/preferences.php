@@ -3,11 +3,13 @@
 $user->req();
 
 require_once("strip.inc");
+require_once("timezone.inc");
 
 $tpl->set_file("preferences", "preferences.tpl");
 
 $tpl->set_block("preferences", "error");
 $tpl->set_block("preferences", "signature");
+$tpl->set_block("preferences", "timezone", "_timezone");
 
 $success = "";
 $error = "";
@@ -105,6 +107,14 @@ $tpl->set_var("SIGNATURE", $user->signature);
 $tpl->set_var("THREADSPERPAGE", $user->threadsperpage);
 $tpl->set_var("TEXT", $text);
 $tpl->set_var("PAGE", htmlspecialchars($page, ENT_QUOTES));
+
+foreach($tz_to_name as $tz) {
+  $selected = "";
+  if($user->timezone == $tz) $selected = " selected=\"1\"";
+  $tpl->set_var("TIMEZONE", $tz);
+  $tpl->set_var("TIMEZONE_SELECTED", $selected);
+  $tpl->parse("_timezone", "timezone", true);
+}
 
 if(isset($user->timezone))
     $tpl->set_var(str_replace("/","_",$user->timezone), " selected=\"1\"");
