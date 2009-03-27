@@ -31,7 +31,7 @@ if (!isset($password2))
 
 if (isset($submit)) {
 
-  if (!isset($_POST['cookie']) || $_POST['cookie'] != md5($user->cookie))
+  if (!isset($_POST['token']) || $_POST['token'] != $user->token())
     err_not_found();
 
   if (!empty($name)) {
