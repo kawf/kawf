@@ -50,7 +50,7 @@
 <!-- END signature -->
   <tr bgcolor="#cccccc">
     <td align="right" width="175">
-    <b>Preferences:
+    <b>Preferences:</b>
     </td>
     <td width="425">
 <input type="checkbox" name="ShowOffTopic"{SHOWOFFTOPIC}> Show offtopic messages?<br>
@@ -67,12 +67,9 @@
 
 Timezone
 <select name="timezone">
-<option value="US/Eastern"{US_Eastern}>US/Eastern</option>
-<option value="US/Central"{US_Central}>US/Central</option>
-<option value="US/Mountain"{US_Mountain}>US/Mountain</option>
-<option value="US/Pacific"{US_Pacific}>US/Pacific</option>
-<option value="US/Hawaii"{US_Hawaii}>US/Hawaii</option>
-<option value="GMT"{GMT}>GMT</option>
+<!-- BEGIN timezone -->
+<option value="{TIMEZONE}"{TIMEZONE_SELECTED}>{TIMEZONE}</option>
+<!-- END timezone -->
 </select><br>
 
 <!-- input type="checkbox" name="SortbyActive"{SORTBYACTIVE}> Sort by active threads?<br -->
