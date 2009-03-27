@@ -39,6 +39,8 @@
 </table>
 
 
+<table width="100%" border="0" cellpadding="2" cellspacing="2">
+<tr><td align="left">
 <form method="get" action="/redirect.phtml">
 <select name="url" onChange="if (this.selectedIndex) { location = this.options[this.selectedIndex].value; }">
 <option value=""><b>Choose Discussion Forum</b>
@@ -59,10 +61,18 @@
 <input type="submit" value="GO">
 </noscript>
 </form>
+</td>
 
 <!-- BEGIN update_all -->
-<div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}&time={TIME}">Update all</a></div>
+<td valign="top">
+<div align="right">
+<a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}&time={TIME}">Update all</a>
+</div>
+</td>
 <!-- END update_all -->
+
+</tr>
+</table>
 
 <!-- BEGIN normal -->
 <table width="100%" border="0" cellpadding="2" cellspacing="2">
