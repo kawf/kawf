@@ -16,6 +16,7 @@ $tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
 $tpl->set_block("message", "advertiser");
 $tpl->set_block("message", "message_ip");
+$tpl->set_block("message", "reply");
 $tpl->set_block("message", "owner");
 $tpl->set_block("owner", "statelocked");
 $tpl->set_block("owner", "delete");
@@ -115,9 +116,14 @@ else
   $tpl->set_var("message_ip", "");
 */
 
-if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')))
+/* reply is only used in full threaded view. in this view, "Post Followup" is
+ * in the showmessage.tpl header */
+$tpl->set_var("reply", "");
+
+if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid
+  || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock'))) {
   $tpl->set_var("owner", "");
-else {
+} else {
   if (isset($flags['StateLocked'])) {
     $tpl->set_var("undelete", "");
     if ($msg['state'] != 'OffTopic' && $msg['state'] != 'Active')
@@ -135,6 +141,7 @@ $tpl->set_var(array(
   "MSG_SUBJECT" => $msg['subject'],
   "MSG_DATE" => $msg['date'],
   "MSG_MID" => $msg['mid'],
+  "MSG_TID" => $msg['tid'],
   "MSG_AID" => $msg['aid'],
 ));
 
