@@ -16,6 +16,7 @@ $tpl->set_block("message", "forum_admin", "_forum_admin");
 $tpl->set_block("message", "advertiser", "_advertiser");
 $tpl->set_block("message", "sponsor", "_sponsor");
 $tpl->set_block("message", "message_ip", "_message_ip");
+$tpl->set_block("message", "reply", "_reply");
 $tpl->set_block("message", "owner", "_owner");
 $tpl->set_block("owner", "statelocked", "_statelocked");
 $tpl->set_block("owner", "delete", "_delete");
@@ -187,18 +188,27 @@ function print_message($thread, $msg)
     $tpl->set_var("message_ip", "");
 */
 
-  if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')))
+  if (!$user->valid() || $msg['aid'] == 0
+    || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock'))) {
+    /* we're not allowed to do anything */
+    $tpl->set_var("_reply", "");
     $tpl->set_var("_owner", "");
-  else {
+  } else if ($msg['aid'] != $user->aid) {
+    /* we're only allowed to reply */
+    $tpl->parse("_reply", "reply");
+    $tpl->set_var("_owner", "");
+  } else {
     if (isset($flags['StateLocked'])) {
+      $tpl->set_var("_reply", "");
       $tpl->set_var("_undelete", "");
-      if ($msg['state'] != 'OffTopic')
+      if ($msg['state'] != 'OffTopic' && $msg['state'] != 'Active')
         $tpl->set_var("_delete", "");
       else
         $tpl->parse("_delete", "delete");
 
       $tpl->parse("_statelocked", "statelocked");
     } else {
+      $tpl->parse("_reply", "reply");
       $tpl->set_var("_statelocked", "");
       if ($msg['state'] != 'Deleted') {
         $tpl->set_var("_undelete", "");
