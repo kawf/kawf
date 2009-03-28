@@ -41,7 +41,9 @@ $tpl->set_block("message", "account_id");
 $tpl->set_block("message", "forum_admin");
 $tpl->set_block("message", "advertiser");
 $tpl->set_block("message", "message_ip");
+$tpl->set_block("message", "reply");
 $tpl->set_block("message", "owner");
+$tpl->set_block("owner", "statelocked");
 $tpl->set_block("owner", "delete");
 $tpl->set_block("owner", "undelete");
 $tpl->set_block("message", "parent");
@@ -56,7 +58,9 @@ $errors = array(
 $tpl->set_var(array(
   "forum_admin" => "",
   "advertiser" => "",
+  "reply" => "",
   "owner" => "",
+  "statelocked" => "",
   "parent" => "",
   "changes" => "",
 ));
