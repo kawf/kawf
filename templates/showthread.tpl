@@ -16,6 +16,7 @@
 </table>
 
 <font size="-2">
+[ <a href="/tips/"><b>Forum Tips</b></a> ]
 [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
 </font>
@@ -32,6 +33,7 @@
 <table>
 <tr><td>
 <font size="-2">
+[ <a href="/tips/"><b>Forum Tips</b></a> ]
 [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
 </font>
