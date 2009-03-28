@@ -35,7 +35,8 @@ class ForumUser {
           $this->pref[$flag] = true;
       }
 
-      if(strlen($this->timezone) && strlen($this->timezone)<6) {
+      if(strlen($this->timezone) && strlen($this->timezone)<6
+    	&& class_exists('DateTimeZone')) {
 	$this->timezone = $tz_to_name[$this->timezone];
 
 	$zoneUser= new DateTimeZone($this->timezone);
