@@ -94,12 +94,18 @@ if (isset($ad_generic)) {
 }
 
 if ($user->capable($forum['fid'], 'Moderate')) {
-  $changes = preg_replace("/&/", "&amp;", $msg['changes']);
-  $changes = preg_replace("/</", "&lt;", $changes);
-  $changes = preg_replace("/>/", "&gt;", $changes);
-  $tpl->set_var("MSG_CHANGES", nl2br($changes));
-  $tpl->set_var("MSG_IP", $msg['ip']);
-  $tpl->set_var("MSG_EMAIL", $uuser->email);
+  if(strlen($msg['changes'])>0) {
+      // TODO; use diff highlight?
+      $changes = preg_replace("/&/", "&amp;", $msg['changes']);
+      $changes = preg_replace("/</", "&lt;", $changes);
+      $changes = preg_replace("/>/", "&gt;", $changes);
+      $tpl->set_var("MSG_CHANGES", "<pre>$changes<pre>");
+      $tpl->set_var("MSG_IP", $msg['ip']);
+      $tpl->set_var("MSG_EMAIL", $uuser->email);
+  } else {
+      $tpl->set_var("changes", "");
+      $tpl->set_var("message_ip", "");
+  }
 } else {
   $tpl->set_var("changes", "");
   $tpl->set_var("message_ip", "");

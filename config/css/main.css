@@ -25,9 +25,10 @@ ul.thread li {
     /* list-style-image: url('/pics/arrow.gif'); */
 }
 
-p.changes {
+.changes {
     background: #eeeeee;
     font-family: monospace;
     font-weight: bold;
-    padding: 1em;
+    margin: 0px;
+    padding: 0.2em 1em 0em 1em;
 }
