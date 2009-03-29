@@ -20,13 +20,17 @@
 </tr>
 </table>
 
-<table width="100%">
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr>
-  <td colspan="2">
+  <td align="left">
   <font size="-2">
   [ <a href="/tips/?page={PAGE}">Forum Tips</a> ]
   [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
   [ <a href="#post"><b>Post New Thread</b></a> ]
+  </font>
+  </td>
+  <td align="right">
+  <font size="-2">
   [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
   </font>
   </td>
