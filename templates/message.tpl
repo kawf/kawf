@@ -45,5 +45,5 @@
 {MSG_MESSAGE}
 <!-- BEGIN changes -->
      <b>Changes:</b><br>
-     <p class="changes">{MSG_CHANGES}</p>
+     <div class="changes">{MSG_CHANGES}</div>
 <!-- END changes -->
