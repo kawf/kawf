@@ -24,9 +24,9 @@
 <tr>
   <td colspan="2">
   <font size="-2">
-  [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
+  [ <a href="/tips/?page={PAGE}">Forum Tips></a> ]
   [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
-  [ <a href="#post">Post New Thread</a> ]
+  [ <a href="#post"><b>Post New Thread</b></a> ]
   [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
   </font>
   </td>
