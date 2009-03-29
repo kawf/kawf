@@ -37,5 +37,11 @@
 &lt;sup&gt;<sup>Superscript</sup>&lt;/sup&gt;<br>
 &lt;sub&gt;<sub>Subscript</sub>&lt;/sub&gt;
 </p>
+
+<?php
+if(isset($_REQUEST['page']))
+    echo "<p><a href=\"$page\">Return to Forums</a></p>\n";
+?>
+
 </body>
 </html>
