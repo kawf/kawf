@@ -4,15 +4,15 @@
     <td>&nbsp;&nbsp;&nbsp;</td>
     <td align="right" nowrap="nowrap"><font size="-2">
 <!-- BEGIN reply -->
-[   <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml#post">reply</a> ]
+[   <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml#post">Reply</a> ]
 <!-- END reply -->
 <!-- BEGIN owner -->
-    [ <a href="/{FORUM_SHORTNAME}/edit.phtml?mid={MSG_MID}&page={PAGE}">edit</a> ]
+    [ <a href="/{FORUM_SHORTNAME}/edit.phtml?mid={MSG_MID}&page={PAGE}">Edit</a> ]
 <!-- BEGIN delete -->
-    [ <a href="/{FORUM_SHORTNAME}/delete.phtml?mid={MSG_MID}&page={PAGE}">delete</a> ]
+    [ <a href="/{FORUM_SHORTNAME}/delete.phtml?mid={MSG_MID}&page={PAGE}">Delete</a> ]
 <!-- END delete -->
 <!-- BEGIN undelete -->
-    [ <a href="/{FORUM_SHORTNAME}/undelete.phtml?mid={MSG_MID}&page={PAGE}">undelete</a> ]
+    [ <a href="/{FORUM_SHORTNAME}/undelete.phtml?mid={MSG_MID}&page={PAGE}">Undelete</a> ]
 <!-- END undelete -->
 <!-- BEGIN statelocked -->
     <b>Status locked</b>

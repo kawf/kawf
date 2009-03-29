@@ -15,14 +15,27 @@
 </tr>
 </table>
 
-<font size="-2">
-[ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
-[ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
-[ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
-[ <a href="../"><b>Return to {FORUM_NAME}</b></a> ]
-</font>
+<br>
+
+<table width="100%">
+<tr>
+  <td align="left">
+  <font size="-2">
+    [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
+    [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
+    [ <a href="../"><b>Return to {FORUM_NAME}</b></a> ]
+    </font>
+  </td>
+  <td align="right">
+  <font size="-2">
+  [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
+  </font>
+  </td>
+</tr>
+</table>
 
 <br>
+
 <table>
 <tr><td>
 {MESSAGES}
@@ -31,16 +44,23 @@
 
 <br>
 
-<table>
-<tr><td>
-<font size="-2">
-[ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
-[ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
-[ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
-[ <a href="../"><b>Return to {FORUM_NAME}</b></a> ]
-</font>
-</td></tr>
+<table width="100%">
+<tr>
+  <td align="left">
+  <font size="-2">
+    [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
+    [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
+    [ <a href="../"><b>Return to {FORUM_NAME}</b></a> ]
+    </font>
+  </td>
+  <td align="right">
+  <font size="-2">
+  [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
+  </font>
+  </td>
+</tr>
 </table>
+<br>
 
 {FOOTER}
 
