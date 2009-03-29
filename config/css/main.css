@@ -24,3 +24,10 @@ ul.thread li {
     list-style: circle outside none;
     /* list-style-image: url('/pics/arrow.gif'); */
 }
+
+p.changes {
+    background: #eeeeee;
+    font-family: monospace;
+    font-weight: bold;
+    padding: 1em;
+}

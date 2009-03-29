@@ -47,5 +47,6 @@
    <p>
 {MSG_MESSAGE}
 <!-- BEGIN changes -->
-     <b>{MSG_CHANGES}</b>
+     <b>Changes:</b><br>
+     <p class="changes">{MSG_CHANGES}</p>
 <!-- END changes -->
