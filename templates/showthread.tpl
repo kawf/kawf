@@ -16,9 +16,10 @@
 </table>
 
 <font size="-2">
-[ <a href="/tips/"><b>Forum Tips</b></a> ]
+[ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
 [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
+[ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
 </font>
 
 <br>
@@ -33,9 +34,10 @@
 <table>
 <tr><td>
 <font size="-2">
-[ <a href="/tips/"><b>Forum Tips</b></a> ]
+[ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
 [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
+[ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
 </font>
 </td></tr>
 </table>

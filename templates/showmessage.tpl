@@ -23,8 +23,9 @@
 [ <a href="#thread">Thread</a> ]
 [ <a href="/{FORUM_SHORTNAME}/threads/{MSG_TID}.phtml#{MSG_MID}">View Thread</a> ]
 [ <a href="#post">Post Followup</a> ]
-[ <a href="/tips/"><b>Forum Tips</b></a> ]
+[ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
 [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
+[ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
 </font>
 
@@ -61,8 +62,9 @@
 <font size="-2">
 [ <a href="#thread">Thread</a> ]
 [ <a href="#post">Post Followup</a> ]
-[ <a href="/tips/"><b>Forum Tips</b></a> ]
+[ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
 [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
+[ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
 [ <a href="../">{FORUM_NAME}</a> ]
 </font>
 </td></tr>

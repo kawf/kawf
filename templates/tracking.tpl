@@ -16,9 +16,10 @@
 <table>
 <tr><td>
   <font size="-2">
-  [ <a href="/tips/"><b>Forum Tips</b></a> ]
+  [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
   [ <a href="/search/" target="_top">Search Forums</a> ]
   [ <a href="/logout.phtml?url=/login.phtml&token={token}">Logout</a> ]
+  [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
   </font>
 </td></tr>
 </table>
@@ -69,9 +70,10 @@
 <table>
 <tr><td>
   <font size="-2">
-  [ <a href="/tips/"><b>Forum Tips</b></a> ]
+  [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
   [ <a href="/search/" target="_top">Search Forums</a> ]
   [ <a href="/logout.phtml?url=/login.phtml&token={token}">Logout</a> ]
+  [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
   </font>
 </td></tr>
 </table>
