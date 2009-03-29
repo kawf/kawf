@@ -13,15 +13,21 @@
 
 <hr width="100%" size="1">
 
-<table>
-<tr><td>
+<table width="100%">
+<tr>
+  <td align="left">
   <font size="-2">
-  [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
-  [ <a href="/search/" target="_top">Search Forums</a> ]
-  [ <a href="/logout.phtml?url=/login.phtml&token={token}">Logout</a> ]
+    [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
+    [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
+    [ <a href="../"><b>Return to {FORUM_NAME}</b></a> ]
+    </font>
+  </td>
+  <td align="right">
+  <font size="-2">
   [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
   </font>
-</td></tr>
+  </td>
+</tr>
 </table>
 
 <!-- BEGIN normal -->
@@ -67,15 +73,21 @@
 <!-- END row -->
 <!-- END simple -->
 
-<table>
-<tr><td>
+<table width="100%">
+<tr>
+  <td align="left">
   <font size="-2">
-  [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
-  [ <a href="/search/" target="_top">Search Forums</a> ]
-  [ <a href="/logout.phtml?url=/login.phtml&token={token}">Logout</a> ]
+    [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
+    [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
+    [ <a href="../"><b>Return to {FORUM_NAME}</b></a> ]
+    </font>
+  </td>
+  <td align="right">
+  <font size="-2">
   [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
   </font>
-</td></tr>
+  </td>
+</tr>
 </table>
 
 <br>
