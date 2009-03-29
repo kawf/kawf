@@ -26,7 +26,7 @@
 [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
 [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
 [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
-[ <a href="../">{FORUM_NAME}</a> ]
+[ <a href="../"><b>Return to {FORUM_NAME}</b></a> ]
 </font>
 
 <br>
@@ -65,7 +65,7 @@
 [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
 [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
 [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
-[ <a href="../">{FORUM_NAME}</a> ]
+[ <a href="../"><b>Return to {FORUM_NAME}</b></a> ]
 </font>
 </td></tr>
 </table><br>
