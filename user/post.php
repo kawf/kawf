@@ -47,7 +47,9 @@ $tpl->set_block("message", "forum_admin");
 $tpl->set_block("message", "advertiser");
 $tpl->set_block("message", "sponsor");
 $tpl->set_block("message", "message_ip");
+$tpl->set_block("message", "reply");
 $tpl->set_block("message", "owner");
+$tpl->set_block("owner", "statelocked");
 $tpl->set_block("owner", "delete");
 $tpl->set_block("owner", "undelete");
 $tpl->set_block("message", "parent");
@@ -64,7 +66,9 @@ $tpl->set_var(array(
   "forum_admin" => "",
   "advertiser" => "",
   "sponsor" => "",
-  "owner" => "",
+  "reply" => "",
+  "undelete" => "",
+  "statelocked" => "",
   "parent" => "",
   "changes" => "",
 ));
@@ -278,6 +282,8 @@ if (isset($postcookie)) {
 
 if (!isset($preview))
   $tpl->set_var("preview", "");
+else
+  $tpl->set_var("owner", "");
 
 $date = strftime("%Y-%m-%d %H:%M:%S", time() - $user->tzoff);
 
