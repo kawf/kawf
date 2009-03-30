@@ -100,7 +100,6 @@ if ($user->capable($forum['fid'], 'Moderate')) {
       $tpl->set_var("MSG_CHANGES", nl2br($changes));
   } else {
       $tpl->set_var("changes", "");
-      $tpl->set_var("message_ip", "");
   }
 } else {
   $tpl->set_var("changes", "");
