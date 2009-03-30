@@ -43,39 +43,33 @@
 </tr>
 </table>
 
-
 <table width="100%" border="0" cellpadding="2" cellspacing="2">
-<tr><td align="left">
+<tr>
 <form method="get" action="/redirect.phtml">
+<td align="left">
 <select name="url" onChange="if (this.selectedIndex) { location = this.options[this.selectedIndex].value; }">
-<option value=""><b>Choose Discussion Forum</b>
-<option value="/other/">Miscellaneous Forum
-<option value="/pr0n/">Pr0n Forum
-<option value="/swapmeet/">Ye Olde Ghetto Swapmeet
-<option value="/photos/">Photo Forum
-<option value="/s4/">B5 S4 Forum
-<option value="/food/">Piehole Stuffing Forum
-<option value="/flames/">FYYFF Forum
-<option value="/wit/">Investment Forum
-<option value="">---
-<option value="/test/">Test Forum
-<option value="">---
-<option value="/tracking.phtml">Your tracked threads
+<option value=""><b>Choose Discussion Forum</b></option>
+<option value="/other/">Miscellaneous Forum</option>
+<option value="/pr0n/">Pr0n Forum</option>
+<option value="/swapmeet/">Ye Olde Ghetto Swapmeet</option>
+<option value="/photos/">Photo Forum</option>
+<option value="/s4/">B5 S4 Forum</option>
+<option value="/food/">Piehole Stuffing Forum</option>
+<option value="/flames/">FYYFF Forum</option>
+<option value="/wit/">Investment Forum</option>
+<option value="">---</option>
+<option value="/test/">Test Forum</option>
+<option value="">---</option>
+<option value="/tracking.phtml">Your tracked threads</option>
 </select>
-<noscript>
-<input type="submit" value="GO">
-</noscript>
-</form>
+<noscript><input type="submit" value="GO"></noscript>
 </td>
-
 <!-- BEGIN update_all -->
-<td valign="top">
-<div align="right">
+<td align="right">
 <a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}&time={TIME}">Update all</a>
-</div>
 </td>
 <!-- END update_all -->
-
+</form>
 </tr>
 </table>
 
