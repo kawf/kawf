@@ -18,8 +18,7 @@
   <td align="left">
   <font size="-2">
     [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
-    [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
-    [ <a href="../"><b>Return to {FORUM_NAME}</b></a> ]
+    [ <a href="/search/" target="_top">Search Forums</a> ]
     </font>
   </td>
   <td align="right">
@@ -78,8 +77,7 @@
   <td align="left">
   <font size="-2">
     [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
-    [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
-    [ <a href="../"><b>Return to {FORUM_NAME}</b></a> ]
+    [ <a href="/search/" target="_top">Search Forums</a> ]
     </font>
   </td>
   <td align="right">
