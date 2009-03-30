@@ -122,15 +122,16 @@ else
   $tpl->set_var("message_ip", "");
 */
 
-/* reply is only used in full threaded view. in this view, "Post Followup" is
- * in the showmessage.tpl header */
-$tpl->set_var("reply", "");
-
-if (!$user->valid() || $msg['aid'] == 0 || $msg['aid'] != $user->aid
+if (!$user->valid() || $msg['aid'] == 0
   || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock'))) {
+  $tpl->set_var("reply", "");
+  $tpl->set_var("owner", "");
+} else if ($msg['aid'] != $user->aid) {
+  /* we're only allowed to reply */
   $tpl->set_var("owner", "");
 } else {
   if (isset($flags['StateLocked'])) {
+    $tpl->set_var("reply", "");
     $tpl->set_var("undelete", "");
     if ($msg['state'] != 'OffTopic' && $msg['state'] != 'Active')
       $tpl->set_var("delete", "");
