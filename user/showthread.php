@@ -58,7 +58,7 @@ foreach ($options as $name => $value)
 
 $index = find_msg_index($thread['mid']);
 $tzoff=isset($user->tzoff)?$user->tzoff:0;
-$sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
+$sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views, changes from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
 $result = mysql_query($sql) or sql_error($sql);
 while ($message = mysql_fetch_array($result)) {
   $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
@@ -68,7 +68,7 @@ while ($message = mysql_fetch_array($result)) {
 
 $index++;
 if (isset($indexes[$index])) {
-  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
+  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views, changes from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
   $result = mysql_query($sql) or sql_error($sql);
   while ($message = mysql_fetch_array($result)) {
     $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
@@ -148,14 +148,17 @@ function print_message($thread, $msg)
   $tpl->set_var("MSG_MESSAGE", $message . "<br><br>\n");
 
   if ($user->capable($forum['fid'], 'Moderate')) {
-    $tpl->set_var("MSG_AID", $msg['aid']);
-    $changes = preg_replace("/&/", "&amp;", $msg['changes']);
-    $changes = preg_replace("/</", "&lt;", $changes);
-    $changes = preg_replace("/>/", "&gt;", $changes);
-    $tpl->set_var("MSG_CHANGES", nl2br($changes));
     $tpl->set_var("MSG_IP", $msg['ip']);
     $tpl->set_var("MSG_EMAIL", $uuser->email);
-    $tpl->parse("_changes", "changes");
+    if(strlen($msg['changes'])>0) {
+	$changes = preg_replace("/&/", "&amp;", $msg['changes']);
+	$changes = preg_replace("/</", "&lt;", $changes);
+	$changes = preg_replace("/>/", "&gt;", $changes);
+	$tpl->set_var("MSG_CHANGES", nl2br($changes));
+	$tpl->parse("_changes", "changes");
+    } else {
+	$tpl->set_var("_changes", "");
+    }
     $tpl->parse("_message_ip", "message_ip");
   } else {
     $tpl->set_var("_changes", "");
