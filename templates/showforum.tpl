@@ -43,9 +43,9 @@
 </tr>
 </table>
 
+<form method="get" action="/redirect.phtml">
 <table width="100%" border="0" cellpadding="2" cellspacing="2">
 <tr>
-<form method="get" action="/redirect.phtml">
 <td align="left">
 <select name="url" onChange="if (this.selectedIndex) { location = this.options[this.selectedIndex].value; }">
 <option value=""><b>Choose Discussion Forum</b></option>
@@ -69,9 +69,9 @@
 <a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}&time={TIME}">Update all</a>
 </td>
 <!-- END update_all -->
-</form>
 </tr>
 </table>
+</form>
 
 <!-- BEGIN normal -->
 <table width="100%" border="0" cellpadding="2" cellspacing="2">
