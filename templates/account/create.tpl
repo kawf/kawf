@@ -24,11 +24,17 @@
 <form action="create.phtml" method="post" name="form">
   <input type="hidden" name="page" value="{PAGE}">
 
-  Screen Name: <input type="text" name="name" value="{NAME}" size="40" maxlength="40"><br>
-  Email: <input type="text" name="email" value="{EMAIL}" size="40" maxlength="40"><br>
-  Password: <input type="password" name="password1" size="40" maxlength="40"><br>
-  Re-enter Password: <input type="password" name="password2" size="40" maxlength="40"><br>
-  <br>
+  Screen Name: <input type="text" name="name" value="{NAME}" size="40" maxlength="40"><br />
+  Email: <input type="text" name="email" value="{EMAIL}" size="40" maxlength="40"><br />
+  Password: <input type="password" name="password1" size="40" maxlength="40"><br />
+  Re-enter Password: <input type="password" name="password2" size="40" maxlength="40"><br />
+  <br />
+<!-- BEGIN tou_agreement -->
+  {TOU}<br />
+  <br />
+  <input type="checkbox" name="tou_agree" value="1"> I agree to the Terms Of Use<br />
+  <br />
+<!-- END tou_agreement -->
 
   <input type="submit" name="submit" value="Create Account">
 </form>

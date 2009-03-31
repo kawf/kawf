@@ -8,15 +8,29 @@ unset($user);
 /* We'll create a new user */
 $user = new AccountUser;
 
-$tpl->set_file(array(
+/* See if TOU is available. */
+$tou_available = false;
+if(is_file($template_dir . "account/tou.tpl")) $tou_available = true;
+
+$template_files = array(
   "create" => "account/create.tpl",
   "create_mail" => "mail/create.tpl",
-));
+);
+if($tou_available) $template_files["tou"] = "account/tou.tpl";
+
+$tpl->set_file($template_files);
 
 $tpl->set_block("create", "form");
 $tpl->set_block("create", "disabled");
 $tpl->set_block("create", "success");
 $tpl->set_block("create", "error");
+$tpl->set_block("form", "tou_agreement");
+
+if($tou_available) {
+  $tpl->parse("TOU", "tou");
+} else {
+  $tpl->set_var("tou_agreement", "");
+}
 
 if(isset($create_disabled))
     $tpl->set_var("form", "");
@@ -71,6 +85,10 @@ if (isset($submit)) {
   else {
     if (!$user->password($password1, $password2))
       $error .= "Passwords do not match, please check and try again\n";
+  }
+
+  if($tou_available && !$_REQUEST["tou_agree"]) {
+    $error .= "You must agree to the Terms Of Use\n";
   }
 }
 
