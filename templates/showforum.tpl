@@ -38,7 +38,7 @@
 <tr>
   <td align="left" valign="bottom"><font size="-2"><b>Page:</b> {PAGES}</font></td>
   <td align="right" valign="bottom">
-  <font size="-2">Total threads: {NUMTHREADS}, total pages: {NUMPAGES}</font>
+  <font size="-2">{NUMTHREADS} threads in {NUMPAGES} pages</font>
   </td>
 </tr>
 </table>
@@ -98,7 +98,7 @@
 <tr>
   <td align="left" valign="bottom"><font size="-2"><b>Page:</b> {PAGES}</font></td>
   <td align="right" valign="bottom">
-  <font size="-2">Total threads: {NUMTHREADS}, total pages: {NUMPAGES}</font>
+  <font size="-2">{NUMTHREADS} threads in {NUMPAGES} pages</font>
   </td>
 </tr>
 </table>
