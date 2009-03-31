@@ -43,7 +43,7 @@
 </tr>
 </table>
 
-<form method="get" action="/redirect.phtml">
+<form method="get" action="/redirect.phtml" style="display: inline; margin: 0;">
 <table width="100%" border="0" cellpadding="2" cellspacing="2">
 <tr>
 <td align="left">
