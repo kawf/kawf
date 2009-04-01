@@ -32,7 +32,7 @@ if (!isset($password2))
 if (isset($submit)) {
 
   if (!isset($_POST['token']) || $_POST['token'] != $user->token())
-    err_not_found();
+    err_not_found('Invalid token');
 
   if (!empty($name)) {
     $name = striptag($name, $no_tags);

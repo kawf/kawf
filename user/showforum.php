@@ -235,14 +235,14 @@ if (isset($tthreads)) {
       $tthreadsshown++;
 
       /* If the thread is tracked, we know they are a user already */
-      $messagelinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "\"><font color=\"#d00000\">ut</font></a>";
+      $messagelinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "&token=" . $user->token() . "\"><font color=\"#d00000\">ut</font></a>";
       if ($count > 1) {
         if (!isset($user->pref['Collapsed']))
           $messagelinks .= "<br>";
         else
           $messagelinks .= " ";
 
-        $messagelinks .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "&time=$time\"><font color=\"#0000f0\">up</font></a>";
+        $messagelinks .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "&token=" . $user->token() . "&time=$time\"><font color=\"#0000f0\">up</font></a>";
       }
 
       $tpl->set_var("MESSAGES", $messagestr);
@@ -348,9 +348,9 @@ while ($numshown < $threadsperpage) {
 
     if ($user->valid()) {
       if (isset($tthreads_by_tid[$thread['tid']]))
-        $messagelinks = " <a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "\"><font color=\"#d00000\">ut</font></a>";
+        $messagelinks = " <a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "&token=" . $user->token() . "\"><font color=\"#d00000\">ut</font></a>";
       else
-        $messagelinks = " <a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "\"><font color=\"#00d000\">tt</font></a>";
+        $messagelinks = " <a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "&token=" . $user->token() . "\"><font color=\"#00d000\">tt</font></a>";
     } else
       $messagelinks = "";
 
