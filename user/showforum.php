@@ -24,6 +24,7 @@ if (isset($user->pref['SimpleHTML'])) {
 }
 
 $tpl->set_block($table_block, "row", "_row");
+$tpl->set_var("USER_TOKEN", $user->token());
 
 /* HACK */
 $_page = $tpl->get_var("PAGE");
