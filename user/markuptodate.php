@@ -5,8 +5,11 @@ if (!$user->valid() || !isset($forum)) {
   exit;
 }
 
+/* pending proper fix */
+/*
 if ($_REQUEST['token'] != $user->token())
   err_not_found("invalid token"); 
+*/
 
 if (!isset($time))
   $time = time();
