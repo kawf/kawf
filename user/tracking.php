@@ -26,6 +26,7 @@ if (isset($user->pref['SimpleHTML'])) {
 
 $tpl->set_block($table_block, "row", "_row");
 $tpl->set_block($table_block, "update_all", "_update_all");
+$tpl->set_var("USER_TOKEN", $user->token());
 
 /* HACK */ 
 $_page = $tpl->get_var("PAGE");
@@ -125,7 +126,7 @@ while ($forum = mysql_fetch_array($result)) {
     $numshown++;
 
     /* If the thread is tracked, we know they are a user already */
-    $messagelinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "\"><font color=\"#d00000\">ut</font></a>";
+    $messagelinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "&token=" . $user->token() . "\"><font color=\"#d00000\">ut</font></a>";
     if ($count > 1) {
       if (!isset($user->pref['Collapsed']))
         $messagelinks .= "<br>";
@@ -133,7 +134,7 @@ while ($forum = mysql_fetch_array($result)) {
         $messagelinks .= " ";
 
       if ($thread['unixtime'] > $tthread['unixtime'])
-        $messagelinks .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "&time=$time\"><font color=\"#0000f0\">up</font></a>";
+        $messagelinks .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "&token=" . $user->token() . "&time=$time\"><font color=\"#0000f0\">up</font></a>";
     }
 
     $tpl->set_var("MESSAGES", $messagestr);
