@@ -9,9 +9,24 @@ if (isset($forgotpassword)) {
   exit;
 }
 
-$tpl->set_file("login", "account/login.tpl");
+/* See if TOU is available. */
+$tou_available = false;
+if(is_file($template_dir . "account/tou.tpl")) $tou_available = true;
 
+$template_files = array(
+  "login" => "account/login.tpl",
+);
+if($tou_available) $template_files["tou"] = "account/tou.tpl";
+
+$tpl->set_file($template_files);
 $tpl->set_block("login", "message");
+$tpl->set_block("login", "tou_agreement");
+
+if($tou_available) {
+  $tpl->parse("TOU", "tou");
+} else {
+  $tpl->set_var("tou_agreement", "");
+}
 
 if (isset($url))
   $page = "http://" . $url;
@@ -26,9 +41,11 @@ if (isset($email)) {
 
   $user = new AccountUser;
   $user->find_by_email($email);
-  if (!$user->valid() || !$user->checkpassword($password))
+  if (!$user->valid() || !$user->checkpassword($password)) {
     $message = "Invalid password for $email\n";
-  else {
+  } else if($tou_available && !$_REQUEST["tou_agree"]) {
+    $message = "You must agree to the Terms Of Use\n";
+  } else {
     $user->setcookie();
     header("Location: $page");
     exit;
