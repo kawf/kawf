@@ -15,7 +15,7 @@ if (!$user->capable($forum['fid'], 'Lock')) {
 }
 
 if ($_REQUEST['token'] != $user->token()) {
-  err_not_found();
+  err_not_found('Invalid token');
 }
 
 $index = find_thread_index($tid);

@@ -3,7 +3,7 @@
 $user->req("ForumAdmin");
 
 if($_REQUEST['token'] != $user->token()) {
-    err_not_found();
+    err_not_found('Invalid token');
 }
 
 if($_GET['clean'] == 1) {
@@ -17,7 +17,7 @@ if($_GET['clean'] == 1) {
 	$aid=$_GET['aid'];
 	$tid=$_GET['tid'];
     } else
-	err_not_found();
+	err_not_found('Invalid aid/tid');
 
     $sql="delete from u_pending where aid = " . addslashes($aid) . " and tid = " . addslashes($tid);
     sql_query($sql) or sql_error($sql);
