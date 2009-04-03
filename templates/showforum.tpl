@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title>{DOMAIN} Forums: {FORUM_NAME}</title>
@@ -65,7 +66,7 @@
 <noscript><input type="submit" value="GO"></noscript>
 </td>
 <!-- BEGIN update_all -->
-<td align="right">
+<td align="right" style="font-size: smaller;">
 <a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}&token={USER_TOKEN}&time={TIME}">Update all</a>
 </td>
 <!-- END update_all -->

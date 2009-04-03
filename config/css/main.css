@@ -1,6 +1,6 @@
 /* general, for everything */
-body { font-family: verdana, arial, geneva; font-size: smaller }
-td { font-family: verdana, arial, geneva; font-size: smaller }
+body { font-family: verdana, arial, geneva; }
+td { font-family: verdana, arial, geneva; }
 
 /* thread stuff */
 .trow0 { background: #ddddff }
@@ -16,13 +16,18 @@ ul {margin-left: 1em; padding-left: 1em;}
 ul.thread {
     margin-top: 0.2em;
     margin-bottom: 0.3em;
-    margin-left: 2em;
+    margin-left: 1em;
     padding-left: 2em;
+    font-size: smaller;
 }
 
 ul.thread li {
     list-style: circle outside none;
     /* list-style-image: url('/pics/arrow.gif'); */
+}
+
+.message {
+    font-size: smaller;
 }
 
 .changes {
@@ -31,4 +36,8 @@ ul.thread li {
     font-weight: bold;
     margin: 0px;
     padding: 0.2em 1em 0em 1em;
+}
+
+.postform {
+    font-size: smaller;
 }

@@ -41,7 +41,7 @@ if(array_key_exists('noob', $_GET)) {
     return;
 }
 ?>
-
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title><?php echo "$domain"?>: Account Information for <?php echo "$uuser->name" ?></title>
