@@ -1,3 +1,4 @@
+<div class=postform>
 <!-- BEGIN disabled -->
 <!-- BEGIN nonewthreads -->
 Posting new threads has been disabled on this forum.<br>
@@ -110,3 +111,4 @@ Track thread?<br><br>
 </form>
 <!-- END acct -->
 <!-- END enabled -->
+</div>

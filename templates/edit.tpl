@@ -1,3 +1,4 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title>{DOMAIN} Forums: Editing message</title>
@@ -55,7 +56,9 @@ Subject is too long! Truncated to 100 characters<br>
 <table>
 <tr><td>
 <center><h2><font color="#000080">Message Updated</font></h2></center><p>
+<font size="-2">
 [ <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml">Go to Your Message</a> ] [ <a href="/{FORUM_SHORTNAME}/">Go back to the forum</a> ]<p>
+</font>
 {PREVIEW}
 </td></tr>
 </table>

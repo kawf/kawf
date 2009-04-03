@@ -42,7 +42,9 @@
 <!-- END parent -->
    </font>
    <p>
+<div class="message">
 {MSG_MESSAGE}
+</div>
 <!-- BEGIN changes -->
      <b>Changes:</b><br>
      <div class="changes">{MSG_CHANGES}</div>
