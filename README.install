@@ -9,8 +9,6 @@ Quick setup guide:
   You may also leave it in place.
 
 * edit config/setup.inc or create config/setup-local.inc to override setup.inc
-  - point $srcroot to where the kawf tree resides (including the kawf directory
-    itself)
   - set $domain to the domain where your forums are
   - you may way to create setup-local.inc to avoid merge problems if you using
     source control on a live tree.
