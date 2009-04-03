@@ -1,10 +1,10 @@
 <?php
 /* Where the kawf tree sits in the filesystem */
-$srcroot = "/usr/local/kawf";
+$srcroot = dirname(__FILE__) . "/..";
 
 /* Where all of the templates reside */
 /* easy install, same location as srcroot */
-$template_dir = "$srcroot/forums/templates/";
+$template_dir = "$srcroot/templates";
 /* templates in different directory from source */
 #$template_dir = "/var/www/vhosts/kawf.org/forums/templates/";
 
