@@ -1,5 +1,5 @@
-body { font-family: verdana, arial, geneva; }
-td { font-family: verdana, arial, geneva; font-size: smaller; }
+body { font-family: verdana, arial, geneva; font-size: smaller; }
+td { font-family: verdana, arial, geneva; }
 
 table.outer { border-width: 0; border-spacing: 3; }
 td.outer { border-width: 0; padding: 0; vertical-align: top; }
