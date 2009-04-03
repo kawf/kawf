@@ -79,7 +79,7 @@ class Template {
   function set_file($handle, $filename = "") {
     if (!is_array($handle)) {
       if ($filename == "") {
-        $this->halt("set_file: For handle $handle filename is empty.");
+        $this->halt("set_file: For handle '$handle' filename is empty.");
         return false;
       }
       $this->file[$handle] = $this->filename($filename);
@@ -329,14 +329,14 @@ class Template {
       return true;
 
     if (!isset($this->file[$handle])) {
-      $this->halt("loadfile: $handle is not a valid handle.");
+      $this->halt("loadfile: '$handle' is not a valid handle.");
       return false;
     }
     $filename = $this->file[$handle];
 
     $str = implode("", @file($filename));
     if (empty($str)) {
-      $this->halt("loadfile: While loading $handle, $filename does not exist or is empty.");
+      $this->halt("loadfile: While loading '$handle', '$filename' does not exist or is empty.");
       return false;
     }
 
