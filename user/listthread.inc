@@ -16,6 +16,8 @@ function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = a
   if ($messages[$s]['pmid'])
     $string .= "<ul>\n";
 
+  $string .= "<li>\n";
+
   if (!$dontshow && (isset($path[$messages[$s]['mid']]) || $messages[$s]['state'] != 'OffTopic' || !isset($user->pref['CollapseOffTopic']))) {
     $string .= $callback($thread, $messages[$s]);
 
@@ -49,6 +51,8 @@ function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = a
 
     $string .= $callback($thread, $messages[$s], $count);
   }
+
+  $string .= "</li>\n";
 
   if ($messages[$s]['pmid'])
     $string .= "</ul>\n";
