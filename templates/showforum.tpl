@@ -66,7 +66,7 @@
 <noscript><input type="submit" value="GO"></noscript>
 </td>
 <!-- BEGIN update_all -->
-<td align="right" style="font-size: smaller;">
+<td align="right">
 <a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}&token={USER_TOKEN}&time={TIME}">Update all</a>
 </td>
 <!-- END update_all -->
