@@ -10,8 +10,6 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
       $flags[$flag] = true;
   }
 
-  $string = "<li>";
-
   $new = (isset($tthreads_by_tid[$msg['tid']]) &&
       $tthreads_by_tid[$msg['tid']]['unixtime'] < $msg['unixtime']);
 
@@ -119,10 +117,6 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
     else
       $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?tid=" . $msg['tid'] . "&page=$page&token=$stoken\">lt</a>";
   }
-
-  // FIXME
-  // dont close <li>'s so we can open sub threads with <ul>'s legally
-  $string .= "</li>\n";
 
   return $string;
 }
