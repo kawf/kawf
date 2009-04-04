@@ -30,7 +30,7 @@
       <option value="">---</option>
       <option value="/tracking.phtml">Your tracked threads</option>
     </select>
-    <noscript><input type="submit" name="submit" value="Go" /></noscript>
+    <noscript><input type="submit" name="submit" value="Go"></noscript>
   </form>
 
 </td>

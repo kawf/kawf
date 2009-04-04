@@ -25,10 +25,10 @@
   <br>
 
 <!-- BEGIN tou_agreement -->
-  {TOU}<br />
-  <br />
-  <input type="checkbox" name="tou_agree" value="1"> I agree to the Terms Of Use<br />
-  <br />
+  {TOU}<br>
+  <br>
+  <input type="checkbox" name="tou_agree" value="1"> I agree to the Terms Of Use<br>
+  <br>
 <!-- END tou_agreement -->
 
   <input type="submit" name="login" value="Login">
