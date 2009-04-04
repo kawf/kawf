@@ -1,6 +1,6 @@
   <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
-    <td align="left"><a name="{MSG_MID}"><font size="+1" color="#000080"><b>{MSG_SUBJECT}</b></font></a></td>
+    <td align="left"><a name="{MSG_MID}"></a><font size="+1" color="#000080"><b>{MSG_SUBJECT}</b></font></td>
     <td>&nbsp;&nbsp;&nbsp;</td>
     <td align="right" nowrap="nowrap"><font size="-2">
 <!-- BEGIN reply -->

@@ -23,6 +23,10 @@ ul.thread li {
     list-style: circle outside none;
 }
 
+ul.showthread li {
+    list-style: none;
+}
+
 /* .message { } */
 
 .changes {

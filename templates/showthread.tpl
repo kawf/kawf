@@ -39,7 +39,9 @@
 
 <table>
 <tr><td>
+<ul class="showthread">
 {MESSAGES}
+</ul>
 </td></tr>
 </table>
 
