@@ -4,7 +4,7 @@
     <td>&nbsp;&nbsp;&nbsp;</td>
     <td align="right" nowrap="nowrap"><font size="-2">
 <!-- BEGIN reply -->
-[   <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml#post">Reply</a> ]
+    [ <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml#post">Reply</a> ]
 <!-- END reply -->
 <!-- BEGIN owner -->
     [ <a href="/{FORUM_SHORTNAME}/edit.phtml?mid={MSG_MID}&page={PAGE}">Edit</a> ]
