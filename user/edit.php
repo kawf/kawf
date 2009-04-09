@@ -120,23 +120,11 @@ if (!isset($message)) {
     $message = $regs[2];
 
   /* Only do this if the client sent it to us */
-  // $subject = preg_replace("/&/", "&amp;", $subject);
-  $subject = striptag($subject, $subject_tags);
-  $subject = demoronize($subject);
-  $subject = trim($subject);
-
-  // $message = preg_replace("/&/", "&amp;", $message);
-  $message = striptag($message, $standard_tags);
-  $message = demoronize($message);
-  $message = trim($message);
-
+  $subject = stripcrap($subject, $subject_tags);
+  $message = stripcrap($message, $standard_tags);
   $url = stripcrapurl($url);
-  $url = preg_replace("/ /", "%20", $url);
-
   $urltext = stripcrap($urltext);
-
   $imageurl = stripcrapurl($imageurl);
-  $imageurl = preg_replace("/ /", "%20", $imageurl);
 }
 
 if (isset($ad_generic)) {
