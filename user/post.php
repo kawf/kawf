@@ -156,15 +156,8 @@ $tpl->set_var("locked", "");
 
 if (isset($postcookie)) {
   /* Strip any tags from the data */
-  // $message = preg_replace("/&/", "&amp;", $message);
-  $message = striptag($message, $standard_tags);
-  $message = demoronize($message);
-  $message = trim($message);
-
-  // $subject = preg_replace("/&/", "&amp;", $subject);
-  $subject = striptag($subject, $subject_tags);
-  $subject = demoronize($subject);
-  $subject = trim($subject);
+  $message = stripcrap($message, $standard_tags);
+  $subject = stripcrap($subject, $subject_tags);
 
   /* Sanitize the strings */
   $name = stripcrap($user->name);
@@ -174,7 +167,6 @@ if (isset($postcookie)) {
     $email = "";
 
   $url = stripcrapurl($url);
-  $url = preg_replace("/ /", "%20", $url);
 
   if (!empty($url) && !preg_match("/^[a-z]+:\/\//i", $url))
     $url = "http://$url";
@@ -182,7 +174,6 @@ if (isset($postcookie)) {
   $urltext = stripcrap($urltext);
 
   $imageurl = stripcrapurl($imageurl);
-  $imageurl = preg_replace("/ /", "%20", $imageurl);
 
   if (!empty($imageurl) && !preg_match("/^[a-z]+:\/\//i", $imageurl))
     $imageurl = "http://$imageurl";
