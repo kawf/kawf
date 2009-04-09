@@ -36,7 +36,7 @@ if (isset($submit)) {
 
   if (!empty($name)) {
     $name = striptag($name, $no_tags);
-    $name = stripspaces($name);
+    $name = trim($name);
 
     /* Filter out bad characters. Do the & first to catch SGML entities */
     $name = preg_replace("/&/", "&#" . ord('&') . ";", $name);
@@ -48,7 +48,7 @@ if (isset($submit)) {
 
   if (!empty($email)) {
     if(strstr($email,'@') ) {
-	$email = stripspaces($email);
+	$email = trim($email);
 
 	$update_email = $email;
     } else {

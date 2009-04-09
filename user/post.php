@@ -156,12 +156,12 @@ if (isset($postcookie)) {
   // $message = preg_replace("/&/", "&amp;", $message);
   $message = striptag($message, $standard_tags);
   $message = demoronize($message);
-  $message = stripspaces($message);
+  $message = trim($message);
 
   // $subject = preg_replace("/&/", "&amp;", $subject);
   $subject = striptag($subject, $subject_tags);
   $subject = demoronize($subject);
-  $subject = stripspaces($subject);
+  $subject = trim($subject);
 
   /* Sanitize the strings */
   $name = stripcrap($user->name);

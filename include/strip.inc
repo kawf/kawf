@@ -44,7 +44,7 @@ function stripcrap($string, $tags=null)
   // $string = preg_replace("/&/", "&amp;", $string);
   $string = striptag($string, $tags);
   $string = demoronize($string);
-  $string = stripspaces($string);
+  $string = trim($string);
 
   return $string;
 }
@@ -55,31 +55,8 @@ function stripcrapurl($string)
   global $no_tags;
 
   $string = striptag($string, $no_tags);
-  $string = stripspaces($string);
+  $string = trim($string);
   $string = preg_replace("/ /", "%20", $string);
-
-  return $string;
-}
-
-function stripspaces($string)
-{
-  /* Beginning */
-  if (strlen($string) > 0) {
-    $c = substr($string, 0, 1);
-    while (($c == " " || $c == "\n" || $c  == "\r") && strlen($string) > 0) {
-      $string = substr($string, 1);
-      $c = substr($string, 0, 1);
-    }
-  }
-
-  /* End */
-  if (strlen($string) > 0) {
-    $c = substr($string, -1);
-    while (($c == " " || $c == "\n" || $c == "\r") && strlen($string) > 0) {
-      $string = substr($string, 0, -1);
-      $c = substr($string, -1);
-    }
-  }
 
   return $string;
 }
@@ -219,7 +196,7 @@ function parse_tag($str)
     $s .= substr($str, $ppos, $pos - $ppos);
 
     if ($equal) {
-      $attr['val'][$i++] = stripspaces($s);
+      $attr['val'][$i++] = trim($s);
       $equal = 0;
     } else
       $attr['attr'][$i++] = $s;

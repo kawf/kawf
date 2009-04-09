@@ -51,7 +51,7 @@ $error = "";
 
 if (isset($submit)) {
   $name = striptag($name, $no_tags);
-  $name = stripspaces($name);
+  $name = trim($name);
 
   /* Filter out bad characters. Do the & first to catch SGML entities */
   $name = preg_replace("/&/", "&#" . ord('&') . ";", $name);
@@ -67,7 +67,7 @@ if (isset($submit)) {
   }
 
   /* We do some sanitizing of the email address first */
-  $email = stripspaces($email);
+  $email = trim($email);
   if (empty($email))
     $error .= "Email address is required\n";
   else {

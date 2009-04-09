@@ -136,7 +136,7 @@ class ForumUser {
   {
     global $standard_tags;
 
-    $signature = stripspaces($signature);
+    $signature = trim($signature);
     $signature = striptag($signature, $standard_tags);
 
     if ($signature != $this->signature)

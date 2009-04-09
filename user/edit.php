@@ -123,12 +123,12 @@ if (!isset($message)) {
   // $subject = preg_replace("/&/", "&amp;", $subject);
   $subject = striptag($subject, $subject_tags);
   $subject = demoronize($subject);
-  $subject = stripspaces($subject);
+  $subject = trim($subject);
 
   // $message = preg_replace("/&/", "&amp;", $message);
   $message = striptag($message, $standard_tags);
   $message = demoronize($message);
-  $message = stripspaces($message);
+  $message = trim($message);
 
   $url = stripcrapurl($url);
   $url = preg_replace("/ /", "%20", $url);
