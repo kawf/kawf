@@ -34,12 +34,15 @@ function demoronize($string)
 }
 
 /* For text strings */
-function stripcrap($string)
+function stripcrap($string, $tags=null)
 {
   global $no_tags;
 
+  if(!isset($tags))
+    $tags = $no_tags;
+
   // $string = preg_replace("/&/", "&amp;", $string);
-  $string = striptag($string, $no_tags);
+  $string = striptag($string, $tags);
   $string = demoronize($string);
   $string = stripspaces($string);
 
@@ -53,6 +56,7 @@ function stripcrapurl($string)
 
   $string = striptag($string, $no_tags);
   $string = stripspaces($string);
+  $string = preg_replace("/ /", "%20", $string);
 
   return $string;
 }
@@ -130,6 +134,7 @@ $subject_tags = array(
   "em" => array(array(), "/em"),
 */
   "sub" => array(array(), "/sub"),
+  "sup" => array(array(), "/sup"),
 );
 
 $standard_tags = array(
@@ -397,6 +402,16 @@ function striptag($message, $allowed_tags)
       $i += $skip;
     } else
       $n_message .= convert_brackets($element);
+  }
+
+  /* prevent ppl from making empty nested tags, eg <sub><sup></sup></sub> */
+  $start = $n_message;
+  while (strlen($n_message)>0) {
+    foreach ($allowed_tags as $tag => $etag) {
+      $n_message = str_ireplace("<$tag></$tag>", "", $n_message);
+    }
+    /* we have converged. stop */
+    if ($start == $n_message) break;
   }
 
   return $n_message;
