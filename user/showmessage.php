@@ -92,6 +92,7 @@ if (isset($ad_generic)) {
 if ($user->capable($forum['fid'], 'Moderate')) {
   $tpl->set_var("MSG_IP", $msg['ip']);
   $tpl->set_var("MSG_EMAIL", $uuser->email);
+  $msg['changes'] = trim($msg['changes']);
   if(strlen($msg['changes'])>0) {
       // TODO; use diff highlight?
       $changes = preg_replace("/&/", "&amp;", $msg['changes']);
