@@ -1,7 +1,7 @@
 /* general, for everything */
 body { font-family: verdana, arial, geneva; font-size: smaller}
 
-/* thread stuff */
+/* showforum thread background alternation */
 .trow0 { background: #ddddff }
 .trow1 { background: #ccccee }
 .drow0 { background: #ddffdd }
@@ -12,29 +12,63 @@ body { font-family: verdana, arial, geneva; font-size: smaller}
 .row1 { background: #eeeeee }
 ul {margin-left: 1em; padding-left: 1em;}
 
+/* showforum/showmessage */
 ul.thread {
     margin-top: 0.2em;
-    margin-bottom: 0.3em;
-    margin-left: 1em;
-    padding-left: 2em;
+    margin-bottom: 0.4em;
 }
 
 ul.thread li {
     list-style: circle outside none;
 }
 
-ul.showthread li {
-    list-style: none;
+/* showthread */
+ul.showthread li.thread {
+    list-style: none outside;
+    border-width: 0 0 0 0.2em;
+    border-style: solid;
+    border-color: #eeeeee;
 }
 
-/* .message { } */
-
-.changes {
+ul.showthread tr.messagesubjectrow td {
     background: #eeeeee;
-    font-family: monospace;
-    font-weight: bold;
-    margin: 0px;
-    padding: 0.2em 1em 0em 1em;
 }
 
-/* .postform { } */
+/* message header */
+tr.messageinforow td {
+    font-size: smaller;
+}
+
+td.subject {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #000080;
+}
+
+/* message subject in showthread */
+ul.showthread td.subject a {
+    text-decoration: none;
+    color: #000080;
+}
+
+/* everything in showthread should be indented a bit */
+ul.showthread td, ul.showthread div {
+    padding-left: 4px;
+}
+
+/* signature in showthread */
+ul.showthread .signature {
+    visibility: hidden;
+    height: 0px;	/* hide for now */
+}
+
+/* embedded url in message */
+.message li.url {
+    list-style: disc outside none;
+}
+
+/* changelog */
+.changes {
+    background: #ffeeee;
+    font-family: monospace;
+}

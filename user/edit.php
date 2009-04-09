@@ -7,7 +7,6 @@ if ($user->status != 'Active') {
     header("Location: $why_url");
 
   echo "Your account isn't validated\n";
-
   exit;
 }
 
@@ -20,6 +19,7 @@ if (!isset($mid) || !isset($forum)) {
 
 require_once("strip.inc");
 require_once("diff.inc");
+require_once("message.inc");
 
 $tpl->set_file(array(
   "edit" => "edit.tpl",
@@ -37,17 +37,7 @@ $tpl->set_block("edit", "preview");
 $tpl->set_block("edit", "form");
 $tpl->set_block("edit", "accept");
 
-$tpl->set_block("message", "account_id");
-$tpl->set_block("message", "forum_admin");
-$tpl->set_block("message", "advertiser");
-$tpl->set_block("message", "message_ip");
-$tpl->set_block("message", "reply");
-$tpl->set_block("message", "owner");
-$tpl->set_block("owner", "statelocked");
-$tpl->set_block("owner", "delete");
-$tpl->set_block("owner", "undelete");
-$tpl->set_block("message", "parent");
-$tpl->set_block("message", "changes");
+message_set_block($tpl);
 
 $errors = array(
   "image",
@@ -55,15 +45,17 @@ $errors = array(
   "subject_too_long",
 );
 
-$tpl->set_var(array(
-  "forum_admin" => "",
-  "advertiser" => "",
-  "reply" => "",
-  "owner" => "",
-  "statelocked" => "",
-  "parent" => "",
-  "changes" => "",
-));
+if ($Debug) {
+  $debug = "\n_REQUEST:\n";
+  foreach ($_REQUEST as $k => $v) {
+    if (!is_numeric($k) && strlen($v)>0)
+      $debug.=" $k => $v\n";
+  }
+  $debug = str_replace("--","- -", $debug);
+  $tpl->set_var("DEBUG", "<!-- $debug -->");
+} else {
+  $tpl->set_var("DEBUG", "");
+}
 
 $tpl->parse("FORUM_HEADER", "forum_header");
 
@@ -83,7 +75,11 @@ $index = find_msg_index($mid);
 $sql = "select * from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'";
 $result = mysql_query($sql) or sql_error($sql);
 
-$msg = mysql_fetch_array($result);
+/* get existing message */
+$nmsg = $msg = mysql_fetch_array($result);
+
+/* pick up new remote_addr */
+$nmsg['ip'] = $remote_addr;
 
 if (!isset($msg)) {
   echo "No message with mid $mid\n";
@@ -101,30 +97,41 @@ if (!empty($msg['flags'])) {
     $flags[$flag] = true;
 }
 
-if (!isset($message)) {
+if ($_REQUEST['preview'])
+    $preview = 1;
+
+if (!isset($_REQUEST['message'])) {
+  /* hit "edit" link */
   $preview = 1;
-  $message = $msg['message'];
-  if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/s", $message, $regs)) {
-    $imageurl = $regs[1];
-    $message = $regs[2];
+
+  /* extract imageurl, remove from message */
+  if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/s", $nmsg['message'], $regs)) {
+    $nmsg['imageurl'] = $regs[1];
+    $nmsg['message'] = $regs[2];
   }
-
-  $subject = $msg['subject'];
-  $url = $msg['url'];
-  $urltext = $msg['urltext'];
-  $ExposeEmail = !empty($msg['email']);
-  $OffTopic = ($msg['state'] == 'OffTopic');
+  /* Synthesize state based on the state of the existing message. */ 
+  $exposeemail = !empty($msg['email']);
+  $offtopic = ($msg['state'] == 'OffTopic');
 } else {
-  // Is this necessary anymore?
-  if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/s", $message, $regs))
-    $message = $regs[2];
+  /* form summitted */
 
-  /* Only do this if the client sent it to us */
-  $subject = stripcrap($subject, $subject_tags);
-  $message = stripcrap($message, $standard_tags);
-  $url = stripcrapurl($url);
-  $urltext = stripcrap($urltext);
-  $imageurl = stripcrapurl($imageurl);
+  /* handle subject */
+  $nmsg['subject'] = stripcrap($_REQUEST['subject'], $subject_tags);
+
+  /* handle message */
+  $nmsg['message'] = $_REQUEST['message'];
+  /* remove any imageurl (to be replaced by _REQUEST'd imageurl below) */
+  if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/s", $nmsg['message'], $regs))
+    $nmsg['message'] = $regs[2];
+  $nmsg['message'] = stripcrap($nmsg['message'], $standard_tags);
+
+  /* handle urls and imgs */
+  $nmsg['url'] = stripcrapurl($_REQUEST['url']);
+  $nmsg['urltext'] = stripcrap($_REQUEST['urltext']);
+  $nmsg['imageurl'] = stripcrapurl($_REQUEST['imageurl']);
+
+  $exposeemail = $_REQUEST['ExposeEmail'];
+  $offtopic = $_REQUEST['OffTopic'];
 }
 
 if (isset($ad_generic)) {
@@ -176,71 +183,44 @@ if (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')) {
 $tpl->set_var("edit_locked", "");
 
 /* Sanitize the strings */
-$name = stripcrap($user->name);
-if ($ExposeEmail)
-  $email = stripcrap($user->email);
+$nmsg['name'] = stripcrap($user->name);
+if ($exposeemail)
+  $nmsg['email'] = stripcrap($user->email);
 else
-  $email = "";
+  $nmsg['email'] = "";
 
-if ($msg['state'] == 'Active' && $OffTopic)
-  $status = "OffTopic";
+/* update offtopic status */
+if ($msg['state'] == 'Active' && $offtopic)
+  $nmsg['state'] = "OffTopic";
 else
-  $status = $msg['state'];
+  $nmsg['state'] = $msg['state'];
 
-if (empty($subject) && strlen($subject) == 0)
+if (empty($nmsg['subject']) && strlen($nmsg['subject']) == 0)
   $error["subject_req"] = true;
 
-if (strlen($subject) > 100) {
+if (strlen($nmsg['subject']) > 100) {
   $error["subject_too_long"] = true;
-  $subject = substr($subject, 0, 100);
+  $nmsg['subject'] = substr($nmsg['subject'], 0, 100);
 }
 
 /* Strip any tags from the data */
 
-if (!empty($url) && !preg_match("/^[a-z]+:\/\//i", $url))
-  $url = "http://$url";
+if (!empty($nmsg['url']) && !preg_match("/^[a-z]+:\/\//i", $nmsg['url']))
+  $nmsg['url'] = "http://".$nmsg['url'];
 
-if (!empty($imageurl) && !preg_match("/^[a-z]+:\/\//i", $imageurl))
-  $imageurl = "http://$imageurl";
+if (!empty($nmsg['imageurl']) && !preg_match("/^[a-z]+:\/\//i", $nmsg['imageurl']))
+  $nmsg['imageurl'] = "http://".$nmsg['imageurl'];
 
-if (!empty($imageurl) && !isset($imgpreview))
+if (!empty($nmsg['imageurl']) && !isset($imgpreview))
   $preview = 1;
 
-if ((isset($error) || isset($preview)) && !empty($imageurl)) {
+if ((isset($error) || isset($preview)) && !empty($nmsg['imageurl'])) {
   $error["image"] = true;
   $imgpreview = 1;
 }
 
-if (isset($ExposeEmail) && $ExposeEmail) {
-  /* Lame spamification */
-  $email = preg_replace("/@/", "&#" . ord('@') . ";", $user->email);
-  $tpl->set_var("MSG_NAMEEMAIL", "<a href=\"mailto:" . $email . "\">" . $user->name . "</a>");
-} else
-  $tpl->set_var("MSG_NAMEEMAIL", $user->name);
-
-if (!empty($imageurl))
-  $msg_message = "<center><img src=\"$imageurl\"></center><p>\n";
-else
-  $msg_message = "";
-$msg_message .= nl2br($message);
-
-if (!empty($url)) {
-  if (!empty($urltext))
-    $msg_message .= "<ul><li><a href=\"" . $url . "\" target=\"_top\">" . $urltext . "</a></ul>\n";
-   else
-    $msg_message .= "<ul><li><a href=\"" . $url . "\" target=\"_top\">" . $url . "</a></ul>\n";
-}
-
-if (!empty($user->signature))
-  $msg_message .= "<p>" . nl2br($user->signature) . "\n";
-
-$tpl->set_var(array(
-  "MSG_MESSAGE" => $msg_message,
-  "MSG_SUBJECT" => $subject,
-  "MSG_DATE" => $msg['date'],
-  "MSG_IP" => $remote_addr,
-  "MSG_AID" => $user->aid,
-));
+/* render new message */
+render_message($tpl, $nmsg, $user);
 
 if (!isset($preview))
   $tpl->set_var("preview", "");
@@ -248,51 +228,54 @@ if (!isset($preview))
 $tpl->parse("PREVIEW", "message");
 
 if (isset($error) || isset($preview)) {
-  $action = "edit";
-
+  /* PREVIEW - edit */
   foreach ($errors as $n => $e) {
     if (!isset($error[$e]))
       $tpl->set_var($e, "");
   }
 
-  require_once("post.inc");
+  /* generate post form for new message */
+  require_once("postform.inc");
+  render_postform($tpl, "edit", $user, $nmsg, $imgpreview);
 
   $tpl->set_var("accept", "");
 } else {
+  /* POST */
   $tpl->set_var(array(
     "error" => "",
     "form" => "",
   ));
 
-  if (isset($ExposeEmail) && $ExposeEmail)
-    $email = $user->email;
-  else
-    $email = "";
+  /* overwrite with latest email record */
+  if (!empty($nmsg['email']))
+    $nmsg['email'] = $user->email;
 
+  /* compose new set of flags */
   $flagset[] = "NewStyle";
 
   if (isset($flags['StateLocked']))
     $flagset[] = 'StateLocked';
 
-  if (empty($message) && strlen($message) == 0)
+  if (empty($nmsg['message']) && strlen($nmsg['message']) == 0)
     $flagset[] = "NoText";
 
-  if (!empty($url) || preg_match("/<[[:space:]]*a[[:space:]]+href/i", $message))
+  if (!empty($nmsg['url']) || preg_match("/<[[:space:]]*a[[:space:]]+href/i", $nmsg['message']))
     $flagset[] = "Link";
 
-  if (!empty($imageurl) || preg_match("/<[[:space:]]*img[[:space:]]+src/i", $message))
+  if (!empty($nmsg['imageurl']) || preg_match("/<[[:space:]]*img[[:space:]]+src/i", $nmsg['message']))
     $flagset[] = "Picture";
 
   $flagset = implode(",", $flagset);
 
-  if (!empty($imageurl))
-    $message = "<center><img src=\"$imageurl\"></center><p>\n" . $message;
+  /* prepend new imageurl for diffing and for entry into the db */
+  if (!empty($nmsg['imageurl']))
+    $nmsg['message'] = "<center><img src=\"" . $nmsg['imageurl']. "\"></center><p>\n" . $nmsg['message'];
 
   /* Create a diff for the old message and the new message */
 
   /* Dump the \r's, we don't want them */
   $msg['message'] = preg_replace("/\r/", "", $msg['message']);
-  $message = preg_replace("/\r/", "", $message);
+  $nmsg['message'] = preg_replace("/\r/", "", $nmsg['message']);
 
   $old[]="Subject: " . $msg['subject'];
   $old = array_merge($old, explode("\n", $msg['message']));
@@ -300,25 +283,26 @@ if (isset($error) || isset($preview)) {
     $old[]="urltext: " . $msg['urltext'];
     $old[]="url: " . $msg['url'];
   }
-  $new[]="Subject: " . $subject;
-  $new = array_merge($new, explode("\n", $message));
-  if (!empty($url)) {
-    $new[]="urltext: " . $urltext;
-    $new[]="url: " . $url;
+
+  $new[]="Subject: " . $nmsg['subject'];
+  $new = array_merge($new, explode("\n", $nmsg['message']));
+  if (!empty($nmsg['url'])) {
+    $new[]="urltext: " . $nmsg['urltext'];
+    $new[]="url: " . $nmsg['url'];
   }
 
   $diff = diff($old, $new);
 
   /* Add it into the database */
   $sql = "update f_messages" . $indexes[$index]['iid'] . " set " .
-	"name = '" . addslashes($name) . "', " .
-	"email = '" . addslashes($email) . "', " .
+	"name = '" . addslashes($nmsg['name']) . "', " .
+	"email = '" . addslashes($nmsg['email']) . "', " .
 	"flags = '$flagset', " .
-	"state = '" . addslashes($status) . "', " .
-	"subject = '" . addslashes($subject) . "', " .
-	"message = '" . addslashes($message) . "', " .
-	"url = '" . addslashes($url) . "', " .
-	"urltext = '" . addslashes($urltext) . "', " .
+	"state = '" . addslashes($nmsg['state']) . "', " .
+	"subject = '" . addslashes($nmsg['subject']) . "', " .
+	"message = '" . addslashes($nmsg['message']) . "', " .
+	"url = '" . addslashes($nmsg['url']) . "', " .
+	"urltext = '" . addslashes($nmsg['urltext']) . "', " .
 	"changes = CONCAT(changes, 'Edited by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), ' from $remote_addr\n" . addslashes($diff) . "\n') " .
 	"where mid = '" . addslashes($mid) . "'";
   mysql_query($sql) or sql_error($sql);

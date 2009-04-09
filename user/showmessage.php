@@ -5,6 +5,8 @@ require_once("listthread.inc");
 require_once("thread.inc");
 require_once("filter.inc");
 require_once("strip.inc");
+require_once("message.inc");
+require_once("postform.inc");
 
 $tpl->set_file(array(
   "showmessage" => "showmessage.tpl",
@@ -12,17 +14,7 @@ $tpl->set_file(array(
   "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
 ));
 
-$tpl->set_block("message", "account_id");
-$tpl->set_block("message", "forum_admin");
-$tpl->set_block("message", "advertiser");
-$tpl->set_block("message", "message_ip");
-$tpl->set_block("message", "reply");
-$tpl->set_block("message", "owner");
-$tpl->set_block("owner", "statelocked");
-$tpl->set_block("owner", "delete");
-$tpl->set_block("owner", "undelete");
-$tpl->set_block("message", "parent");
-$tpl->set_block("message", "changes");
+message_set_block($tpl);
 
 $tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
@@ -89,69 +81,6 @@ if (isset($ad_generic)) {
   $tpl->_set_var("AD", $ad);
 }
 
-if ($user->capable($forum['fid'], 'Moderate')) {
-  $tpl->set_var("MSG_IP", $msg['ip']);
-  $tpl->set_var("MSG_EMAIL", $uuser->email);
-  $msg['changes'] = trim($msg['changes']);
-  if(strlen($msg['changes'])>0) {
-      // TODO; use diff highlight?
-      $changes = preg_replace("/&/", "&amp;", $msg['changes']);
-      $changes = preg_replace("/</", "&lt;", $changes);
-      $changes = preg_replace("/>/", "&gt;", $changes);
-      $tpl->set_var("MSG_CHANGES", nl2br($changes));
-  } else {
-      $tpl->set_var("changes", "");
-  }
-} else {
-  $tpl->set_var("changes", "");
-  $tpl->set_var("message_ip", "");
-}
-
-if (!$user->capable($forum['fid'], 'Moderate') || !$msg['aid'])
-  $tpl->set_var("forum_admin", "");
-if (!$uuser->capable($forum['fid'], 'Advertise'))
-  $tpl->set_var("advertiser", "");
-
-if (!$msg['aid'])
-  $tpl->set_var("account_id", "");
-
-/*
-if ($user->valid())
-  $tpl->set_var("MSG_IP", $msg['ip']);
-else
-  $tpl->set_var("message_ip", "");
-*/
-
-if (!$user->valid() || $msg['aid'] == 0
-  || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock'))) {
-  $tpl->set_var("reply", "");
-  $tpl->set_var("owner", "");
-} else if ($msg['aid'] != $user->aid) {
-  /* we're only allowed to reply */
-  $tpl->set_var("owner", "");
-} else {
-  if (isset($flags['StateLocked'])) {
-    $tpl->set_var("reply", "");
-    $tpl->set_var("undelete", "");
-    if ($msg['state'] != 'OffTopic' && $msg['state'] != 'Active')
-      $tpl->set_var("delete", "");
-  } else {
-    $tpl->set_var("statelocked", "");
-    if ($msg['state'] != 'Deleted')
-      $tpl->set_var("undelete", "");
-    else
-      $tpl->set_var("delete", "");
-  }
-}
-
-$tpl->set_var(array(
-  "MSG_SUBJECT" => $msg['subject'],
-  "MSG_DATE" => $msg['date'],
-  "MSG_MID" => $msg['mid'],
-  "MSG_TID" => $msg['tid'],
-  "MSG_AID" => $msg['aid'],
-));
-
 /* UGLY hack, kludge, etc to workaround nasty ordering problem */
 $_page = $tpl->get_var("PAGE");
 unset($tpl->varkeys["PAGE"]);
@@ -163,13 +92,6 @@ unset($tpl->varkeys["DOMAIN"]);
 unset($tpl->varvals["DOMAIN"]);
 $tpl->set_var("DOMAIN", $_domain);
 
-if ($user->valid() && !empty($msg['email'])) {
-  /* Lame spamification */
-  $email = preg_replace("/@/", "&#" . ord('@') . ";", $msg['email']);
-  $tpl->set_var("MSG_NAMEEMAIL", "<a href=\"mailto:" . $email . "\">" . $msg['name'] . "</a>");
-} else
-  $tpl->set_var("MSG_NAMEEMAIL", $msg['name']);
-
 if (isset($pmsg)) {
   $tpl->set_var(array(
     "PMSG_MID" => $pmsg['mid'],
@@ -180,28 +102,7 @@ if (isset($pmsg)) {
 } else
   $tpl->set_var("parent", "");
 
-// $message = nl2br(wordwrap($msg['message'],78,'<wbr>',1));
-$message = nl2br($msg['message']);
-
-if (!empty($msg['url'])) {
-  $urlset = 1;
-  if (!empty($msg['urltext']))
-    $message .= "<ul><li><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['urltext'] . "</a></ul>\n";
-   else
-    $message .= "<ul><li><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['url'] . "</a></ul>\n";
-}
-
-if (isset($flags['NewStyle']) && !isset($user->pref['HideSignatures']) &&
-   isset($uuser->signature)) {
-  unset($urlset);
-  if (!empty($uuser->signature))
-    $message .= "<p>" . nl2br($uuser->signature) . "\n";
-}
-
-if (!isset($urlset))
-  $message .= "<br>";
-
-$tpl->set_var("MSG_MESSAGE", $message . "<br>\n");
+render_message($tpl, $msg, $user, $uuser);	/* viewer, message owner */
 
 $vmid = $msg['mid'];
 
@@ -214,6 +115,7 @@ if (!$ulkludge)
 
 $tpl->set_var("THREAD", $threadmsg);
 
+/* generate threadlinks */
 if ($user->valid()) {
   if (isset($tthreads_by_tid[$msg['tid']])) {
     $threadlinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&page=" . $script_name . $path_info . "&token=" . $user->token() . "\"><font color=\"#d00000\">ut</font></a>";
@@ -233,22 +135,21 @@ if (isset($tthreads_by_tid[$msg['tid']]) &&
 
 $tpl->set_var("THREADLINKS", $threadlinks);
 
-$action = "post";
+/* create a new message based on current for postform */
+$nmsg['msg'] = $nmsg['subject'] = $nmsg['urltext'] = "";
+$nmsg['aid'] = $msg['aid'];
+$nmsg['pmid'] = $msg['mid']; 	/* new pmid is current message */
+$nmsg['tid'] = $msg['tid'];
+$nmsg['ip'] = $remote_addr;
 
-if (!preg_match("/^Re:/i", $msg['subject'], $sregs))
-  // screw this, lets not let noobs be lame
-  $subject = ""; // "Re: " . $msg['subject'];
- else
-  $subject = $msg['subject'];
+if (preg_match("/^Re:/i", $msg['subject'], $sregs))
+  $nmsg['subject'] = $msg['subject'];
+/*
+else
+  $nmsg['subject'] = "Re: " . $msg['subject'];
+*/
 
-$pmid = $msg['mid'];
-$tid = $msg['tid'];
-unset($mid);
-unset($message);
-
-$parent = $msg;
-
-require_once("post.inc");
+render_postform($tpl, "post", $user, $nmsg);
 
 $tpl->parse("MESSAGE", "message");
 
