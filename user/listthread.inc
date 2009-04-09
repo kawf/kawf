@@ -13,29 +13,29 @@ function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = a
 
   next($siblings);
 
-  if ($messages[$s]['pmid'])
-    $string .= "<ul>\n";
-
-  $string .= "<li>\n";
-
   if (!$dontshow && (isset($path[$messages[$s]['mid']]) || $messages[$s]['state'] != 'OffTopic' || !isset($user->pref['CollapseOffTopic']))) {
     $string .= $callback($thread, $messages[$s]);
 
+    $sibs = "";
     if (isset($user->pref['OldestFirst'])) {
       while (list(, $s1) = each($siblings)) {
         if (!isset($messages[$s1]))
           continue;
 
-        $string .= list_thread($callback, $messages, $tree, $tree[$messages[$s1]['mid']], $thread);
+        $sibs .= list_thread($callback, $messages, $tree, $tree[$messages[$s1]['mid']], $thread);
       }
     } else {
       for ($s1 = end($siblings); $s1 != $s; $s1 = prev($siblings)) {
         if (!isset($messages[$s1]))
           continue;
 
-        $string .= list_thread($callback, $messages, $tree, $tree[$messages[$s1]['mid']], $thread);
+        $sibs .= list_thread($callback, $messages, $tree, $tree[$messages[$s1]['mid']], $thread);
       }
     }
+
+    if(strlen($sibs)>0)
+      $string .= "\n<ul>\n" . $sibs . "</ul>\n";
+
   } else {
     $count = 0;
 
@@ -52,10 +52,7 @@ function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = a
     $string .= $callback($thread, $messages[$s], $count);
   }
 
-  $string .= "</li>\n";
-
-  if ($messages[$s]['pmid'])
-    $string .= "</ul>\n";
+  $string = "<li>" . $string . "</li>\n";
 
   return $string;
 }
