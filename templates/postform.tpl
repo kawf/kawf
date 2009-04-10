@@ -1,3 +1,4 @@
+{POSTFORM_DEBUG}
 <div class=postform>
 <!-- BEGIN disabled -->
 <!-- BEGIN nonewthreads -->

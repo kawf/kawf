@@ -377,11 +377,10 @@ $tpl->set_var(array(
   "ACTIVE_GUESTS" => $active_guests,
 ));
 
-$action = "post";
-
 unset($thread);
 
-require_once("post.inc");
+require_once("postform.inc");
+render_postform($tpl, "post", $user);
 
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");

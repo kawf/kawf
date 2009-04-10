@@ -23,32 +23,15 @@ if (!isset($mid) || !isset($forum)) {
 require_once("strip.inc");
 
 $tpl->set_file(array(
-  "delete" => "delete.tpl",
+  "del" => "delete.tpl",	// do not call it delete, it is used by message.tpl
   "message" => "message.tpl",
   "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
 ));
 
-$tpl->set_block("delete", "disabled");
+$tpl->set_block("del", "disabled");
 
-$tpl->set_block("message", "account_id");
-$tpl->set_block("message", "forum_admin");
-$tpl->set_block("message", "advertiser");
-$tpl->set_block("message", "sponsor");
-$tpl->set_block("message", "message_ip");
-$tpl->set_block("message", "owner");
-$tpl->set_block("owner", "delete_");
-$tpl->set_block("owner", "undelete_");
-$tpl->set_block("message", "parent");
-$tpl->set_block("message", "changes");
-
-$tpl->set_var(array(
-  "forum_admin" => "",
-  "advertiser" => "",
-  "sponsor" => "",
-  "owner" => "",
-  "parent" => "",
-  "changes" => "",
-));
+require_once("message.inc");
+message_set_block($tpl);
 
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 $tpl->set_var("FORUM_NOTICES", "");
@@ -75,12 +58,6 @@ if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/", $message, 
   $message = $regs[2];
 }
 
-$subject = $msg['subject'];
-$url = $msg['url'];
-$urltext = $msg['urltext'];
-$name = $msg['name'];
-$email = $msg['email'];
-
 if (isset($ad_generic)) {
   $urlroot = "/ads";
   /* We get our money from ads, make sure it's there */
@@ -104,33 +81,11 @@ if (!isset($forum['opt.PostEdit'])) {
 
 $tpl->set_var("disabled", "");
 
-if (!empty($imageurl))
-  $msg_message = "<center><img src=\"$imageurl\"></center><p>";
-else
-  $msg_message = "";
-$msg_message .= nl2br($message);
+render_message($tpl, $msg, $user);
 
-if (!empty($user->signature))
-  $msg_message .= "<p>" . nl2br($user->signature) . "\n";
-
-if (!empty($email)) {
-  /* Lame spamification */
-  $email = preg_replace("/@/", "&#" . ord('@') . ";", $email);
-  $tpl->set_var("MSG_NAMEEMAIL", "<a href=\"mailto:" . $email . "\">" . $name . "</a>");
-} else
-  $tpl->set_var("MSG_NAMEEMAIL", $name);
-
-$tpl->set_var(array(
-  "MSG_MESSAGE" => $msg_message,
-  "MSG_SUBJECT" => $subject,
-  "MSG_DATE" => $msg['date'],
-  "MSG_IP" => $remote_addr,
-  "MSG_MID" => $msg['mid'],
-  "MSG_AID" => $msg['aid'],
-  "PAGE" => $_page,
-));
+$tpl->set_var("PAGE", $_page);
 
 $tpl->parse("PREVIEW", "message");
 
-$tpl->pparse("CONTENT", "delete");
+$tpl->pparse("CONTENT", "del");
 ?>

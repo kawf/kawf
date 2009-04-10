@@ -17,8 +17,6 @@
 </tr>
 </table>
 
-<br>
-
 <table width="100%">
 <tr>
   <td align="left">
@@ -35,8 +33,6 @@
   </td>
 </tr>
 </table>
-
-<br>
 
 <table>
 <tr><td>
@@ -46,8 +42,6 @@
 </td></tr>
 </table>
 
-<br>
-
 <table width="100%">
 <tr>
   <td align="left">
@@ -64,7 +58,6 @@
   </td>
 </tr>
 </table>
-<br>
 
 {FOOTER}
 

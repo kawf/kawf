@@ -37,13 +37,10 @@
   </td>
 </tr>
 </table>
-<br>
 
-<table>
-<tr><td>
+<p>
 {MESSAGE}
-</td></tr>
-</table>
+</p>
 
 <a name="thread"><b>Thread:</b></a><br>
 <table width="100%">
@@ -56,8 +53,6 @@
 </td>
 </tr>
 </table>
-
-<br>
 
 <table>
 <tr><td align="center">
