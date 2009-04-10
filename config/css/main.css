@@ -37,6 +37,7 @@ ul.showthread tr.messagesubjectrow td {
 /* message header */
 tr.messageinforow td {
     font-size: smaller;
+    padding-bottom: 1em;
 }
 
 td.subject {
@@ -60,6 +61,10 @@ ul.showthread td, ul.showthread div {
 ul.showthread .signature {
     visibility: hidden;
     height: 0px;	/* hide for now */
+}
+
+.signature {
+    padding-bottom: .2em;
 }
 
 /* embedded url in message */

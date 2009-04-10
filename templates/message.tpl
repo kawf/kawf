@@ -48,12 +48,12 @@
   </table>
 <!-- BEGIN msg -->
   <div class="message">
-<p>{MSG_MESSAGE}</p>
+{MSG_MESSAGE}
   </div>
 <!-- END msg -->
 <!-- BEGIN signature -->
   <div class="signature">
-<p>{MSG_SIGNATURE}</p>
+{MSG_SIGNATURE}
   </div>
 <!-- END signature -->
 <!-- BEGIN changes -->
