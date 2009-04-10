@@ -4,6 +4,7 @@
 <title>{DOMAIN} Forums: Tracking</title>
 <link rel=StyleSheet href="/css/main.css" type="text/css" media="screen">
 </head>
+
 <body bgcolor="#ffffff">
 
 {HEADER}

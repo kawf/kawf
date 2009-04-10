@@ -4,6 +4,7 @@
 <title>{DOMAIN} Forums: Editing message</title>
 <link rel=StyleSheet href="/css/main.css" type="text/css">
 </head>
+
 <body bgcolor="#ffffff">
 
 {HEADER}
