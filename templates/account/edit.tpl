@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>{DOMAIN} Forums: Edit Account</title>
-<link rel=StyleSheet href="/css/main.css" type="text/css">
+<link rel=StyleSheet href="{CSS_HREF}" type="text/css">
 </head>
 
 <body bgcolor="#ffffff" text="#000000" link="#0000cc" vlink="#0000cc" alink="#0000cc" style="text-decoration: none">

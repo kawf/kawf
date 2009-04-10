@@ -70,4 +70,10 @@ function getmicrotime()
 /* Seed the random number generator */
 mt_srand(getmicrotime());
 
+function css_href($filename="main.css")
+{
+    global $css_dir, $css_href_dir;
+    $time = filemtime("$css_dir/$filename");
+    return "$css_href_dir/$filename?$time";
+}
 ?>

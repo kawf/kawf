@@ -8,7 +8,7 @@ function page_header($title)
 <html>
 <head>
 <title><?echo $title;?></title>
-<link rel=StyleSheet href="/css/main.css" type="text/css">
+<link rel=StyleSheet href="<? echo css_href()?>" type="text/css">
 </head>
 
 <body bgcolor="#FFFFFF">

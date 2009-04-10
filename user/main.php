@@ -40,6 +40,7 @@ $ulkludge =
 sql_open($database);
 
 $tpl = new Template($template_dir, "comment");
+$tpl->set_var("CSS_HREF", css_href());
 
 $tpl->set_file(array(
   "header" => "header.tpl",
