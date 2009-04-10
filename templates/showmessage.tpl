@@ -37,7 +37,6 @@
   </td>
 </tr>
 </table>
-<br>
 
 <p>
 {MESSAGE}
@@ -54,8 +53,6 @@
 </td>
 </tr>
 </table>
-
-<br>
 
 <table>
 <tr><td align="center">
