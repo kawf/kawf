@@ -25,7 +25,7 @@ ul.thread li {
 /* showthread */
 ul.showthread li.thread {
     list-style: none outside;
-    border-width: 0 0 0 0.2em;
+    border-width: 0 0 0 2px;
     border-style: solid;
     border-color: #eeeeee;
 }
