@@ -6,6 +6,7 @@
 </head>
 
 <body bgcolor="#ffffff">
+{DEBUG}
 
 {HEADER}
 
@@ -52,11 +53,13 @@ Subject line too long! Truncated to 100 characters<br>
 <!-- END error -->
 <!-- BEGIN preview -->
 <table>
+  <tr>
+    <td>
+    <center><h2><font color="#000080">Message Preview</font></h2></center><br>
+    [ <a href="/{FORUM_SHORTNAME}/">Cancel post and go back to the forum</a> ]
+    </td>
+  </tr>
 <tr><td>
-<center><h2><font color="#000080">Message Preview</font></h2></center><p>
-<font size="-2">
-[ <a href="/{FORUM_SHORTNAME}/">Cancel post and go back to the forum</a> ]<p>
-</font>
 {PREVIEW}
 </td></tr>
 </table>

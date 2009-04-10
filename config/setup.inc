@@ -38,6 +38,9 @@ $css_dir = "$srcroot/config/css";
 /* path to prepend to css href */
 $css_href_dir = "/css";
 
+/* set to 1 for debugging */
+$Debug = 0;
+
 /* allow user to override default in a separate file (prevents merge problems
    when using source control */
 if (is_file(dirname(__FILE__) . "/setup-local.inc") )

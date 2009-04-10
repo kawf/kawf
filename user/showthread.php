@@ -2,6 +2,8 @@
 
 require_once("listthread.inc");
 require_once("filter.inc");
+require_once("message.inc");
+
 require_once("textwrap.inc");
 require_once("notices.inc");
 
@@ -11,18 +13,7 @@ $tpl->set_file(array(
   "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
 ));
 
-$tpl->set_block("message", "account_id", "_account_id");
-$tpl->set_block("message", "forum_admin", "_forum_admin");
-$tpl->set_block("message", "advertiser", "_advertiser");
-$tpl->set_block("message", "sponsor", "_sponsor");
-$tpl->set_block("message", "message_ip", "_message_ip");
-$tpl->set_block("message", "reply", "_reply");
-$tpl->set_block("message", "owner", "_owner");
-$tpl->set_block("owner", "statelocked", "_statelocked");
-$tpl->set_block("owner", "delete", "_delete");
-$tpl->set_block("owner", "undelete", "_undelete");
-$tpl->set_block("message", "parent", "_parent");
-$tpl->set_block("message", "changes", "_changes");
+message_set_block($tpl, '_');
 
 $tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
@@ -100,80 +91,17 @@ function print_message($thread, $msg)
 {
   global $tpl, $user, $forum, $indexes;
 
-  if (!empty($msg['flags'])) {
-    $flagexp = explode(",", $msg['flags']);
-    while (list(,$flag) = each($flagexp))
-      $flags[$flag] = true;
-  }
-
   $index = find_msg_index($msg['mid']);
   $sql = "update f_messages" . $indexes[$index]['iid'] . " set views = views + 1 where mid = '" . addslashes($msg['mid']) . "'";
   mysql_query($sql) or sql_warn($sql);
 
-  $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . softbreaklongwords($msg['subject'],40) . "</a>";
-  $tpl->set_var(array(
-    "MSG_SUBJECT" => $subject,
-    "MSG_DATE" => $msg['date'],
-    "MSG_MID" => $msg['mid'],
-    "MSG_AID" => $msg['aid'],
-  ));
-
   $uuser = new ForumUser;
   $uuser->find_by_aid((int)$msg['aid']);
 
-  if ($user->valid() && !empty($msg['email'])) {
-    /* Lame spamification */
-    $email = preg_replace("/@/", "&#" . ord('@') . ";", $msg['email']);
-    $tpl->set_var("MSG_NAMEEMAIL", "<a href=\"mailto:" . $email . "\">" . $msg['name'] . "</a>");
-  } else
-    $tpl->set_var("MSG_NAMEEMAIL", $msg['name']);
-
   $tpl->set_var("_parent", "");
 
-  $message = nl2br($msg['message']);
-
-  if (!empty($msg['url'])) {
-    if (!empty($msg['urltext']))
-      $message .= "<ul><li><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['urltext'] . "</a></ul>\n";
-     else
-      $message .= "<ul><li><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['url'] . "</a></ul>\n";
-  }
-
-  if (isset($flags['NewStyle']) && !isset($user->pref['HideSignatures']) &&
-     isset($uuser->signature)) {
-    if (!empty($uuser->signature))
-      $message .= "<p>" . nl2br($uuser->signature) . "\n";
-  }
-
-  $tpl->set_var("MSG_MESSAGE", $message . "<br><br>\n");
-
-  if ($user->capable($forum['fid'], 'Moderate')) {
-    $tpl->set_var("MSG_IP", $msg['ip']);
-    $tpl->set_var("MSG_EMAIL", $uuser->email);
-    if(strlen($msg['changes'])>0) {
-	$changes = preg_replace("/&/", "&amp;", $msg['changes']);
-	$changes = preg_replace("/</", "&lt;", $changes);
-	$changes = preg_replace("/>/", "&gt;", $changes);
-	$tpl->set_var("MSG_CHANGES", nl2br($changes));
-	$tpl->parse("_changes", "changes");
-    } else {
-	$tpl->set_var("_changes", "");
-    }
-    $tpl->parse("_message_ip", "message_ip");
-  } else {
-    $tpl->set_var("_changes", "");
-    $tpl->set_var("_message_ip", "");
-  }
-
-  if ($user->capable($forum['fid'], 'Moderate') && $msg['aid'])
-    $tpl->parse("_forum_admin", "forum_admin");
-  else
-    $tpl->set_var("_forum_admin", "");
-
-  if ($uuser->capable($forum['fid'], 'Advertise'))
-    $tpl->parse("_advertiser", "advertiser");
-  else
-    $tpl->set_var("_advertiser", "");
+  /* '_' used for stack hack */
+  render_message($tpl, $msg, $user, $uuser, '_');
 
   if ($uuser->capable($forum['fid'], 'Sponsor'))
     $tpl->parse("_sponsor", "sponsor");
@@ -224,6 +152,10 @@ function print_message($thread, $msg)
 
     $tpl->parse("_owner", "owner");
   }
+  /* in threaded mode, subject is a link. override MSG_SUBJECT set above. */
+  $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . softbreaklongwords($msg['subject'],40) . "</a>";
+  $tpl->set_var("MSG_SUBJECT",
+    "<a href=\"../msgs/" . $msg['mid'] . ".phtml\" name=\"" . $msg['mid'] . "\">" . $subject . "</a>");
 
   $tpl->parse("MESSAGE", "message");
 

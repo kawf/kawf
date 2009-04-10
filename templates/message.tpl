@@ -1,6 +1,7 @@
-  <table width="100%" border="0" cellspacing="0" cellpadding="0">
-  <tr>
-    <td align="left"><a name="{MSG_MID}"></a><font size="+1" color="#000080"><b>{MSG_SUBJECT}</b></font></td>
+  {MSG_DEBUG}
+  <table class="messageheader" width="100%" border="0" cellspacing="0" cellpadding="0">
+  <tr class="messagesubjectrow">
+    <td align="left" class="subject">{MSG_SUBJECT}</td>
     <td>&nbsp;&nbsp;&nbsp;</td>
     <td align="right" nowrap="nowrap"><font size="-2">
 <!-- BEGIN reply -->
@@ -20,9 +21,8 @@
 <!-- END owner -->
     </font></td>
   </tr>
-  </table>
-
-  <font size="-2">
+  <tr class="messageinforow">
+    <td align="left">
 <!-- BEGIN account_id -->
      User account number (aid): <a href="http://forums.{DOMAIN}/account/{MSG_AID}.phtml">{MSG_AID}</a>
 <!-- END account_id -->
@@ -39,16 +39,26 @@
 <!-- BEGIN message_ip -->
      Posting IP Address: {MSG_IP}<br>
 <!-- END message_ip -->
-     <b>Posted by {MSG_NAMEEMAIL} on {MSG_DATE}</b>
+     <b>Posted by {MSG_NAMEEMAIL} on {MSG_DATE}</b><br>
 <!-- BEGIN parent -->
      In Reply to: <a href="{PMSG_MID}.phtml">{PMSG_SUBJECT}</a> posted by {PMSG_NAME} on {PMSG_DATE}<br>
 <!-- END parent -->
-   </font>
-   <p>
-<div class="message">
-{MSG_MESSAGE}
-</div>
+    </td>
+  </tr>
+  </table>
+<!-- BEGIN msg -->
+  <div class="message">
+<p>{MSG_MESSAGE}</p>
+  </div>
+<!-- END msg -->
+<!-- BEGIN signature -->
+  <div class="signature">
+<p>{MSG_SIGNATURE}</p>
+  </div>
+<!-- END signature -->
 <!-- BEGIN changes -->
-     <b>Changes:</b><br>
-     <div class="changes">{MSG_CHANGES}</div>
+  <br><b>Changes:</b><br>
+  <div class="changes">
+{MSG_CHANGES}
+  </div>
 <!-- END changes -->
