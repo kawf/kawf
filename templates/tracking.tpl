@@ -2,8 +2,9 @@
 <html>
 <head>
 <title>{DOMAIN} Forums: Tracking</title>
-<link rel=StyleSheet href="/css/main.css" type="text/css" media="screen">
+<link rel=StyleSheet href="{CSS_HREF}" type="text/css" media="screen">
 </head>
+
 <body bgcolor="#ffffff">
 
 {HEADER}

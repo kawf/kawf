@@ -1,11 +1,21 @@
+<?
+$include_path = "..:../include:../config";
+$old_include_path = ini_get("include_path");
+if (!empty($old_include_path))
+  $include_path .= ":" . $old_include_path;
+ini_set("include_path", $include_path);
+
+require_once("setup.inc");
+require_once("util.inc");
+?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title>Forum Tips</title>
-<link rel=StyleSheet href="/css/main.css" type="text/css">
+<link rel=StyleSheet href="<? echo css_href() ?>" type="text/css">
 </head>
-<body>
 
+<body>
 <h1>Posting Tips</h1>
 <p>To automatically track threads that you create or post to, make sure to check the "Default to track threads you create or followup to" checkbox in your <a href="/preferences.phtml?page=/tips/">preferences</a>.</p>
 

@@ -2,7 +2,7 @@
 <html>
 <head>
 <title>{DOMAIN} Forums: Create Account</title>
-<link rel=StyleSheet href="/css/main.css" type="text/css">
+<link rel=StyleSheet href="{CSS_HREF}" type="text/css">
 </head>
 
 <body bgcolor="#ffffff">

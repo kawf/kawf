@@ -1,4 +1,4 @@
 <?php
-include('setup.inc');
-include("$srcroot/admin/main.php");
+include_once('setup.inc');
+require_once("$srcroot/admin/main.php");
 ?>
