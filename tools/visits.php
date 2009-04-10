@@ -1,7 +1,9 @@
 <?php
 
+require_once("../config/setup.inc");
+
 /* First setup the path */
-$include_path = "$srcroot/include:$srcroot/user";
+$include_path = "$srcroot/include:$srcroot/config";
 if (isset($include_append))
   $include_path .= ":" . $include_append;
 
