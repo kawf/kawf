@@ -38,9 +38,7 @@
 </tr>
 </table>
 
-<p>
 {MESSAGE}
-</p>
 
 <a name="thread"><b>Thread:</b></a><br>
 <table width="100%">
