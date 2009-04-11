@@ -63,6 +63,7 @@ $tpl->parse("FORUM_HEADER", "forum_header");
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");
 
+$tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
 /* UGLY hack, kludge, etc to workaround nasty ordering problem */
