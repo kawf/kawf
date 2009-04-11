@@ -65,7 +65,10 @@ div.messageblock div {
 /* message header */
 tr.messageinforow td {
     font-size: 85%;
+    color: #808080;
 }
+tr.messageinforow a:link { color: #8080ff; }
+tr.messageinforow a:visited { color: #b080ff; }
 
 td.subject {
     font-size: 1.4em;
