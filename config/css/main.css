@@ -24,7 +24,7 @@ body { font-family: verdana, arial, geneva; font-size: smaller}
 .row1 { background: #eeeeee }
 ul {margin-left: 1em; padding-left: 1em;}
 
-/* showforum/showmessage */
+/* showforum/showmessage subject thread listing*/
 ul.thread {
     margin-top: 0.2em;
     margin-bottom: 0.4em;
@@ -35,11 +35,20 @@ ul.thread li {
 }
 
 /* showthread */
+ul.showthread {
+    /* first row is flush left */
+    margin-left: 0;
+    padding-left: 0em;
+}
+
 ul.showthread li.thread {
     list-style: none outside;
+/* people hate this */
+/*
     border-width: 0 0 0 2px;
     border-style: solid;
     border-color: #eeeeee;
+*/
 }
 
 ul.showthread tr.messagesubjectrow td {
@@ -49,7 +58,6 @@ ul.showthread tr.messagesubjectrow td {
 /* message header */
 tr.messageinforow td {
     font-size: smaller;
-    padding-bottom: 1em;
 }
 
 td.subject {
@@ -66,17 +74,13 @@ ul.showthread td.subject a {
 
 /* everything in showthread should be indented a bit */
 ul.showthread td, ul.showthread div {
-    padding-left: 4px;
+    padding-left: 5px;
 }
 
 /* signature in showthread */
 ul.showthread .signature {
     visibility: hidden;
     height: 0px;	/* hide for now */
-}
-
-.signature {
-    padding-bottom: .2em;
 }
 
 /* embedded url in message */
@@ -88,4 +92,5 @@ ul.showthread .signature {
 .changes {
     background: #ffeeee;
     font-family: monospace;
+    padding: 5px;
 }
