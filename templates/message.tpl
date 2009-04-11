@@ -3,7 +3,7 @@
   <tr class="messagesubjectrow">
     <td align="left" class="subject">{MSG_SUBJECT}</td>
     <td>&nbsp;&nbsp;&nbsp;</td>
-    <td align="right" nowrap="nowrap"><font size="-2">
+    <td class="tools" align="right" nowrap="nowrap">
 <!-- BEGIN reply -->
     [ <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml#post">Reply</a> ]
 <!-- END reply -->
@@ -19,7 +19,7 @@
     <b>Status locked</b>
 <!-- END statelocked -->
 <!-- END owner -->
-    </font></td>
+    </td>
   </tr>
   <tr class="messageinforow">
     <td align="left">

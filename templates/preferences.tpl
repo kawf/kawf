@@ -12,9 +12,9 @@
 <img src="/pics/change.gif"><br>
 
 <!-- BEGIN error -->
-<font color="#ff0000">
+<div class="error">
 {ERROR}
-</font>
+</div>
 <!-- END error -->
 
 <form action="preferences.phtml?page={PAGE}" method="post">

@@ -22,18 +22,14 @@
 </table>
 
 <table width="100%">
-<tr>
+<tr class="tools">
   <td align="left">
-  <font size="-2">
     [ <a href="/{FORUM_SHORTNAME}/threads/{MSG_TID}.phtml#{MSG_MID}">All messages</a> ]
     [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
     [ <a href="../"><b>Return to {FORUM_NAME}</b></a> ]
-    </font>
   </td>
   <td align="right">
-  <font size="-2">
     [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
-  </font>
   </td>
 </tr>
 </table>
@@ -63,13 +59,11 @@
 </table>
 
 <table width="100%">
-<tr>
+<tr class="tools">
   <td align="left">
-  <font size="-2">
     [ <a href="/{FORUM_SHORTNAME}/threads/{MSG_TID}.phtml#{MSG_MID}">All messages</a> ]
     [ <a href="/search/?forum={FORUM_SHORTNAME}" target="_top">Search Forums</a> ]
     [ <a href="../"><b>Return to {FORUM_NAME}</b></a> ]
-    </font>
   </td>
 </tr>
 </table>
