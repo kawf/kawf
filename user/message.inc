@@ -126,10 +126,10 @@ function _message_render_extras($tpl, $msg, $viewer, $owner, $pre)
 function render_message($tpl, $msg, $viewer, $owner=null, $pre="")
 {
   global $Debug;
-  if (isset($owner)) {
-    _message_render_extras($tpl, $msg, $viewer, $owner, $pre);
-  } else {
-    _message_unset_block_extras($tpl);
+
+  $extras=true;
+  if (!isset($owner)) {
+    $extras=false;
     $owner=$viewer;
   }
 
@@ -209,5 +209,10 @@ function render_message($tpl, $msg, $viewer, $owner=null, $pre="")
     "MSG_AID" => $msg['aid'],
     "MSG_TID" => $msg['tid'],
   ));
+
+  if ($extras)
+    _message_render_extras($tpl, $msg, $viewer, $owner, $pre);
+  else
+    _message_unset_block_extras($tpl);
 }
 ?>
