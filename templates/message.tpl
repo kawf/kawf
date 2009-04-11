@@ -24,7 +24,7 @@
   <tr class="messageinforow">
     <td align="left">
 <!-- BEGIN account_id -->
-     User account number (aid): <a href="http://forums.{DOMAIN}/account/{MSG_AID}.phtml">{MSG_AID}</a>
+     User account number: <a href="http://forums.{DOMAIN}/account/{MSG_AID}.phtml" target="_blank">{MSG_AID}</a>
 <!-- END account_id -->
 <!-- BEGIN forum_admin -->
      <a href="http://forums.{DOMAIN}/admin/su.phtml?aid={MSG_AID}">su</a> ({MSG_EMAIL})
