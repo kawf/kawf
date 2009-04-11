@@ -50,13 +50,11 @@
 <!-- BEGIN msg -->
   <div class="message">
 {MSG_MESSAGE}
-  <br>
   </div>
 <!-- END msg -->
 <!-- BEGIN signature -->
   <div class="signature">
 {MSG_SIGNATURE}
-  <br>
   </div>
 <!-- END signature -->
 <!-- BEGIN changes -->

@@ -34,8 +34,8 @@
 </tr>
 </table>
 
+<div class="showmessage">
 {MESSAGE}
-
 <a name="thread"><b>Thread:</b></a><br>
 <table width="100%">
 <tr bgcolor="{BGCOLOR}">
@@ -47,16 +47,9 @@
 </td>
 </tr>
 </table>
-
-<table>
-<tr><td align="center">
 <a name="post"><img src="/pics/followup.gif" alt="post follow up"></a>
-</td></tr>
-
-<tr><td>
 {FORM}
-</td></tr>
-</table>
+</div>
 
 <table width="100%">
 <tr class="tools">

@@ -34,6 +34,8 @@ ul.thread li {
     list-style: circle outside none;
 }
 
+div.showmessage { margin-left: 0.2em; }
+
 /* showthread */
 ul.showthread {
     /* first row is flush left */
@@ -41,14 +43,9 @@ ul.showthread {
     padding-left: 0em;
 }
 
+/* get rid of bullets in showthread view */
 ul.showthread li.thread {
     list-style: none outside;
-/* people hate this */
-/*
-    border-width: 0 0 0 2px;
-    border-style: solid;
-    border-color: #eeeeee;
-*/
 }
 
 ul.showthread tr.messagesubjectrow td {
@@ -56,6 +53,11 @@ ul.showthread tr.messagesubjectrow td {
 }
 
 div.messageblock {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+div.messageblock div {
     padding-top: 0.5em;
     padding-bottom: 0.5em;
 }
@@ -74,20 +76,13 @@ td.subject {
 /* message subject in showthread */
 ul.showthread td.subject a {
     text-decoration: none;
+    font-weight: normal;
     color: #000080;
 }
 
 /* everything in showthread should be indented a bit */
 ul.showthread td, ul.showthread div.messageblock {
     padding-left: 5px;
-}
-
-/* signature in showthread */
-ul.showthread .signature {
-    /* hide for now */
-    visibility: hidden;
-    overflow: hidden;
-    height: 0px;
 }
 
 /* embedded url in message */
