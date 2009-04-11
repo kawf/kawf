@@ -157,10 +157,12 @@ function render_message($tpl, $msg, $viewer, $owner=null, $pre="")
     $msg['message'] = nl2br($msg['message']);
 
   if (!empty($msg['url'])) {
+    $url = $msg['url'];
     if (!empty($msg['urltext']))
-      $msg['message'] .= "<ul><li class=\"url\"><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['urltext'] . "</a></ul>\n";
-     else
-      $msg['message'] .= "<ul><li class=\"url\"><a href=\"" . $msg['url'] . "\" target=\"_top\">" . $msg['url'] . "</a></ul>\n";
+      $text = $msg['urltext'];
+    else
+      $text = $msg['url'];
+    $msg['message'] .= "<ul><li class=\"url\"><a href=\"$url\" target=\"_blank\">$text</a></ul>\n";
   }
 
   $message = $msg['message'];
