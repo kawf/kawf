@@ -47,14 +47,14 @@
 <!-- BEGIN msg -->
   <div class="message">
 {MSG_MESSAGE}
-  </div>
   <br>
+  </div>
 <!-- END msg -->
 <!-- BEGIN signature -->
   <div class="signature">
 {MSG_SIGNATURE}
+  <br>
   </div>
-<!-- do not add a <br> here, it interferes with visibility: hidden -->
 <!-- END signature -->
 <!-- BEGIN changes -->
   <b>Changes:</b><br>

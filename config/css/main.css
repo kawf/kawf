@@ -3,7 +3,7 @@ body { font-family: verdana, arial, geneva; font-size: smaller}
 
 .error { color: red; }
 .warning { color: green; }
-.tools { font-size: smaller; }	/* mini-links */
+.tools { font-size: 85%; }	/* mini-links */
 
 /* post/edit informational text */
 .info {
@@ -56,13 +56,13 @@ ul.showthread tr.messagesubjectrow td {
 }
 
 div.messageblock {
-    padding-top: 0.4em;
-    padding-bottom: 0.4em;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 /* message header */
 tr.messageinforow td {
-    font-size: smaller;
+    font-size: 85%;
 }
 
 td.subject {
@@ -84,8 +84,10 @@ ul.showthread td, ul.showthread div.messageblock {
 
 /* signature in showthread */
 ul.showthread .signature {
+    /* hide for now */
     visibility: hidden;
-    height: 0px;	/* hide for now */
+    overflow: hidden;
+    height: 0px;
 }
 
 /* embedded url in message */
