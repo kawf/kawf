@@ -43,19 +43,23 @@
     </td>
   </tr>
   </table>
+  <p class="messageblock">
 <!-- BEGIN msg -->
   <div class="message">
 {MSG_MESSAGE}
   </div>
+  <br>
 <!-- END msg -->
 <!-- BEGIN signature -->
   <div class="signature">
 {MSG_SIGNATURE}
   </div>
+  <br>
 <!-- END signature -->
 <!-- BEGIN changes -->
-  <br><b>Changes:</b><br>
+  <b>Changes:</b><br>
   <div class="changes">
 {MSG_CHANGES}
   </div>
 <!-- END changes -->
+  </p>
