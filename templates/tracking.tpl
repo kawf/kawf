@@ -18,8 +18,8 @@
 <table width="100%">
 <tr class="tools">
   <td align="left">
-    [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
-    [ <a href="/search/" target="_top">Search Forums</a> ]
+    [ <a href="/tips/?page={PAGE}" target="_blank"><b>Forum Tips</b></a> ]
+    [ <a href="/search/?page={PAGE}" target="_blank">Search Forums</a> ]
   </td>
   <td align="right">
     [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
@@ -73,8 +73,8 @@
 <table width="100%">
 <tr class="tools">
   <td align="left">
-    [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
-    [ <a href="/search/" target="_top">Search Forums</a> ]
+    [ <a href="/tips/?page={PAGE}" target="_blank"><b>Forum Tips</b></a> ]
+    [ <a href="/search/?page={PAGE}" target="_blank">Search Forums</a> ]
   </td>
   <td align="right">
     [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
