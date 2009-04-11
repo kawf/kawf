@@ -16,17 +16,13 @@
 <hr width="100%" size="1">
 
 <table width="100%">
-<tr>
+<tr class="tools">
   <td align="left">
-  <font size="-2">
     [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
     [ <a href="/search/" target="_top">Search Forums</a> ]
-    </font>
   </td>
   <td align="right">
-  <font size="-2">
-  [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
-  </font>
+    [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
   </td>
 </tr>
 </table>
@@ -75,17 +71,13 @@
 <!-- END simple -->
 
 <table width="100%">
-<tr>
+<tr class="tools">
   <td align="left">
-  <font size="-2">
     [ <a href="/tips/?page={PAGE}"><b>Forum Tips</b></a> ]
     [ <a href="/search/" target="_top">Search Forums</a> ]
-    </font>
   </td>
   <td align="right">
-  <font size="-2">
-  [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
-  </font>
+    [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
   </td>
 </tr>
 </table>

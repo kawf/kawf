@@ -1,6 +1,18 @@
 /* general, for everything */
 body { font-family: verdana, arial, geneva; font-size: smaller}
 
+.error { color: red; }
+.warning { color: green; }
+.tools { font-size: smaller; }	/* mini-links */
+
+/* post/edit informational text */
+.info {
+    text-align: center;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #000080;
+}
+
 /* showforum thread background alternation */
 .trow0 { background: #ddddff }
 .trow1 { background: #ccccee }

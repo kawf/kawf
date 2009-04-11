@@ -29,9 +29,13 @@
 <h2>This thread is locked. Posts are not allowed to be edited</h2><br>
 <!-- END edit_locked -->
 <!-- BEGIN error -->
-<font color="#ff0000">
+<div class="error">
 <!-- BEGIN image -->
-<i><b>Picture Verification:</b> If you see your picture below then please scroll down and hit Post Message to complete your posting. If no picture appears then your link was set incorrectly or your image is not valid a JPG or GIF file. Correct the image type or URL link to the picture in the box below and hit Preview Message to re-verify that your picture will be visible.</i>
+<i><b>Picture Verification:</b> If you see your picture below then please
+scroll down and hit Post Message to complete your posting. If no picture
+appears then your link was set incorrectly or your image is not valid a JPG or
+GIF file. Correct the image type or URL link to the picture in the box below
+and hit Preview Message to re-verify that your picture will be visible.</i>
 <br>
 <!-- END image -->
 <!-- BEGIN subject_req -->
@@ -40,15 +44,13 @@ Subject is required!<br>
 <!-- BEGIN subject_too_long -->
 Subject is too long! Truncated to 100 characters<br>
 <!-- END subject_too_long -->
-</font><p>
+</div><p>
 <!-- END error -->
 <!-- BEGIN preview -->
-<table>
-<tr>
-  <td>
-    <center><h2><font color="#000080">Message Preview</font></h2></center><br>
-    [ <a href="/{FORUM_SHORTNAME}/">Cancel editing and go back to the forum</a> ]
-  </td>
+<table width="100%">
+<tr><td class="info">Message Preview</td></tr>
+<tr class="tools">
+  <td>[ <a href="/{FORUM_SHORTNAME}/">Cancel editing and go back to the forum</a> ]</td>
 </tr>
 <tr><td>
 {PREVIEW}
@@ -59,12 +61,15 @@ Subject is too long! Truncated to 100 characters<br>
 {FORM}
 <!-- END form -->
 <!-- BEGIN accept -->
-<table>
+<table width="100%">
+<tr><td class="info">Message Updated</td></tr>
+<tr class="tools">
+  <td>
+    [ <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml">Go to Your Message</a> ]
+    [ <a href="/{FORUM_SHORTNAME}/">Go back to the forum</a> ]
+  </td>
+</tr>
 <tr><td>
-<center><h2><font color="#000080">Message Updated</font></h2></center><p>
-<font size="-2">
-[ <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml">Go to Your Message</a> ] [ <a href="/{FORUM_SHORTNAME}/">Go back to the forum</a> ]<p>
-</font>
 {PREVIEW}
 </td></tr>
 </table>
