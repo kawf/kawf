@@ -149,6 +149,7 @@ if ($Debug) {
 $msg['date'] = strftime("%Y-%m-%d %H:%M:%S", time() - $user->tzoff);
 $msg['ip'] = $remote_addr;
 $msg['aid'] = $user->aid;
+$msg['flags'] = 'NewStyle';
 
 if (isset($_POST['postcookie'])) {
   $postcookie = $_POST['postcookie'];
@@ -277,7 +278,7 @@ if (!$accepted || isset($preview)) {
   if (!empty($msg['imageurl']) || preg_match("/<[[:space:]]*img[[:space:]]+src/i", $msg['message']))
     $flags[] = "Picture";
 
-  $flagset = implode(",", $flags);
+  $msg['flags'] = implode(",", $flags);
 
   /* prepend image url to new message for entry into the db */
   if (!empty($msg['imageurl']))
@@ -325,7 +326,7 @@ if (!$accepted || isset($preview)) {
 	"name = '" . addslashes($msg['name']) . "', " .
 	"email = '" . addslashes($msg['email']) . "', " .
 	"ip = '" . addslashes($msg['ip']) . "', " .
-	"flags = '$flagset', " .
+	"flags = '" . $msg['flags'] . "', " .
 	"subject = '" . addslashes($msg['subject']) . "', " .
 	"message = '" . addslashes($msg['message']) . "', " .
 	"url = '" . addslashes($msg['url']) . "', " .
@@ -334,7 +335,19 @@ if (!$accepted || isset($preview)) {
 	"where mid = '" . addslashes($msg['mid']) . "' and state = 'Active'";
   } else
     $sql = "insert into $mtable " .
-	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, state ) values ( '" . addslashes($msg['mid']) . "', '".addslashes($user->aid)."', '".addslashes($msg['pmid'])."', '".addslashes($msg['tid'])."', '".addslashes($msg['name'])."', '".addslashes($msg['email'])."', NOW(), '" . addslashes($msg['ip']) . "', '$flagset', '".addslashes($msg['subject'])."', '".addslashes($msg['message'])."', '".addslashes($msg['url'])."', '".addslashes($msg['urltext'])."', '$status' );";
+	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, state ) values ( '"
+	    . addslashes($msg['mid']) . "', '"
+	    . addslashes($user->aid) . "', '"
+	    . addslashes($msg['pmid']) . "', '"
+	    . addslashes($msg['tid']) . "', '"
+	    . addslashes($msg['name']) . "', '"
+	    . addslashes($msg['email']) . "', NOW(), '"
+	    . addslashes($msg['ip']) . "', '"
+	    . $msg['flags'] . "', '"
+	    . addslashes($msg['subject']) . "', '"
+	    . addslashes($msg['message']) . "', '"
+	    . addslashes($msg['url']) . "', '"
+	    . addslashes($msg['urltext']) ."', '$status' );";
 
   $result = mysql_query($sql) or sql_error($sql);
 
