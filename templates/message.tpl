@@ -46,7 +46,7 @@
     </td>
   </tr>
   </table>
-  <p class="messageblock">
+  <div class="messageblock">
 <!-- BEGIN msg -->
   <div class="message">
 {MSG_MESSAGE}
@@ -57,7 +57,7 @@
   <div class="signature">
 {MSG_SIGNATURE}
   </div>
-  <br>
+<!-- do not add a <br> here, it interferes with visibility: hidden -->
 <!-- END signature -->
 <!-- BEGIN changes -->
   <b>Changes:</b><br>
@@ -65,4 +65,4 @@
 {MSG_CHANGES}
   </div>
 <!-- END changes -->
-  </p>
+  </div>

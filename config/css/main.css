@@ -55,6 +55,11 @@ ul.showthread tr.messagesubjectrow td {
     background: #eeeeee;
 }
 
+div.messageblock {
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+}
+
 /* message header */
 tr.messageinforow td {
     font-size: smaller;
@@ -73,7 +78,7 @@ ul.showthread td.subject a {
 }
 
 /* everything in showthread should be indented a bit */
-ul.showthread td, ul.showthread div {
+ul.showthread td, ul.showthread div.messageblock {
     padding-left: 5px;
 }
 
