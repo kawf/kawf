@@ -88,12 +88,12 @@ ul.showthread .subject a {
 }
 
 /* message header */
-tr.messageinforow td {
+td.messageinfo {
     font-size: 85%;
     color: #808080;
 }
-tr.messageinforow a:link { color: #8080ff; }
-tr.messageinforow a:visited { color: #b080ff; }
+td.messageinfo a:link { color: #8080ff; }
+td.messageinfo a:visited { color: #b080ff; }
 
 /* embedded url in message */
 .message li.url {
