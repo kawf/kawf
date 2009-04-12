@@ -39,48 +39,28 @@ This thread is locked. No replies are allowed.<br>
 </tr>
 
 <tr>
-  <td align="right">
-    <b>Subject:</b>
-  </td>
-  <td>
-    <input type="text" name="subject" value="{SUBJECT}" size="80" maxlength="100">
-  </td>
+  <td align="right"><b>Subject:</b></td>
+  <td><input class="text" type="text" name="subject" value="{SUBJECT}" size="80" maxlength="100"></td>
 </tr>
 
 <tr>
-  <td align="right" valign="top">
-    <b>Message:</b>
-  </td>
-  <td>
-    <textarea wrap="virtual" name="message" rows="10" cols="55">{MESSAGE}</textarea>
-  </td>
+  <td align="right" valign="top"><b>Message:</b></td>
+  <td><textarea class="text" wrap="virtual" name="message" rows="10" cols="55">{MESSAGE}</textarea></td>
 </tr>
 
 <tr>
-  <td align="right">
-    <b>Optional Link URL:</b>
-  </td>
-  <td>
-    <input type="text" name="url" value="{URLLINK}" size="80">
-  </td>
+  <td align="right"><b>Optional Link URL:</b></td>
+  <td><input class="text" type="text" name="url" value="{URLLINK}" size="80"></td>
 </tr>
 
 <tr>
-  <td align="right">
-    <b>Link Text:</b>
-  </td>
-  <td>
-    <input type="text" name="urltext" value="{URLTEXT}" size=80>
-  </td>
+  <td align="right"><b>Link Text:</b></td>
+  <td><input class="text" type="text" name="urltext" value="{URLTEXT}" size=80></td>
 </tr>
 
 <tr>
-  <td align="right">
-    <b>Optional Image URL:</b>
-  </td>
-  <td>
-    <input type="text" name="imageurl" value="{IMAGEURL}" size="80">
-  </td>
+  <td align="right"><b>Optional Image URL:</b></td>
+  <td><input class="text" type="text" name="imageurl" value="{IMAGEURL}" size="80"></td>
 </tr>
 
 {HIDDEN}
