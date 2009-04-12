@@ -114,6 +114,7 @@ td.messageinfo a:visited { color: #b080ff; }
     padding: 5px;
 }
 
+.postform tr th { background: #dfdfdf; text-align: right;}
 .postform tr td { background: #dfdfdf; }
 
 /* hacks */
