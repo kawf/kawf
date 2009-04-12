@@ -6,11 +6,8 @@ require_once("message.inc");
 
 $tpl->set_file(array(
   "showthread" => "showthread.tpl",
-  "message" => "message.tpl",
   "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
 ));
-
-message_set_block($tpl, '_');
 
 $tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
@@ -85,7 +82,11 @@ filter_messages($messages, $tree, reset($tree));
 
 function print_message($thread, $msg)
 {
-  global $tpl, $user, $forum, $indexes;
+  global $template_dir, $user, $forum, $indexes;
+  $mtpl = new Template($template_dir, "comment");
+  $mtpl->set_file("message", "message.tpl");
+
+  message_set_block($mtpl);
 
   $index = find_msg_index($msg['mid']);
   $sql = "update f_messages" . $indexes[$index]['iid'] . " set views = views + 1 where mid = '" . addslashes($msg['mid']) . "'";
@@ -94,18 +95,17 @@ function print_message($thread, $msg)
   $uuser = new ForumUser;
   $uuser->find_by_aid((int)$msg['aid']);
 
-  $tpl->set_var("_parent", "");
+  $mtpl->set_var("parent", "");
 
-  /* '_' used for stack hack */
-  render_message($tpl, $msg, $user, $uuser, '_');
+  render_message($mtpl, $msg, $user, $uuser);
 
   /* in threaded mode, subject is a link. override MSG_SUBJECT set above. */
-  $tpl->set_var("MSG_SUBJECT",
+  $mtpl->set_var("MSG_SUBJECT",
     "<a href=\"../msgs/" . $msg['mid'] . ".phtml\" name=\"" . $msg['mid'] . "\">" . $msg['subject'] . "</a>");
 
-  $tpl->parse("MESSAGE", "message");
+  $mtpl->parse("MESSAGE", "message");
 
-  return $tpl->get_var("MESSAGE");
+  return $mtpl->get_var("MESSAGE");
 }
 
 $messagestr = list_thread(print_message, $messages, $tree, reset($tree), $thread);
