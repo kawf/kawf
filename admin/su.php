@@ -16,6 +16,8 @@ if (!$user->valid()) {
 }
 
 $user->setcookie();
-Header("Location: /");
-
+if (!isset($_GET['page']))
+    Header("Location: /admin/");
+else
+    Header("Location: ".$_GET['page']);
 ?>

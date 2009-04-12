@@ -52,6 +52,17 @@ ul.showthread tr.messagesubjectrow td {
     background: #eeeeee;
 }
 
+/* signature in showthread */
+ul.showthread .signature {
+    /* visibility: hidden; */
+    /*
+    overflow: hidden;
+    max-height: 120px;
+    max-width: 800px;
+    */
+}
+
+/* message area styles */
 div.messageblock {
     padding-top: 0.5em;
     padding-bottom: 0.5em;
@@ -98,4 +109,8 @@ ul.showthread td, ul.showthread div.messageblock {
     background: #ffeeee;
     font-family: monospace;
     padding: 5px;
+}
+
+table.postform tr td {
+    background: #dfdfdf;
 }

@@ -24,12 +24,12 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 <tr class="tools">
   <td align="left">
-  [ <a href="/tips/?page={PAGE}" target="_blank">Forum Tips</a> ]
-  [ <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a> ]
-  [ <a href="#post"><b>Post New Thread</b></a> ]
+  <a href="/tips/?page={PAGE}" target="_blank">Forum Tips</a>
+| <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
+| <a href="#post"><b>Post New Thread</b></a>
   </td>
   <td align="right">
-  [ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
+  <a href="/preferences.phtml?page={PAGE}">Preferences</a>
   </td>
 </tr>
 <tr class="tools">
@@ -71,15 +71,10 @@
 </tr>
 </table>
 
-<table>
-<tr><td align="center">
+<div class="forumpost">
 <a name="post"><img src="/pics/post.gif" alt="post message"></a>
-</td></tr>
-
-<tr><td>
 {FORM}
-</td></tr>
-</table><br>
+</div>
 
 <!-- b>{ACTIVE_USERS}</b> users and <b>{ACTIVE_GUESTS}</b> guests have been browsing the forums in the last 15 minutes<p -->
 

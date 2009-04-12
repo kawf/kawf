@@ -60,7 +60,7 @@ Subject line too long! Truncated to 100 characters<br>
 <table width="100%">
 <tr><td class="info">Message Preview</td></tr>
 <tr class="tools">
-  <td>[ <a href="/{FORUM_SHORTNAME}/">Cancel post and go back to the forum</a> ]</td>
+  <td><a href="/{FORUM_SHORTNAME}/">Cancel post and go back to the forum</a></td>
 </tr>
 <tr><td>
 {PREVIEW}
@@ -82,8 +82,8 @@ Subject line too long! Truncated to 100 characters<br>
 <tr><td class="info">Message Added</td></tr>
 <tr class="tools">
   <td>
-    [ <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml">Go to Your Message</a> ]
-    [ <a href="/{FORUM_SHORTNAME}/">Go back to the forum</a> ]
+    <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml">Go to Your Message</a>
+  | <a href="/{FORUM_SHORTNAME}/">Go back to the forum</a>
   </td>
 </tr>
 <tr><td>
