@@ -83,6 +83,8 @@ filter_messages($messages, $tree, reset($tree));
 function print_message($thread, $msg)
 {
   global $template_dir, $user, $forum, $indexes;
+  global $tpl; /* hack to get current page */
+
   $mtpl = new Template($template_dir, "comment");
   $mtpl->set_file("message", "message.tpl");
 
@@ -102,6 +104,9 @@ function print_message($thread, $msg)
   /* in threaded mode, subject is a link. override MSG_SUBJECT set above. */
   $mtpl->set_var("MSG_SUBJECT",
     "<a href=\"../msgs/" . $msg['mid'] . ".phtml\" name=\"" . $msg['mid'] . "\">" . $msg['subject'] . "</a>");
+
+  $mtpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
+  $mtpl->set_var("PAGE", $tpl->get_var('PAGE'));
 
   $mtpl->parse("MESSAGE", "message");
 
