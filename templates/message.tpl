@@ -6,39 +6,39 @@
   <tr class="messageinforow">
     <td class="messageinfo" align="left">
 <!-- BEGIN account_id -->
-     User account number: <a href="/account/{MSG_AID}.phtml" target="_blank">{MSG_AID}</a>
+      User account number: <a href="/account/{MSG_AID}.phtml" target="_blank">{MSG_AID}</a>
 <!-- END account_id -->
 <!-- BEGIN forum_admin -->
-     <a href="/admin/su.phtml?aid={MSG_AID}&amp;page={PAGE}">su</a> ({MSG_EMAIL})
+      <a href="/admin/su.phtml?aid={MSG_AID}&amp;page={PAGE}">su</a> ({MSG_EMAIL})
 <!-- END forum_admin -->
 <!-- BEGIN advertiser -->
-     <b>Advertiser</b>
+      <b>Advertiser</b>
 <!-- END advertiser -->
-     <br>
+      <br>
 <!-- BEGIN message_ip -->
-     Posting IP Address: {MSG_IP}<br>
+      Posting IP Address: {MSG_IP}<br>
 <!-- END message_ip -->
-     <b>Posted by {MSG_NAMEEMAIL} on {MSG_DATE}</b><br>
+      <b>Posted by {MSG_NAMEEMAIL} on {MSG_DATE}</b><br>
 <!-- BEGIN parent -->
-     In Reply to: <a href="{PMSG_MID}.phtml">{PMSG_SUBJECT}</a> posted by {PMSG_NAME} on {PMSG_DATE}<br>
+      In Reply to: <a href="{PMSG_MID}.phtml">{PMSG_SUBJECT}</a> posted by {PMSG_NAME} on {PMSG_DATE}<br>
 <!-- END parent -->
     </td>
     <td class="tools" align="right" nowrap="nowrap">
-<!-- BEGIN reply -->
-    <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml#post">Reply</a>
-<!-- END reply -->
 <!-- BEGIN owner -->
-    [ <a href="/{FORUM_SHORTNAME}/edit.phtml?mid={MSG_MID}&amp;page={PAGE}">Edit</a> ]
+      <a href="/{FORUM_SHORTNAME}/edit.phtml?mid={MSG_MID}&amp;page={PAGE}">Edit</a> |
 <!-- BEGIN delete -->
-    [ <a href="/{FORUM_SHORTNAME}/delete.phtml?mid={MSG_MID}&amp;page={PAGE}">Delete</a> ]
+      <a href="/{FORUM_SHORTNAME}/delete.phtml?mid={MSG_MID}&amp;page={PAGE}">Delete</a> |
 <!-- END delete -->
 <!-- BEGIN undelete -->
-    [ <a href="/{FORUM_SHORTNAME}/undelete.phtml?mid={MSG_MID}&amp;page={PAGE}">Undelete</a> ]
+      <a href="/{FORUM_SHORTNAME}/undelete.phtml?mid={MSG_MID}&amp;page={PAGE}">Undelete</a> |
 <!-- END undelete -->
 <!-- BEGIN statelocked -->
-    <b>Status locked</b>
+      <b>(Status locked)</b>
 <!-- END statelocked -->
 <!-- END owner -->
+<!-- BEGIN reply -->
+      <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml#post">Reply</a>
+<!-- END reply -->
     </td>
   </tr>
 </table>

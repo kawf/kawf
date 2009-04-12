@@ -1,11 +1,11 @@
 <?php
 function message_set_block($tpl)
 {
-  $tpl->set_block("message", "reply");		/* opt */
   $tpl->set_block("message", "owner");		/* opt */
   $tpl->set_block("owner", "delete");		/* opt */
   $tpl->set_block("owner", "undelete");		/* opt */
   $tpl->set_block("owner", "statelocked");	/* opt */
+  $tpl->set_block("message", "reply");		/* opt */
 
   $tpl->set_block("message", "account_id");
 
@@ -73,7 +73,12 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
     $tpl->set_var("account_id", "");
 
   /* handle stupid tool links. templating system sucks; we have to
-     explicitly set or unset EVERY block */
+     explicitly unset EVERY block we do not use */
+
+  /* note that the order of Edit Delete/Undelete/Locked/Reply is crucial
+     so we can deterministically place the | bars such that every combination
+     looks right. Edit/Delete/Undelete all have | after in message.tpl */
+
   if (!$viewer->valid() || $msg['aid'] == 0
     || (isset($thread['flag.Locked']) && !$viewer->capable($forum['fid'], 'Lock'))) {
     /* NO LINKS - viwer not logged in, or does not have lock permissions */
@@ -85,23 +90,23 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
   } else {
     $own=true;
     if (isset($flags['StateLocked'])) {
-      $locked = true;				/* Edit | Locked */
+      $locked = true;				/* (Edit |) Locked */
       if ($msg['state'] == 'OffTopic' || $msg['state'] == 'Active')
-        $delete = true;				/* Edit | Delete | Locked */
+        $delete = true;				/* (Edit |) (Delete |) Locked */
     } else {
       $reply = true;
       if ($msg['state'] != 'Deleted') {
-        $delete = true;				/* Reply | Edit | Delete */
+        $delete = true;				/* (Edit |) (Delete |) Reply */
       } else {
-        $undelete = true;			/* Reply | Edit | Undelete */
+        $undelete = true;			/* (Edit |) (Undelete |) Reply */
       }
     }
   }
-  blank_extra($tpl, "reply", $reply);
   blank_extra($tpl, "owner", $own);
   blank_extra($tpl, "statelocked", $locked);
   blank_extra($tpl, "delete", $delete);
   blank_extra($tpl, "undelete", $undelete);
+  blank_extra($tpl, "reply", $reply);
 }
 
 function blank_extra($tpl, $tag, $bool)
