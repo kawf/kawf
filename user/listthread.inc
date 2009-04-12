@@ -52,7 +52,7 @@ function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = a
     $string .= $callback($thread, $messages[$s], $count);
   }
 
-  $string = "<li class=\"thread\">" . $string . "</li>\n";
+  $string = "<li>" . $string . "</li>\n";
 
   return $string;
 }
