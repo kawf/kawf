@@ -1,7 +1,7 @@
 {MSG_DEBUG}
 <table class="messageheader" width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr class="messagesubjectrow">
-    <td class="subject" align="left" colspan=2">{MSG_SUBJECT}</td>
+    <td class="subject" align="left" colspan="2">{MSG_SUBJECT}</td>
   </tr>
   <tr class="messageinforow">
     <td class="messageinfo" align="left">
