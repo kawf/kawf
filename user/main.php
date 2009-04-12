@@ -49,19 +49,21 @@ sql_open($database);
 mysql_query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
 
 $tpl = new Template($template_dir, "comment");
-$tpl->set_var("CSS_HREF", css_href());
 
 $tpl->set_file(array(
   "header" => "header.tpl",
   "footer" => "footer.tpl",
 ));
 
+/*
 if ($ua->property('browser') == "ns" && $ua->property('maj_ver') == 4 && $ua->property('platform') == "mac")
   $tpl->set_file("css", "css/ns4mac.tpl");
 else
   $tpl->set_file("css", "css/standard.tpl");
-
 $tpl->parse("CSS", "css");
+*/
+
+$tpl->set_var("CSS_HREF", css_href());
 
 $_page = $page;
 $tpl->set_var("PAGE", $script_name . $path_info);

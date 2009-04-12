@@ -13,10 +13,10 @@ This thread is locked. No replies are allowed.<br>
 <!-- END disabled -->
 <!-- BEGIN enabled -->
 <!-- BEGIN noacct -->
-<table>
-<tr><td bgcolor="#dfdfdf">
+<table class="postform">
+<tr><td>
   <table width="95%">
-  <tr><td bgcolor="#dfdfdf">
+  <tr><td>
     You must be registered and logged in to post. Please select an option:<p>
     <a href="/login.phtml?url={URL}">Login with existing account</a><br>
     <a href="/create.phtml?url={URL}">Create a new account</a><p>
@@ -27,58 +27,58 @@ This thread is locked. No replies are allowed.<br>
 <!-- END noacct -->
 <!-- BEGIN acct -->
 <form action="/{FORUM_SHORTNAME}/{ACTION}.phtml" method="post">
-<table>
+<table class="postform">
 <tr>
-  <td bgcolor="#dfdfdf" align="right">
+  <td align="right">
     <b>Logged in as:</b>
   </td>
-  <td bgcolor="#dfdfdf">
-    {USER_NAME} &nbsp; &nbsp; &nbsp;[ <a href="/preferences.phtml?page={PAGE}">Preferences</a> ]
-    [ <a href="/tips/"><b>Posting Tips</b></a> ]
+  <td style="padding: 0.5em;">
+    {USER_NAME} &nbsp; &nbsp; &nbsp;<a href="/preferences.phtml?page={PAGE}">Preferences</a>
+  | <a href="/tips/"><b>Posting Tips</b></a>
   </td>
 </tr>
 
 <tr>
-  <td bgcolor="#dfdfdf" align="right">
+  <td align="right">
     <b>Subject:</b>
   </td>
-  <td bgcolor="#dfdfdf">
+  <td>
     <input type="text" name="subject" value="{SUBJECT}" size="50" maxlength="100">
   </td>
 </tr>
 
 <tr>
-  <td bgcolor="#dfdfdf" align="right" valign="top">
+  <td align="right" valign="top">
     <b>Message:</b>
   </td>
-  <td bgcolor="#dfdfdf">
-    <textarea wrap="virtual" name="message" rows="10" cols="50">{MESSAGE}</textarea>
+  <td>
+    <textarea wrap="virtual" name="message" rows="10" cols="60">{MESSAGE}</textarea>
   </td>
 </tr>
 
 <tr>
-  <td bgcolor="#dfdfdf" align="right">
+  <td align="right">
     <b>Optional Link URL:</b>
   </td>
-  <td bgcolor="#dfdfdf">
+  <td>
     <input type="text" name="url" value="{URLLINK}" size="50">
   </td>
 </tr>
 
 <tr>
-  <td bgcolor="#dfdfdf" align="right">
+  <td align="right">
     <b>Link Text:</b>
   </td>
-  <td bgcolor="#dfdfdf">
+  <td>
     <input type="text" name="urltext" value="{URLTEXT}" size=50>
   </td>
 </tr>
 
 <tr>
-  <td bgcolor="#dfdfdf" align="right">
+  <td align="right">
     <b>Optional Image URL:</b>
   </td>
-  <td bgcolor="#dfdfdf">
+  <td>
     <input type="text" name="imageurl" value="{IMAGEURL}" size="50">
   </td>
 </tr>
@@ -86,8 +86,8 @@ This thread is locked. No replies are allowed.<br>
 {HIDDEN}
 
 <tr>
-<td bgcolor="#dfdfdf" align="right" valign="top"><b>Post Message:</b></td>
-<td bgcolor="#dfdfdf">
+<td align="right" valign="top"><b>Post Message:</b></td>
+<td>
 <!-- <input type="reset" value="Reset Message"><br> -->
 <input type="checkbox" name="ExposeEmail"{EXPOSEEMAIL}>
 Show email address in post?<br>
@@ -100,10 +100,9 @@ Track thread?<br><br>
 </td>
 </tr>
 <tr>
-<td bgcolor="#dfdfdf" align="right"><b>Logout:</b></td>
-<td bgcolor="#dfdfdf">
-<br>
-&nbsp;[ <a href="/logout.phtml?url={URL}&token={token}">Logout this session</a> ] [ <a href="/logout.phtml?all&url={URL}&token={token}">Logout ALL SESSIONS</a> ]<br><br>
+<td align="right"><b>Logout:</b></td>
+<td style="padding: 0.5em;">
+<a href="/logout.phtml?url={URL}&token={token}">Logout this session</a> | <a href="/logout.phtml?all&url={URL}&token={token}">Logout ALL SESSIONS</a>
 </td>
 </tr>
 

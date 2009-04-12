@@ -88,38 +88,46 @@ function _message_render_extras($tpl, $msg, $viewer, $owner, $pre)
   else
     $tpl->set_var($pre."account_id", "");
 
+  /* handle stupid tool links. templating system sucks; we have to
+     explicitly set or unset EVERY block */
   if (!$viewer->valid() || $msg['aid'] == 0
     || (isset($thread['flag.Locked']) && !$viewer->capable($forum['fid'], 'Lock'))) {
-    /* we're not allowed to do anything */
-    $tpl->set_var($pre."reply", "");
-    $tpl->set_var($pre."owner", "");
+    /* NO LINKS - viwer not logged in, or does not have lock permissions */
+    $reply = false;
+    $own = false;
   } else if ($msg['aid'] != $viewer->aid) {
-    /* we're only allowed to reply */
-    $tpl->parse($pre."reply", "reply");
-    $tpl->set_var($pre."owner", "");
+    /* message does not belong to viewer */
+    $reply = true;				/* Reply */
   } else {
+    $own=true;
     if (isset($flags['StateLocked'])) {
-      $tpl->set_var($pre."reply", "");
-      $tpl->set_var($pre."undelete", "");
-      if ($msg['state'] != 'OffTopic' && $msg['state'] != 'Active')
-        $tpl->set_var($pre."delete", "");
-      else
-        $tpl->parse($pre."delete", "delete");
-
-      $tpl->parse($pre."statelocked", "statelocked");
+      $locked = true;				/* Edit | Locked */
+      if ($msg['state'] == 'OffTopic' || $msg['state'] == 'Active')
+        $delete = true;				/* Edit | Delete | Locked */
     } else {
-      $tpl->parse($pre."reply", "reply");
-      $tpl->set_var($pre."statelocked", "");
+      $reply = true;
       if ($msg['state'] != 'Deleted') {
-        $tpl->set_var($pre."undelete", "");
-        $tpl->parse($pre."delete", "delete");
+        $delete = true;				/* Reply | Edit | Delete */
       } else {
-        $tpl->set_var($pre."delete", "");
-        $tpl->parse($pre."undelete", "undelete");
+        $undelete = true;			/* Reply | Edit | Undelete */
       }
     }
-    $tpl->parse($pre."owner", "owner");
   }
+  render_extra($tpl, $pre, "reply", $reply);
+  render_extra($tpl, $pre, "owner", $own);
+  render_extra($tpl, $pre, "statelocked", $locked);
+  render_extra($tpl, $pre, "delete", $delete);
+  render_extra($tpl, $pre, "undelete", $undelete);
+}
+
+function render_extra($tpl, $pre, $tag, $bool)
+{
+    if ($bool) {
+	if (strlen($pre) > 0)
+	    $tpl->parse($pre.$tag, $tag);
+    } else {
+	$tpl->set_var($pre.$tag, "");
+    }
 }
 
 /* pre is a hack for stacking used by showthread.php */
