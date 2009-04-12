@@ -50,7 +50,6 @@ This thread is locked. No replies are allowed.<br>
   <th>Optional Image URL:</th>
   <td><input class="text" type="text" name="imageurl" value="{IMAGEURL}" size="80"></td>
 </tr>
-{HIDDEN}
 <tr>
   <th valign="top">Post Message:</th>
   <td>
@@ -73,6 +72,7 @@ This thread is locked. No replies are allowed.<br>
   </td>
 </tr>
 </table>
+{HIDDEN}
 </form>
 <!-- END acct -->
 <!-- END enabled -->
