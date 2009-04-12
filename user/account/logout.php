@@ -8,6 +8,9 @@ $user->find_by_aid((int)$aid);
 if (!$user->unsetcookie())
     err_not_found('unsetcookie() failed');
 
-header("Location: login.phtml?message=" . urlencode("You have been logged out"));
+if (isset($_GET['url']))
+    $url = "url=".urlencode($_GET['url'])."&";
+
+header("Location: login.phtml?$url"."message=" . urlencode("You have been logged out"));
 
 ?>
