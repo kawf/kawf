@@ -20,7 +20,7 @@ body { font-family: verdana, arial, geneva; font-size: smaller}
 .drow1 { background: #cceecc }
 .mrow0 { background: #ffdddd }
 .mrow1 { background: #eecccc }
-.row0 { background: #fcfcfc }
+.row0 { background: #f8f8f8 }
 .row1 { background: #eeeeee }
 ul {margin-left: 1em; padding-left: 1em;}
 
@@ -40,27 +40,27 @@ div.showmessage { margin-left: 0.2em; }
 ul.showthread {
     /* first row is flush left */
     margin-left: 0;
-    padding-left: 0em;
+    padding-left: 0;
 }
 
 /* get rid of bullets in showthread view */
-ul.showthread li.thread {
-    list-style: none outside;
-}
-
-ul.showthread tr.messagesubjectrow td {
-    background: #eeeeee;
-}
+ul.showthread li { list-style: none outside; }
+/* dont indent as extreme in showthread view */
+/* ul.showthread li ul { margin-left: 0.5em; padding-left: 0.5em; } */
+/* set up padding for subject highlight */
+ul.showthread tr td { padding: 0 6px 0 6px; }
+/* make sure block padding matches subject highlight */
+ul.showthread div.messageblock div { padding: 0.4em 6px 0.4em 6px; }
+ul.showthread tr.messagesubjectrow td { background: #eeeeee; }
 
 /* signature in showthread */
+/*
 ul.showthread .signature {
-    /* visibility: hidden; */
-    /*
+    visibility: hidden;
     overflow: hidden;
-    max-height: 120px;
-    max-width: 800px;
-    */
+    max-height: 10px;
 }
+*/
 
 /* message area styles */
 div.messageblock {
@@ -73,6 +73,20 @@ div.messageblock div {
     padding-bottom: 0.5em;
 }
 
+/* all message subjects - big, bold, wacky color */
+.subject {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #000080;
+}
+
+/* message subject in showthread - no bold, no link decoration */
+ul.showthread .subject a {
+    text-decoration: none;
+    font-weight: normal;
+    color: #000080;
+}
+
 /* message header */
 tr.messageinforow td {
     font-size: 85%;
@@ -81,27 +95,16 @@ tr.messageinforow td {
 tr.messageinforow a:link { color: #8080ff; }
 tr.messageinforow a:visited { color: #b080ff; }
 
-td.subject {
-    font-size: 1.4em;
-    font-weight: bold;
-    color: #000080;
-}
-
-/* message subject in showthread */
-ul.showthread td.subject a {
-    text-decoration: none;
-    font-weight: normal;
-    color: #000080;
-}
-
-/* everything in showthread should be indented a bit */
-ul.showthread td, ul.showthread div.messageblock {
-    padding-left: 5px;
-}
-
 /* embedded url in message */
 .message li.url {
     list-style: disc outside none;
+}
+
+.signature {
+    /* width: 100%; */
+    border-width: 2px 0 0 0;
+    border-style: solid;
+    border-color: #eeeed0;
 }
 
 /* changelog */
