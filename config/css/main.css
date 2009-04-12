@@ -114,6 +114,13 @@ td.messageinfo a:visited { color: #b080ff; }
     padding: 5px;
 }
 
-table.postform tr td { background: #dfdfdf; }
-/* IE doesn't like 100%, have to use fixed size */
-table.postform .text { width: 600px; }
+.postform tr td { background: #dfdfdf; }
+
+/* hacks */
+
+/* IE doesn't like 100% (referenced to largest input/textara.
+   Have to use fixed size */
+.postform .text { width: 600px; }
+
+/* IE wants inline for it to pack right */
+.postform { display: inline; }
