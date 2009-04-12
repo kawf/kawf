@@ -9,11 +9,8 @@ require_once("notices.inc");
 
 $tpl->set_file(array(
   "showthread" => "showthread.tpl",
-  "message" => "message.tpl",
   "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
 ));
-
-message_set_block($tpl, '_');
 
 $tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
@@ -89,7 +86,11 @@ filter_messages($messages, $tree, reset($tree));
 
 function print_message($thread, $msg)
 {
-  global $tpl, $user, $forum, $indexes;
+  global $template_dir, $user, $forum, $indexes;
+  $mtpl = new Template($template_dir, "comment");
+  $mtpl->set_file("message", "message.tpl");
+
+  message_set_block($mtpl);
 
   $index = find_msg_index($msg['mid']);
   $sql = "update f_messages" . $indexes[$index]['iid'] . " set views = views + 1 where mid = '" . addslashes($msg['mid']) . "'";
@@ -98,68 +99,18 @@ function print_message($thread, $msg)
   $uuser = new ForumUser;
   $uuser->find_by_aid((int)$msg['aid']);
 
-  $tpl->set_var("_parent", "");
+  $mtpl->set_var("parent", "");
 
-  /* '_' used for stack hack */
-  render_message($tpl, $msg, $user, $uuser, '_');
+  render_message($mtpl, $msg, $user, $uuser);
 
-  if ($uuser->capable($forum['fid'], 'Sponsor'))
-    $tpl->parse("_sponsor", "sponsor");
-  else
-    $tpl->set_var("_sponsor", "");
-
-  if ($msg['aid'])
-    $tpl->parse("_account_id", "account_id");
-  else
-    $tpl->set_var("_account_id", "");
-/*
-  if ($user->valid())
-    $tpl->set_var("MSG_IP", $msg['ip']);
-  else
-    $tpl->set_var("message_ip", "");
-*/
-
-  if (!$user->valid() || $msg['aid'] == 0
-    || (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock'))) {
-    /* we're not allowed to do anything */
-    $tpl->set_var("_reply", "");
-    $tpl->set_var("_owner", "");
-  } else if ($msg['aid'] != $user->aid) {
-    /* we're only allowed to reply */
-    $tpl->parse("_reply", "reply");
-    $tpl->set_var("_owner", "");
-  } else {
-    if (isset($flags['StateLocked'])) {
-      $tpl->set_var("_reply", "");
-      $tpl->set_var("_undelete", "");
-      if ($msg['state'] != 'OffTopic' && $msg['state'] != 'Active')
-        $tpl->set_var("_delete", "");
-      else
-        $tpl->parse("_delete", "delete");
-
-      $tpl->parse("_statelocked", "statelocked");
-    } else {
-      $tpl->parse("_reply", "reply");
-      $tpl->set_var("_statelocked", "");
-      if ($msg['state'] != 'Deleted') {
-        $tpl->set_var("_undelete", "");
-        $tpl->parse("_delete", "delete");
-      } else {
-        $tpl->set_var("_delete", "");
-        $tpl->parse("_undelete", "undelete");
-      }
-    }
-
-    $tpl->parse("_owner", "owner");
-  }
   /* in threaded mode, subject is a link. override MSG_SUBJECT set above. */
   $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . softbreaklongwords($msg['subject'],40) . "</a>";
-  $tpl->set_var("MSG_SUBJECT",
+  $mtpl->set_var("MSG_SUBJECT",
     "<a href=\"../msgs/" . $msg['mid'] . ".phtml\" name=\"" . $msg['mid'] . "\">" . $subject . "</a>");
 
-  $tpl->parse("MESSAGE", "message");
+  $mtpl->parse("MESSAGE", "message");
 
-  return $tpl->get_var("MESSAGE");
+  return $mtpl->get_var("MESSAGE");
 }
 
 $messagestr = list_thread(print_message, $messages, $tree, reset($tree), $thread);

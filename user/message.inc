@@ -1,27 +1,27 @@
 <?php
 require_once("textwrap.inc");
-function message_set_block($tpl, $pre="")
+function message_set_block($tpl)
 {
-  $tpl->set_block("message", "reply", $pre."reply");		/* opt */
-  $tpl->set_block("message", "owner", $pre."owner");		/* opt */
-  $tpl->set_block("owner", "delete", $pre."delete");		/* opt */
-  $tpl->set_block("owner", "undelete", $pre."undelete");	/* opt */
-  $tpl->set_block("owner", "statelocked", $pre."statelocked");	/* opt */
+  $tpl->set_block("message", "reply");		/* opt */
+  $tpl->set_block("message", "owner");		/* opt */
+  $tpl->set_block("owner", "delete");		/* opt */
+  $tpl->set_block("owner", "undelete");		/* opt */
+  $tpl->set_block("owner", "statelocked");	/* opt */
 
-  $tpl->set_block("message", "account_id", $pre."account_id");
+  $tpl->set_block("message", "account_id");
 
-  $tpl->set_block("message", "forum_admin", $pre."forum_admin");/* opt */
-  $tpl->set_block("message", "advertiser", $pre."advertiser");	/* opt */
-  $tpl->set_block("message", "sponsor", $pre."sponsor");	/* opt */
-  $tpl->set_block("message", "message_ip", $pre."message_ip");	/* opt */
+  $tpl->set_block("message", "forum_admin");	/* opt */
+  $tpl->set_block("message", "advertiser");	/* opt */
+  $tpl->set_block("message", "sponsor");	/* opt */
+  $tpl->set_block("message", "message_ip");	/* opt */
 
-  $tpl->set_block("message", "parent", $pre."parent");		/* manual */
+  $tpl->set_block("message", "parent");		/* manual */
 
-  $tpl->set_block("message", "msg", $pre."msg");
+  $tpl->set_block("message", "msg");
 
-  $tpl->set_block("message", "changes", $pre."changes");	/* opt */
+  $tpl->set_block("message", "changes");	/* opt */
 
-  $tpl->set_block("message", "signature", $pre."signature");
+  $tpl->set_block("message", "signature");
 }
 
 function _message_unset_block_extras($tpl)
@@ -39,7 +39,7 @@ function _message_unset_block_extras($tpl)
   ));
 }
 
-function _message_render_extras($tpl, $msg, $viewer, $owner, $pre)
+function _message_render_extras($tpl, $msg, $viewer, $owner)
 {
   global $forum, $thread;
 
@@ -58,35 +58,25 @@ function _message_render_extras($tpl, $msg, $viewer, $owner, $pre)
 	$changes = preg_replace("/</", "&lt;", $changes);
 	$changes = preg_replace("/>/", "&gt;", $changes);
 	$tpl->set_var("MSG_CHANGES", nl2br($changes));
-	$tpl->parse($pre."changes", "changes");
     } else {
-	$tpl->set_var($pre."changes", "");
+	$tpl->set_var("changes", "");
     }
-    $tpl->parse($pre."message_ip", "message_ip");
   } else {
-    $tpl->set_var($pre."changes", "");
-    $tpl->set_var($pre."message_ip", "");
+    $tpl->set_var("changes", "");
+    $tpl->set_var("message_ip", "");
   }
 
-  if ($viewer->capable($forum['fid'], 'Moderate') && $msg['aid'])
-    $tpl->parse($pre."forum_admin", "forum_admin");
-  else
-    $tpl->set_var($pre."forum_admin", "");
+  if (!$viewer->capable($forum['fid'], 'Moderate') || !$msg['aid'])
+    $tpl->set_var("forum_admin", "");
 
-  if ($owner->capable($forum['fid'], 'Advertise'))
-    $tpl->parse($pre."advertiser", "advertiser");
-  else
-    $tpl->set_var($pre."advertiser", "");
+  if (!$owner->capable($forum['fid'], 'Advertise'))
+    $tpl->set_var("advertiser", "");
 
-  if ($owner->capable($forum['fid'], 'Sponsor'))
-    $tpl->parse($pre."sponsor", "sponsor");
-  else
-    $tpl->set_var($pre."sponsor", "");
+  if (!$owner->capable($forum['fid'], 'Sponsor'))
+    $tpl->set_var("sponsor", "");
 
-  if ($msg['aid'])
-    $tpl->parse($pre."account_id", "account_id");
-  else
-    $tpl->set_var($pre."account_id", "");
+  if (!$msg['aid'])
+    $tpl->set_var("account_id", "");
 
   /* handle stupid tool links. templating system sucks; we have to
      explicitly set or unset EVERY block */
@@ -113,25 +103,21 @@ function _message_render_extras($tpl, $msg, $viewer, $owner, $pre)
       }
     }
   }
-  render_extra($tpl, $pre, "reply", $reply);
-  render_extra($tpl, $pre, "owner", $own);
-  render_extra($tpl, $pre, "statelocked", $locked);
-  render_extra($tpl, $pre, "delete", $delete);
-  render_extra($tpl, $pre, "undelete", $undelete);
+  blank_extra($tpl, "reply", $reply);
+  blank_extra($tpl, "owner", $own);
+  blank_extra($tpl, "statelocked", $locked);
+  blank_extra($tpl, "delete", $delete);
+  blank_extra($tpl, "undelete", $undelete);
 }
 
-function render_extra($tpl, $pre, $tag, $bool)
+function blank_extra($tpl, $tag, $bool)
 {
-    if ($bool) {
-	if (strlen($pre) > 0)
-	    $tpl->parse($pre.$tag, $tag);
-    } else {
-	$tpl->set_var($pre.$tag, "");
-    }
+  if (!$bool)
+    $tpl->set_var($tag, "");
 }
 
 /* pre is a hack for stacking used by showthread.php */
-function render_message($tpl, $msg, $viewer, $owner=null, $pre="")
+function render_message($tpl, $msg, $viewer, $owner=null)
 {
   global $Debug;
 
@@ -193,22 +179,18 @@ function render_message($tpl, $msg, $viewer, $owner=null, $pre="")
 
   if (!empty($message)) {
     $tpl->set_var("MSG_MESSAGE", $message);
-    if(strlen($pre)>0)
-      $tpl->parse($pre."msg", "msg");
   } else {
-    $tpl->set_var($pre."msg", "");
+    $tpl->set_var("msg", "");
   }
 
   if (isset($flags['NewStyle']) && !isset($viewer->pref['HideSignatures']) && isset($owner->signature)) {
     if (!empty($owner->signature)) {
       $tpl->set_var("MSG_SIGNATURE", nl2br($owner->signature));
-      if(strlen($pre)>0)
-	$tpl->parse($pre."signature", "signature");
     } else {
-      $tpl->set_var($pre."signature", "");
+      $tpl->set_var("signature", "");
     }
   } else {
-    $tpl->set_var($pre."signature", "");
+    $tpl->set_var("signature", "");
   }
 
   $msg['subject'] = softbreaklongwords($msg['subject'],40);
@@ -221,7 +203,7 @@ function render_message($tpl, $msg, $viewer, $owner=null, $pre="")
   ));
 
   if ($extras)
-    _message_render_extras($tpl, $msg, $viewer, $owner, $pre);
+    _message_render_extras($tpl, $msg, $viewer, $owner);
   else
     _message_unset_block_extras($tpl);
 }
