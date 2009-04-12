@@ -1,4 +1,6 @@
-/* general, for everything */
+/***********/
+/* general */
+/***********/
 body { font-family: verdana, arial, geneva; font-size: smaller}
 
 .error { color: red; }
@@ -13,45 +15,59 @@ body { font-family: verdana, arial, geneva; font-size: smaller}
     color: #000080;
 }
 
-/* showforum thread background alternation */
+/* indent for all ul heirarchies */
+ul {margin-left: 1em; padding-left: 1em;}
+
+/*************************/
+/* showforum/showmessage */
+/*************************/
+/* normal */
+.row0 { background: #f8f8f8 }
+.row1 { background: #eeeeee }
+
+/* tracked */
 .trow0 { background: #ddddff }
 .trow1 { background: #ccccee }
+
+/* deleted/moderated (unused) */
+/*
 .drow0 { background: #ddffdd }
 .drow1 { background: #cceecc }
 .mrow0 { background: #ffdddd }
 .mrow1 { background: #eecccc }
-.row0 { background: #f8f8f8 }
-.row1 { background: #eeeeee }
-ul {margin-left: 1em; padding-left: 1em;}
+*/
 
-/* showforum/showmessage subject thread listing*/
+ul.thread li { list-style: circle outside none; }
+
+/* subject thread listing spacing */
 ul.thread {
     margin-top: 0.2em;
     margin-bottom: 0.4em;
 }
 
-ul.thread li {
-    list-style: circle outside none;
-}
-
-div.showmessage { margin-left: 0.2em; }
-
+/**************/
 /* showthread */
-ul.showthread {
-    /* first row is flush left */
-    margin-left: 0;
-    padding-left: 0;
-}
+/**************/
+/* first row is flush left */
+ul.showthread { margin-left: 0; padding-left: 0; }
 
-/* get rid of bullets in showthread view */
+/* get rid of bullets */
 ul.showthread li { list-style: none outside; }
-/* dont indent as extreme in showthread view */
-/* ul.showthread li ul { margin-left: 0.5em; padding-left: 0.5em; } */
-/* set up padding for subject highlight */
-ul.showthread tr td { padding: 0 6px 0 6px; }
-/* make sure block padding matches subject highlight */
-ul.showthread div.messageblock div { padding: 0.4em 6px 0.4em 6px; }
+
+/* highlight subject */
 ul.showthread tr.messagesubjectrow td { background: #eeeeee; }
+
+/* right/left padding for subject highlight for it and everything under it */
+ul.showthread tr td { padding-left: 6px; padding-right: 6px; }
+ul.showthread .messageblock div { padding-left: 6px; padding-right: 6px; }
+
+/* message subject in showthread - no bold, no link decoration */
+ul.showthread .messageblock .subject a {
+    text-decoration: none;
+    font-weight: normal;
+    /* for all type of links (visited, etc) */
+    color: #000080;
+}
 
 /* signature in showthread */
 /*
@@ -62,52 +78,45 @@ ul.showthread .signature {
 }
 */
 
-/* message area styles */
-div.messageblock {
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
+/****************/
+/* messageblock */
+/****************/
+.messageblock {
+    margin-left: 2px; /* hack to match table indent */
+    margin-bottom: 1em;
 }
 
-div.messageblock div {
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-}
+/* divs inside all messageblocks - leave space before/after them */
+.messageblock div { padding-top: 0.4em; padding-bottom: 0.4em; }
 
 /* all message subjects - big, bold, wacky color */
-.subject {
+.messageblock .subject {
     font-size: 1.4em;
     font-weight: bold;
     color: #000080;
 }
 
-/* message subject in showthread - no bold, no link decoration */
-ul.showthread .subject a {
-    text-decoration: none;
-    font-weight: normal;
-    color: #000080;
-}
-
-/* message header */
+/* message header/info */
 td.messageinfo {
     font-size: 85%;
     color: #808080;
+    /* leave space below info section */
+    padding-bottom: 0.4em;
 }
 td.messageinfo a:link { color: #8080ff; }
 td.messageinfo a:visited { color: #b080ff; }
 
 /* embedded url in message */
-.message li.url {
-    list-style: disc outside none;
-}
+.message li.url { list-style: disc outside none; }
 
 .signature {
     /* width: 100%; */
+    margin-top: .4em;
     border-width: 2px 0 0 0;
     border-style: solid;
     border-color: #eeeed0;
 }
 
-/* changelog */
 .changes {
     background: #ffeeee;
     font-family: monospace;
@@ -117,8 +126,9 @@ td.messageinfo a:visited { color: #b080ff; }
 .postform tr th { background: #dfdfdf; text-align: right;}
 .postform tr td { background: #dfdfdf; }
 
+/*********/
 /* hacks */
-
+/*********/
 /* IE doesn't like 100% (referenced to largest input/textara.
    Have to use fixed size */
 .postform .text { width: 600px; }

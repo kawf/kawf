@@ -1,3 +1,4 @@
+<div class="messageblock">
 {MSG_DEBUG}
 <table class="messageheader" width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr class="messagesubjectrow">
@@ -45,7 +46,6 @@
     </td>
   </tr>
 </table>
-<div class="messageblock">
 <!-- BEGIN msg -->
   <div class="message">
 {MSG_MESSAGE}
