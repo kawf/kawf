@@ -40,7 +40,7 @@
 
 
 <!-- BEGIN update_all -->
-<div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&page={PAGE}&token={USER_TOKEN}&time={TIME}">Update all</a></div>
+<div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a></div>
 <!-- END update_all -->
 
 <!-- BEGIN normal -->
