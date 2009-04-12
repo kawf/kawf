@@ -75,11 +75,6 @@ echo "Cleaning visits\n";
 /* Clear out visits */
 sql_query("delete from f_visits where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 30");
 
-echo "Cleaning visits\n";
-/* Clear out visits */
-sql_query("delete from f_visits where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14");
-
-
 echo "Cleaning forums:";
 $res1 = sql_query("select * from f_forums,f_indexes where f_forums.fid=f_indexes.fid order by f_forums.fid");
 while ($forum = sql_fetch_array($res1)) {
@@ -102,17 +97,13 @@ while ($forum = sql_fetch_array($res1)) {
   // sql_query("unlock tables");
 
   // really slow, fixme
+  /*
   echo ", cleaning '<sub>' and '</sub>'s";
-  //$sql = "update f_messages" . $forum['fid'] . " set subject = replace(subject,'<sub>','&lt;sub&gt;')";
-  //sql_query($sql) or sql_error($sql);
-  //$sql = "update f_messages" . $forum['fid'] . " set subject = replace(subject,'</sub>','&lt;/sub&gt;')";
-  //sql_query($sql) or sql_error($sql);
-  $sql = "update f_messages" . $forum['fid'] . " set subject = replace(subject,'<sub></sub>','&lt;sub&gt;&lt;/sub&gt;')";
+  $sql = "update f_messages" . $forum['fid'] . " set subject = replace(subject,'<sub>','&lt;sub&gt')";
   sql_query($sql) or sql_error($sql);
-
-  echo ", cleaning 'logout.phtml' messages";
-  $sql = "update f_messages" . $forum['fid'] . " set message ='<img src=\"/pics/i-am-gay.jpg\">' where message like '%img src=%/logout.phtml%'";
+  $sql = "update f_messages" . $forum['fid'] . " set subject = replace(subject,'</sub>','&lt;/sub&gt')";
   sql_query($sql) or sql_error($sql);
+  */
 
   /* Figure out the maximums so we don't delete them */
   $maxmid = sql_query1("select max(id) from f_unique where fid = " . $forum['fid'] . " and type = 'Message'");
