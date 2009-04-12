@@ -43,7 +43,7 @@ This thread is locked. No replies are allowed.<br>
     <b>Subject:</b>
   </td>
   <td>
-    <input type="text" name="subject" value="{SUBJECT}" size="50" maxlength="100">
+    <input type="text" name="subject" value="{SUBJECT}" size="80" maxlength="100">
   </td>
 </tr>
 
@@ -52,7 +52,7 @@ This thread is locked. No replies are allowed.<br>
     <b>Message:</b>
   </td>
   <td>
-    <textarea wrap="virtual" name="message" rows="10" cols="60">{MESSAGE}</textarea>
+    <textarea wrap="virtual" name="message" rows="10" cols="55">{MESSAGE}</textarea>
   </td>
 </tr>
 
@@ -61,7 +61,7 @@ This thread is locked. No replies are allowed.<br>
     <b>Optional Link URL:</b>
   </td>
   <td>
-    <input type="text" name="url" value="{URLLINK}" size="50">
+    <input type="text" name="url" value="{URLLINK}" size="80">
   </td>
 </tr>
 
@@ -70,7 +70,7 @@ This thread is locked. No replies are allowed.<br>
     <b>Link Text:</b>
   </td>
   <td>
-    <input type="text" name="urltext" value="{URLTEXT}" size=50>
+    <input type="text" name="urltext" value="{URLTEXT}" size=80>
   </td>
 </tr>
 
@@ -79,7 +79,7 @@ This thread is locked. No replies are allowed.<br>
     <b>Optional Image URL:</b>
   </td>
   <td>
-    <input type="text" name="imageurl" value="{IMAGEURL}" size="50">
+    <input type="text" name="imageurl" value="{IMAGEURL}" size="80">
   </td>
 </tr>
 
