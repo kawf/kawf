@@ -32,7 +32,7 @@ function get_notices_html($forum, $aid)
 					$notices .= '<div class="notice_closebox">';
 					$notices .= '<a class="ignore_notice" href="http://boty.wayot.org/notices/ignore.php?forum=';
 					$notices .= $forum['shortname'];
-					$notices .= '&nid='.$notices_a['nid'].'"><img border="0" src="/pics/close_notice.png" /></a>';
+					$notices .= '&amp;nid='.$notices_a['nid'].'"><img border="0" src="/pics/close_notice.png" /></a>';
 					$notices .= '</div>';
 				}
 				$notices .= $notices_a['blurb'];
