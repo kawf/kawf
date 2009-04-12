@@ -1,28 +1,10 @@
-  {MSG_DEBUG}
-  <table class="messageheader" width="100%" border="0" cellspacing="0" cellpadding="0">
+{MSG_DEBUG}
+<table class="messageheader" width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr class="messagesubjectrow">
-    <td align="left" class="subject">{MSG_SUBJECT}</td>
-    <td>&nbsp;&nbsp;&nbsp;</td>
-    <td class="tools" align="right" nowrap="nowrap">
-<!-- BEGIN reply -->
-    [ <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml#post">Reply</a> ]
-<!-- END reply -->
-<!-- BEGIN owner -->
-    [ <a href="/{FORUM_SHORTNAME}/edit.phtml?mid={MSG_MID}&amp;page={PAGE}">Edit</a> ]
-<!-- BEGIN delete -->
-    [ <a href="/{FORUM_SHORTNAME}/delete.phtml?mid={MSG_MID}&amp;page={PAGE}">Delete</a> ]
-<!-- END delete -->
-<!-- BEGIN undelete -->
-    [ <a href="/{FORUM_SHORTNAME}/undelete.phtml?mid={MSG_MID}&amp;page={PAGE}">Undelete</a> ]
-<!-- END undelete -->
-<!-- BEGIN statelocked -->
-    <b>Status locked</b>
-<!-- END statelocked -->
-<!-- END owner -->
-    </td>
+    <td class="subject" align="left" colspan=2">{MSG_SUBJECT}</td>
   </tr>
   <tr class="messageinforow">
-    <td align="left">
+    <td class="messageinfo" align="left">
 <!-- BEGIN account_id -->
      User account number: <a href="/account/{MSG_AID}.phtml" target="_blank">{MSG_AID}</a>
 <!-- END account_id -->
@@ -41,9 +23,26 @@
      In Reply to: <a href="{PMSG_MID}.phtml">{PMSG_SUBJECT}</a> posted by {PMSG_NAME} on {PMSG_DATE}<br>
 <!-- END parent -->
     </td>
+    <td class="tools" align="right" nowrap="nowrap">
+<!-- BEGIN reply -->
+    <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml#post">Reply</a>
+<!-- END reply -->
+<!-- BEGIN owner -->
+    [ <a href="/{FORUM_SHORTNAME}/edit.phtml?mid={MSG_MID}&amp;page={PAGE}">Edit</a> ]
+<!-- BEGIN delete -->
+    [ <a href="/{FORUM_SHORTNAME}/delete.phtml?mid={MSG_MID}&amp;page={PAGE}">Delete</a> ]
+<!-- END delete -->
+<!-- BEGIN undelete -->
+    [ <a href="/{FORUM_SHORTNAME}/undelete.phtml?mid={MSG_MID}&amp;page={PAGE}">Undelete</a> ]
+<!-- END undelete -->
+<!-- BEGIN statelocked -->
+    <b>Status locked</b>
+<!-- END statelocked -->
+<!-- END owner -->
+    </td>
   </tr>
-  </table>
-  <div class="messageblock">
+</table>
+<div class="messageblock">
 <!-- BEGIN msg -->
   <div class="message">
 {MSG_MESSAGE}
@@ -60,4 +59,4 @@
 {MSG_CHANGES}
   </div>
 <!-- END changes -->
-  </div>
+</div>
