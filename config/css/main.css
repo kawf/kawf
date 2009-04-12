@@ -111,6 +111,6 @@ ul.showthread td, ul.showthread div.messageblock {
     padding: 5px;
 }
 
-table.postform tr td {
-    background: #dfdfdf;
-}
+table.postform tr td { background: #dfdfdf; }
+/* IE doesn't like 100%, have to use fixed size */
+table.postform .text { width: 600px; }
