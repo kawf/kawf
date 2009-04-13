@@ -1,5 +1,7 @@
 <?php
+require_once("nl2brPre.inc");
 require_once("textwrap.inc");
+
 function message_set_block($tpl)
 {
   $tpl->set_block("message", "owner");		/* opt */
@@ -160,8 +162,11 @@ function render_message($tpl, $msg, $viewer, $owner=null)
     $tpl->set_var("MSG_NAMEEMAIL", $msg['name']);
   }
 
-  if (!empty($msg['message']))
-    $msg['message'] = nl2br(softbreaklongwords($msg['message'],78));
+  if (!empty($msg['message'])) {
+    // todo: make sure softbreak avoids pre
+    // $msg['message'] = nl2br(softbreaklongwords($msg['message'],78));
+    $msg['message'] = nl2brPre($msg['message']);
+  }
 
   if (!empty($msg['url'])) {
     $url = $msg['url'];
@@ -190,7 +195,7 @@ function render_message($tpl, $msg, $viewer, $owner=null)
 
   if (isset($flags['NewStyle']) && !isset($viewer->pref['HideSignatures']) && isset($owner->signature)) {
     if (!empty($owner->signature)) {
-      $tpl->set_var("MSG_SIGNATURE", nl2br($owner->signature));
+      $tpl->set_var("MSG_SIGNATURE", nl2brPre($owner->signature));
     } else {
       $tpl->set_var("signature", "");
     }
