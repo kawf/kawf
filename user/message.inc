@@ -1,4 +1,6 @@
 <?php
+require_once("nl2brPre.inc");
+
 function message_set_block($tpl)
 {
   $tpl->set_block("message", "owner");		/* opt */
@@ -155,7 +157,7 @@ function render_message($tpl, $msg, $viewer, $owner=null)
   }
 
   if (!empty($msg['message']))
-    $msg['message'] = nl2br($msg['message']);
+    $msg['message'] = nl2brPre($msg['message']);
 
   if (!empty($msg['url'])) {
     $url = $msg['url'];
@@ -184,7 +186,7 @@ function render_message($tpl, $msg, $viewer, $owner=null)
 
   if (isset($flags['NewStyle']) && !isset($viewer->pref['HideSignatures']) && isset($owner->signature)) {
     if (!empty($owner->signature)) {
-      $tpl->set_var("MSG_SIGNATURE", nl2br($owner->signature));
+      $tpl->set_var("MSG_SIGNATURE", nl2brPre($owner->signature));
     } else {
       $tpl->set_var("signature", "");
     }
