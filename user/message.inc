@@ -157,15 +157,17 @@ function render_message($tpl, $msg, $viewer, $owner=null)
   }
 
   if (!empty($msg['message']))
-    $msg['message'] = nl2brPre($msg['message']);
+    $msg['message'] = nl2brPre::out($msg['message']);
 
   if (!empty($msg['url'])) {
     $url = $msg['url'];
+    // $target = " target=\"_blank\"";
     if (!empty($msg['urltext']))
       $text = $msg['urltext'];
     else
       $text = $msg['url'];
-    $msg['message'] .= "<ul><li class=\"url\"><a href=\"$url\" target=\"_blank\">$text</a></ul>\n";
+    $msg['message'] .=
+      "<ul><li class=\"url\"><a href=\"$url\"$target>$text</a></ul>\n";
   }
 
   $message = $msg['message'];
@@ -186,7 +188,7 @@ function render_message($tpl, $msg, $viewer, $owner=null)
 
   if (isset($flags['NewStyle']) && !isset($viewer->pref['HideSignatures']) && isset($owner->signature)) {
     if (!empty($owner->signature)) {
-      $tpl->set_var("MSG_SIGNATURE", nl2brPre($owner->signature));
+      $tpl->set_var("MSG_SIGNATURE", nl2brPre::out($owner->signature));
     } else {
       $tpl->set_var("signature", "");
     }
