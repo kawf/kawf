@@ -9,7 +9,7 @@
 
 {HEADER}
 
-<img src="/pics/change.gif"><br>
+<img src="/pics/change.gif" alt="change preferences"><br>
 
 <!-- BEGIN error -->
 <div class="error">
@@ -37,7 +37,7 @@
       <b>Signature:</b>
     </td>
     <td width="425">
-      <textarea wrap="virtual" name="signature" rows=5 cols=40>{SIGNATURE}</textarea>
+      <textarea wrap="soft" name="signature" rows=5 cols=40>{SIGNATURE}</textarea>
     </td>
   </tr>
 <!-- BEGIN signature -->
@@ -76,7 +76,7 @@ Timezone
 
 <!-- input type="checkbox" name="SortbyActive"{SORTBYACTIVE}> Sort by active threads?<br -->
 
-      Threads per page <input type="input" size="3" name="threadsperpage" value="{THREADSPERPAGE}"><br>
+      Threads per page <input type="text" size="3" name="threadsperpage" value="{THREADSPERPAGE}"><br>
     </td>
   </tr>
   <tr bgcolor="#cccccc">
@@ -86,7 +86,7 @@ Timezone
   </tr>
   <tr bgcolor="#cccccc">
     <td colspan="2" align="center">
-    <p><a href="{PAGE}"><b>Click here to return to the {DOMAIN} Discussion Forums</a>
+    <p><a href="{PAGE}"><b>Click here to return to the {DOMAIN} Discussion Forums</b></a>
     </td>
   </tr>
 </table>

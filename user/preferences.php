@@ -113,7 +113,7 @@ $tpl->set_var("PAGE", htmlspecialchars($_REQUEST['page'], ENT_QUOTES));
 
 foreach($tz_to_name as $tz) {
   $selected = "";
-  if($user->timezone == $tz) $selected = " selected=\"1\"";
+  if($user->timezone == $tz) $selected = " selected=\"selected\"";
   $tpl->set_var("TIMEZONE", $tz);
   $tpl->set_var("TIMEZONE_SELECTED", $selected);
   $tpl->parse("_timezone", "timezone", true);
@@ -121,9 +121,9 @@ foreach($tz_to_name as $tz) {
 
 /* todo: translate date_default_timezone_get() into something we know */
 if(isset($user->timezone))
-    $tpl->set_var(str_replace("/","_",$user->timezone), " selected=\"1\"");
+    $tpl->set_var(str_replace("/","_",$user->timezone), " selected=\"selected\"");
 else
-    $tpl->set_var("US_Pacific", " selected=\"1\"");
+    $tpl->set_var("US_Pacific", " selected=\"selected\"");
 
 $tpl->parse("HEADER", "header");
 $tpl->parse("FOOTER", "footer");
