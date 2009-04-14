@@ -3,6 +3,9 @@
 $user->req();
 $stoken = $user->token();
 
+$page = $_REQUEST['page'];
+$mid = $_REQUEST['mid'];
+
 if (isset($no)) {
   header("Location: $page");
   exit;

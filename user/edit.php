@@ -10,6 +10,8 @@ if ($user->status != 'Active') {
   exit;
 }
 
+$mid = $_REQUEST['mid'];
+
 /* Check the data to make sure they entered stuff */
 if (!isset($mid) || !isset($forum)) {
   /* Hmm, how did this happen? Redirect them back to the main page */

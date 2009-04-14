@@ -5,6 +5,9 @@ if (!isset($forum)) {
   exit;
 }
 
+$page = $_REQUEST['page'];
+$tid = $_REQUEST['tid'];
+
 if (!$user->valid()) {
   header("Location: $page");
   exit;

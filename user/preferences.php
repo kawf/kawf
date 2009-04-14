@@ -16,12 +16,12 @@ $error = "";
 
 function option_changed($name, $message)
 {
-  global $user, $success, $$name;
+  global $user, $success, $_REQUEST;
 
-  if (!$user->preference($name, isset($$name)))
+  if (!$user->preference($name, isset($_REQUEST[$name])))
     return;
 
-  $success .= (isset($$name) ? "Enabled" : "Disabled") . " " . $message . "<p>\n";
+  $success .= (isset($_REQUEST[$name]) ? "Enabled" : "Disabled") . " " . $message . "<p>\n";
 }
 
 function do_option($name)
@@ -47,13 +47,13 @@ if (isset($submit)) {
   option_changed('AutoUpdateTracking', "automatic updating of tracked threads");
   option_changed('OldestFirst', "show replies oldest first");
 
-  $user->signature($signature);
-
 /*
-  if ($signature != $user->signature)
+  if ($_REQUEST['signature'] != $user->signature)
     $success .= "Updated signature<p>";
 */
+  $user->signature($_REQUEST['signature']);
 
+  $threadsperpage = $_REQUEST['threadsperpage'];
   if (!preg_match("/^[0-9]+$/", $threadsperpage)) {
     $error .= "Threads per page set to non number, ignoring<p>\n";
     $threadsperpage = $user->threadsperpage;
@@ -64,14 +64,17 @@ if (isset($submit)) {
     $error .= "Threads per page more than upper limit of 100, setting to 100<p>\n";
     $threadsperpage = 100;
   }
-
-  $user->set_timezone($timezone);
-  $user->threadsperpage($threadsperpage);
-
 /*
- elseif ($threadsperpage != $user->threadsperpage)
+ if ($threadsprepage] != $user->threadsperpage)
     $success .= "Threads per page has been set to $threadsperpage<p>\n";
 */
+  $user->threadsperpage($_REQUEST['threadsperpage']);
+
+/*
+ if ($_REQUEST['timezone'] != $user->timezone)
+    $success .= "Timezone has been set to " . $_REQUEST['timezone'] . "<p>\n";
+*/
+  $user->set_timezone($_REQUEST['timezone']);
 
   $user->update();
 }
@@ -106,7 +109,7 @@ $tpl->set_var("SIGNATURE_COOKED", nl2br($user->signature));
 $tpl->set_var("SIGNATURE", $user->signature);
 $tpl->set_var("THREADSPERPAGE", $user->threadsperpage);
 $tpl->set_var("TEXT", $text);
-$tpl->set_var("PAGE", htmlspecialchars($page, ENT_QUOTES));
+$tpl->set_var("PAGE", htmlspecialchars($_REQUEST['page'], ENT_QUOTES));
 
 foreach($tz_to_name as $tz) {
   $selected = "";
@@ -116,9 +119,9 @@ foreach($tz_to_name as $tz) {
   $tpl->parse("_timezone", "timezone", true);
 }
 
+/* todo: translate date_default_timezone_get() into something we know */
 if(isset($user->timezone))
     $tpl->set_var(str_replace("/","_",$user->timezone), " selected=\"1\"");
-/* todo: translate date_default_timezone_get() into something we know */
 else
     $tpl->set_var("US_Pacific", " selected=\"1\"");
 
