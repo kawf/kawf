@@ -43,7 +43,7 @@
 <tr>
 <td align="left">
 <select name="url" onChange="if (this.selectedIndex) { location = this.options[this.selectedIndex].value; }">
-<option value=""><b>Choose Discussion Forum</b></option>
+<option value="">Choose Discussion Forum</option>
 <option value="/other/">Miscellaneous Forum</option>
 <option value="/pr0n/">Pr0n Forum</option>
 <option value="/swapmeet/">Ye Olde Ghetto Swapmeet</option>
