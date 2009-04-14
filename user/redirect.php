@@ -1,4 +1,6 @@
 <?php
+$url = $_REQUEST['url'];
+
 if(is_array($url)) {
   // Redirect to the first non-empty value in the array.
   $oneurl = "";

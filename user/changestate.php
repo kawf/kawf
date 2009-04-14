@@ -3,6 +3,10 @@
 require_once("mailfrom.inc");
 require_once("textwrap.inc");
 
+$page = $_REQUEST['page'];
+$state = $_REQUEST['state'];
+$mid = $_REQUEST['mid'];
+
 $user->req();
 
 if ($state != 'Active' && $state != 'OffTopic' && $state != 'Moderated' && $state != 'Deleted') {

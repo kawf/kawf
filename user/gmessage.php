@@ -5,6 +5,8 @@ if (!$user->valid()) {
   exit;
 }
 
+$gid = $_REQUEST['gid'];
+
 if (!isset($gid) || is_int($gid) || $gid < 0 || $gid > 63) {
   echo "gid invalid\n";
   exit;

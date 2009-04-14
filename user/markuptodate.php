@@ -5,10 +5,15 @@ if (!$user->valid() || !isset($forum)) {
   exit;
 }
 
+$tid = $_REQUEST['tid'];
+$page = $_REQUEST['page'];
+
 if ($_REQUEST['token'] != $user->token())
   err_not_found("invalid token"); 
 
-if (!isset($time))
+if (isset($_REQUEST['time']))
+  $time = $_REQUEST['time'];
+else
   $time = time();
 
 /* Convert it to MySQL format */

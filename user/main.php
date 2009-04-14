@@ -56,7 +56,8 @@ $tpl->parse("CSS", "css");
 
 $tpl->set_var("CSS_HREF", css_href());
 
-$_page = $page;
+$_page = $_REQUEST['page'];
+
 $tpl->set_var("PAGE", $script_name . $path_info);
 if (isset($http_host) && !empty($http_host))
   $_url = $http_host;
