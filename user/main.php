@@ -112,8 +112,6 @@ if (!isset($dont_use_account)) {
 $fscripts = array(
   "" => "showforum.php",
 
-  "flat.phtml" => "flat.php",
-
   "post.phtml" => "post.php",
   "edit.phtml" => "edit.php",
   "delete.phtml" => "delete.php",
