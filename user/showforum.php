@@ -105,15 +105,15 @@ $pagestr = "";
 
 if ($curpage > 1) {
   $prevpage = $curpage - 1;
-  $pagestr .= "[<a href=\"/" . $forum['shortname'] . "/pages/$prevpage.phtml\">&lt;&lt;&lt;</a>] ";
+  $pagestr .= "<a href=\"/" . $forum['shortname'] . "/pages/$prevpage.phtml\">&lt;&lt;&lt;</a> | ";
 }
 
-$pagestr .= "[<a href=\"/" . $forum['shortname'] . "/pages/1.phtml\">";
+$pagestr .= "<a href=\"/" . $forum['shortname'] . "/pages/1.phtml\">";
 if ($curpage == 1)
   $pagestr .= "<font size=\"+1\"><b>1</b></font>";
 else
   $pagestr .= "1";
-$pagestr .= "</a>]\n";
+$pagestr .= "</a>";
 
 if ($startpage == 1)
   $startpage++;
@@ -121,17 +121,17 @@ elseif ($startpage < $endpage)
   $pagestr .= " ... ";
 
 for ($i = $startpage; $i <= $endpage; $i++) {
-  $pagestr .= "[<a href=\"/" . $forum['shortname'] . "/pages/" . $i . ".phtml\">";
+  $pagestr .= " | <a href=\"/" . $forum['shortname'] . "/pages/" . $i . ".phtml\">";
   if ($i == $curpage)
     $pagestr .= "<font size=\"+1\"><b>$i</b></font>";
   else
     $pagestr .= $i;
-  $pagestr .= "</a>] ";
+  $pagestr .= "</a>";
 }
 
 if ($curpage < $numpages) {
   $nextpage = $curpage + 1;
-  $pagestr .= "[<a href=\"/" . $forum['shortname'] . "/pages/$nextpage.phtml\">&gt;&gt;&gt;</a>] ";
+  $pagestr .= " | <a href=\"/" . $forum['shortname'] . "/pages/$nextpage.phtml\">&gt;&gt;&gt;</a>";
 }
 
 $tpl->set_var("PAGES", $pagestr);
