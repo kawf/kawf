@@ -8,8 +8,10 @@ class nl2brPre {
 	    return nl2br($string);
 	}
 
-	if ($verbose) echo "checking ". strlen($string)." byte length '".$this->cook($string)."'\n";
+	if ($verbose) echo "checking ". strlen($string)." byte length '".nl2brPre::cook($string)."'\n";
 
+	$start = $inp = 0;
+	$out = '';
 	while ($start < strlen($string)) {
 	    $i = nl2brPre::find_tag($string, $pos);
 	    $seg = nl2brPre::process(substr($string, $start, $pos-$start), $inp);
@@ -17,7 +19,7 @@ class nl2brPre {
 	    /* we got the pre in munge if we needed it, advance the ptr */
 	    if ($i==-1) $pos += 6;
 
-	    if ($verbose) echo "[$inp $i] [$start->$pos] inspecting '".$this->cook($seg)."'\n";
+	    if ($verbose) echo "[$inp $i] [$start -> $pos] inspecting '".nl2brPre::cook($seg)."'\n";
 
 	    /* dont let inp go negative */
 	    $new = $inp + $i;
@@ -26,11 +28,11 @@ class nl2brPre {
 	    if (($inp <= 1 && $new <= 1 && $inp != $new) || ($i==0)) {
 		/* output the segment on all 0->1, 1->0 transitions, or if there
 		   are no tags left; then advance start pointer */
-		if ($verbose) echo " [$inp->$new] $pos outputting '".$this->cook($seg)."'\n";
+		if ($verbose) echo " [$inp -> $new] $pos outputting '".nl2brPre::cook($seg)."'\n";
 		$out .= $seg;
 		$start = $pos;
 	    } else if ($verbose) {
-		echo " [$inp->$new] $pos skipped '".$this->cook($seg)."'\n";
+		echo " [$inp -> $new] $pos skipped '".nl2brPre::cook($seg)."'\n";
 	    }
 
 	    $inp = $new;
@@ -113,7 +115,8 @@ class nl2brPre {
 	    array("<pre><pre>a</pre></pre>", "<pre>&lt;pre&gt;a&lt;/pre&gt;</pre>"),
 	    array("<pre></pre>a</pre>", "<pre></pre>a</pre>"),
 	);
-	
+
+	$p = $i = 0; 	
 	foreach ($a as $t) {
 	    $out = nl2brPre::out($t[0], $xhtml);
 	    if ($out != $t[1]) {
