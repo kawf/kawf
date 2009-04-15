@@ -11,7 +11,7 @@ if (isset($forgotpassword)) {
 
 /* See if TOU is available. */
 $tou_available = false;
-if(is_file($template_dir . "account/tou.tpl")) $tou_available = true;
+if(is_file($template_dir . "/account/tou.tpl")) $tou_available = true;
 
 $template_files = array(
   "login" => "account/login.tpl",
