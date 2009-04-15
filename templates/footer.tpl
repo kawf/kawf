@@ -4,7 +4,7 @@
     <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
     <input type="hidden" name="cmd" value="_s-xclick">
     <input type="hidden" name="hosted_button_id" value="4023927">
-    <input type="image" src="/pics/btn_donate_LG.gif" name="submit" alt="PayPal - The safer, easier way to pay online!">
+    <input type="image" src="/pics/btn_donate_SM.gif" name="submit" alt="PayPal - The safer, easier way to pay online!">
     <img alt="" src="/pics/pixel.gif" width="1" height="1">
     </form>
   </td>  
