@@ -7,7 +7,7 @@
     <input type="hidden" name="custom" value="aid={AID}">
 <!-- END acct -->
     <input type="hidden" name="hosted_button_id" value="4023927">
-    <input type="image" src="/pics/btn_donateCC_LG.gif" name="submit" alt="PayPal - The safer, easier way to pay online!">
+    <input type="image" src="/pics/btn_donate_LG.gif" name="submit" alt="PayPal - The safer, easier way to pay online!">
     <img alt="" src="/pics/pixel.gif" width="1" height="1">
     </form>
   </td>  
