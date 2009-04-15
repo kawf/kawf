@@ -17,7 +17,7 @@
 </div>
 <!-- END error -->
 
-<form action="preferences.phtml?page={PAGE}" method="post">
+<form action="preferences.phtml?page={PAGE}" autocomplete="off" method="post">
 
 <table border="0" cellpadding="5" cellspacing="2">
 
