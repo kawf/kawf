@@ -5,14 +5,14 @@ $user= new ForumUser;
 $user->find_by_cookie();
 $uuser= new ForumUser;
 
-if (preg_match("/^\/.*\/([0-9]+)\.phtml$/", $script_name . $path_info, $regs)) {
+if (preg_match("/^\/[^\/]*\/([0-9]+)\.phtml$/", $script_name . $path_info, $regs)) {
     $uuser->find_by_aid((int)$regs[1]);
 } else if(empty($path_info) || $path_info =="/") {
     $uuser->find_by_cookie();
-    if(!$uuser->valid()) {
+    if(!$uuser->valid(false)) {	/* dont go to login page if user is invalid */
 	err_not_found("Unknown user");
     }
-    Header("Location: http://$server_name$script_name/$uuser->aid.phtml");
+    Header("Location: /account/$uuser->aid.phtml");
     exit;
 } else {
     err_not_found("Unknown path");
@@ -55,7 +55,8 @@ if(array_key_exists('noob', $_GET)) {
 
 <!--
 <?php echo $user->name. ", ". $user->aid ."\n"; ?>
-<?php echo "$script_name$path_info $regs[1]\n" ?>
+<?php echo $uuser->name. ", ". $uuser->aid ."\n"; ?>
+<?php echo "'$script_name' '$path_info' '$regs[1]'\n" ?>
 -->
 
 <body>
