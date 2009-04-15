@@ -99,7 +99,7 @@ if($user->aid == 1) echo "<td>email</td>\n";
 
 <h2>Signature</h2>
 <?php
-echo "<p>\n" . $uuser->signature . "\n</p>\n";
+echo "<p>\n" . nl2br($uuser->signature) . "\n</p>\n";
 ?>
 <?php
   if($user->aid == 1 && $_GET['verbose']) {
