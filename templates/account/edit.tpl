@@ -27,14 +27,14 @@ An email has been sent to your new email address of {NEWEMAIL} to confirm the ch
 <!-- BEGIN password -->
 Your password has been changed<p>
 <!-- END password -->
-<form action="acctedit.phtml" method="post">
+<form action="acctedit.phtml" autocomplete="off" method="post">
 <table cellpadding="2">
-<tr><td bgcolor="#dfdfdf" align="center" colspan="2"><b>Leave items you want unchanged blank.<b></td></tr>
-<tr><td bgcolor="#dfdfdf" align="right"><b>&nbsp;New Screen Name:</b></td><td><input type="text" name="name" length="40"></td></tr>
-<tr><td bgcolor="#dfdfdf" align="right"><b>&nbsp;New Email Address:</b></td><td><input type="text" name="email" length="40"></td></tr>
-<tr><td bgcolor="#dfdfdf" align="right"><b>&nbsp;New Password:</b></td><td><input type="password" name="password1" length="20"></td></tr>
-<tr><td bgcolor="#dfdfdf" align="right"><b>&nbsp;Re-enter Password:</b></td><td><input type="password" name="password2" length="20"></td></tr>
-<tr><td bgcolor="#dfdfdf" align="center" colspan="2"><input type="submit" name="submit" value="Update"</td></tr>
+<tr><th bgcolor="#dfdfdf" align="center" colspan="2">Leave items you want unchanged blank.</th></tr>
+<tr><th bgcolor="#dfdfdf" align="right">&nbsp;New Screen Name:</th>  <td><input type="text" name="name" maxlength="40"></td></tr>
+<tr><th bgcolor="#dfdfdf" align="right">&nbsp;New Email Address:</th><td><input type="text" name="email" maxlength="40"></td></tr>
+<tr><th bgcolor="#dfdfdf" align="right">&nbsp;New Password:</th>     <td><input type="password" name="password1" maxlength="20"></td></tr>
+<tr><th bgcolor="#dfdfdf" align="right">&nbsp;Re-enter Password:</th><td><input type="password" name="password2" maxlength="20"></td></tr>
+<tr><td bgcolor="#dfdfdf" align="center" colspan="2"><input type="submit" name="submit" value="Update"></td></tr>
 </table>
 <input type="hidden" name="token" value={token}>
 </form>
