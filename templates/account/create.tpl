@@ -22,7 +22,6 @@
 
 <!-- BEGIN form -->
 <form action="create.phtml" method="post" name="form">
-<input type="hidden" name="page" value="{PAGE}">
 <table class="postform">
   <tr><td colspan="2" align="center"><b>Enter New Account Information</b></td></tr>
   <tr><th>Screen Name:</th><td><input type="text" name="name" value="{NAME}" size="40" maxlength="40"></td></tr>
@@ -33,9 +32,10 @@
   <tr><td colspan="2" align="center"><input type="submit" name="submit" value="Create Account"></td></tr>
 </table>
 <!-- BEGIN tou_agreement -->
-{TOU}
+<p>{TOU}</p>
 <input type="checkbox" name="tou_agree" value="1">I agree to the Terms Of Use
 <!-- END tou_agreement -->
+<input type="hidden" name="page" value="{PAGE}">
 </form>
 
 <p>Use your browser's BACK button to return to the Login screen.</p>
