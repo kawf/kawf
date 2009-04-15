@@ -15,7 +15,6 @@
 
 <h1>Accounts - Create</h1><p>
 
-<p><h2>Create Account</h2><p>
 
 <!-- BEGIN error -->
 <font color="#ff0000">{ERROR}</font><p>
@@ -23,34 +22,35 @@
 
 <!-- BEGIN form -->
 <form action="create.phtml" method="post" name="form">
-  <input type="hidden" name="page" value="{PAGE}">
-
-  Screen Name: <input type="text" name="name" value="{NAME}" size="40" maxlength="40"><br>
-  Email: <input type="text" name="email" value="{EMAIL}" size="40" maxlength="40"><br>
-  Password: <input type="password" name="password1" size="40" maxlength="40"><br>
-  Re-enter Password: <input type="password" name="password2" size="40" maxlength="40"><br>
-  Secret Key: <input type="key" name="key" size="40" maxlength="40"><br>
-  <br>
+<input type="hidden" name="page" value="{PAGE}">
+<table class="postform">
+  <tr><td colspan="2" align="center"><b>Enter New Account Information</b></td></tr>
+  <tr><th>Screen Name:</th><td><input type="text" name="name" value="{NAME}" size="40" maxlength="40"></td></tr>
+  <tr><th>Email:</th><td><input type="text" name="email" value="{EMAIL}" size="40" maxlength="40"></td></tr>
+  <tr><th>Password:</th><td><input type="password" name="password1" size="40" maxlength="40"></td></tr>
+  <tr><th>Re-enter Password:</th><td><input type="password" name="password2" size="40" maxlength="40"></td></tr>
+  <tr><th>Secret Key:</th><td><input type="password" name="key" size="40" maxlength="40"></td></tr>
+  <tr><td colspan="2" align="center"><input type="submit" name="submit" value="Create Account"></td></tr>
+</table>
 <!-- BEGIN tou_agreement -->
-  {TOU}<br>
-  <br>
-  <input type="checkbox" name="tou_agree" value="1"> I agree to the Terms Of Use<br>
-  <br>
+{TOU}
+<input type="checkbox" name="tou_agree" value="1">I agree to the Terms Of Use
 <!-- END tou_agreement -->
-
-  <input type="submit" name="submit" value="Create Account">
 </form>
 
-Use your browser's BACK button to return to the Login screen.<p>
+<p>Use your browser's BACK button to return to the Login screen.</p>
 <!-- END form -->
 
 <!-- BEGIN success -->
-Thank you for creating an account with us. A confirmation e-mail has been sent and you should receive it shortly. Once you receive that e-mail, simply follow the instructions that are included and the account creation process will be complete.<p>
+<p>Thank you for creating an account with us. A confirmation e-mail has been
+sent and you should receive it shortly. Once you receive that e-mail, simply
+follow the instructions that are included and the account creation process will
+be complete.</p>
 <!-- END success -->
 
 <!-- BEGIN disabled -->
-Creation of new accounts has been temporarily disabled.<p>
-Use your browser's BACK button to return to the Login screen.<p>
+<p>Creation of new accounts has been temporarily disabled.</p>
+<p>Use your browser's BACK button to return to the Login screen.</p>
 <!-- END disabled -->
 
 </td>
