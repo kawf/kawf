@@ -6,7 +6,7 @@ $stoken = $user->token();
 $page = $_REQUEST['page'];
 $mid = $_REQUEST['mid'];
 
-if (isset($no)) {
+if (isset($_POST['no'])) {
   header("Location: $page");
   exit;
 }
