@@ -77,6 +77,9 @@ ul.showthread .messageblock .subject a {
     /* for all type of links (visited, etc) */
     color: #008;
 }
+ul.showthread .messageblock .subject a:hover {
+    color: #00f; text-decoration: underline;
+}
 
 /* signature in showthread */
 /*
