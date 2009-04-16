@@ -47,7 +47,7 @@ page_header("Modify User ACL $aid");
 
 ?>
 
-<form method="post" action="<?php echo basename($PHP_SELF);?>">
+<form method="post" action="<?php echo basename($_SERVER['PHP_SELF']);?>">
 <input type="hidden" name="aid" value="<?php echo $aid;?>">
 <table>
 
