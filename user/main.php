@@ -242,12 +242,13 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
   /* Now show that page */
   $curpage = $regs[2];
   require_once("showforum.php");
-} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/msgs\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
+} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/msgs\/([0-9]+)\.(phtml|txt)$/", $script_name.$path_info, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
   /* See if the message number is legitimate */
   $mid = $regs[2];
+  $fmt = $regs[3];
   $index = find_msg_index($mid);
   if (isset($index)) {
     $sql = "select mid from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'";
@@ -264,7 +265,10 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
   }
 
   if (isset($result) && mysql_num_rows($result)) {
-    require_once("showmessage.php");
+    if ($fmt=='phtml')
+	require_once("showmessage.php");
+    else
+	require_once("plainmessage.php");
   } else
     err_not_found("Unknown message " . $mid . " in forum " . $forum['shortname']. "\n$sql");
 } else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/threads\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
