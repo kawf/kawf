@@ -53,7 +53,7 @@ page_header("Add Forum");
 #page_show_nav("1.2");
 ?>
 
-<form method="post" action="<?php echo basename($PHP_SELF);?>">
+<form method="post" action="<?php echo basename($_SERVER['PHP_SELF']);?>">
 <table>
  <tr>
   <td>Long Name:</td>
