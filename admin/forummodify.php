@@ -59,7 +59,7 @@ page_header("Modify '" . $forum['name'] . "' fid=".$forum['fid']);
 #page_show_nav("1.2");
 ?>
 
-<form method="post" action="<?php echo basename($PHP_SELF);?>">
+<form method="post" action="<?php echo basename($_SERVER['PHP_SELF']);?>">
 <input type="hidden" name="fid" value="<?php echo $forum['fid'];?>">
 
 

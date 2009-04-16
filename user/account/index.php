@@ -45,7 +45,7 @@ if(array_key_exists('noob', $_GET)) {
 <html>
 <head>
 <title><?php echo "$domain"?>: Account Information for <?php echo "$uuser->name" ?></title>
-<link rel=StyleSheet href="/css/account.css" type="text/css">
+<link rel=StyleSheet href="<?php echo css_href("account.css") ?>" type="text/css">
 </style>
 </head>
 

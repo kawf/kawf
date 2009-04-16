@@ -48,7 +48,7 @@ if (isset($_POST['submit'])) {
 page_header("Add User ACL");
 ?>
 
-<form method="post" action="<?php echo basename($PHP_SELF);?>">
+<form method="post" action="<?php echo basename($_SERVER['PHP_SELF']);?>">
 <table>
  <tr>
   <td>aid:</td>
