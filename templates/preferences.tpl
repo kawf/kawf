@@ -45,7 +45,7 @@
 &nbsp;
     </td>
     <td width="425">
-{SIGNATURE}
+{SIGNATURE_COOKED}
     </td>
   </tr>
 <!-- END signature -->
