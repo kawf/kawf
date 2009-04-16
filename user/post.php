@@ -399,10 +399,10 @@ if (!$accepted || isset($preview)) {
   $sql = "insert into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($msg['mid']) . "' )";
   mysql_query($sql);
 
-  if (!empty($TrackThread) && isset($newmessage)) {
+  if (!empty($_POST['TrackThread']) && isset($newmessage)) {
     $options = "";
 
-    if (isset($_REQUEST['EmailFollowup']))
+    if (isset($_POST['EmailFollowup']))
       $options = "SendEmail";
 
     $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and aid = '" . $user->aid . "' and tid = '" . addslashes($msg['tid']) . "'";
