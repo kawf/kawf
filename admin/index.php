@@ -19,9 +19,7 @@ $result = sql_query("select * from f_forums,f_indexes where f_forums.fid=f_index
 
 <p>
 
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr><td bgcolor="#99999">
-<table width="100%" cellpadding="3" cellspacing="1" border="0">
+<table bgcolor="#999" width="100%" cellpadding="3" cellspacing="1" border="0">
 
 <tr bgcolor="#D0D0D0">
 <td>fid</td>
@@ -50,8 +48,6 @@ while ($forum = sql_fetch_array($result)) {
   $count++;
 }
 ?>
-
-</table></td></tr>
 </table>
 
 <?php

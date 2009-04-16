@@ -1,7 +1,7 @@
 body { font-family: verdana, arial, geneva; font-size: smaller; }
-td { font-family: verdana, arial, geneva; }
 
-table.outer { border-width: 0; border-spacing: 3; }
-td.outer { border-width: 0; padding: 0; vertical-align: top; }
-table.inner { border-width: 1px; border-color: #999990; border-style: none solid solid none; border-spacing: 0; }
-td.inner { border-width: 1px; border-color: #999990; border-style: solid none none solid; padding: 3; }
+th { background-color: #ddd; text-align: left; }
+table.outer { border-width: 1px; border-spacing: 3px; }
+td.outer { border-width: 0; padding: 5px; vertical-align: top; }
+table.inner { border-width: 1px; border-color: #990; border-style: none solid solid none; border-spacing: 0; }
+td.inner { border-width: 1px; border-color: #990; border-style: solid none none solid; padding: 3px; }
