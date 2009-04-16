@@ -30,7 +30,7 @@ if (isset($_POST['submit'])) {
 		"values " .
 		"( '" . addslashes($_POST['name']) . "', " .
 		"'" . addslashes($_POST['shortname']) . "', " .
-		"'" . addslashes($_POST['options']) . "'" .
+		"'" . addslashes($options) . "'" .
 		")");
   $fid = sql_query1("select last_insert_id()");
 
