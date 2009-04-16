@@ -135,8 +135,8 @@ $tpl->set_var("AID", $user->aid);	// for hidden section in footer.tpl
 
 function update_visits()
 {
-  global $user, $REMOTE_ADDR;
-  $ip = "'" . addslashes($REMOTE_ADDR) . "'";
+  global $user, $_SERVER['REMOTE_ADDR'];
+  $ip = "'" . addslashes($_SERVER['REMOTE_ADDR']) . "'";
   $aid = -1;
 
   if($user->valid())
