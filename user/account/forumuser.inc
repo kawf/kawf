@@ -17,7 +17,7 @@ class ForumUser {
   var $shortname, $password, $cookie;
 
   /* You shouldn't call this directly */
-  function find($where, $req=false)
+  function find($where, $req=true)
   {
     global $tz_to_name;
 
@@ -60,7 +60,7 @@ class ForumUser {
 
   /* These functions are used to find a user - NOTE! always try to call find,
      even for invalid/non-existent users or tzoff wont ever get set! */
-  function find_by_aid($aid, $req=false)
+  function find_by_aid($aid, $req=true)
   {
     if (!is_int($aid)) return $this->find('0', $req);
 

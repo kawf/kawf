@@ -6,10 +6,10 @@ $user->find_by_cookie();
 $uuser= new ForumUser;
 
 if (preg_match("/^\/[^\/]*\/([0-9]+)\.phtml$/", $script_name . $path_info, $regs)) {
-    $uuser->find_by_aid((int)$regs[1]);
+    $uuser->find_by_aid((int)$regs[1], false);
 } else if(empty($path_info) || $path_info =="/") {
     $uuser->find_by_cookie();
-    if(!$uuser->valid(false)) {	/* dont go to login page if user is invalid */
+    if(!$uuser->valid()) {	/* dont go to login page if user is invalid */
 	err_not_found("Unknown user");
     }
     Header("Location: /account/$uuser->aid.phtml");
