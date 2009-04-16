@@ -53,6 +53,7 @@
 <option value="/flames/">FYYFF Forum</option>
 <option value="/wit/">Investment Forum</option>
 <option value="">---</option>
+<option value="/feedback/">Feedback Forum</option>
 <option value="/test/">Test Forum</option>
 <option value="">---</option>
 <option value="/tracking.phtml">Your tracked threads</option>
