@@ -30,7 +30,7 @@
 <br>
 <h2>Are you sure you want to undelete this?</h2>
 
-<form action="undelete.phtml">
+<form action="undelete.phtml" method="post">
 <input type="hidden" name="mid" value="{MSG_MID}">
 <input type="hidden" name="page" value="{PAGE}">
 <input type="submit" name="yes" value="Yes">
