@@ -42,7 +42,7 @@
 <td>
 {THREAD}
 </td>
-<td valign="top">
+<td class="threadlinks" valign="top">
 {THREADLINKS}
 </td>
 </tr>

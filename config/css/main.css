@@ -12,8 +12,17 @@ body { font-family: verdana, arial, geneva; font-size: smaller}
     text-align: center;
     font-size: 1.4em;
     font-weight: bold;
-    color: #000080;
+    color: #008;
 }
+
+.messagelinks a { text-decoration: none; }
+.threadlinks a { text-decoration: none; }
+a.ut { color: #d00; }
+a:hover.ut { color: #f00; text-decoration: underline;}
+a.tt { color: #0d0; }
+a:hover.tt { color: #0f0; text-decoration: underline;}
+a.up { color: #00d; }
+a:hover.up { color: #00f; text-decoration: underline;}
 
 /* indent for all ul heirarchies */
 ul {margin-left: 1em; padding-left: 1em;}
@@ -66,7 +75,7 @@ ul.showthread .messageblock .subject a {
     text-decoration: none;
     font-weight: normal;
     /* for all type of links (visited, etc) */
-    color: #000080;
+    color: #008;
 }
 
 /* signature in showthread */
@@ -93,13 +102,13 @@ ul.showthread .signature {
 .messageblock .subject {
     font-size: 1.4em;
     font-weight: bold;
-    color: #000080;
+    color: #008;
 }
 
 /* message header/info */
 td.messageinfo {
     font-size: 85%;
-    color: #808080;
+    color: #888;
     /* leave space below info section */
     padding-bottom: 0.4em;
 }
