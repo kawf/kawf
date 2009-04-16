@@ -26,15 +26,9 @@ $tpl->set_var("FORUM_NOTICES", get_notices_html($forum, $user->aid));
 $tpl->parse("FORUM_HEADER", "forum_header");
 
 /* Grab the actual message */
+$msg = fetch_message($user, $mid);
+
 $index = find_msg_index($mid);
-$tzoff=isset($user->tzoff)?$user->tzoff:0;
-$sql = "select *, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'";
-$result = mysql_query($sql) or sql_error($sql);
-
-$msg = mysql_fetch_array($result);
-
-$msg['date'] = strftime("%Y-%m-%d %H:%M:%S", $msg['unixtime']);
-
 $sql = "update f_messages" . $indexes[$index]['iid'] . " set views = views + 1 where mid = '" . addslashes($mid) . "'";
 mysql_query($sql) or sql_warn($sql);
 
@@ -48,25 +42,12 @@ $uuser = new ForumUser;
 $uuser->find_by_aid((int)$msg['aid']);
 
 /* Grab some information about the parent (if there is one) */
-if (!isset($msg['pmid']))
-  $msg['pmid'] = $msg['pid'];
+if ($msg['pmid'] != 0)
+  $pmsg = fetch_message($user, $msg['pmid'], 'mid,subject,name' );
 
-if ($msg['pmid'] != 0) {
-  $index = find_msg_index($msg['pmid']);
-  $sql = "select mid, subject, name, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime from f_messages" . $indexes[$index]['iid'] . " where mid = " . $msg['pmid'];
-  $result = mysql_query($sql) or sql_error($sql);
+mark_thread_read($msg, $user);
 
-  $pmsg = mysql_fetch_array($result);
-  $pmsg['date'] = strftime("%Y-%m-%d %H:%M:%S", $pmsg['unixtime']);
-}
-
-/* Mark the thread as read if need be */
-if (isset($tthreads_by_tid[$msg['tid']]) &&
-    $tthreads_by_tid[$msg['tid']]['unixtime'] < $msg['unixtime']) {
-  $sql = "update f_tracking set tstamp = NOW() where fid = " . $forum['fid'] . " and tid = " . $msg['tid'] . " and aid = " . $user->aid;
-  mysql_query($sql) or sql_warn($sql);
-}
-
+/* generate message subjects in the thread this message is a part of */
 $index = find_thread_index($msg['tid']);
 $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . $msg['tid'] . "'";
 $result = mysql_query($sql) or sql_error($sql);

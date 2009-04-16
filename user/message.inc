@@ -226,4 +226,44 @@ function render_message($tpl, $msg, $viewer, $owner=null)
   else
     _message_unset_block_extras($tpl);
 }
+
+function fetch_message($user, $mid, $what = '*')
+{
+    global $indexes;
+
+    /* Grab the actual message */
+    $index = find_msg_index($mid);
+    $tzoff = isset($user->tzoff)?$user->tzoff:0;
+    $sql = "select $what, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime from f_messages"
+	. $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) .  "'";
+    $result = mysql_query($sql) or sql_error($sql);
+    $msg = mysql_fetch_array($result);
+
+    /* FIXME: translate pid -> pmid */
+    if (!isset($msg['pmid']))
+      $msg['pmid'] = $msg['pid'];
+
+    $msg['date'] = strftime("%Y-%m-%d %H:%M:%S", $msg['unixtime']);
+
+    return $msg;
+}
+
+function mark_thread_read($msg, $user)
+{
+  global $tthreads_by_tid, $forum;
+
+  if (!$user->valid()) return;
+
+  $tid = $msg['tid'];
+  $unixtime = $msg['unixtime'];
+
+  /* Mark the thread as read if need be */
+  if (isset($tthreads_by_tid[$tid]) &&
+      $tthreads_by_tid[$tid]['unixtime'] < $unixtime) {
+    $sql = "update f_tracking set tstamp = NOW() where fid = " . $forum['fid']
+      . " and tid = " . $tid . " and aid = " . $user->aid;
+    mysql_query($sql) or sql_warn($sql);
+  }
+}
+
 ?>
