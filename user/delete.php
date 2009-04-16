@@ -11,7 +11,7 @@ if (isset($no)) {
   exit;
 }
 
-if (isset($yes)) {
+if (isset($_POST['yes'])) {
   header("Location: changestate.phtml?state=Deleted&mid=$mid&page=$page&token=$stoken");
   exit;
 }

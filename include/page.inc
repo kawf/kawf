@@ -1,7 +1,6 @@
 <?php
 
 // some layout functions
-// only used for account/admin functions
 function page_header($title)
 {
 ?>
@@ -9,19 +8,19 @@ function page_header($title)
 <html>
 <head>
 <title><?echo $title;?></title>
-<link rel=StyleSheet href="<? echo css_href("account.css")?>" type="text/css">
+<link rel=StyleSheet href="<? echo css_href()?>" type="text/css">
 </head>
 
 <body bgcolor="#FFFFFF">
-<table class="outer">
+<table border="0" cellspacing="0" cellpadding="1" align="center" bgcolor="#000099">
   <tr>
-    <td class="outer">
-      <table class="inner">
-        <tr>
-          <th class="inner"><?echo $title;?></th>
+    <td>
+      <table border="0" align="center" bgcolor="#FFFFFF" cellspacing="0" cellpadding="5">
+        <tr bgcolor="#000099"> 
+          <td><span class="heading"><?echo $title;?></span></td>
         </tr>
         <tr> 
-          <td class="inner">
+          <td>
 <?php
 }
  
@@ -34,8 +33,8 @@ function page_footer()
 <?php
   if (isset($user)) {
 ?>
-        <tr>
-          <th><a href="logout.phtml?token=<? echo $user->token() ?>">Logout</a></th>
+        <tr bgcolor="#000099"> 
+          <td><span class="footing"><a class="footing" href="logout.phtml?token=<? echo $user->token() ?>">Logout</a></span></td>
         </tr>
 <?php
   }
