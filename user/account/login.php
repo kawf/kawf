@@ -38,8 +38,9 @@ if (!isset($page))
 
 $tpl->set_var("PAGE", $page);
 
-if (isset($_POST['submit']) && isset($_POST['email'])) {
+if (isset($_POST['login']) && isset($_POST['email'])) {
   $email = $_POST['email'];
+  $password = $_POST['password'];
   $tpl->set_var("EMAIL", $email);
 
   $user = new AccountUser;
