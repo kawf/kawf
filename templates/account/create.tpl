@@ -23,13 +23,13 @@
 <!-- BEGIN form -->
 <form action="create.phtml" method="post" name="form">
 <table class="postform">
-  <tr><td colspan="2" align="center"><b>Enter New Account Information</b></td></tr>
+  <tr><td colspan="2" align="center" style="padding: 0.5em;"><b>Enter New Account Information</b></td></tr>
   <tr><th>Screen Name:</th><td><input type="text" name="name" value="{NAME}" size="40" maxlength="40"></td></tr>
   <tr><th>Email:</th><td><input type="text" name="email" value="{EMAIL}" size="40" maxlength="40"></td></tr>
   <tr><th>Password:</th><td><input type="password" name="password1" size="40" maxlength="40"></td></tr>
   <tr><th>Re-enter Password:</th><td><input type="password" name="password2" size="40" maxlength="40"></td></tr>
   <tr><th>Secret Key:</th><td><input type="password" name="key" size="40" maxlength="40"></td></tr>
-  <tr><td colspan="2" align="center"><input type="submit" name="submit" value="Create Account"></td></tr>
+  <tr><td colspan="2" align="center" style="padding: 0.5em;"><input type="submit" name="submit" value="Create Account"></td></tr>
 </table>
 <!-- BEGIN tou_agreement -->
 <p>{TOU}</p>
