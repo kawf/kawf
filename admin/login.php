@@ -2,7 +2,11 @@
 
 unset($user);
 
-$message = $_GET['message'];
+$url = $_REQUEST['url'];
+$message = $_REQUEST['message'];
+
+$email = $_POST['email'];
+$password = $_POST['password'];
 
 if (isset($_POST['submit'])) {
   $user = new AdminUser;

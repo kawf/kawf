@@ -20,16 +20,29 @@ unset($update_email);
 
 $error = "";
 
-if (!isset($name))
+$tpl->set_var("PAGE", $_page);	/* $_page set by main.php */
+
+if (isset($_POST['name']))
+  $name = $_POST['name'];
+else
   $name = "";
-if (!isset($email))
+
+if (isset($_POST['email']))
+  $email = $_POST['email'];
+else
   $email = "";
-if (!isset($password1))
+
+if (isset($_POST['password1']))
+  $password1 = $_POST['password1'];
+else
   $password1 = "";
-if (!isset($password2))
+
+if (isset($_POST['password2']))
+  $password2 = $_POST['password2'];
+else
   $password2 = "";
 
-if (isset($submit)) {
+if (isset($_POST['submit'])) {
 
   if (!isset($_POST['token']) || $_POST['token'] != $user->token())
     err_not_found('Invalid token');

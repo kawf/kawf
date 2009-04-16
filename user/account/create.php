@@ -37,19 +37,26 @@ if(isset($create_disabled))
 else
     $tpl->set_var("disabled", "");
 
-if (!isset($page))
+if (isset($_REQUEST['page']))
+  $page = $_REQUEST['page'];
+else
   $page = "";
 
-$tpl->set_var("PAGE", $page);
+$tpl->set_var("PAGE", $page);	/* FIXME: doesn't work. */
 
-if (!isset($name))
+if (isset($_POST['name']))
+  $name = $_POST['name'];
+else
   $name = "";
-if (!isset($email))
+
+if (isset($_POST['email']))
+  $email = $_POST['email'];
+else
   $email = "";
 
 $error = "";
 
-if (isset($submit)) {
+if (isset($_POST['submit'])) {
   $name = striptag($name, $no_tags);
   $name = trim($name);
 
@@ -75,9 +82,13 @@ if (isset($submit)) {
       $error .= "Email address '$email' is invalid\n";
   }
 
-  if (!isset($password1))
+  if (isset($_POST['password1']))
+    $password1 = $_POST['password2'];
+  else
     $password1 = "";
-  if (!isset($password2))
+  if (isset($_POST['password2']))
+    $password2 = $_POST['password2'];
+  else
     $password2 = "";
 
   if (empty($password1) || empty($password2))
@@ -87,12 +98,12 @@ if (isset($submit)) {
       $error .= "Passwords do not match, please check and try again\n";
   }
 
-  if($tou_available && !$_REQUEST["tou_agree"]) {
+  if($tou_available && !$_POST["tou_agree"]) {
     $error .= "You must agree to the Terms Of Use\n";
   }
 }
 
-if (empty($error) && isset($submit)) {
+if (empty($error) && isset($_POST['submit'])) {
   if (!$user->create()) {
     if (!$user->email)
       $error .= "The email address '$email' is taken. Perhaps you forgot your password?\n";

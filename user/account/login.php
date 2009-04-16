@@ -1,8 +1,8 @@
 <?php
 
-if (isset($forgotpassword)) {
-  if (isset($email) && !empty($email))
-    header("Location: forgotpassword.phtml?email=$email");
+if (isset($_POST['forgotpassword'])) {
+  if (isset($_POST['email']) && !empty($_POST['email']))
+    header("Location: forgotpassword.phtml?email=" . $_POST['email']);
   else
     header("Location: forgotpassword.phtml");
 
@@ -38,7 +38,8 @@ if (!isset($page))
 
 $tpl->set_var("PAGE", $page);
 
-if (isset($email)) {
+if (isset($_POST['submit']) && isset($_POST['email'])) {
+  $email = $_POST['email'];
   $tpl->set_var("EMAIL", $email);
 
   $user = new AccountUser;

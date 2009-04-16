@@ -9,12 +9,17 @@ $tpl->set_block("forgotpassword", "form");
 $tpl->set_block("forgotpassword", "success");
 $tpl->set_block("forgotpassword", "unknown");
 
+$page = $_REQUEST['page'];
+
 if (!isset($page))
   $page = "/";
 
-$tpl->set_var("PAGE", $page);
+$tpl->set_var("PAGE", $page);	/* FIXME: doesn't work */
 
-if (isset($email)) {
+/* forgotpassword might get a POST with submit/email, or
+   a simple GET with email */
+if (isset($_REQUEST['email'])) {
+  $email = $_REQUEST['email'];
   $tpl->set_var("EMAIL", $email);
 
   $user = new AccountUser;

@@ -25,6 +25,7 @@ The email address '{EMAIL}' is unknown. Please check the address and try again<p
 <form action="forgotpassword.phtml" method="post">
 Email address: <input type="text" name="email" value="{EMAIL}"><br>
 <input type="submit" value="Help me"><p>
+<input type="hidden" name="page" value="{PAGE}">
 </form>
 <!-- END form -->
 
