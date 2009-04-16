@@ -118,9 +118,9 @@ $tpl->set_var("THREAD", $threadmsg);
 /* generate threadlinks */
 if ($user->valid()) {
   if (isset($tthreads_by_tid[$msg['tid']])) {
-    $threadlinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\"><font color=\"#d00000\">ut</font></a>";
+    $threadlinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\" class=\"ut\" title=\"Untrack thread\">ut</a>";
   } else {
-    $threadlinks = "<a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\"><font color=\"#00d000\">tt</font></a>";
+    $threadlinks = "<a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\" class=\"tt\" title=\"Track thread\">tt</a>";
   }
 } else
   $threadlinks = "";
@@ -129,7 +129,7 @@ if (isset($tthreads_by_tid[$msg['tid']]) &&
    ($thread['unixtime'] > $tthreads_by_tid[$msg['tid']]['unixtime'])) {
   $tpl->set_var("BGCOLOR", "#ccccee");
   if (count($messages) > 1)
-    $threadlinks .= "<br><a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "&amp;time=" . time() . "\"><font color=\"#0000f0\">up</font></a>";
+    $threadlinks .= "<br><a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "&amp;time=" . time() . "\" class=\"up\" title=\"Update thread\">up</a>";
 } else
   $tpl->set_var("BGCOLOR", "#eeeeee");
 

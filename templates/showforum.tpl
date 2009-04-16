@@ -50,7 +50,7 @@
   <td>
 {MESSAGES}
   </td>
-  <td valign="top">
+  <td class="messagelinks" valign="top">
 {MESSAGELINKS}
   </td>
 </tr>
