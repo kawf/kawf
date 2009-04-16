@@ -125,7 +125,7 @@ $user->find_by_cookie();
 
 function update_visits()
 {
-  global $user, $_SERVER['REMOTE_ADDR'];
+  global $user, $_SERVER;
   $ip = "'" . addslashes($_SERVER['REMOTE_ADDR']) . "'";
   $aid = -1;
 
