@@ -9,7 +9,6 @@
 
 {HEADER}
 
-<center>
 <h1>Account - Edit</h1><p>
 
 <!-- BEGIN error -->
@@ -36,9 +35,9 @@ Your password has been changed<p>
 <tr><th>&nbsp;Re-enter Password:</th><td><input type="password" name="password2" maxlength="20"></td></tr>
 <tr><td align="center" colspan="2"><input type="submit" name="submit" value="Update"></td></tr>
 </table>
-<input type="hidden" name="token" value={token}>
+<input type="hidden" name="page" value="{PAGE}">
+<input type="hidden" name="token" value="{token}">
 </form>
-</center>
 
 {FOOTER}
 

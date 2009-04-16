@@ -26,12 +26,18 @@ $successes = array(
   "forgot_password",
 );
 
+if (!isset($_REQUEST['cookie']))
+    err_not_found('No cookie');
+
+$cookie = $_REQUEST['cookie'];
+
 $pending = sql_querya("select * from u_pending where cookie = '" . addslashes($cookie) . "'");
 if (!$pending) {
   if (isset($cookie) && !empty($cookie)) {
     $error = "unknown";
     $tpl->set_var("COOKIE", $cookie);
-  }
+  } else
+    err_not_found('No cookie');
 } else {
   $user = new AccountUser;
   $user->find_by_aid((int)$pending['aid']);

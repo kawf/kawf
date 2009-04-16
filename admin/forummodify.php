@@ -4,7 +4,7 @@ $user->req("ForumAdmin");
 
 /* If submit is set, shove the data into the database (well, after some */
 /* error checking) */
-if (isset($submit)) {
+if (isset($_POST['submit'])) {
   if(!is_valid_integer($_POST['fid']))
       err_not_found("Invalid fid");
   $fid=$_POST['fid'];
