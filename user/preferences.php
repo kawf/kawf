@@ -34,7 +34,7 @@ function do_option($name)
     $tpl->set_var(strtoupper($name), '');
 }
 
-if (isset($submit)) {
+if (isset($_POST['submit'])) {
   option_changed('ShowOffTopic', "showing of off-topic posts");
 #  option_changed('ShowModerated', "showing of moderated posts");
   option_changed('Collapsed', "collapsed view of threads");
