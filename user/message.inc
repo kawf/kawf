@@ -117,6 +117,27 @@ function blank_extra($tpl, $tag, $bool)
     $tpl->set_var($tag, "");
 }
 
+function postprocess($msg)
+{
+  $out = '';
+
+  if (!empty($msg['message']))
+    $out .= nl2brPre::out($msg['message']);
+
+  if (!empty($msg['url'])) {
+    $url = $msg['url'];
+    // $target = " target=\"_blank\"";
+    if (!empty($msg['urltext']))
+      $text = $msg['urltext'];
+    else
+      $text = $msg['url'];
+    $out .=
+      "<ul><li class=\"url\"><a href=\"$url\"$target>$text</a></li></ul>\n";
+  }
+
+  return $out;
+}
+
 /* pre is a hack for stacking used by showthread.php */
 function render_message($tpl, $msg, $viewer, $owner=null)
 {
@@ -156,21 +177,7 @@ function render_message($tpl, $msg, $viewer, $owner=null)
     $tpl->set_var("MSG_NAMEEMAIL", $msg['name']);
   }
 
-  if (!empty($msg['message']))
-    $msg['message'] = nl2brPre::out($msg['message']);
-
-  if (!empty($msg['url'])) {
-    $url = $msg['url'];
-    // $target = " target=\"_blank\"";
-    if (!empty($msg['urltext']))
-      $text = $msg['urltext'];
-    else
-      $text = $msg['url'];
-    $msg['message'] .=
-      "<ul><li class=\"url\"><a href=\"$url\"$target>$text</a></ul>\n";
-  }
-
-  $message = $msg['message'];
+  $message = postprocess($msg);
 
   /* if 'imageurl' is set, it means the message itself does not have the
      image (such as for edit or preview) in it. */
