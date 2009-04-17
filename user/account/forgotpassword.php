@@ -14,7 +14,10 @@ $page = $_REQUEST['page'];
 if (!isset($page))
   $page = "/";
 
-$tpl->set_var("PAGE", $page);	/* FIXME: doesn't work */
+/* FIXME: Dumb workaround */
+unset($tpl->varkeys["PAGE"]);
+unset($tpl->varvals["PAGE"]);
+$tpl->set_var("PAGE", $page);
 
 /* forgotpassword might get a POST with submit/email, or
    a simple GET with email */

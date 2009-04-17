@@ -42,7 +42,10 @@ if (isset($_REQUEST['page']))
 else
   $page = "";
 
-$tpl->set_var("PAGE", $page);	/* FIXME: doesn't work. */
+/* FIXME: Dumb workaround */
+unset($tpl->varkeys["PAGE"]);
+unset($tpl->varvals["PAGE"]);
+$tpl->set_var("PAGE", $page);
 
 if (isset($_POST['name']))
   $name = $_POST['name'];
