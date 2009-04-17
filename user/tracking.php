@@ -48,7 +48,7 @@ $tpl->set_var("TIME", $time);
 
 function display_thread($thread)
 {
-  global $user, $forum, $ulkludge;
+  global $user, $forum;
 
   $options = explode(",", $thread['flags']);
   foreach ($options as $name => $value)
@@ -68,10 +68,7 @@ function display_thread($thread)
   if (empty($messagestr))
     return array(0, "");
 
-  if (!$ulkludge || isset($user->pref['SimpleHTML']))
-    $messagestr .= "</ul>";
-
-  return array($count, "<ul class=\"thread\">\n" . $messagestr);
+  return array($count, "<ul class=\"thread\">\n" . $messagestr . "</ul>");
 }
 
 $sql = "select * from f_forums order by fid";

@@ -147,7 +147,7 @@ $tpl->set_var("TIME", $time);
 
 function display_thread($thread)
 {
-  global $user, $forum, $ulkludge;
+  global $user, $forum;
 
   if (!empty($thread['flags'])) {
     $options = explode(",", $thread['flags']);
@@ -169,13 +169,10 @@ function display_thread($thread)
   if (empty($messagestr))
     return array(0, "", "");
 
-  if (!$ulkludge || isset($user->pref['SimpleHTML']))
-    $messagestr .= "</ul>";
-
   $message = reset($messages);
   $state = $message['state'];
 
-  return array($count, "<ul class=\"thread\">\n" . $messagestr, $state);
+  return array($count, "<ul class=\"thread\">\n" . $messagestr . "</ul>", $state);
 }
 
 $numshown = 0;

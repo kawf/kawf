@@ -27,6 +27,7 @@ require_once("util.inc");
 require_once("forumuser.inc");
 require_once("timezone.inc");
 
+/*
 require_once("phpSniff.class.php");
 
 if($_SERVER['HTTP_REFERER']) {
@@ -44,6 +45,7 @@ $ua = new phpSniff();
 $ulkludge =
 	($ua->property('browser') == "ns" && $ua->property('maj_ver') == 4 && $ua->property('platform') == "mac") ||
 	($ua->property('browser') == "ie" && $ua->property('maj_ver') == 5 && $ua->property('platform') == "win");
+*/
 
 sql_open($database);
 mysql_query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
