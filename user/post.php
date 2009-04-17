@@ -159,6 +159,9 @@ if (isset($_POST['postcookie'])) {
 
   /* Sanitize the strings */
   $msg['name'] = stripcrap($user->name);
+
+  /* FIXME: bug 2771354 - dont throw away the email; just mark
+     the message with some sort of flag to indicate hidden */
   if (isset($_POST['ExposeEmail']))
     $msg['email'] = stripcrap($user->email);
   else

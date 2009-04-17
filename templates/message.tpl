@@ -6,22 +6,19 @@
   </tr>
   <tr class="messageinforow">
     <td class="messageinfo" align="left">
-<!-- BEGIN account_id -->
-      User account number: <a href="/account/{MSG_AID}.phtml?page={PAGE}">{MSG_AID}</a>
-<!-- END account_id -->
 <!-- BEGIN forum_admin -->
-      <a href="/admin/su.phtml?aid={MSG_AID}&amp;page={PAGE}">su</a> ({MSG_EMAIL})
+      Source: {MSG_IP} {MSG_EMAIL}
+     (<a href="/admin/su.phtml?aid={MSG_AID}&amp;page={PAGE}" title="Become AID {MSG_AID} (USE WITH CAUTION)">su</a>)<br>
 <!-- END forum_admin -->
+      Posted by: <b>{MSG_NAMEEMAIL}</b>
+      (<a href="/account/{MSG_AID}.phtml?page={PAGE}">{MSG_AID}</a>)
+      on {MSG_DATE}
 <!-- BEGIN advertiser -->
-      <b>Advertiser</b>
+      <b> - Advertiser</b>
 <!-- END advertiser -->
       <br>
-<!-- BEGIN message_ip -->
-      Posting IP Address: {MSG_IP}<br>
-<!-- END message_ip -->
-      <b>Posted by {MSG_NAMEEMAIL} on {MSG_DATE}</b><br>
 <!-- BEGIN parent -->
-      In Reply to: <a href="{PMSG_MID}.phtml">{PMSG_SUBJECT}</a> posted by {PMSG_NAME} on {PMSG_DATE}<br>
+      In Reply to: <a href="{PMSG_MID}.phtml">{PMSG_SUBJECT}</a> posted by <b>{PMSG_NAME}</b> on {PMSG_DATE}<br>
 <!-- END parent -->
     </td>
     <td class="tools" align="right" nowrap="nowrap">

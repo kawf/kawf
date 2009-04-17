@@ -9,11 +9,8 @@ function message_set_block($tpl)
   $tpl->set_block("owner", "statelocked");	/* opt */
   $tpl->set_block("message", "reply");		/* opt */
 
-  $tpl->set_block("message", "account_id");
-
   $tpl->set_block("message", "forum_admin");	/* opt */
   $tpl->set_block("message", "advertiser");	/* opt */
-  $tpl->set_block("message", "message_ip");	/* opt */
 
   $tpl->set_block("message", "parent");		/* manual */
 
@@ -32,7 +29,6 @@ function _message_unset_block_extras($tpl)
     "owner" => "",
     "forum_admin" => "",
     "advertiser" => "",
-    "message_ip" => "",
     "parent" => "",	/* must be handled manually */
     "changes" => "",
   ));
@@ -41,6 +37,9 @@ function _message_unset_block_extras($tpl)
 function _message_render_extras($tpl, $msg, $viewer, $owner)
 {
   global $forum, $thread;
+  $moderator = $viewer->capable($forum['fid'], 'Moderate');
+  $advertiser = $viewer->capable($forum['fid'], 'Advertise');
+  $locker = $viewer->capable($forum['fid'], 'Lock');
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
@@ -48,9 +47,10 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
       $flags[$flag] = true;
   }
 
-  if ($viewer->capable($forum['fid'], 'Moderate')) {
+  if ($moderator) {
     $tpl->set_var("MSG_IP", $msg['ip']);
-    $tpl->set_var("MSG_EMAIL", $owner->email);
+    /* unfortunately, may be blank, if poster did not set ExposeEmail */
+    $tpl->set_var("MSG_EMAIL", $msg['email']);
     $msg['changes'] = trim($msg['changes']);
     if(strlen($msg['changes'])>0) {
 	$changes = preg_replace("/&/", "&amp;", $msg['changes']);
@@ -62,17 +62,11 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
     }
   } else {
     $tpl->set_var("changes", "");
-    $tpl->set_var("message_ip", "");
+    $tpl->set_var("forum_admin", "");
   }
 
-  if (!$viewer->capable($forum['fid'], 'Moderate') || !$msg['aid'])
-    $tpl->set_var("forum_admin", "");
-
-  if (!$owner->capable($forum['fid'], 'Advertise'))
+  if (!$advertiser)
     $tpl->set_var("advertiser", "");
-
-  if (!$msg['aid'])
-    $tpl->set_var("account_id", "");
 
   /* handle stupid tool links. templating system sucks; we have to
      explicitly unset EVERY block we do not use */
@@ -81,11 +75,11 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
      so we can deterministically place the | bars such that every combination
      looks right. Edit/Delete/Undelete all have | after in message.tpl */
 
-  if (!$viewer->valid() || $msg['aid'] == 0
-    || (isset($thread['flag.Locked']) && !$viewer->capable($forum['fid'], 'Lock'))) {
-    /* NO LINKS - viwer not logged in, or does not have lock permissions */
+  if (!$viewer->valid() || (isset($thread['flag.Locked']) && !$locker)) {
+    /* viewer not logged in, or does not have lock permissions and
+       thread is locked */
     $reply = false;
-    $own = false;
+    $own = false;				/* NO LINKS */
   } else if ($msg['aid'] != $viewer->aid) {
     /* message does not belong to viewer */
     $reply = true;				/* Reply */
@@ -141,7 +135,20 @@ function postprocess($msg)
 /* pre is a hack for stacking used by showthread.php */
 function render_message($tpl, $msg, $viewer, $owner=null)
 {
-  global $Debug;
+  global $Debug, $forum;
+  $moderator = $viewer->capable($forum['fid'], 'Moderate');
+
+  /*---------------------------------------------------------------------*/
+  /* Bug 2771354 */
+  /* Unfortunately, ExposeEmail is indicated by a *non-empty* msg field!
+     This means that even a moderator cannot what email the user had at the
+     time of posting this message! */
+  $expose_email = !empty($msg['email']);
+
+  /* for now, just hack in the current email for moderators to see */
+  if (!$expose_email)
+      $msg['email'] = stripcrap($owner->email);
+  /*---------------------------------------------------------------------*/
 
   $extras=true;
   if (!isset($owner)) {
@@ -169,10 +176,11 @@ function render_message($tpl, $msg, $viewer, $owner=null)
       $flags[$flag] = true;
   }
 
-  if ($viewer->valid() && !empty($msg['email'])) {
+  /* Show CURRENT email information of user */
+  if ($moderator || ($viewer->valid() && $expose_email)) {
     /* Lame spamification */
-    $msg['email'] = preg_replace("/@/", "&#" . ord('@') . ";", $msg['email']);
-    $tpl->set_var("MSG_NAMEEMAIL", "<a href=\"mailto:" . $msg['email'] . "\">" . $msg['name'] . "</a>");
+    $email = preg_replace("/@/", "&#" . ord('@') . ";", stripcrap($owner->email));
+    $tpl->set_var("MSG_NAMEEMAIL", "<a href=\"mailto:" . $email . "\">" . $msg['name'] . "</a>");
   } else {
     $tpl->set_var("MSG_NAMEEMAIL", $msg['name']);
   }
