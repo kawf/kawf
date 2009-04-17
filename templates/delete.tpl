@@ -27,7 +27,6 @@
 
 {PREVIEW}
 
-<br>
 <h2>Are you sure you want to delete this?</h2>
 
 <form action="delete.phtml" method="post">
@@ -36,6 +35,8 @@
 <input type="submit" name="yes" value="Yes">
 <input type="submit" name="no" value="No">
 </form>
+
+<br>
 
 {FOOTER}
 
