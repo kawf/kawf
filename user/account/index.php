@@ -100,9 +100,8 @@ if($user->aid == 1) echo "<td>email</td>\n";
 
 <h2>Signature</h2>
 <?php
-echo "<p>\n" . nl2br($uuser->signature) . "\n</p>\n";
-?>
-<?php
+  echo "<p>\n" . nl2br($uuser->signature) . "\n</p>\n";
+
   if($user->aid == 1 && $_GET['verbose']) {
     echo "<h2>IP addresses</h2>\n";
     echo "<table class=\"outer\">\n <tr>\n";
@@ -122,6 +121,9 @@ echo "<p>\n" . nl2br($uuser->signature) . "\n</p>\n";
     echo "</tr>\n";
     echo "</table>\n";
   }
+
+  if($_GET['page'])
+    echo "<p><a href=\"" . $_GET['page'] . "\">Return to forums</a></p>\n";
 ?>
 
 </body>
