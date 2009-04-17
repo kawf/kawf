@@ -6,10 +6,10 @@
   </tr>
   <tr class="messageinforow">
     <td class="messageinfo" align="left">
-<!-- BEGIN forum_admin -->
+<!-- BEGIN forum_mod -->
       Source: {MSG_IP} {MSG_EMAIL}
      (<a href="/admin/su.phtml?aid={MSG_AID}&amp;page={PAGE}" title="Become AID {MSG_AID} (USE WITH CAUTION)">su</a>)<br>
-<!-- END forum_admin -->
+<!-- END forum_mod -->
       Posted by: <b>{MSG_NAMEEMAIL}</b>
       (<a href="/account/{MSG_AID}.phtml?page={PAGE}">{MSG_AID}</a>)
       on {MSG_DATE}
