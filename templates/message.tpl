@@ -7,7 +7,7 @@
   <tr class="messageinforow">
     <td class="messageinfo" align="left">
 <!-- BEGIN account_id -->
-      User account number: <a href="/account/{MSG_AID}.phtml" target="_blank">{MSG_AID}</a>
+      User account number: <a href="/account/{MSG_AID}.phtml?page={PAGE}">{MSG_AID}</a>
 <!-- END account_id -->
 <!-- BEGIN forum_admin -->
       <a href="/admin/su.phtml?aid={MSG_AID}&amp;page={PAGE}">su</a> ({MSG_EMAIL})
