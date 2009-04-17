@@ -91,8 +91,7 @@ list($messages, $tree, $path) = fetch_thread($thread, $vmid);
 
 $threadmsg = "<ul class=\"thread\">\n";
 $threadmsg .= list_thread(print_subject, $messages, $tree, reset($tree), $thread, $path);
-if (!$ulkludge)
-  $threadmsg .= "</ul>\n";
+$threadmsg .= "</ul>\n";
 
 $tpl->set_var("THREAD", $threadmsg);
 

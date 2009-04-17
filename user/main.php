@@ -27,6 +27,7 @@ require_once("util.inc");
 require_once("forumuser.inc");
 require_once("timezone.inc");
 
+/*
 require_once("phpSniff.class.php");
 
 $ua = new phpSniff();
@@ -36,6 +37,7 @@ $ua = new phpSniff();
 $ulkludge =
 	($ua->property('browser') == "ns" && $ua->property('maj_ver') == 4 && $ua->property('platform') == "mac") ||
 	($ua->property('browser') == "ie" && $ua->property('maj_ver') == 5 && $ua->property('platform') == "win");
+*/
 
 sql_open($database);
 
