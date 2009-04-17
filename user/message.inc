@@ -10,7 +10,7 @@ function message_set_block($tpl)
   $tpl->set_block("owner", "statelocked");	/* opt */
   $tpl->set_block("message", "reply");		/* opt */
 
-  $tpl->set_block("message", "forum_admin");	/* opt */
+  $tpl->set_block("message", "forum_mod");	/* opt */
   $tpl->set_block("message", "advertiser");	/* opt */
   $tpl->set_block("message", "sponsor");	/* opt */
 
@@ -29,7 +29,7 @@ function _message_unset_block_extras($tpl)
   $tpl->set_var(array(
     "reply" => "",
     "owner" => "",
-    "forum_admin" => "",
+    "forum_mod" => "",
     "advertiser" => "",
     "sponsor" => "",
     "parent" => "",	/* must be handled manually */
@@ -65,7 +65,7 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
     }
   } else {
     $tpl->set_var("changes", "");
-    $tpl->set_var("forum_admin", "");
+    $tpl->set_var("forum_mod", "");
   }
 
   if (!$advertiser)
