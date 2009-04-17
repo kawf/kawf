@@ -3,9 +3,6 @@
 $user->req();
 
 if ($user->status != 'Active') {
-  if (isset($why_url)) 
-    header("Location: $why_url");
-
   echo "Your account isn't validated\n";
   exit;
 }
