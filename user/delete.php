@@ -86,6 +86,7 @@ $tpl->set_var("disabled", "");
 
 render_message($tpl, $msg, $user);
 
+/* $_page set by main.php from _REQUEST */
 $tpl->set_var("PAGE", $_page);
 
 $tpl->parse("PREVIEW", "message");

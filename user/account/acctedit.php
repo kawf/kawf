@@ -20,7 +20,8 @@ unset($update_email);
 
 $error = "";
 
-$tpl->set_var("PAGE", $_page);	/* $_page set by main.php */
+/* $_page set by main.php from _REQUEST */
+$tpl->set_var("PAGE", $_page);
 
 if (isset($_POST['name']))
   $name = $_POST['name'];

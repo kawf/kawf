@@ -457,10 +457,13 @@ if (!$accepted || isset($preview)) {
     }
   }
 
+  /* $_page set by main.php from $_REQUEST */
   if (!isset($_page) || empty($_page))
     $tpl->set_var("refresh_page", "");
 
   /* FIXME: Dumb workaround */
+  /* ??? why are we not getting $_page from $tpl here, like we do for $_domain
+   * here and $_page in showforum and tracking? */
   unset($tpl->varkeys["PAGE"]);
   unset($tpl->varvals["PAGE"]);
 
