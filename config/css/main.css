@@ -111,12 +111,13 @@ ul.showthread .signature {
 /* message header/info */
 td.messageinfo {
     font-size: 85%;
-    color: #888;
+    color: #666;
     /* leave space below info section */
     padding-bottom: 0.4em;
 }
-td.messageinfo a:link { color: #8080ff; }
-td.messageinfo a:visited { color: #b080ff; }
+td.messageinfo a:link { color: #66f; }
+td.messageinfo a:visited { color: #96e; }
+td.messageinfo a:hover { color: #008; }
 
 /* embedded url in message */
 .message li.url { list-style: disc outside none; }
