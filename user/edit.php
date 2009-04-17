@@ -104,6 +104,9 @@ if (!empty($msg['flags'])) {
 if ($_REQUEST['preview'])
     $preview = 1;
 
+if ($_REQUEST['imgpreview'])
+    $imgpreview = 1;
+
 if (!isset($_REQUEST['message'])) {
   /* hit "edit" link */
   $preview = 1;
@@ -215,6 +218,8 @@ if (!empty($nmsg['url']) && !preg_match("/^[a-z]+:\/\//i", $nmsg['url']))
 if (!empty($nmsg['imageurl']) && !preg_match("/^[a-z]+:\/\//i", $nmsg['imageurl']))
   $nmsg['imageurl'] = "http://".$nmsg['imageurl'];
 
+/* first time around, there is an imageurl set, and the user
+   did not preview, force the action to "preview" */
 if (!empty($nmsg['imageurl']) && !isset($imgpreview))
   $preview = 1;
 
