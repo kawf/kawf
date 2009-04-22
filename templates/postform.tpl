@@ -23,7 +23,7 @@ This thread is locked. No replies are allowed.<br>
 <table>
 <tr>
   <th>Logged in as:</th>
-  <td style="padding: 0.7em;">
+  <td style="padding: 0.5em;">
     <b>{USER_NAME}</b>&nbsp;&nbsp;&nbsp;<a href="/preferences.phtml?page={PAGE}">Preferences</a>
   | <a href="/tips/"><b>Posting Tips</b></a>
   </td>
@@ -66,7 +66,7 @@ This thread is locked. No replies are allowed.<br>
 </tr>
 <tr>
   <th>Logout:</th>
-  <td style="padding: 0.7em;">
+  <td style="padding: 0.5em;">
     <a href="/logout.phtml?url={URL}&amp;token={token}">Logout this session</a> |
     <a href="/logout.phtml?all&amp;url={URL}&amp;token={token}">Logout ALL SESSIONS</a>
   </td>
