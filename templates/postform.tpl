@@ -51,17 +51,17 @@ This thread is locked. No replies are allowed.<br>
   <td><input class="text" type="text" name="imageurl" value="{IMAGEURL}" size="80"></td>
 </tr>
 <tr>
-  <th valign="top">Post Message:</th>
-  <td style="padding: 0.7em;">
+  <th style="padding-top: 0.5em;" valign="top">Post Message:</th>
+  <td style="padding: 0.5em;">
+  <input type="submit" name="preview" value="Preview Message">
+  <input type="submit" name="post" value="{SUBMITTEXT}"><br>
   <!-- <input type="reset" value="Reset Message"><br> -->
   <input type="checkbox" name="ExposeEmail"{EXPOSEEMAIL}>
     Show email address in post?<br>
   <input type="checkbox" name="EmailFollowup"{EMAILFOLLOWUP}>
     Send email on followup replies?<br>
   <input type="checkbox" name="TrackThread"{TRACKTHREAD}>
-    Track thread?<br><br>
-  <input type="submit" name="preview" value="Preview Message">
-  <input type="submit" name="post" value="{SUBMITTEXT}">
+    Track thread?
   </td>
 </tr>
 <tr>
