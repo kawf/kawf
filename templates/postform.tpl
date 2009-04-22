@@ -23,8 +23,8 @@ This thread is locked. No replies are allowed.<br>
 <table>
 <tr>
   <th>Logged in as:</th>
-  <td style="padding: 0.5em;">
-    {USER_NAME}&nbsp;&nbsp;&nbsp;<a href="/preferences.phtml?page={PAGE}">Preferences</a>
+  <td style="padding: 0.7em;">
+    <b>{USER_NAME}</b>&nbsp;&nbsp;&nbsp;<a href="/preferences.phtml?page={PAGE}">Preferences</a>
   | <a href="/tips/"><b>Posting Tips</b></a>
   </td>
 </tr>
@@ -52,7 +52,7 @@ This thread is locked. No replies are allowed.<br>
 </tr>
 <tr>
   <th valign="top">Post Message:</th>
-  <td>
+  <td style="padding: 0.7em;">
   <!-- <input type="reset" value="Reset Message"><br> -->
   <input type="checkbox" name="ExposeEmail"{EXPOSEEMAIL}>
     Show email address in post?<br>
@@ -66,7 +66,7 @@ This thread is locked. No replies are allowed.<br>
 </tr>
 <tr>
   <th>Logout:</th>
-  <td style="padding: 0.5em;">
+  <td style="padding: 0.7em;">
     <a href="/logout.phtml?url={URL}&amp;token={token}">Logout this session</a> |
     <a href="/logout.phtml?all&amp;url={URL}&amp;token={token}">Logout ALL SESSIONS</a>
   </td>
