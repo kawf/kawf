@@ -16,8 +16,8 @@ if ($_SERVER['argc']<2) {
 $argv = $_SERVER['argv'];
 array_shift($argv);	// pop off argv[0]
 foreach ($argv as $ip)
-    $where[] = "ip = '$ip'";
-$where = " where " . implode (' or ', $where);
+    $where[] = "'$ip'";
+$where = " where ip in (" . implode (', ', $where) . ")";
 
 sql_open($database);
 
