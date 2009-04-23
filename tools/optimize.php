@@ -1,26 +1,34 @@
 <?php
 
-require('../sql.inc');
+/* First setup the path */
+/* $include_path = "..:../include:../../php"; */
+$include_path = "..:../include:../config";
+$old_include_path = ini_get("include_path");
+if (!empty($old_include_path))
+  $include_path .= ":" . $old_include_path;
+ini_set("include_path", $include_path);
 
-sql_open_admin();
+include("config.inc");
+include("sql.inc");
+
+sql_open($database);
 
 if(!ini_get('safe_mode'))
     set_time_limit(0);
 
-$sql = "select * from forums";
-$res1 = mysql_db_query('a4', $sql) or sql_error($sql);
+$alltables = sql_query("SHOW TABLES");
+if(!$alltables) die("show tables fail: " . sql_error() . "\n");
 
-while ($forum = mysql_fetch_array($res1)) {
-  echo $forum['shortname'] . "\n";
-
-  $fdb = "forum_" . $forum['shortname'];
-
-  $sql = "select * from indexes";
-  $res2 = mysql_db_query($fdb, $sql) or sql_error($sql);
-
-  while ($index = mysql_fetch_array($res2)) {
-    $sql = "optimize table messages" . $index['iid'];
-    mysql_db_query($fdb, $sql) or sql_error($sql);
-  }
+while ($table = mysql_fetch_assoc($alltables))
+{
+   foreach ($table as $db => $tablename)
+   {
+      echo "optimize table $tablename\n";
+      sql_query("OPTIMIZE TABLE $tablename")
+          or die(mysql_error());
+   }
 }
+
+sql_close();
+
 ?>
