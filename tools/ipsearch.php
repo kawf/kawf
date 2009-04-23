@@ -23,7 +23,7 @@ sql_open($database);
 
 $res = sql_query("select fid from f_forums");
 while ($forum = sql_fetch_array($res))
-  $fids[] = "select aid, ip, name, email from f_messages" . $forum['fid'] . $where . " group by aid";
+  $fids[] = "select aid, ip, name, email from f_messages" . $forum['fid'] . $where;
 
 $fids = implode(' UNION ', $fids);
 
