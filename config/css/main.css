@@ -148,3 +148,10 @@ td.messageinfo a:hover { color: #008; }
 
 /* IE wants inline for it to pack right */
 .postform { display: inline; }
+
+/* force mozilla to show broken image icon */
+img:-moz-broken {
+    -moz-force-broken-image-icon: 1;
+    width: 24px;
+    height: 24px;
+}
