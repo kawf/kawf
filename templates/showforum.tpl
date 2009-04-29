@@ -28,20 +28,19 @@
 | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
 | <a href="#post"><b>Post New Thread</b></a>
   </td>
+<!-- BEGIN update_all -->
   <td align="right">
-  <a href="/preferences.phtml?page={PAGE}">Preferences</a>
+    <a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a>
   </td>
+<!-- END update_all -->
 </tr>
 <tr class="tools">
   <td align="left" valign="bottom"><b>Page:</b> {PAGES}</td>
   <td align="right" valign="bottom">{NUMTHREADS} threads in {NUMPAGES} pages</td>
 </tr>
-</table>
-
-<form method="get" action="/redirect.phtml" style="display: inline; margin: 0;">
-<table width="100%" border="0" cellpadding="2" cellspacing="2">
 <tr>
-<td align="left">
+<td>
+<form method="get" action="/redirect.phtml" style="display: inline; margin: 0;">
 <select name="url" onChange="if (this.selectedIndex) { location = this.options[this.selectedIndex].value; }">
 <option value="">Choose Discussion Forum</option>
 <option value="/other/">Miscellaneous Forum</option>
@@ -59,15 +58,11 @@
 <option value="/tracking.phtml">Your tracked threads</option>
 </select>
 <noscript><input type="submit" value="GO"></noscript>
+</form>
 </td>
-<!-- BEGIN update_all -->
-<td align="right">
-<a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a>
-</td>
-<!-- END update_all -->
 </tr>
 </table>
-</form>
+
 
 <!-- BEGIN normal -->
 <table width="100%" border="0" cellpadding="2" cellspacing="2">
