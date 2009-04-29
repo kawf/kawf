@@ -179,4 +179,41 @@ $create_pending_table = "
     unique key (cookie)
   )";
 
+$create_preferences_table = "
+  create table if not exists u_preferences (
+    id int not null,
+    name varchar(50) not null,
+    primary key (id)
+  )";
+
+$insert_static_preferences = "
+  replace into u_preferences
+    (id, name)
+  values
+    (1, 'ShowOffTopic'),
+    (2, 'ShowModerated'),
+    (3, 'Collapsed'),
+    (4, 'SecretEmail'),
+    (5, 'FlatThread'),
+    (6, 'SimpleHTML'),
+    (7, 'AutoTrack'),
+    (8, 'HideSignatures'),
+    (9, 'AutoUpdateTracking'),
+    (10, 'OldestFirst'),
+    (11, 'SortbyActive'),
+    (12, 'CollapseOffTopic'),
+    (13, 'ThreadsPerPage'),
+    (14, 'Style')
+  ";
+
+$create_user_preferences_table = "
+  create table if not exists u_user_preferences (
+    id int not null auto_increment,
+    aid int not null,
+    preference_id int not null,
+    preference_value varchar(255),
+    primary key (id),
+    unique key (aid, preference_id)
+  )";
+
 ?>
