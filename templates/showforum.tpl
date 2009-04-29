@@ -28,9 +28,11 @@
 | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
 | <a href="#post"><b>Post New Thread</b></a>
   </td>
+<!-- BEGIN update_all -->
   <td align="right">
-  <a href="/preferences.phtml?page={PAGE}">Preferences</a>
+    <a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a>
   </td>
+<!-- END update_all -->
 </tr>
 <tr class="tools">
   <td align="left" valign="bottom"><b>Page:</b> {PAGES}</td>
@@ -38,10 +40,6 @@
 </tr>
 </table>
 
-
-<!-- BEGIN update_all -->
-<div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a></div>
-<!-- END update_all -->
 
 <!-- BEGIN normal -->
 <table width="100%" border="0" cellpadding="2" cellspacing="2">
