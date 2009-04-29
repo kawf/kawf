@@ -24,9 +24,6 @@
   | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
   | <a href="../"><b>Return to {FORUM_NAME}</b></a>
   </td>
-  <td align="right">
-    <a href="/preferences.phtml?page={PAGE}">Preferences</a>
-  </td>
 </tr>
 </table>
 
@@ -44,9 +41,6 @@
     <a href="/tips/?page={PAGE}" target="_blank">Forum Tips</a>
   | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
   | <a href="../"><b>Return to {FORUM_NAME}</b></a>
-  </td>
-  <td align="right">
-    <a href="/preferences.phtml?page={PAGE}">Preferences</a>
   </td>
 </tr>
 </table>

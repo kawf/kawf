@@ -21,9 +21,6 @@
     <a href="/tips/?page={PAGE}" target="_blank"><b>Forum Tips</b></a>
   | <a href="/search/?page={PAGE}" target="_blank">Search Forums</a>
   </td>
-  <td align="right">
-    <a href="/preferences.phtml?page={PAGE}">Preferences</a>
-  </td>
 </tr>
 </table>
 
@@ -75,9 +72,6 @@
   <td align="left">
     <a href="/tips/?page={PAGE}" target="_blank"><b>Forum Tips</b></a>
   | <a href="/search/?page={PAGE}" target="_blank">Search Forums</a>
-  </td>
-  <td align="right">
-    <a href="/preferences.phtml?page={PAGE}">Preferences</a>
   </td>
 </tr>
 </table>
