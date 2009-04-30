@@ -2,10 +2,8 @@
 
 $user->req("ForumAdmin");
 
-if(is_valid_integer($_POST['aid'])) {
-    $aid=$_POST['aid'];
-} else if(is_valid_integer($_GET['aid'])) {
-    $aid=$_GET['aid'];
+if(is_valid_integer($_REQUEST['aid'])) {
+    $aid=$_REQUEST['aid'];
 } else {
     err_not_found("invalid fid or aid");
 }
@@ -14,23 +12,28 @@ if(is_valid_integer($_POST['aid'])) {
 /* error checking) */
 if (isset($_POST['submit'])) {
   $opts=$_POST['opts'];
-  for ($i = 0; $i < $count; $i++) {
+  for ($i = 0; $i < count($opts); $i++) {
     $capabilities = Array();
+    if (is_valid_signed_integer($opts[$i]['fid'])) {
+      $fid = $opts[$i]['fid'];
+      if (isset($opts[$i]['Lock']))
+	$capabilities[] = "Lock";
+      if (isset($opts[$i]['Moderate']))
+	$capabilities[] = "Moderate";
+      if (isset($opts[$i]['Delete']))
+	$capabilities[] = "Delete";
+      if (isset($opts[$i]['OffTopic']))
+	$capabilities[] = "OffTopic";
+      if (isset($opts[$i]['Advertise']))
+	$capabilities[] = "Advertise";
 
-    if (isset($opts[$i]['Lock']))
-      $capabilities[] = "Lock";
-    if (isset($opts[$i]['Moderate']))
-      $capabilities[] = "Moderate";
-    if (isset($opts[$i]['Delete']))
-      $capabilities[] = "Delete";
-    if (isset($opts[$i]['OffTopic']))
-      $capabilities[] = "OffTopic";
-    if (isset($opts[$i]['Advertise']))
-      $capabilities[] = "Advertise";
+      $capabilities = join(",", $capabilities);
 
-    $capabilities = join(",", $capabilities);
-
-    sql_query("update f_moderators set capabilities = '" . addslashes($capabilities) . "' where aid = " . addslashes($aid) . " and fid = " . addslashes($opts[$i]['fid']));
+      sql_query("update f_moderators set capabilities = '" .
+	addslashes($capabilities) .
+        "' where aid = " . addslashes($aid) .
+	" and fid = " . addslashes($fid));
+    }
   }
 
   Header("Location: useracl.phtml?message=" . urlencode("User ACL Modified"));
