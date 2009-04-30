@@ -112,7 +112,7 @@ $create_moderators_table = "
     aid int not null,
     fid int not null,
     capabilities set('Lock','Moderate','Delete','OffTopic','Advertise') not null,
-    key (aid, fid)
+    unique key (aid, fid)
   )";
 
 $create_upostcount_table = "
