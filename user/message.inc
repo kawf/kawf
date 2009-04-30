@@ -40,8 +40,10 @@ function _message_unset_block_extras($tpl)
 function _message_render_extras($tpl, $msg, $viewer, $owner)
 {
   global $forum, $thread;
+  /* for advertiser tag (based on owner */
+  $advertiser = $owner->capable($forum['fid'], 'Advertise');
+  /* moderator/locker tools (based on viewer) */
   $moderator = $viewer->capable($forum['fid'], 'Moderate');
-  $advertiser = $viewer->capable($forum['fid'], 'Advertise');
   $locker = $viewer->capable($forum['fid'], 'Lock');
 
   if (!empty($msg['flags'])) {
