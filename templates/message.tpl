@@ -14,8 +14,11 @@
       (<a href="/account/{MSG_AID}.phtml?page={PAGE}">{MSG_AID}</a>)
       on {MSG_DATE}
 <!-- BEGIN advertiser -->
-      <b> - Advertiser</b>
+      | <b>Advertiser</b>
 <!-- END advertiser -->
+<!-- BEGIN moderator -->
+      | <b>Moderator</b>
+<!-- END moderator -->
       <br>
 <!-- BEGIN parent -->
       In Reply to: <a href="{PMSG_MID}.phtml">{PMSG_SUBJECT}</a> posted by <b>{PMSG_NAME}</b> on {PMSG_DATE}<br>

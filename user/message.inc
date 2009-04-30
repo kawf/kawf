@@ -10,6 +10,7 @@ function message_set_block($tpl)
   $tpl->set_block("message", "reply");		/* opt */
 
   $tpl->set_block("message", "forum_mod");	/* opt */
+  $tpl->set_block("message", "moderator");	/* opt */
   $tpl->set_block("message", "advertiser");	/* opt */
 
   $tpl->set_block("message", "parent");		/* manual */
@@ -28,6 +29,7 @@ function _message_unset_block_extras($tpl)
     "reply" => "",
     "owner" => "",
     "forum_mod" => "",
+    "moderator" => "",
     "advertiser" => "",
     "parent" => "",	/* must be handled manually */
     "changes" => "",
@@ -41,9 +43,6 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
   /* moderator/locker tools (based on viewer) */
   $moderator = $viewer->capable($forum['fid'], 'Moderate');
   $locker = $viewer->capable($forum['fid'], 'Lock');
-
-  /* for advertiser tag (based on owner) */
-  $advertiser = $owner->capable($forum['fid'], 'Advertise');
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
@@ -69,7 +68,12 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
     $tpl->set_var("forum_mod", "");
   }
 
-  if (!$advertiser)
+  /* for moderator tag (based on message owner) */
+  if (!$owner->capable($forum['fid'], 'Moderate'))
+    $tpl->set_var("moderator", "");
+
+  /* for advertiser tag (based on message owner) */
+  if (!$owner->capable($forum['fid'], 'Advertise'))
     $tpl->set_var("advertiser", "");
 
   /* handle stupid tool links. templating system sucks; we have to
