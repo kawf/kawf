@@ -31,7 +31,7 @@
       <a href="/{FORUM_SHORTNAME}/undelete.phtml?mid={MSG_MID}&amp;page={PAGE}">Undelete</a> |
 <!-- END undelete -->
 <!-- BEGIN statelocked -->
-      <b>(Status locked)</b>
+      <b>Status locked</b>
 <!-- END statelocked -->
 <!-- END owner -->
 <!-- BEGIN reply -->
