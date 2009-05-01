@@ -99,4 +99,6 @@ echo "<br>\n";
 
 print_pages();
 
+page_footer();
+
 ?>
