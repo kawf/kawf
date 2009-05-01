@@ -1,0 +1,9 @@
+body { font-family: verdana, arial, geneva; font-size: smaller; }
+td { font-family: verdana, arial, geneva; }
+
+/* for stuff defined in include/page.inc */
+table.outer { background-color: #009; }
+table.inner { background-color: white; }
+.heading,.footing { text-align: left; color: #eef; background-color: #009; }
+.message,.error { background-color: #ccf; }
+.footing a { color: #eef; }

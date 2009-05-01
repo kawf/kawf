@@ -8,16 +8,16 @@ function page_header($title)
 <html>
 <head>
 <title><?echo $title;?></title>
-<link rel=StyleSheet href="<? echo css_href()?>" type="text/css">
+<link rel=StyleSheet href="<? echo css_href("admin.css")?>" type="text/css">
 </head>
 
-<body bgcolor="#FFFFFF">
-<table border="0" cellspacing="0" cellpadding="1" align="center" bgcolor="#000099">
+<body>
+<table class="outer" border="0" cellspacing="0" cellpadding="1" align="center">
   <tr>
     <td>
-      <table border="0" align="center" bgcolor="#FFFFFF" cellspacing="0" cellpadding="5">
-        <tr bgcolor="#000099"> 
-          <td><span class="heading"><?echo $title;?></span></td>
+      <table class="inner" border="0" align="center" cellspacing="0" cellpadding="5">
+        <tr>
+          <th class="heading"><?echo $title;?></th>
         </tr>
         <tr> 
           <td>
@@ -33,8 +33,8 @@ function page_footer()
 <?php
   if (isset($user)) {
 ?>
-        <tr bgcolor="#000099"> 
-          <td><span class="footing"><a class="footing" href="logout.phtml?token=<? echo $user->token() ?>">Logout</a></span></td>
+        <tr>
+          <th class="footing"><a href="logout.phtml?token=<? echo $user->token() ?>">Logout</a></th>
         </tr>
 <?php
   }
@@ -53,8 +53,7 @@ function page_show_message($message)
 {
 ?>
              <table border="0" align="" width="100%">
-              <tr bgcolor="#CCCCFF"> 
-                <td><b><?echo $message;?></b></td>
+                <th class="message"><?echo $message;?></th>
               </tr>
             </table>
 <?php
@@ -73,8 +72,8 @@ function page_die($title = "Error", $message = "Unknown error")
 {
 ?>
   <table border="0" align="" width="100%">
-    <tr bgcolor="#CCCCFF"> 
-      <td><b><?echo $title;?></b><br><?echo $message;?></td>
+    <tr>
+      <td class="error"><b><?echo $title;?></b><br><?echo $message;?></td>
     </tr>
   </table>
 <?php
