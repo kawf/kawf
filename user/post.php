@@ -220,8 +220,9 @@ if (isset($_POST['postcookie'])) {
 
   $accepted = !isset($error);
 } else {
-  /* somebody hit post.phtml directly */
-  $msg['msg'] = $msg['subject'] = $msg['urltext'] = $msg['imageurl'] = "";
+  /* somebody hit post.phtml directly, just generate blank post form */
+  $msg['message'] = $msg['subject'] = "";
+  $msg['url'] = $msg['urltext'] = $msg['imageurl'] = "";
 
   /* Guaranteed no picture */
   $tpl->set_var("image", "");
