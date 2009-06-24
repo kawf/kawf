@@ -1,10 +1,11 @@
 <?php
 
 /*
- * sets $msg['mid'] to the new message id
- * sets $msg['tid'] to the new thread, if there is no $msg['pmid']
- * sets $msg['flags'] to detected flags
- * prepeds $msg['imgurl'] to $msg['message'] if present
+ * $msg passed by ref, it is altered as follows:
+ *   sets $msg['mid'] to the new message id
+ *   sets $msg['tid'] to the new thread id if there is no $msg['pmid'] (parent)
+ *   sets $msg['flags'] to detected flags based on $request and msg content
+ *   prepends $msg['imgurl'] to $msg['message'] if present
  *
  * returns true if ok, false if detected dup
 */
@@ -13,6 +14,8 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
 {
   $index = end($indexes);
   $iid = $index['iid'];
+  $mtable = "f_messages" . $iid;
+  $ttable = "f_threads" . $iid;
 
   if (isset($request['OffTopic']))
     $status = "OffTopic";
@@ -42,11 +45,43 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
   $result = mysql_query($sql);
 
   if (!$result) {
-    if (mysql_errno() != 1062)
+    /* fail, its a dup */
+    $newmessage = false;
+    if (mysql_errno() != 1062)	/* something bad happened if insert did not generate dup entry error */
       sql_error($sql);
 
+    /* get current mid */
     $msg['mid'] = sql_query1("select mid from f_dupposts where cookie = '" . addslashes($request['postcookie']) . "'");
+
+    if (!$msg['mid'])
+      sql_error('failed to get mid for ' . $request['postcookie']);
+
+    /* back up old message */
+    $omsg = sql_querya("select * from $mtable where mid = '" . addslashes($msg['mid']) ."'");
+
+    /* update with new message */
+    $sql = "update $mtable set " .
+	"name = '" . addslashes($msg['name']) . "', " .
+	"email = '" . addslashes($msg['email']) . "', " .
+	"ip = '" . addslashes($msg['ip']) . "', " .
+	"flags = '" . $msg['flags'] . "', " .
+	"subject = '" . addslashes($msg['subject']) . "', " .
+	"message = '" . addslashes($msg['message']) . "', " .
+	"url = '" . addslashes($msg['url']) . "', " .
+	"urltext = '" . addslashes($msg['urltext']) . "', " .
+	"state = '$status' " .
+	"where mid = '" . addslashes($msg['mid']) . "' and state = 'Active'";
+    $result = mysql_query($sql) or sql_error($sql);
+
+    /* unwind... do we really need these? */
+    /* unwind index for old message */
+    if (!$msg['pmid'])
+      sql_query("update f_indexes set " . $omsg['state'] . " = " . $omsg['state'] . " - 1 where iid = $iid");
+
+    /* unwind post count for old message */
+    $user->post($fid, $omsg['state'], -1);
   } else {
+    $newmessage = true;
     /* Grab a new mid, this should work reliably */
     do {
       $sql = "select max(id) + 1 from f_unique where fid = $fid and type = 'Message'";
@@ -61,28 +96,10 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
     if (!$result)
       sql_error($sql);
 
-    $newmessage = 1;
-
+    /* update postcookie with the new mid */
     sql_query("update f_dupposts set mid = " . $msg['mid'] . " where cookie = '" . addslashes($request['postcookie']) . "'");
-  }
 
-  $mtable = "f_messages" . $iid;
-  $ttable = "f_threads" . $iid;
-
-  if (!isset($newmessage)) {
-    $omsg = sql_querya("select * from $mtable where mid = '" . addslashes($msg['mid']) ."'");
-    $sql = "update $mtable set " .
-	"name = '" . addslashes($msg['name']) . "', " .
-	"email = '" . addslashes($msg['email']) . "', " .
-	"ip = '" . addslashes($msg['ip']) . "', " .
-	"flags = '" . $msg['flags'] . "', " .
-	"subject = '" . addslashes($msg['subject']) . "', " .
-	"message = '" . addslashes($msg['message']) . "', " .
-	"url = '" . addslashes($msg['url']) . "', " .
-	"urltext = '" . addslashes($msg['urltext']) . "', " .
-	"state = '$status' " .
-	"where mid = '" . addslashes($msg['mid']) . "' and state = 'Active'";
-  } else
+    /* add the message to the db */
     $sql = "insert into $mtable " .
 	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, state ) values ( '"
 	    . addslashes($msg['mid']) . "', '"
@@ -98,9 +115,8 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
 	    . addslashes($msg['url']) . "', '"
 	    . addslashes($msg['urltext']) ."', '$status' );";
 
-  $result = mysql_query($sql) or sql_error($sql);
+    $result = mysql_query($sql) or sql_error($sql);
 
-  if (isset($newmessage)) {
     if (!$msg['pmid']) {
       /* Grab a new tid, this should work reliably */
       do {
@@ -132,25 +148,20 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
     $sql = "update f_indexes set maxmid = " . $msg['mid'] . " where iid = $iid and maxmid < " . $msg['mid'];
     mysql_query($sql) or sql_error($sql);
 
+    /* update index for new message */
     if (!$msg['pmid']) {
       $sql = "update f_indexes set $status = $status + 1 where iid = $iid";
       mysql_query($sql) or sql_error($sql);
     }
 
+    /* bump post count */
     $user->post($fid, $status, 1);
-    $ret = true;
-  } else {
-    $user->post($fid, $omsg['state'], -1);
-
-    if (!$msg['pmid'] && isset($omsg['state']))
-      sql_query("update f_indexes set " . $omsg['state'] . " = " . $omsg['state'] . " - 1 where iid = $iid");
-    $ret = false;
   }
 
   $sql = "insert into f_updates ( fid, mid ) values ( $fid, '" . addslashes($msg['mid']) . "' )";
   mysql_query($sql);
 
-  if (!empty($request['TrackThread']) && isset($newmessage)) {
+  if (!empty($request['TrackThread']) && $newmessage) {
     $options = "";
 
     if (isset($request['EmailFollowup']))
@@ -165,6 +176,6 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
     }
   }
 
-  return $ret;
+  return $newmessage;
 }
 ?>
