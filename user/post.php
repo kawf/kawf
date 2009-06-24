@@ -149,7 +149,6 @@ $msg['aid'] = $user->aid;
 $msg['flags'] = 'NewStyle';
 
 if (isset($_POST['postcookie'])) {
-  $postcookie = $_POST['postcookie'];
   $preview = $_POST['preview'];
   $imgpreview = $_POST['imgpreview'];
 
@@ -268,153 +267,11 @@ if (!$accepted || isset($preview)) {
     "duplicate" => "",
   ));
 } else {
-  $flags[] = "NewStyle";
+  require_once("postmessage.inc");
 
-  if (empty($msg['message']) && strlen($msg['message']) == 0)
-    $flags[] = "NoText";
-
-  if (!empty($msg['url']) || preg_match("/<[[:space:]]*a[[:space:]]+href/i", $msg['message']))
-    $flags[] = "Link";
-
-  if (!empty($msg['imageurl']) || preg_match("/<[[:space:]]*img[[:space:]]+src/i", $msg['message']))
-    $flags[] = "Picture";
-
-  $msg['flags'] = implode(",", $flags);
-
-  /* prepend image url to new message for entry into the db */
-  if (!empty($msg['imageurl']))
-    $msg['message'] = "<center><img src=\"" . $msg['imageurl'] . "\"></center><p>" . $msg['message'];
-
-  /* Add it into the database */
-  /* Check to make sure this isn't a duplicate */
-  $sql = "insert into f_dupposts ( cookie, fid, aid, ip, tstamp ) values ('" . addslashes($postcookie) . "', " . $forum['fid'] . ", " . $user->aid . ", '" . addslashes($msg['ip']) . "', NOW() )";
-  $result = mysql_query($sql);
-
-  if (!$result) {
-    if (mysql_errno() != 1062)
-      sql_error($sql);
-
-    $msg['mid'] = sql_query1("select mid from f_dupposts where cookie = '" . addslashes($postcookie) . "'");
-  } else {
-    /* Grab a new mid, this should work reliably */
-    do {
-      $sql = "select max(id) + 1 from f_unique where fid = " . $forum['fid'] . " and type = 'Message'";
-      $result = mysql_query($sql) or sql_error($sql);
-
-      list ($msg['mid']) = mysql_fetch_row($result);
-
-      $sql = "insert into f_unique ( fid, type, id ) values ( " . $forum['fid'] . ", 'Message', ". $msg['mid'] . ")";
-      $result = mysql_query($sql);
-    } while (!$result && mysql_errno() == 1062);
-
-    if (!$result)
-      sql_error($sql);
-
-    $newmessage = 1;
-
-    sql_query("update f_dupposts set mid = " . $msg['mid'] . " where cookie = '" . addslashes($postcookie) . "'");
-  }
-
-  /* Add the message to the last index */
-  $index = end($indexes);
-
-  $mtable = "f_messages" . $index['iid'];
-  $ttable = "f_threads" . $index['iid'];
-
-  if (!isset($newmessage)) {
-    $omsg = sql_querya("select * from $mtable where mid = '" . addslashes($msg['mid']) ."'");
-    $sql = "update $mtable set " .
-	"name = '" . addslashes($msg['name']) . "', " .
-	"email = '" . addslashes($msg['email']) . "', " .
-	"ip = '" . addslashes($msg['ip']) . "', " .
-	"flags = '" . $msg['flags'] . "', " .
-	"subject = '" . addslashes($msg['subject']) . "', " .
-	"message = '" . addslashes($msg['message']) . "', " .
-	"url = '" . addslashes($msg['url']) . "', " .
-	"urltext = '" . addslashes($msg['urltext']) . "', " .
-	"state = '$status' " .
-	"where mid = '" . addslashes($msg['mid']) . "' and state = 'Active'";
-  } else
-    $sql = "insert into $mtable " .
-	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, state ) values ( '"
-	    . addslashes($msg['mid']) . "', '"
-	    . addslashes($user->aid) . "', '"
-	    . addslashes($msg['pmid']) . "', '"
-	    . addslashes($msg['tid']) . "', '"
-	    . addslashes($msg['name']) . "', '"
-	    . addslashes($msg['email']) . "', NOW(), '"
-	    . addslashes($msg['ip']) . "', '"
-	    . $msg['flags'] . "', '"
-	    . addslashes($msg['subject']) . "', '"
-	    . addslashes($msg['message']) . "', '"
-	    . addslashes($msg['url']) . "', '"
-	    . addslashes($msg['urltext']) ."', '$status' );";
-
-  $result = mysql_query($sql) or sql_error($sql);
-
-  if (isset($newmessage)) {
-    if (!$msg['pmid']) {
-      /* Grab a new tid, this should work reliably */
-      do {
-        $sql = "select max(id) + 1 from f_unique where fid = " . $forum['fid'] . " and type = 'Thread'";
-        $result = mysql_query($sql) or sql_error($sql);
-
-        list ($msg['tid']) = mysql_fetch_row($result);
-
-        $sql = "insert into f_unique ( fid, type, id ) values ( " . $forum['fid'] . ", 'Thread', " . $msg['tid'] . " )";
-        $result = mysql_query($sql);
-      } while (!$result && mysql_errno() == 1062);
-
-      if (!$result)
-        sql_error($sql);
-
-      $sql = "update $mtable set tid = " . $msg['tid'] . " where mid = " . $msg['mid'];
-      mysql_query($sql) or sql_error($sql);
-
-      $sql = "insert into $ttable ( tid, mid, tstamp ) values ( " . $msg['tid']  .", " . $msg['mid'] . ", NOW() )";
-      mysql_query($sql) or sql_error($sql);
-
-      $sql = "update f_indexes set maxtid = " . $msg['tid'] . " where iid = " . $index['iid'] . " and maxtid < " . $msg['tid'];
-      mysql_query($sql) or sql_error($sql);
-    } else {
-      $sql = "update $ttable set replies = replies + 1, tstamp = NOW() where tid = '" . addslashes($msg['tid']) . "'";
-      mysql_query($sql) or sql_error($sql);
-    }
-
-    $sql = "update f_indexes set maxmid = " . $msg['mid'] . " where iid = " . $index['iid'] . " and maxmid < " . $msg['mid'];
-    mysql_query($sql) or sql_error($sql);
-
-    if (!$msg['pmid']) {
-      $sql = "update f_indexes set $status = $status + 1 where iid = " . $index['iid'];
-      mysql_query($sql) or sql_error($sql);
-    }
-
-    $user->post($forum['fid'], $status, 1);
+  /* sets $msg['mid'] to the new message id */
+  if (postmessage($user, $indexes, $forum['fid'], $msg, $_POST) == true)
     $tpl->set_var("duplicate", "");
-  } else {
-    $user->post($forum['fid'], $omsg['state'], -1);
-
-    if (!$msg['pmid'])
-      sql_query("update f_indexes set " . $omsg['state'] . " = " . $omsg['state'] . " - 1 where iid = " . $index['iid']);
-  }
-
-  $sql = "insert into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($msg['mid']) . "' )";
-  mysql_query($sql);
-
-  if (!empty($_POST['TrackThread']) && isset($newmessage)) {
-    $options = "";
-
-    if (isset($_POST['EmailFollowup']))
-      $options = "SendEmail";
-
-    $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and aid = '" . $user->aid . "' and tid = '" . addslashes($msg['tid']) . "'";
-    $result = mysql_query($sql) or sql_error($sql);
-
-    if (!mysql_num_rows($result)) {
-      $sql = "insert into f_tracking ( fid, tid, aid, options ) values ( " . $forum['fid'] . ", '" . addslashes($msg['tid']) . "', '" . addslashes($user->aid) . "', '$options' )";
-      mysql_query($sql) or sql_error($sql);
-    }
-  }
 
   require_once("mailfrom.inc");
 
