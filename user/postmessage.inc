@@ -63,7 +63,7 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
 
     $newmessage = 1;
 
-    sql_query("update f_dupposts set mid = " . $msg['mid'] . " where cookie = '" . addslashes($postcookie) . "'");
+    sql_query("update f_dupposts set mid = " . $msg['mid'] . " where cookie = '" . addslashes($request['postcookie']) . "'");
   }
 
   $mtable = "f_messages" . $iid;
