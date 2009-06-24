@@ -79,6 +79,7 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
   if (!$owner->capable($forum['fid'], 'Advertise'))
     $tpl->set_var("advertiser", "");
 
+  /* for sponsor tag (based on message owner) */
   if (!$owner->capable($forum['fid'], 'Sponsor'))
     $tpl->set_var("sponsor", "");
 
