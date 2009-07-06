@@ -139,7 +139,7 @@ while ($forum = sql_fetch_array($res1)) {
 
   echo ", cleaning up tracking";
   /* Clear out tracking */
-  $res2 = sql_query("select * from f_tracking where fid = " . $forum['fid'] . " and TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14");
+  $res2 = sql_query("select * from f_tracking where fid = " . $forum['fid'] . " and TO_DAYS(NOW()) - TO_DAYS(tstamp) > 30");
 
   while ($tracking = mysql_fetch_array($res2)) {
     echo ".";
