@@ -128,6 +128,7 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
 	$urltext = $msg['urltext'];
       $urltext = preg_replace("/&lt;/", "<", $urltext);
       $urltext = preg_replace("/&gt;/", ">", $urltext);
+      $urltext = preg_replace("/\"/", "&quot;", $urltext);
       $tpl->set_var("URLTEXT", $urltext);
 
       if (!isset($msg['imageurl']))
