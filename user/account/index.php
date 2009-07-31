@@ -103,23 +103,54 @@ if($user->aid == 1) echo "<td>email</td>\n";
   echo "<p>\n" . nl2br($uuser->signature) . "\n</p>\n";
 
   if($user->aid == 1 && $_GET['verbose']) {
+    $res1 = sql_query("select fid,shortname from f_forums order by fid");
+    while ($f = sql_fetch_array($res1)) {
+      $forums[] = $f;
+    }
+
     echo "<h2>IP addresses</h2>\n";
     echo "<table class=\"outer\">\n <tr>\n";
-    $res1 = sql_query("select fid,shortname from f_forums order by fid");
-    while ($forum = sql_fetch_array($res1)) {
-      echo " <td class=\"outer\"><table class=\"inner\">\n";
-      $fmsg="f_messages".$forum['fid'];
-      $res2 = sql_query("select DISTINCT ip from `$fmsg` where `aid` = ".$uuser->aid);
+    foreach ($forums as $forum) {
+      $res2 = sql_query("select DISTINCT ip,name from `f_messages".$forum['fid']."` where `aid` = ".$uuser->aid);
       if(mysql_num_rows($res2)>0) {
-	echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
+	echo " <td class=\"outer\"><table class=\"inner\">\n";
+	echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\" colspan=\"2\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
 	while ($msg = sql_fetch_array($res2)) {
-	  echo "  <tr bgcolor=\"#ECECFF\"><td class=\"inner\">".$msg['ip']."</td></tr>\n";
+	  echo "  <tr bgcolor=\"#ECECFF\">";
+	  echo "<td class=\"inner\">".$msg['ip']."</td>";
+	  echo "<td class=\"inner\">".$msg['name']."</td>";
+	  echo "</tr>\n";
+	  $ips[]=$msg['ip'];
 	}
+	echo " </table></td>\n";
       }
-      echo " </table></td>\n";
     }
     echo "</tr>\n";
     echo "</table>\n";
+
+    if ($_GET['verbose']>1) {
+      echo "<h2>AIDs</h2>\n";
+      foreach (array_unique($ips) as $ip) {
+	echo "<h3>$ip</h3>\n";
+	echo "<table class=\"outer\">\n <tr>\n";
+	foreach ($forums as $forum) {
+	  $res2 = sql_query("select DISTINCT aid,name from `f_messages".$forum['fid']."` where `ip` = \"$ip\"");
+	  if(mysql_num_rows($res2)>0) {
+	    echo " <td class=\"outer\"><table class=\"inner\">\n";
+	    echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\" colspan=\"2\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
+	    while ($msg = sql_fetch_array($res2)) {
+	      echo "  <tr bgcolor=\"#ECECFF\">";
+	      echo "<td class=\"inner\">".$msg['aid']."</td>";
+	      echo "<td class=\"inner\">".$msg['name']."</td>";
+	      echo "</tr>\n";
+	    }
+	    echo " </table></td>\n";
+	  }
+	}
+	echo "</tr>\n";
+	echo "</table>\n";
+      }
+    }
   }
 
   if($_GET['page'])
