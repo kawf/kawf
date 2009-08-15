@@ -68,7 +68,7 @@ if (isset($_POST['submit'])) {
  if ($threadsprepage] != $user->threadsperpage)
     $success .= "Threads per page has been set to $threadsperpage<p>\n";
 */
-  $user->threadsperpage($_REQUEST['threadsperpage']);
+  $user->threadsperpage($threadsperpage);
 
 /*
  if ($_REQUEST['timezone'] != $user->timezone)
