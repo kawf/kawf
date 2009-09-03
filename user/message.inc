@@ -10,7 +10,7 @@ function message_set_block($tpl)
   $tpl->set_block("message", "reply");		/* opt */
 
   $tpl->set_block("message", "forum_mod");	/* opt */
-  $tpl->set_block("message", "admin");		/* opt */
+  $tpl->set_block("forum_mod", "admin");	/* opt */
   $tpl->set_block("message", "moderator");	/* opt */
   $tpl->set_block("message", "advertiser");	/* opt */
 
