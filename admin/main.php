@@ -45,6 +45,7 @@ $scripts = array(
 
   "su.phtml" => "su.php",
   "admin.phtml" => "admin.php",
+  "suspend.phtml" => "suspend.php",
 );
 
 $user = new AdminUser;
