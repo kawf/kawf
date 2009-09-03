@@ -255,6 +255,12 @@ class ForumUser {
   {
     return md5($salt . $this->email . $this->password);
   }
+
+  function admin()
+  {
+    if ($this->aid == 1) return true;
+    return false;
+  }
 }
 
 /* This is the class to change the user stuff */
