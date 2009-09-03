@@ -6,8 +6,8 @@ require_once("forumuser.inc");
 class AdminUser extends AccountUser {
     function valid()
     {
-	if($this->aid!=1) return false;
-	return parent::valid();
+	if (!isset($this->aid)) return false;
+	return $this->admin();
     }
 }
 
