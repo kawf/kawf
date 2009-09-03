@@ -85,7 +85,17 @@ if($user->admin()) echo "<td>email</td>\n";
   echo "<td>" . $uuser->aid . "</td>\n";
   echo "<td>" . $uuser->name . "</td>\n";
   echo "<td>" . $uuser->shortname . "</td>\n";
-  echo "<td>" . $uuser->status . "</td>\n";
+  echo "<td>" . $uuser->status;
+
+  if($user->admin()) {
+    $token="token=".$user->token();
+    if ($uuser->status=="Active")
+	echo " (<a href=\"/admin/suspend.phtml?$token&aid=" . $uuser->aid . "\">suspend</a>)";
+    else if ($uuser->status=="Suspended")
+	echo " (<a href=\"/admin/suspend.phtml?$token&undo=1&aid=" . $uuser->aid . "\">activate</a>)";
+  }
+  echo "</td>\n";
+
   echo "<td>" . $uuser->createdate . "</td>\n";
   echo "<td>" . ($active+$deleted+$offtopic) . "</td>\n";
   if($deleted) echo "<td>" . $deleted . "</td>\n";
