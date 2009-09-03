@@ -11,6 +11,7 @@ function message_set_block($tpl)
   $tpl->set_block("message", "reply");		/* opt */
 
   $tpl->set_block("message", "forum_mod");	/* opt */
+  $tpl->set_block("message", "admin");		/* opt */
   $tpl->set_block("message", "moderator");	/* opt */
   $tpl->set_block("message", "advertiser");	/* opt */
   $tpl->set_block("message", "sponsor");	/* opt */
@@ -30,6 +31,7 @@ function _message_unset_block_extras($tpl)
   $tpl->set_var(array(
     "reply" => "",
     "owner" => "",
+    "admin" => "",
     "forum_mod" => "",
     "moderator" => "",
     "advertiser" => "",
@@ -44,8 +46,8 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
   global $forum, $thread;
 
   /* moderator/locker tools (based on viewer) */
-  $moderator = $viewer->capable($forum['fid'], 'Moderate');
-  $locker = $viewer->capable($forum['fid'], 'Lock');
+  $moderator = $viewer->admin() || $viewer->capable($forum['fid'], 'Moderate');
+  $locker = $viewer->admin() || $viewer->capable($forum['fid'], 'Lock');
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
@@ -53,6 +55,11 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
       $flags[$flag] = true;
   }
 
+  if ($viewer->admin()) {
+    $tpl->set_var("USER_TOKEN", $viewer->token());
+  } else {
+    $tpl->set_var("admin", "");
+  } 
   if ($moderator) {
     $tpl->set_var("MSG_IP", $msg['ip']);
     /* unfortunately, may be blank, if poster did not set ExposeEmail */
@@ -154,7 +161,7 @@ function postprocess($msg)
 function render_message($tpl, $msg, $viewer, $owner=null)
 {
   global $Debug, $forum;
-  $moderator = $viewer->capable($forum['fid'], 'Moderate');
+  $moderator = $viewer->admin() || $viewer->capable($forum['fid'], 'Moderate');
 
   /*---------------------------------------------------------------------*/
   /* Bug 2771354 */

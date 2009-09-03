@@ -8,8 +8,10 @@
     <td class="messageinfo" align="left">
 <!-- BEGIN forum_mod -->
       Source: {MSG_IP} {MSG_EMAIL}
-     (<a href="/admin/su.phtml?aid={MSG_AID}&amp;page={PAGE}" title="Become AID {MSG_AID} (USE WITH CAUTION)">su</a>)<br>
 <!-- END forum_mod -->
+<!-- BEGIN admin -->
+     (<a href="/admin/su.phtml?token={USER_TOKEN}&amp;aid={MSG_AID}&amp;page={PAGE}" title="Become AID {MSG_AID} (USE WITH CAUTION)">su</a>)<br>
+<!-- END admin -->
       Posted by: <b>{MSG_NAMEEMAIL}</b>
       (<a href="/account/{MSG_AID}.phtml?page={PAGE}">{MSG_AID}</a>)
       on {MSG_DATE}
