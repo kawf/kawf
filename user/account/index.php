@@ -75,7 +75,7 @@ if(array_key_exists('noob', $_GET)) {
 <?php
 if($deleted) echo "<td>deleted</td>\n";
 if($offtopic) echo "<td>offtopic</td>\n";
-if($user->aid == 1) echo "<td>email</td>\n";
+if($user->admin()) echo "<td>email</td>\n";
 ?>
 </tr>
 
@@ -90,7 +90,7 @@ if($user->aid == 1) echo "<td>email</td>\n";
   echo "<td>" . ($active+$deleted+$offtopic) . "</td>\n";
   if($deleted) echo "<td>" . $deleted . "</td>\n";
   if($offtopic) echo "<td>" . $offtopic . "</td>\n";
-  if($user->aid == 1) echo "<td>" . $uuser->email . "</td>\n";
+  if($user->admin()) echo "<td>" . $uuser->email . "</td>\n";
   echo "</tr>\n";
   $count++;
 ?>
@@ -102,53 +102,70 @@ if($user->aid == 1) echo "<td>email</td>\n";
 <?php
   echo "<p>\n" . nl2br($uuser->signature) . "\n</p>\n";
 
-  if($user->aid == 1 && $_GET['verbose']) {
-    $res1 = sql_query("select fid,shortname from f_forums order by fid");
-    while ($f = sql_fetch_array($res1)) {
-      $forums[] = $f;
-    }
-
+  if($user->admin()) {
     echo "<h2>IP addresses</h2>\n";
-    echo "<table class=\"outer\">\n <tr>\n";
-    foreach ($forums as $forum) {
-      $res2 = sql_query("select DISTINCT ip,name from `f_messages".$forum['fid']."` where `aid` = ".$uuser->aid);
-      if(mysql_num_rows($res2)>0) {
-	echo " <td class=\"outer\"><table class=\"inner\">\n";
-	echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\" colspan=\"2\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
-	while ($msg = sql_fetch_array($res2)) {
-	  echo "  <tr bgcolor=\"#ECECFF\">";
-	  echo "<td class=\"inner\">".$msg['ip']."</td>";
-	  echo "<td class=\"inner\">".$msg['name']."</td>";
-	  echo "</tr>\n";
-	  $ips[]=$msg['ip'];
-	}
-	echo " </table></td>\n";
-      }
-    }
-    echo "</tr>\n";
-    echo "</table>\n";
 
-    if ($_GET['verbose']>1) {
-      echo "<h2>AIDs</h2>\n";
-      foreach (array_unique($ips) as $ip) {
-	echo "<h3>$ip</h3>\n";
-	echo "<table class=\"outer\">\n <tr>\n";
-	foreach ($forums as $forum) {
-	  $res2 = sql_query("select DISTINCT aid,name from `f_messages".$forum['fid']."` where `ip` = \"$ip\"");
-	  if(mysql_num_rows($res2)>0) {
-	    echo " <td class=\"outer\"><table class=\"inner\">\n";
-	    echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\" colspan=\"2\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
-	    while ($msg = sql_fetch_array($res2)) {
-	      echo "  <tr bgcolor=\"#ECECFF\">";
-	      echo "<td class=\"inner\">".$msg['aid']."</td>";
-	      echo "<td class=\"inner\">".$msg['name']."</td>";
-	      echo "</tr>\n";
-	    }
-	    echo " </table></td>\n";
+    if ($_GET['page']) $page = "page=".$_GET['page'];
+
+    if ($_GET['verbose']) $verbose = $_GET['verbose'];
+    else $verbose=0;
+
+    if($verbose>1) $v2="class=selected";
+    else if($verbose>0) $v1="class=selected";
+    else $v0="class=selected";
+
+    echo " <a$v0 href=\"/account/". $uuser->aid .".phtml?$page\">none</a> | ";
+    echo " <a$v1 href=\"/account/". $uuser->aid .".phtml?$page&verbose=1\">basic</a> | ";
+    echo " <a$v2 href=\"/account/". $uuser->aid .".phtml?$page&verbose=2\">extended</a>\n";
+    echo "<p>\n";
+
+    if($verbose>0) {
+      $res1 = sql_query("select fid,shortname from f_forums order by fid");
+      while ($f = sql_fetch_array($res1)) {
+	$forums[] = $f;
+      }
+
+      echo "<table class=\"outer\">\n <tr>\n";
+      foreach ($forums as $forum) {
+	$res2 = sql_query("select DISTINCT ip,name from `f_messages".$forum['fid']."` where `aid` = ".$uuser->aid);
+	if(mysql_num_rows($res2)>0) {
+	  echo " <td class=\"outer\"><table class=\"inner\">\n";
+	  echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\" colspan=\"2\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
+	  while ($msg = sql_fetch_array($res2)) {
+	    echo "  <tr bgcolor=\"#ECECFF\">";
+	    echo "<td class=\"inner\">".$msg['ip']."</td>";
+	    echo "<td class=\"inner\">".$msg['name']."</td>";
+	    echo "</tr>\n";
+	    $ips[]=$msg['ip'];
 	  }
+	  echo " </table></td>\n";
 	}
-	echo "</tr>\n";
-	echo "</table>\n";
+      }
+      echo "</tr>\n";
+      echo "</table>\n";
+
+      if ($verbose>1) {
+	echo "<h2>AIDs</h2>\n";
+	foreach (array_unique($ips) as $ip) {
+	  echo "<h3>$ip</h3>\n";
+	  echo "<table class=\"outer\">\n <tr>\n";
+	  foreach ($forums as $forum) {
+	    $res2 = sql_query("select DISTINCT aid,name from `f_messages".$forum['fid']."` where `ip` = \"$ip\"");
+	    if(mysql_num_rows($res2)>0) {
+	      echo " <td class=\"outer\"><table class=\"inner\">\n";
+	      echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\" colspan=\"2\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
+	      while ($msg = sql_fetch_array($res2)) {
+		echo "  <tr bgcolor=\"#ECECFF\">";
+		echo "<td class=\"inner\">".$msg['aid']."</td>";
+		echo "<td class=\"inner\">".$msg['name']."</td>";
+		echo "</tr>\n";
+	      }
+	      echo " </table></td>\n";
+	    }
+	  }
+	  echo "</tr>\n";
+	  echo "</table>\n";
+	}
       }
     }
   }
