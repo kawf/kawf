@@ -9,7 +9,7 @@ if (!$user->unsetcookie())
     err_not_found('unsetcookie() failed');
 
 if (isset($_GET['url']))
-    $url = "url=".urlencode($_GET['url'])."&";
+    $url = "url=".$_GET['url']."&";
 
 header("Location: login.phtml?$url"."message=" . urlencode("You have been logged out"));
 
