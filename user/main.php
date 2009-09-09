@@ -177,7 +177,8 @@ function find_forum($shortname)
 
   /* Grab all of the tracking data for the user */
   if ($user->valid()) {
-    $result = sql_query("select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc");
+    /* TZ: unixtime is seconds since epoch */
+    $result = sql_query("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc");
 
     while ($tthread = mysql_fetch_array($result)) {
       $tthreads[] = $tthread;

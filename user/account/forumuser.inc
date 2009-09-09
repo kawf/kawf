@@ -44,6 +44,8 @@ class ForumUser {
 
 	$timeLocal = new DateTime("now", $zoneLocal);
 
+	/* tzoff is offset between PHP server local time and user viewer local
+           time */
 	$this->tzoff =  $zoneLocal->getOffset($timeLocal)-
 			$zoneUser->getOffset($timeLocal);
       } else {

@@ -41,6 +41,7 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
 
   /* Add it into the database */
   /* Check to make sure this isn't a duplicate */
+  /* TZ: 'tstamp' is SQL server localtime */
   $sql = "insert into f_dupposts ( cookie, fid, aid, ip, tstamp ) values ('" . addslashes($request['postcookie']) . "', $fid, " . $user->aid . ", '" . addslashes($msg['ip']) . "', NOW() )";
   $result = mysql_query($sql);
 
@@ -100,6 +101,7 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
     sql_query("update f_dupposts set mid = " . $msg['mid'] . " where cookie = '" . addslashes($request['postcookie']) . "'");
 
     /* add the message to the db */
+    /* TZ: f_messagesXX 'date' is SQL server local time */
     $sql = "insert into $mtable " .
 	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, state ) values ( '"
 	    . addslashes($msg['mid']) . "', '"
@@ -135,12 +137,14 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
       $sql = "update $mtable set tid = " . $msg['tid'] . " where mid = " . $msg['mid'];
       mysql_query($sql) or sql_error($sql);
 
+      /* TZ: f_threadsXX 'tstamp' is SQL server local time */
       $sql = "insert into $ttable ( tid, mid, tstamp ) values ( " . $msg['tid']  .", " . $msg['mid'] . ", NOW() )";
       mysql_query($sql) or sql_error($sql);
 
       $sql = "update f_indexes set maxtid = " . $msg['tid'] . " where iid = $iid and maxtid < " . $msg['tid'];
       mysql_query($sql) or sql_error($sql);
     } else {
+      /* TZ: f_threadsXX 'tstamp' is SQL server local time */
       $sql = "update $ttable set replies = replies + 1, tstamp = NOW() where tid = '" . addslashes($msg['tid']) . "'";
       mysql_query($sql) or sql_error($sql);
     }
