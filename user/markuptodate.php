@@ -14,9 +14,10 @@ if ($_REQUEST['token'] != $user->token())
 if (isset($_REQUEST['time']))
   $time = $_REQUEST['time'];
 else
-  $time = time();
+  $time = time();	/* Unix time (seconds since epoch) */
 
 /* Convert it to MySQL format */
+/* TZ: strftime is local time of SQL server -> used for tstamp */
 $time = strftime("%Y%m%d%H%M%S", $time);
 
 if ($tid == "all") {
@@ -27,16 +28,21 @@ if ($tid == "all") {
       if (!isset($index))
         continue;
 
-      $thread = sql_querya("select *, (UNIX_TIMESTAMP(tstamp) - $user->tzoff) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tthread['tid']) . "'");
+      /* TZ: unixtime is seconds since epoch */
+      $thread = sql_querya("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tthread['tid']) . "'");
       if (!$thread)
         continue;
 
-      if ($thread['unixtime'] > $tthread['unixtime'])
+      if ($thread['unixtime'] > $tthread['unixtime']) {
+	/* TZ: tstamp is sql local time */
         sql_query("update f_tracking set tstamp = $time where fid = " . $forum['fid'] . " and tid = " . $thread['tid'] . " and aid = " . $user->aid);
+      }
     }
   }
-} else
+} else {
+  /* TZ: tstamp is SQL server local time, NOT PHP server local time */
   sql_query("update f_tracking set tstamp = $time where fid = " . $forum['fid'] . " and tid = " . addslashes($tid) . " and aid = " . $user->aid);
+}
 
 Header("Location: " . $page);
 

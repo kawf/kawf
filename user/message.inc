@@ -246,8 +246,12 @@ function fetch_message($user, $mid, $what = '*')
 
     /* Grab the actual message */
     $index = find_msg_index($mid);
+
+    /* TZ: tzoff is difference between PHP server and viewer, not SQL server and viewer */
     $tzoff = isset($user->tzoff)?$user->tzoff:0;
-    $sql = "select $what, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime from f_messages"
+
+    /* TZ: unixtime is seconds since epoch */
+    $sql = "select $what, UNIX_TIMESTAMP(date) as unixtime from f_messages"
 	. $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) .  "'";
     $result = mysql_query($sql) or sql_error($sql);
     $msg = mysql_fetch_array($result);
@@ -256,7 +260,9 @@ function fetch_message($user, $mid, $what = '*')
     if (!isset($msg['pmid']))
       $msg['pmid'] = $msg['pid'];
 
-    $msg['date'] = strftime("%Y-%m-%d %H:%M:%S", $msg['unixtime']);
+    /* msg['date'] is time local to user... strftime would normally be
+       time local to PHP server */
+    $msg['date'] = strftime("%Y-%m-%d %H:%M:%S", $msg['unixtime'] - $tzoff);
 
     return $msg;
 }
@@ -268,11 +274,13 @@ function mark_thread_read($msg, $user)
   if (!$user->valid()) return;
 
   $tid = $msg['tid'];
+  /* TZ: unixtime is seconds since epoch */
   $unixtime = $msg['unixtime'];
 
   /* Mark the thread as read if need be */
   if (isset($tthreads_by_tid[$tid]) &&
       $tthreads_by_tid[$tid]['unixtime'] < $unixtime) {
+    /* TZ: f_tracking 'tstamp' is SQL server local time */
     $sql = "update f_tracking set tstamp = NOW() where fid = " . $forum['fid']
       . " and tid = " . $tid . " and aid = " . $user->aid;
     mysql_query($sql) or sql_warn($sql);

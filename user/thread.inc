@@ -2,23 +2,31 @@
 function fetch_thread($thread, $vmid = 0)
 {
   global $user, $indexes;
+
+  /* TZ: tzoff is difference between PHP server and viewer, not SQL server and viewer */
   $tzoff=isset($user->tzoff)?$user->tzoff:0;
 
   $index = find_msg_index($thread['mid']);
-  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime, subject, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
+  /* TZ: unixtime is seconds since epoch */
+  $sql = "select mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, subject, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
   $result = mysql_query($sql) or sql_error($sql);
   while ($message = mysql_fetch_array($result)) {
-    $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
+    /* msg['date'] is time local to user... strftime would normally be
+       time local to php server */
+    $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime'] - $tzoff);
     $message['pmid'] = $message['pid'];
     $messages[] = $message;
   }
 
   $index++;
   if (isset($indexes[$index])) {
-    $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime, subject, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
+    /* TZ: unixtime is seconds since epoch */
+    $sql = "select mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, subject, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
     $result = mysql_query($sql) or sql_error($sql);
     while ($message = mysql_fetch_array($result)) {
-      $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime']);
+      /* msg['date'] is time local to user... strftime would normally be
+         time local to php server */
+      $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime'] - $tzoff);
       $message['pmid'] = $message['pid'];
       $messages[] = $message;
     }
