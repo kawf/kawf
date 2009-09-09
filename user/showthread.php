@@ -59,7 +59,7 @@ while ($message = mysql_fetch_array($result)) {
 $index++;
 if (isset($indexes[$index])) {
   /* TZ: unixtime is seconds since epoch */
-  $sql = "select mid, tid, pid, aid, state, (UNIX_TIMESTAMP(date) - $tzoff) as unixtime, ip, subject, message, url, urltext, flags, name, email, views, changes from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
+  $sql = "select mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, ip, subject, message, url, urltext, flags, name, email, views, changes from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
   $result = mysql_query($sql) or sql_error($sql);
   while ($message = mysql_fetch_array($result)) {
     /* msg['date'] is time local to user... strftime would normally be
