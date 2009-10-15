@@ -52,10 +52,6 @@
 | <a href="#post"><b>Post New Thread</b></a>
   </td>
   <td align="right">
-<!-- BEGIN restore_gmsgs -->
-    <a href="/gmessage.phtml?gid=-1&amp;hide=0&amp;page={PAGE}&amp;token={USER_TOKEN}">Restore global messages</a>
-<!-- END restore_gmsgs -->
-    {TOOL_SPACER}
 <!-- BEGIN update_all -->
     <a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a>
 <!-- END update_all -->

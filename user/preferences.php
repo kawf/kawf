@@ -110,6 +110,7 @@ $tpl->set_var("SIGNATURE", $user->signature);
 $tpl->set_var("THREADSPERPAGE", $user->threadsperpage);
 $tpl->set_var("TEXT", $text);
 $tpl->set_var("PAGE", htmlspecialchars($_REQUEST['page'], ENT_QUOTES));
+$tpl->set_var("USER_TOKEN", $user->token());
 
 foreach($tz_to_name as $tz) {
   $selected = "";
