@@ -174,7 +174,6 @@ function display_thread($thread)
 }
 
 $numshown = 0;
-$gnumhidden = 0;
 
 if ($curpage == 1) {
   /* PHP has a 32 bit limit even tho the type is a BIGINT, 64 bits */
@@ -210,8 +209,6 @@ if ($curpage == 1) {
 	$tpl->set_var("MESSAGELINKS", $messagelinks);
 	$tpl->parse("_row", "row", true);
 	$numshown++;
-      } else {
-	$gnumhidden++;
       }
     }
   }
@@ -273,11 +270,6 @@ if (isset($tthreads)) {
     }
   }
 }
-
-if (!$gnumhidden)
-  $tpl->set_var("restore_gmsgs", "");
-
-$tpl->set_var("TOOL_SPACER", ($gnumhidden && $tthreadsshown)?"|":"");
 
 if (!$tthreadsshown)
   $tpl->set_var("update_all", "");
