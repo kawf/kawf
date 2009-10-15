@@ -14,7 +14,7 @@ require_once("timezone.inc");
 class ForumUser {
   var $aid, $name, $email, $status, $createdate;
 
-  var $shortname, $password, $cookie;
+  var $shortname, $password, $cookie, $gmsgfilter;
 
   /* You shouldn't call this directly */
   function find($where, $req=true)

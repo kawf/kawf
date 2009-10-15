@@ -13,6 +13,7 @@ $tpl->set_file(array(
   "forum_header" => array("forum/" . $forum['shortname'] . ".tpl","forum/generic.tpl"),
 ));
 
+$tpl->set_block("showforum", "restore_gmsgs");
 $tpl->set_block("showforum", "update_all");
 $tpl->set_block("showforum", "simple");
 $tpl->set_block("showforum", "normal");
@@ -176,22 +177,47 @@ function display_thread($thread)
 }
 
 $numshown = 0;
+$gnumhidden = 0;
 
-if ($curpage == 1 && $user->gmsgswait != 0) {
+if ($curpage == 1) {
   /* PHP has a 32 bit limit even tho the type is a BIGINT, 64 bits */
-  for ($i = 0; $i < 32; $i++)
-    if ($user->gmsgswait & (1 << $i)) {
-      $gmsg = sql_querya("select * from f_global_messages where gid = $i");
+  for ($i = 0; $i < 32; $i++) {
+    $gmsg = sql_querya("select * from f_global_messages where gid = $i");
+    if ($gmsg && strlen($gmsg['url'])>0) {
+      if (!($user->gmsgfilter & (1 << $i)) && ($user->admin() || $gmsg['state'] == "Active")) {
+	$tpl->set_var("CLASS", "grow" . ($numshown % 2));
+	$gid = "gid=" . $gmsg['gid'];
+	$gpage = "page=" . $script_name . $path_info;
+	$gtoken = "token=" . $user->token();
 
-      $tpl->set_var("CLASS", "grow" . ($numshown % 2));
+	$messages = "<a href=\"" .
+	    $gmsg['url'] . "\" target=\"_top\">" .
+	    $gmsg['subject'] .  "</a>&nbsp;&nbsp;-&nbsp;&nbsp;<b>" .
+	    $gmsg['name'] .  "</b>&nbsp;&nbsp;<font size=-2><i>" .
+	    $gmsg['date'] .  "</i></font>";
 
-      $tpl->set_var("MESSAGES", "<ul class=\"thread\"><li><a href=\"/gmessage.phtml?gid=" . $gmsg['gid'] . "\" target=\"_top\">" . softbreaklongwords($gmsg['subject'],40) . "</a>&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $gmsg['name'] . "</b>&nbsp;&nbsp;<font size=-2><i>" . $gmsg['date'] . "</i></font></ul>");
-      $tpl->set_var("MESSAGELINKS", "&nbsp;");
+	if ($user->admin()) {
+	    if ($gmsg['state']=='Active') {
+		$state='state=Inactive'; $state_txt = "dg";
+		$messages .= " (<font color=\"green\"><b>Active</b></font>)";
+	    } elseif ($gmsg['state']=='Inactive'){
+		$state='state=Active'; $state_txt = "ug";
+		$messages .= " (<font color=\"red\"><b>Deleted</b></font>)";
+	    }
+	    $messages .= " <a href=\"/gmessage.phtml?$gid&amp;$state&amp;$gpage&amp;$gtoken\">$state_txt</a>";
+	}
 
-      $tpl->parse("_row", "row", true);
+	$messagelinks="<a href=\"/gmessage.phtml?$gid&amp;hide=1&amp;$gpage&amp;$gtoken\" class=\"up\" title=\"hide\">rm</a>";
 
-      $numshown++;
+	$tpl->set_var("MESSAGES", "<ul class=\"thread\"><li>$messages</ul>");
+	$tpl->set_var("MESSAGELINKS", $messagelinks);
+	$tpl->parse("_row", "row", true);
+	$numshown++;
+      } else {
+	$gnumhidden++;
+      }
     }
+  }
 }
 
 $tthreadsshow = 0;
@@ -250,6 +276,11 @@ if (isset($tthreads)) {
     }
   }
 }
+
+if (!$gnumhidden)
+  $tpl->set_var("restore_gmsgs", "");
+
+$tpl->set_var("TOOL_SPACER", ($gnumhidden && $tthreadsshown)?"|":"");
 
 if (!$tthreadsshown)
   $tpl->set_var("update_all", "");
