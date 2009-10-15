@@ -28,11 +28,15 @@
 | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
 | <a href="#post"><b>Post New Thread</b></a>
   </td>
-<!-- BEGIN update_all -->
   <td align="right">
+<!-- BEGIN restore_gmsgs -->
+    <a href="/gmessage.phtml?gid=-1&amp;hide=0&amp;page={PAGE}&amp;token={USER_TOKEN}">Restore global messages</a>
+<!-- END restore_gmsgs -->
+    {TOOL_SPACER}
+<!-- BEGIN update_all -->
     <a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a>
-  </td>
 <!-- END update_all -->
+  </td>
 </tr>
 <tr class="tools">
   <td align="left" valign="bottom"><b>Page:</b> {PAGES}</td>

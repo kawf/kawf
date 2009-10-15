@@ -46,6 +46,10 @@ ul {margin-left: 1em; padding-left: 1em;}
 .mrow1 { background: #eecccc }
 */
 
+/* global messages */
+.grow0 { background: #ffdddd }
+.grow1 { background: #eecccc }
+
 ul.thread li { list-style: circle outside none; }
 
 /* subject thread listing spacing */

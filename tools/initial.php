@@ -32,6 +32,7 @@ sql_query($create_upostcount_table);
 sql_query($create_offtopic_table);
 sql_query($create_preferences_table);
 sql_query($create_user_preferences_table);
+sql_query($create_global_messages_table);
 
 /* Static preferences. */
 sql_query($insert_static_preferences);

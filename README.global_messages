@@ -1,0 +1,30 @@
+f_global_messages contains messages that everybody sees in every forum, at the
+top of each forum thread list. There is a FIXED limit of 32 global messages
+(see note below about reusing old global message slots).
+
+Unlike a normal message, global messages are not linked to an account id,
+and they don't contain any text. They are simply clickable urls.
+
+f_global_message columns are
+    gid: integer from 0-31 - MUST BE UNIQUE
+    subject: just like a thread subject
+    url: when you click on the subject, it will send you DIRECTLY here
+    name: just like a message "name" - the user "name" of who posted this.
+    date: will show up next to subject/name
+    state: Inactive global messages are only visible to admins
+
+Normal users can:
+    "rm" (remove aka mark read)
+    "Restore global messages" (un-remove removed messages)
+
+Administrators can:
+    see "inactive" global messages
+    "ug" (undelete global messages aka mark active)
+    "dg" (delete global messages aka mark inactive)
+
+TODO:
+    Make global message generator.
+    Make global message editor.
+    Currently, adminstrator has to add messages by manually walking the user
+    database to reuse an old gmessage that users have hidden to unmark its bit
+    in user->gmsgfilter.
