@@ -42,8 +42,8 @@ function stripcrap($string, $tags=null)
     $tags = $no_tags;
 
   // $string = preg_replace("/&/", "&amp;", $string);
-  $string = striptag($string, $tags);
   $string = demoronize($string);
+  $string = striptag($string, $tags);
   $string = trim($string);
 
   return $string;
