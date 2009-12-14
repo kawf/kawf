@@ -52,6 +52,9 @@ class ForumUser {
 	$this->timezone = date_default_timezone_get();
       }
 
+      /* Set token time rounded down to 15 minutes UTC. */
+      $this->tokentime = 900 * (int)(time() / 900);
+
     } elseif ($req) {
 	global $login_to_read;
 	if(isset($login_to_read)) $this->req();
@@ -253,9 +256,24 @@ class ForumUser {
     return isset($this->capable[$fid][$type]);
   }
 
-  function token($salt = 'token')
+  function token($salt = 'token', $tokentime = NULL)
   {
-    return md5($salt . $this->email . $this->password);
+    $time = $tokentime ? $tokentime : $this->tokentime;
+    $timestr = gmstrftime("%Y%m%d%H%M", $time);
+    return md5($salt . $this->email . $this->password . $timestr);
+  }
+
+  function is_valid_token($other_token)
+  {
+    /* A token is valid if it's the current token, or one with time -15
+       -30 or -45 minutes. */
+    if ($this->token() == $other_token or
+        $this->token("token", $this->tokentime - 900) == $other_token or
+        $this->token("token", $this->tokentime - 1800) == $other_token or
+        $this->token("token", $this->tokentime - 2700) == $other_token)
+      return true;
+    else
+      return false;
   }
 
   function admin()
@@ -392,7 +410,7 @@ class AccountUser extends ForumUser {
     global $cookie_host;
 
     if(isset($this->cookie) && $this->cookie) {
-	if(!isset($_REQUEST['token']) || $this->token() != $_REQUEST['token'])
+	if(!$this->is_valid_token($_REQUEST['token']))
 	    return false;
     }
 

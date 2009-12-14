@@ -45,7 +45,7 @@ else
 
 if (isset($_POST['submit'])) {
 
-  if (!isset($_POST['token']) || $_POST['token'] != $user->token())
+  if (!$user->is_valid_token($_POST['token']))
     err_not_found('Invalid token');
 
   if (!empty($name)) {

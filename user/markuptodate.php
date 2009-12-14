@@ -8,7 +8,7 @@ if (!$user->valid() || !isset($forum)) {
 $tid = $_REQUEST['tid'];
 $page = $_REQUEST['page'];
 
-if ($_REQUEST['token'] != $user->token())
+if (!$user->is_valid_token($_REQUEST['token']))
   err_not_found("invalid token"); 
 
 if (isset($_REQUEST['time']))

@@ -13,7 +13,7 @@ if (!$user->valid()) {
   exit;
 }
 
-if ($_REQUEST['token'] != $user->token())
+if (!$user->is_valid_token($_REQUEST['token']))
   err_not_found("Invalid token"); 
 
 $sql = "delete from f_tracking where fid = " . $forum['fid'] . " and tid = '" . addslashes($tid) . "' and aid = '" . $user->aid . "'";

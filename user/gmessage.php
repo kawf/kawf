@@ -17,7 +17,7 @@ if (strlen($_REQUEST['state'])>0) {
 	err_not_found();
     }
 
-    if ($_REQUEST['token'] != $user->token()) {
+    if (!$user->is_valid_token($_REQUEST['token'])) {
 	err_not_found('Invalid token');
     }
 
@@ -31,7 +31,7 @@ if (strlen($_REQUEST['state'])>0) {
 }
 
 if (isset($_REQUEST['hide'])) {
-    if ($_REQUEST['token'] != $user->token()) {
+    if (!$user->is_valid_token($_REQUEST['token'])) {
       err_not_found('Invalid token');
     }
 
