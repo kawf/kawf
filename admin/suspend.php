@@ -7,7 +7,7 @@ if (!is_valid_integer($_GET['aid'])) {
     exit();
 }
 
-if ($_REQUEST['token'] != $user->token()) {
+if (!$user->is_valid_token($_REQUEST['token'])) {
   err_not_found('Invalid token');
 }
 
