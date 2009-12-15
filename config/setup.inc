@@ -41,6 +41,9 @@ $css_href_dir = "/css";
 /* set to 1 for debugging */
 $Debug = 0;
 
+/* User token expiration in 15 minute increments: 3 means 45 minutes. */
+$user_token_expiration = 7;
+
 /* allow user to override default in a separate file (prevents merge problems
    when using source control */
 if (is_file(dirname(__FILE__) . "/setup-local.inc") )

@@ -265,15 +265,16 @@ class ForumUser {
 
   function is_valid_token($other_token)
   {
-    /* A token is valid if it's the current token, or one with time -15
-       -30 or -45 minutes. */
-    if ($this->token() == $other_token or
-        $this->token("token", $this->tokentime - 900) == $other_token or
-        $this->token("token", $this->tokentime - 1800) == $other_token or
-        $this->token("token", $this->tokentime - 2700) == $other_token)
+    global $user_token_expiration;
+    /* A token is valid if it's the current token, or $user_token_expiration
+     * previous ones */
+    if ($this->token() == $other_token)
       return true;
-    else
-      return false;
+    for ($i = 1; $i <= $user_token_expiration; $i++)
+      if ($this->token("token", $this->tokentime - 900 * $i) == $other_token)
+        return true;
+
+    return false;
   }
 
   function admin()
