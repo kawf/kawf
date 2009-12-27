@@ -133,6 +133,7 @@ $create_users_table = "
     password varchar(50) not null,
     status enum('Create','Active','Suspended') not null default 'Create',
     createdate datetime not null,
+    createip varchar(15),
     cookie varchar(50) not null,
     timezone varchar(5) not null,
     style enum('Classic','Simple','UBB') not null default 'Classic',
