@@ -225,4 +225,11 @@ $create_schema_version_table = "
     version varchar(14) not null
   )";
 
+$set_current_schema_version = "
+  insert into schema_version
+    (version)
+  values
+    ('20091226183652')
+  ";
+
 ?>
