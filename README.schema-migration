@@ -22,4 +22,6 @@ The migrations are only intended to change production databases where the forum
 has been set up previously.  The migrations are *not* intended to be run when
 setting up a clean new database.  Therefore, any changes made in migrations,
 should also be made in initial.php and tables.inc, so that new databases can be
-set up correctly from scratch.
+set up correctly from scratch.  Don't forget to update $SCHEMA_VERSION at the
+top of tables.inc as well, so that newly-created databases have the correct
+schema version.

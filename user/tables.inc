@@ -1,4 +1,8 @@
 <?php
+
+# Update this to the proper migration when changing the schema.
+$SCHEMA_VERSION = "20091227121215";
+
 # f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
 $create_message_table = "
@@ -230,7 +234,7 @@ $set_current_schema_version = "
   insert into schema_version
     (version)
   values
-    ('20091226183652')
+    ('$SCHEMA_VERSION')
   ";
 
 ?>
