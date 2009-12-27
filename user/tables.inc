@@ -218,4 +218,11 @@ $create_user_preferences_table = "
     unique key (aid, preference_id)
   )";
 
+# This table should only contain one row - the current
+# schema version.
+$create_schema_version_table = "
+  create table if not exists schema_version (
+    version varchar(14) not null
+  )";
+
 ?>
