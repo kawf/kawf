@@ -1,4 +1,8 @@
 <?php
+
+# Update this to the proper migration when changing the schema.
+$SCHEMA_VERSION = "20091227121215";
+
 # f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
 $create_message_table = "
@@ -133,6 +137,7 @@ $create_users_table = "
     password varchar(50) not null,
     status enum('Create','Active','Suspended') not null default 'Create',
     createdate datetime not null,
+    createip varchar(15),
     cookie varchar(50) not null,
     timezone varchar(5) not null,
     style enum('Classic','Simple','UBB') not null default 'Classic',
@@ -217,5 +222,19 @@ $create_user_preferences_table = "
     primary key (id),
     unique key (aid, preference_id)
   )";
+
+# This table should only contain one row - the current
+# schema version.
+$create_schema_version_table = "
+  create table if not exists schema_version (
+    version varchar(14) not null
+  )";
+
+$set_current_schema_version = "
+  insert into schema_version
+    (version)
+  values
+    ('$SCHEMA_VERSION')
+  ";
 
 ?>

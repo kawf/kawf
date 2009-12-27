@@ -34,6 +34,9 @@ sql_query($create_preferences_table);
 sql_query($create_user_preferences_table);
 sql_query($create_global_messages_table);
 
+sql_query($create_schema_version_table);
+sql_query($set_current_schema_version);
+
 /* Static preferences. */
 sql_query($insert_static_preferences);
 
