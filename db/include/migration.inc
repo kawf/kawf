@@ -4,6 +4,8 @@ $kawf_base = realpath(dirname(__FILE__) . "/../..");
 include_once($kawf_base . "/config/config.inc");
 include_once($kawf_base . "/include/sql.inc");
 
+class DatabaseMigrationException extends Exception {}
+
 class DatabaseMigration {
   public static function get_migration($filepath) {
     // Given a path to the file containing a database migration, this method
@@ -21,7 +23,7 @@ class DatabaseMigration {
     //   // $m is now an instance of UpdateUserTable
     include($filepath);
     $name = preg_replace('/^\d+_/', "", basename($filepath, ".php"));
-    $class_name = preg_replace('/(?:^|_)(.)/e', "strtoupper($1)", $name);
+    $class_name = preg_replace('/(?:^|_)(.)/e', "strtoupper('$1')", $name);
     return new $class_name();
   }
 
@@ -70,21 +72,33 @@ class DatabaseMigration {
     $migration_version = $parts[0];
     $migration = self::get_migration($filepath);
 
-    if($migration->migrate()) {
-      $qversion = mysql_real_escape_string($migration_version);
-      $result = mysql_query("UPDATE schema_version SET version = '$qversion'");
-      return $result ? true : false;
-    }
-
-    return false;
+    $migration->migrate(); // Should throw an exception failure.
+    $migration->update_schema_version($migration_version);
   }
 
   // Instance methods start here.
 
   public function migrate() {
     // This function should contain code to execute the migration on the
-    // database.  It should return true on success, and false on error.
+    // database.  Use $this->execute_sql() to run database queries.
     throw new BadMethodCallException("Must be overridden by a subclass.");
+  }
+
+  public function execute_sql($sql) {
+    // Execute the query in $sql and return the resulting resource.
+    // Throw DatabaseMigrationException on failure.
+    $result = mysql_query($sql);
+    if(! $result) {
+      $msg = mysql_errno() . ": " . mysql_error();
+      throw new DatabaseMigrationException($msg);
+    }
+    return $result;
+  }
+
+  public function update_schema_version($new_version) {
+    // Update schema version to $new_version, throw an exception on failure.
+    $qversion = mysql_real_escape_string($new_version);
+    $this->execute_sql("UPDATE schema_version SET version = '$qversion'");
   }
 }
 

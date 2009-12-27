@@ -39,15 +39,10 @@ if($command == "showcurrent") {
     $to_run = $command == "runnext" ? array($pending[0]) : $pending;
     foreach($to_run as $filepath) {
       echo "Running " . basename($filepath, ".php") . "\n";
-      $success = DatabaseMigration::run_migration($filepath);
-      if($success) {
-        $updated_version = DatabaseMigration::find_current_version();
-        echo "Migration succeeded, updated schema version is " .
-             ($updated_version ? $updated_version : "UNKNOWN") . "\n";
-      } else {
-        echo "Migration failed, you'll have to clean up manually.\n";
-        break;
-      }
+      DatabaseMigration::run_migration($filepath); // Will throw an exception on failure.
+      $updated_version = DatabaseMigration::find_current_version();
+      echo "Migration succeeded, updated schema version is " .
+           ($updated_version ? $updated_version : "UNKNOWN") . "\n";
     }
   } else {
     echo "Schema up to date, no pending migrations.\n";
