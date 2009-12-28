@@ -14,8 +14,8 @@ $template_dir = "$srcroot/templates";
 /* Uncomment this if you have your own account management stuff */
 #$dont_use_account = true;
 
-/* Uncomment this if you want to disable creation of new accounts */
-#$create_disabled = 1;
+/* Set this to true if you want to disable creation of new accounts. */
+$create_disabled = false;
 
 /* Uncomment this if you want to force people to log in to read the forums */
 #$login_to_read = 1;
