@@ -70,6 +70,7 @@ if(array_key_exists('noob', $_GET)) {
 <td>Shortname</td>
 <td>Status</td>
 <td>Date of Creation</td>
+<? if($user->admin()) echo "<td>Creation IP</td>\n"; ?>
 <!-- <td>E-Mail</td> -->
 <td>Total posts</td>
 <?php
@@ -97,6 +98,7 @@ if($user->admin()) echo "<td>email</td>\n";
   echo "</td>\n";
 
   echo "<td>" . $uuser->createdate . "</td>\n";
+  if($user->admin()) echo "<td>" . $uuser->createip . "</td>\n";
   echo "<td>" . ($active+$deleted+$offtopic) . "</td>\n";
   if($deleted) echo "<td>" . $deleted . "</td>\n";
   if($offtopic) echo "<td>" . $offtopic . "</td>\n";
@@ -160,7 +162,7 @@ if($user->admin()) echo "<td>email</td>\n";
 	  echo "<h3>$ip</h3>\n";
 	  echo "<table class=\"outer\">\n <tr>\n";
 	  foreach ($forums as $forum) {
-	    $res2 = sql_query("select DISTINCT aid,name from `f_messages".$forum['fid']."` where `ip` = \"$ip\"");
+	    $res2 = sql_query("select DISTINCT aid,name from `f_messages".$forum['fid']."` where `ip` = \"$ip\" ORDER BY aid");
 	    if(mysql_num_rows($res2)>0) {
 	      echo " <td class=\"outer\"><table class=\"inner\">\n";
 	      echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\" colspan=\"2\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
