@@ -5,14 +5,11 @@ class CreateSchemaVersion extends DatabaseMigration {
     $sql = "CREATE TABLE schema_version (" .
            "  version VARCHAR(14) NOT NULL" .
            ")";
-    $result = mysql_query($sql);
-    if(! $result) {
-      return false;
-    }
+    $this->execute_sql($sql);
 
     $sql = "INSERT INTO schema_version (version) " .
            "VALUES ('')";
-    return mysql_query($sql) ? true : false;
+    $this->execute_sql($sql);
   }
 }
 

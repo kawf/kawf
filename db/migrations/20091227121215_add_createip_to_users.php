@@ -5,7 +5,7 @@ class AddCreateipToUsers extends DatabaseMigration {
     $sql = "ALTER TABLE u_users " .
            "ADD COLUMN createip VARCHAR(15) " .
            "AFTER createdate";
-    return mysql_query($sql) ? true : false;
+    $this->execute_sql($sql);
   }
 }
 
