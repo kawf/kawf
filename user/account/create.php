@@ -32,7 +32,7 @@ if($tou_available) {
   $tpl->set_var("tou_agreement", "");
 }
 
-if(isset($create_disabled))
+if($create_disabled)
     $tpl->set_var("form", "");
 else
     $tpl->set_var("disabled", "");
@@ -59,7 +59,7 @@ else
 
 $error = "";
 
-if (isset($_POST['submit'])) {
+if ($_POST['submit'] && !$create_disabled) {
   $name = striptag($name, $no_tags);
   $name = trim($name);
 
@@ -101,12 +101,18 @@ if (isset($_POST['submit'])) {
       $error .= "Passwords do not match, please check and try again\n";
   }
 
+  if(trim($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+    $user->createip(end(explode(",", trim($_SERVER["HTTP_X_FORWARDED_FOR"]))));
+  } else {
+    $user->createip($_SERVER["REMOTE_ADDR"]);
+  }
+
   if($tou_available && !$_POST["tou_agree"]) {
     $error .= "You must agree to the Terms Of Use\n";
   }
 }
 
-if (empty($error) && isset($_POST['submit'])) {
+if (empty($error) && $_POST['submit'] && !$create_disabled) {
   if ($create_key && $_POST['key'] != $create_key) {
     $error .= "Please supply a valid secret key\n";
   } else if (!$user->create()) {

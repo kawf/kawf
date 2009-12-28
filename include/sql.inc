@@ -113,4 +113,16 @@ function sql_close()
 {
   mysql_close();
 }
+
+function sql_escape($thing)
+{
+  if(is_null($thing)) {
+    return "NULL";
+  } elseif(is_int($thing) or is_float($thing)) {
+    return "$thing";
+  } else {
+    return "'" . mysql_real_escape_string($thing) . "'";
+  }
+}
+
 ?>

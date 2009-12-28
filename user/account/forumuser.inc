@@ -12,7 +12,7 @@ require_once("timezone.inc");
 
 /* This is the standard ForumUser class */
 class ForumUser {
-  var $aid, $name, $email, $status, $createdate;
+  var $aid, $name, $email, $status, $createdate, $createip;
 
   var $shortname, $password, $cookie, $gmsgfilter;
 
@@ -349,27 +349,33 @@ class AccountUser extends ForumUser {
 
     $cookie = md5("cookie" . $this->email . microtime());
 
+    $qname = sql_escape($this->name);
+    $qshortname = sql_escape($this->shortname);
+    $qemail = sql_escape($this->email);
+    $qpassword = sql_escape($this->password);
+    $qcreateip = sql_escape($this->createip);
+    $qcookie = sql_escape($cookie);
     $sql = "insert into u_users ( " .
-        " name, shortname, email, password, status, cookie, createdate " .
+        " name, shortname, email, password, status, cookie, createdate," .
+        " createip" .
         ") values ( " .
-        "'" . addslashes($this->name) . "', '" . addslashes($this->shortname) . "', " .
-        "'" . addslashes($this->email) . "', '$this->password', 'Create', " .
-        "'$cookie', NOW() ".
+        "$qname, $qshortname, $qemail, $qpassword, 'Create', $qcookie, " .
+        "NOW(), $qcreateip " .
         ")";
     $result = _sql_query($sql);
     if (!$result) {
       if (mysql_errno() != 1062)
         sql_error($sql);
 
-      $tshortname = sql_query1("select shortname from u_users where shortname = '" . addslashes($this->shortname) . "'");
+      $tshortname = sql_query1("select shortname from u_users where shortname = $qshortname");
       if ($tshortname != null)
         $this->shortname = "";
 
-      $tname = sql_query1("select name from u_users where name = '" . addslashes($this->name) . "'");
+      $tname = sql_query1("select name from u_users where name = $qname");
       if ($tname != null)
         $this->name = "";
       
-      $temail = sql_query1("select email from u_users where email = '" . addslashes($this->email) . "'");
+      $temail = sql_query1("select email from u_users where email = $qemail");
       if ($temail != null)
         $this->email = "";
 
@@ -463,13 +469,9 @@ class AccountUser extends ForumUser {
   {
     /* The shortname is a simple way to make sure people don't use names */
     /*  that are too similar */
-    /* FIXME: We should handle letters with accents, etc as well */
-    $shortname = "";
-    for ($i = 0; $i < strlen($name); $i++) {
-      if (strchr("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", substr($name, $i, 1)))
-        $shortname .= substr($name, $i, 1);
-    }
-    $shortname = strtolower($shortname);
+    /* FIXME: We should handle letters with accents, etc as well - */
+    /*        setting the character set to utf8 will probably work. */
+    $shortname = strtolower(preg_replace('/[_\W]+/', "", $name));
 
     if ($name != $this->name)
       $this->update['name'] = $name;
@@ -480,6 +482,11 @@ class AccountUser extends ForumUser {
     $this->shortname = $shortname;
 
     return true;
+  }
+
+  function createip($ip)
+  {
+    $this->createip = $ip;
   }
 
   function verify_email($email)
