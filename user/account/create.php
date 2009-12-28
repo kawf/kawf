@@ -101,11 +101,15 @@ if ($_POST['submit'] && !$create_disabled) {
       $error .= "Passwords do not match, please check and try again\n";
   }
 
+  /* TODO: we should only use HTTP_X_FORWARDED_FOR if the proxy is trusted. */
+  /*
   if(trim($_SERVER["HTTP_X_FORWARDED_FOR"])) {
     $user->createip(end(explode(",", trim($_SERVER["HTTP_X_FORWARDED_FOR"]))));
   } else {
     $user->createip($_SERVER["REMOTE_ADDR"]);
   }
+  */
+  $user->createip($_SERVER["REMOTE_ADDR"]);
 
   if($tou_available && !$_POST["tou_agree"]) {
     $error .= "You must agree to the Terms Of Use\n";
