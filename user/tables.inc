@@ -1,7 +1,7 @@
 <?php
 
 # Update this to the proper migration when changing the schema.
-$SCHEMA_VERSION = "20091227121215";
+$SCHEMA_VERSION = "20091229191429";
 
 # f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
@@ -236,5 +236,42 @@ $set_current_schema_version = "
   values
     ('$SCHEMA_VERSION')
   ";
+
+# ACL - IP bans.
+$create_acl_ips_table = "
+  CREATE TABLE acl_ips (
+    id INT NOT NULL AUTO_INCREMENT,
+    ip VARCHAR(18) NOT NULL,
+    note VARCHAR(255),
+    PRIMARY KEY (id),
+    UNIQUE KEY (ip)
+  )";
+
+$create_acl_ban_types_table = "
+  CREATE TABLE acl_ban_types (
+    id INT NOT NULL,
+    ban_type VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY (ban_type)
+  )";
+
+$insert_static_ban_types = "
+  INSERT INTO acl_ban_types
+    (id, ban_type)
+  VALUES
+    (1, 'account_creation'),
+    (2, 'posts'),
+    (3, 'login'),
+    (4, 'all')";
+
+$create_acl_ip_bans_table = "
+  CREATE TABLE acl_ip_bans (
+    id INT NOT NULL AUTO_INCREMENT,
+    ip_id INT NOT NULL,
+    ban_type_id INT NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY (ip_id, ban_type_id)
+  )";
+
 
 ?>
