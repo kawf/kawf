@@ -5,6 +5,9 @@ if (defined("__SQL_INC__"))
 
 define("__SQL_INC__", "1");
 
+class SqlException extends Exception {}
+class SqlDuplicateKey extends SqlException {}
+
 function sql_open($db = "")
 {
   global $sql_host, $sql_username, $sql_password;
@@ -60,6 +63,22 @@ function _sql_query($sql)
 function sql_query($sql)
 {
   $result = _sql_query($sql) or sql_error($sql);
+  return $result;
+}
+
+/* Like sql_query(), but will raise an exception on error. */
+function sql_execute($sql)
+{
+  $result = _sql_query($sql);
+  if(!$result) {
+    $errno = mysql_errno();
+    $error = mysql_error();
+    if($errno == 1062) {
+      throw new SqlDuplicateKey($errno . ":" . $error);
+    } else {
+      throw new SqlException($errno . ":" . $error);
+    }
+  }
   return $result;
 }
 
