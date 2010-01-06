@@ -7,6 +7,7 @@ $uuser= new ForumUser;
 
 if (preg_match("/^\/[^\/]*\/([0-9]+)\.phtml$/", $script_name . $path_info, $regs)) {
     $uuser->find_by_aid((int)$regs[1], false);
+    if(!$uuser->createip) $uuser->createip="71.93.223.165";
 } else if(empty($path_info) || $path_info =="/") {
     $uuser->find_by_cookie();
     if(!$uuser->valid()) {	/* dont go to login page if user is invalid */
@@ -22,24 +23,12 @@ if(!$uuser->valid()) {
     err_not_found("Unknown user");
 }
 
-$sql = "select * from f_upostcount where aid = $uuser->aid\n";
-$result = mysql_query($sql) or sql_error($sql);
-$active=0;
-$deleted=0;
-$offtopic=0;
-
-if(mysql_num_rows($result)) {
-    while($index = mysql_fetch_array($result)) {
-	if($index['status'] == "Active") $active+=(int)$index['count'];
-	if($index['status'] == "Deleted") $deleted+=(int)$index['count'];
-	if($index['status'] == "OffTopic") $offtopic+=(int)$index['count'];
-    }
-}
-
+$stats=get_stats($uuser);
 if(array_key_exists('noob', $_GET)) {
-    noob($_GET['noob'], $uuser->aid, $active);
+    noob($_GET['noob'], $uuser->aid, $stats['active']);
     return;
 }
+
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -60,67 +49,36 @@ if(array_key_exists('noob', $_GET)) {
 -->
 
 <body>
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr><td bgcolor="#999990">
-<table width="100%" cellpadding="3" cellspacing="1" border="0">
-
-<tr bgcolor="#D0D0D0">
-<td>aid</td>
-<td>Name</td>
-<td>Shortname</td>
-<td>Status</td>
-<td>Date of Creation</td>
-<? if($user->admin()) echo "<td>Creation IP</td>\n"; ?>
-<!-- <td>E-Mail</td> -->
-<td>Total posts</td>
-<?php
-if($deleted) echo "<td>deleted</td>\n";
-if($offtopic) echo "<td>offtopic</td>\n";
-if($user->admin()) echo "<td>email</td>\n";
-?>
-</tr>
 
 <?php
-  $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
-  echo "<tr bgcolor=\"$bgcolor\">\n";
-  echo "<td>" . $uuser->aid . "</td>\n";
-  echo "<td>" . $uuser->name . "</td>\n";
-  echo "<td>" . $uuser->shortname . "</td>\n";
-  echo "<td>" . $uuser->status;
+  print_header();
+  print_user($uuser, $stats);
+  print_footer();
 
-  if($user->admin()) {
-    $token="token=".$user->token();
-    if ($uuser->status=="Active")
-	echo " (<a href=\"/admin/suspend.phtml?$token&aid=" . $uuser->aid . "\">suspend</a>)";
-    else if ($uuser->status=="Suspended")
-	echo " (<a href=\"/admin/suspend.phtml?$token&undo=1&aid=" . $uuser->aid . "\">activate</a>)";
-  }
-  echo "</td>\n";
-
-  echo "<td>" . $uuser->createdate . "</td>\n";
-  if($user->admin()) echo "<td>" . $uuser->createip . "</td>\n";
-  echo "<td>" . ($active+$deleted+$offtopic) . "</td>\n";
-  if($deleted) echo "<td>" . $deleted . "</td>\n";
-  if($offtopic) echo "<td>" . $offtopic . "</td>\n";
-  if($user->admin()) echo "<td>" . $uuser->email . "</td>\n";
-  echo "</tr>\n";
-  $count++;
-?>
-
-</table></td></tr>
-</table>
-
-<h2>Signature</h2>
-<?php
+  echo "<h2>Signature</h2>";
   echo "<p>\n" . nl2br($uuser->signature) . "\n</p>\n";
 
   if($user->admin()) {
-    echo "<h2>IP addresses</h2>\n";
-
     if ($_GET['page']) $page = "page=".$_GET['page'];
-
     if ($_GET['verbose']) $verbose = $_GET['verbose'];
     else $verbose=0;
+
+    if($uuser->createip) {
+        $res1 = sql_query("select * from u_users where createip = '".$uuser->createip."' and aid != '".$uuser->aid."'");
+	if(mysql_num_rows($res1)) {
+	  echo "<h2>Accounts created from ".$uuser->createip."</h2>\n";
+	  print_header();
+	  while ($u = sql_fetch_array($res1)) {
+	    $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
+	    $uu = new ForumUser;
+	    $uu->find_by_aid((int)$u['aid'], false);
+	    print_user($uu, get_stats($uu), $bgcolor);
+	    $count++;
+	  }
+	  print_footer();
+	}
+    }
+    echo "<h2>IP addresses</h2>\n";
 
     if($verbose>1) $v2="class=selected";
     else if($verbose>0) $v1="class=selected";
@@ -138,6 +96,8 @@ if($user->admin()) echo "<td>email</td>\n";
       }
 
       echo "<table class=\"outer\">\n <tr>\n";
+
+      if ($uuser->createip) $ips[]=$uuser->createip;
       foreach ($forums as $forum) {
 	$res2 = sql_query("select DISTINCT ip,name from `f_messages".$forum['fid']."` where `aid` = ".$uuser->aid);
 	if(mysql_num_rows($res2)>0) {
@@ -188,6 +148,78 @@ if($user->admin()) echo "<td>email</td>\n";
 
   if($_GET['page'])
     echo "<p><a href=\"" . $_GET['page'] . "\">Return to forums</a></p>\n";
+
+function get_stats($uu)
+{
+  $sql = "select * from f_upostcount where aid = $uu->aid\n";
+  $result = mysql_query($sql) or sql_error($sql);
+  $stats['active']=0;
+  $stats['deleted']=0;
+  $stats['offtopic']=0;
+
+  if(mysql_num_rows($result)) {
+      while($index = mysql_fetch_array($result)) {
+	  if($index['status'] == "Active") $stats['active']+=(int)$index['count'];
+	  if($index['status'] == "Deleted") $stats['deleted']+=(int)$index['count'];
+	  if($index['status'] == "OffTopic") $stats['offtopic']+=(int)$index['count'];
+      }
+  }
+  return $stats;
+}
+
+function print_header()
+{
+  global $user;
+  echo "<table width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\">";
+  echo "<tr><td bgcolor=\"#999990\">";
+  echo "<table width=\"100%\" cellpadding=\"3\" cellspacing=\"1\" border=\"0\">";
+
+  echo "<tr bgcolor=\"#D0D0D0\">";
+  echo "<td>aid</td>";
+  echo "<td>Name</td>";
+  echo "<td>Shortname</td>";
+  echo "<td>Status</td>";
+  echo "<td>Date of Creation</td>";
+  if($user->admin()) echo "<td>Creation IP</td>\n";
+  echo "<!-- <td>E-Mail</td> -->";
+  echo "<td>Total posts</td>";
+  echo "<td>deleted</td>\n";
+  echo "<td>offtopic</td>\n";
+  if($user->admin()) echo "<td>email</td>\n";
+  echo "</tr>";
+}
+
+function print_user($uu, $stats, $bgcolor="#F7F7F7")
+{  
+    global $user;
+    echo "<tr bgcolor=\"$bgcolor\">\n";
+    echo "<td>" . $uu->aid . "</td>\n";
+    echo "<td>" . $uu->name . "</td>\n";
+    echo "<td>" . $uu->shortname . "</td>\n";
+    echo "<td>" . $uu->status;
+
+    if($user->admin()) {
+      $token="token=".$user->token();
+      if ($uu->status=="Active")
+	  echo " (<a href=\"/admin/suspend.phtml?$token&aid=" . $uu->aid . "\">suspend</a>)";
+      else if ($uu->status=="Suspended")
+	  echo " (<a href=\"/admin/suspend.phtml?$token&undo=1&aid=" . $uu->aid . "\">activate</a>)";
+    }
+    echo "</td>\n";
+
+    echo "<td>" . $uu->createdate . "</td>\n";
+    if($user->admin()) echo "<td>" . $uu->createip . "</td>\n";
+    echo "<td>" . ($stats['active']+$stats['deleted']+$stats['offtopic']) . "</td>\n";
+    echo "<td>" . $stats['deleted'] . "</td>\n";
+    echo "<td>" . $stats['offtopic'] . "</td>\n";
+    if($user->admin()) echo "<td>" . $uu->email . "</td>\n";
+    echo "</tr>\n";
+}
+
+function print_footer() {
+  echo "</table></td></tr>";
+  echo "</table>";
+}
 ?>
 
 </body>
