@@ -7,7 +7,6 @@ $uuser= new ForumUser;
 
 if (preg_match("/^\/[^\/]*\/([0-9]+)\.phtml$/", $script_name . $path_info, $regs)) {
     $uuser->find_by_aid((int)$regs[1], false);
-    if(!$uuser->createip) $uuser->createip="71.93.223.165";
 } else if(empty($path_info) || $path_info =="/") {
     $uuser->find_by_cookie();
     if(!$uuser->valid()) {	/* dont go to login page if user is invalid */
