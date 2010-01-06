@@ -168,7 +168,11 @@ if($user->admin()) echo "<td>email</td>\n";
 	      echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\" colspan=\"2\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
 	      while ($msg = sql_fetch_array($res2)) {
 		echo "  <tr bgcolor=\"#ECECFF\">";
-		echo "<td class=\"inner\">".$msg['aid']."</td>";
+		if($msg['aid']!=$uuser->aid) {
+		    echo "<td class=\"inner\"><a$v0 href=\"/account/".$msg['aid'].".phtml?$page\">".$msg['aid']."</a></td>";
+		} else {
+		    echo "<td class=\"inner\">".$msg['aid']."</td>";
+		}
 		echo "<td class=\"inner\">".$msg['name']."</td>";
 		echo "</tr>\n";
 	      }
