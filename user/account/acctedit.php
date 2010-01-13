@@ -1,6 +1,7 @@
 <?php
 
-include_once("strip.inc");
+require_once("strip.inc");
+require_once("validate.inc");
 
 $aid = $user->aid;
 
@@ -61,9 +62,8 @@ if (isset($_POST['submit'])) {
   }
 
   if (!empty($email)) {
-    if(strstr($email,'@') ) {
-	$email = trim($email);
-
+    $email = trim($email);
+    if(is_valid_email($email)) {
 	$update_email = $email;
     } else {
 	$error .= "Please supply a valid email address\n";

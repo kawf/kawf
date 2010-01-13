@@ -1,7 +1,7 @@
 <?php
 function is_valid_email($email)
 {
-  return eregi("^[_a-z0-9-][._a-z0-9+-]*@[a-z0-9-]+[a-z0-9-]+\.[a-z0-9-]+[.a-z0-9-]+$", $email);
+  return filter_var($email, FILTER_VALIDATE_EMAIL) ? true : false;
 }
 
 function is_valid_filename($filename)
