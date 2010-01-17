@@ -1,7 +1,7 @@
 <?php
 
 # Update this to the proper migration when changing the schema.
-$SCHEMA_VERSION = "20100101211822";
+$SCHEMA_VERSION = "20100116214033";
 
 # f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
@@ -243,10 +243,19 @@ $create_acl_ips_table = "
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     ip INT UNSIGNED NOT NULL,
     mask INT UNSIGNED NOT NULL,
+    proxy_type INT,
     note VARCHAR(255),
     update_time TIMESTAMP,
     PRIMARY KEY (id),
     UNIQUE KEY ip_mask_idx (ip, mask)
+  )";
+
+$create_acl_proxy_types_table = "
+  CREATE TABLE acl_proxy_types (
+    id INT NOT NULL,
+    proxy_type VARCHAR(50) NOT NULL,
+    PRIMARY KEY (id),
+    UNIQUE KEY (proxy_type)
   )";
 
 $create_acl_ban_types_table = "
