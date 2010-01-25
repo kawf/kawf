@@ -9,7 +9,7 @@
 #}
 
 /* First setup the path */
-$include_path = "$srcroot:$srcroot/lib:$srcroot/include:$srcroot/user";
+$include_path = "$srcroot:$srcroot/lib:$srcroot/include:$srcroot/user:$srcroot/user/acl";
 if (!isset($dont_use_account))
   $include_path .= ":" . "$srcroot/user/account";
 
@@ -26,6 +26,8 @@ require_once("sql.inc");
 require_once("util.inc");
 require_once("forumuser.inc");
 require_once("timezone.inc");
+require_once("acl_ip_ban.inc");
+require_once("acl_ip_ban_list.inc");
 
 /*
 require_once("phpSniff.class.php");
@@ -136,6 +138,8 @@ header("Cache-Control: private");
 $user = new ForumUser;
 $user->find_by_cookie();
 $tpl->set_var("AID", $user->aid);	// for hidden section in footer.tpl
+
+$IPBAN = AclIpBanList::find_matching_ban_list($_SERVER["REMOTE_ADDR"]);
 
 function update_visits()
 {
