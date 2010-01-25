@@ -43,6 +43,7 @@ sql_query($insert_static_preferences);
 /* ACL tables */
 sql_query($create_acl_ips_table);
 sql_query($create_acl_proxy_types_table);
+sql_query($insert_acl_proxy_types);
 sql_query($create_acl_ban_types_table);
 sql_query($insert_static_ban_types);
 sql_query($create_acl_ip_bans_table);

@@ -26,6 +26,8 @@ $tpl->set_block("create", "success");
 $tpl->set_block("create", "error");
 $tpl->set_block("form", "tou_agreement");
 
+$error = "";
+
 if($tou_available) {
   $tpl->parse("TOU", "tou");
 } else {
@@ -33,9 +35,20 @@ if($tou_available) {
 }
 
 if($create_disabled)
-    $tpl->set_var("form", "");
+  $tpl->set_var("form", "");
 else
-    $tpl->set_var("disabled", "");
+  $tpl->set_var("disabled", "");
+
+/* Check for bannination. */
+$banned_ip = false;
+if($IPBAN and ($IPBAN->is_account_creation_banned() or $IPBAN->is_all_banned())) {
+  $banned_ip = true;
+}
+
+if($banned_ip) {
+  $error = "Account creation is banned from this IP\n";
+  $tpl->set_var("form", "");
+}
 
 if (isset($_REQUEST['page']))
   $page = $_REQUEST['page'];
@@ -57,9 +70,7 @@ if (isset($_POST['email']))
 else
   $email = "";
 
-$error = "";
-
-if ($_POST['submit'] && !$create_disabled) {
+if ($_POST['submit'] && !$create_disabled && !$banned_ip) {
   $name = striptag($name, $no_tags);
   $name = trim($name);
 
@@ -101,14 +112,6 @@ if ($_POST['submit'] && !$create_disabled) {
       $error .= "Passwords do not match, please check and try again\n";
   }
 
-  /* TODO: we should only use HTTP_X_FORWARDED_FOR if the proxy is trusted. */
-  /*
-  if(trim($_SERVER["HTTP_X_FORWARDED_FOR"])) {
-    $user->createip(end(explode(",", trim($_SERVER["HTTP_X_FORWARDED_FOR"]))));
-  } else {
-    $user->createip($_SERVER["REMOTE_ADDR"]);
-  }
-  */
   $user->createip($_SERVER["REMOTE_ADDR"]);
 
   if($tou_available && !$_POST["tou_agree"]) {
@@ -116,7 +119,7 @@ if ($_POST['submit'] && !$create_disabled) {
   }
 }
 
-if (empty($error) && $_POST['submit'] && !$create_disabled) {
+if (empty($error) && $_POST['submit'] && !$create_disabled && !$banned_ip) {
   if (!$user->create()) {
     if (!$user->email)
       $error .= "The email address '$email' is taken. Perhaps you forgot your password?\n";
