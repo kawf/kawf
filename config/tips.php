@@ -46,7 +46,9 @@ require_once("util.inc");
 &lt;big&gt;<big>Larger Text</big>&lt;/big&gt;<br>
 &lt;small&gt;<small>Smaller Text</small>&lt;/small&gt;<br>
 &lt;sup&gt;<sup>Superscript</sup>&lt;/sup&gt;<br>
-&lt;sub&gt;<sub>Subscript</sub>&lt;/sub&gt;
+&lt;sub&gt;<sub>Subscript</sub>&lt;/sub&gt;<br>
+<br>
+&lt;pre&gt;<pre>  Preformatted text</pre>&lt;/pre&gt;
 </p>
 
 <?php
