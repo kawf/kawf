@@ -192,7 +192,7 @@ function print_user($uu, $stats, $bgcolor="#F7F7F7")
 {  
     global $user;
     echo "<tr bgcolor=\"$bgcolor\">\n";
-    echo "<td>" . $uu->aid . "</td>\n";
+    echo "<td><a href=\"/account/". $uu->aid .".phtml\">".$uu->aid."</a></td>\n";
     echo "<td>" . $uu->name . "</td>\n";
     echo "<td>" . $uu->shortname . "</td>\n";
     echo "<td>" . $uu->status;
