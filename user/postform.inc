@@ -1,7 +1,8 @@
 <?php
 function hidden($name, $value)
 {
-  return "<input type=\"hidden\" name=\"$name\" value=\"$value\">\n";
+  return "<input type=\"hidden\" name=\"" . htmlspecialchars($name) . "\" "
+  	. "value=\"" . htmlspecialchars($value) . "\">\n";
 }
 
 function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
