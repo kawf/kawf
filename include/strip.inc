@@ -74,7 +74,7 @@ function validate_url($url)
 {
   global $valid_transports;
 
-  if (!preg_match("/([^:]+):.*/", $url, $regs))
+  if (!preg_match("/^([^:]+):.*/", $url, $regs))
     return true;
 
   if (!isset($valid_transports[strtolower($regs[1])]) ||
