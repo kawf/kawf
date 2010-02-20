@@ -55,6 +55,7 @@ require_once("util.inc");
 
 <?php
 if(isset($_REQUEST['page']))
+    $page=$_REQUEST['page'];
     echo "<p><a href=\"$page\">Return to Forums</a></p>\n";
 ?>
 
