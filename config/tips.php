@@ -42,6 +42,8 @@ require_once("util.inc");
 &lt;b&gt;<b>Bold</b>&lt;/b&gt;<br>
 &lt;i&gt;<i>Italic</i>&lt;/i&gt;<br>
 &lt;u&gt;<u>Underline</u>&lt;/u&gt;<br>
+&lt;em&gt;<u>Emphasis</u>&lt;/em&gt;<br>
+&lt;strong&gt;<u>Strong</u>&lt;/strong&gt;<br>
 &lt;font color="red"&gt;<font color="red">Colored Text</font>&lt;/font&gt;<br>
 &lt;big&gt;<big>Larger Text</big>&lt;/big&gt;<br>
 &lt;small&gt;<small>Smaller Text</small>&lt;/small&gt;<br>
