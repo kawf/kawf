@@ -484,7 +484,7 @@ function search_results($useIndexedSearch)
 	
 	$sql2 = " where ";
 	
-	$searchArr = split(" ",trim($searchTxt));
+	$searchArr = explode(" ",trim($searchTxt));
 	
 	if($useIndexedSearch) {
 	    //check if any params are <=3 chars, if so, can't use indexed search
