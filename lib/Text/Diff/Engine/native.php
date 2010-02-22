@@ -106,7 +106,7 @@ class Text_Diff_Engine_native {
                 ++$yi;
             }
             if ($copy) {
-                $edits[] = &new Text_Diff_Op_copy($copy);
+                $edits[] = new Text_Diff_Op_copy($copy);
             }
 
             // Find deletes & adds.
