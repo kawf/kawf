@@ -4,8 +4,8 @@ function diff($old, $new)
     require_once("Text/Diff.php");
     require_once("Text/Diff/Renderer/unified.php");
 
-    $td = &new Text_Diff('auto', array($old, $new));
-    $rend = &new Text_Diff_Renderer_unified();
+    $td = new Text_Diff('auto', array($old, $new));
+    $rend = new Text_Diff_Renderer_unified();
     return $rend->render($td);
 }
 
