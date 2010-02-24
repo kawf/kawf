@@ -132,6 +132,7 @@ if (!isset($_REQUEST['message'])) {
   /* handle urls and imgs */
   $nmsg['url'] = stripcrapurl($_REQUEST['url']);
   $nmsg['urltext'] = stripcrap($_REQUEST['urltext']);
+  $nmsg['video'] = stripcrapurl($_REQUEST['video']);
   $nmsg['imageurl'] = stripcrapurl($_REQUEST['imageurl']);
 
   $exposeemail = $_REQUEST['ExposeEmail'];
@@ -268,6 +269,9 @@ if (isset($error) || isset($preview)) {
   if (!empty($nmsg['url']) || preg_match("/<[[:space:]]*a[[:space:]]+href/i", $nmsg['message']))
     $flagset[] = "Link";
 
+  if (!empty($nmsg['video']) || preg_match("/<[[:space:]]*video[[:space:]]+src/i", $nmsg['message']))
+    $flagset[] = "Video";
+
   if (!empty($nmsg['imageurl']) || preg_match("/<[[:space:]]*img[[:space:]]+src/i", $nmsg['message']))
     $flagset[] = "Picture";
 
@@ -289,6 +293,8 @@ if (isset($error) || isset($preview)) {
     $old[]="urltext: " . $msg['urltext'];
     $old[]="url: " . $msg['url'];
   }
+  if (!empty($msg['video']))
+    $old[]="video: " . $msg['video'];
 
   $new[]="Subject: " . $nmsg['subject'];
   $new = array_merge($new, explode("\n", $nmsg['message']));
@@ -296,6 +302,8 @@ if (isset($error) || isset($preview)) {
     $new[]="urltext: " . $nmsg['urltext'];
     $new[]="url: " . $nmsg['url'];
   }
+  if (!empty($nmsg['video']))
+    $new[]="video: " . $nmsg['video'];
 
   $diff = diff($old, $new);
 
@@ -309,6 +317,7 @@ if (isset($error) || isset($preview)) {
 	"message = '" . addslashes($nmsg['message']) . "', " .
 	"url = '" . addslashes($nmsg['url']) . "', " .
 	"urltext = '" . addslashes($nmsg['urltext']) . "', " .
+	"video = '" . addslashes($nmsg['video']) . "', " .
 	"changes = CONCAT(changes, 'Edited by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), ' from $remote_addr\n" . addslashes($diff) . "\n') " .
 	"where mid = '" . addslashes($mid) . "'";
   mysql_query($sql) or sql_error($sql);

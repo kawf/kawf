@@ -1,4 +1,4 @@
-<?
+<?php
 
 class CreateSchemaVersion extends DatabaseMigration {
   public function migrate() {

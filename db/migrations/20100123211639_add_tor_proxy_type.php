@@ -1,4 +1,4 @@
-<?
+<?php
 
 class AddTorProxyType extends DatabaseMigration {
   public function migrate() {

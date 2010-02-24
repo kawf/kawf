@@ -1,4 +1,4 @@
-<?
+<?php
 
 class AddCreateipToUsers extends DatabaseMigration {
   public function migrate() {

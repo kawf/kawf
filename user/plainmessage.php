@@ -4,7 +4,7 @@ require_once("message.inc");
 
 $raw = isset($_REQUEST['raw']);
 
-$msg = fetch_message($user, $mid, 'message,url,urltext,tid');
+$msg = fetch_message($user, $mid, 'message,url,urltext,video,tid');
 
 if ($raw) {
     header("Content-type: text/plain");

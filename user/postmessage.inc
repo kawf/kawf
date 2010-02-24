@@ -5,7 +5,7 @@
  *   sets $msg['mid'] to the new message id
  *   sets $msg['tid'] to the new thread id if there is no $msg['pmid'] (parent)
  *   sets $msg['flags'] to detected flags based on $request and msg content
- *   prepends $msg['imgurl'] to $msg['message'] if present
+ *   prepends $msg['imageurl'] to $msg['message'] if present
  *
  * returns true if ok, false if detected dup
 */
@@ -29,6 +29,9 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
 
   if (!empty($msg['url']) || preg_match("/<[[:space:]]*a[[:space:]]+href/i", $msg['message']))
     $flags[] = "Link";
+
+  if (!empty($msg['video']) || preg_match("/<[[:space:]]*a[[:space:]]+video/i", $msg['message']))
+    $flags[] = "Video";
 
   if (!empty($msg['imageurl']) || preg_match("/<[[:space:]]*img[[:space:]]+src/i", $msg['message']))
     $flags[] = "Picture";
@@ -70,6 +73,7 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
 	"message = '" . addslashes($msg['message']) . "', " .
 	"url = '" . addslashes($msg['url']) . "', " .
 	"urltext = '" . addslashes($msg['urltext']) . "', " .
+	"video = '" . addslashes($msg['video']) . "', " .
 	"state = '$status' " .
 	"where mid = '" . addslashes($msg['mid']) . "' and state = 'Active'";
     $result = mysql_query($sql) or sql_error($sql);
@@ -103,7 +107,7 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
     /* add the message to the db */
     /* TZ: f_messagesXX 'date' is SQL server local time */
     $sql = "insert into $mtable " .
-	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, state ) values ( '"
+	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, video, state ) values ( '"
 	    . addslashes($msg['mid']) . "', '"
 	    . addslashes($user->aid) . "', '"
 	    . addslashes($msg['pmid']) . "', '"
@@ -115,7 +119,9 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
 	    . addslashes($msg['subject']) . "', '"
 	    . addslashes($msg['message']) . "', '"
 	    . addslashes($msg['url']) . "', '"
-	    . addslashes($msg['urltext']) ."', '$status' );";
+	    . addslashes($msg['urltext']) ."', '"
+	    . addslashes($msg['video']) ."', '"
+	    . $status . "' );";
 
     $result = mysql_query($sql) or sql_error($sql);
 

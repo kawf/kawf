@@ -225,8 +225,26 @@ echo $sql . "\n";
         $msg = mysql_fetch_array($res3);
         mysql_free_result($res3);
 
-        $sql = "insert into messages" . $newindex . " (mid, pid, tid, aid, state, flags, name, email, date, ip, subject, message, url, urltext) values (" . $msg['mid'] . ", " . $msg['pid'] . ", " . $msg['tid'] . ", " . $msg['aid'] . ", '" . $msg['state'] . "', '" . $msg['flags'] . "', '" . addslashes($msg['name']) . "', '" . addslashes($msg['email']) . "', '" . addslashes($msg['date']) . "', '" . addslashes($msg['ip']) . "', '" . addslashes($msg['subject']) . "', '" . addslashes($msg['message']) . "', '" . addslashes($msg['url']) . "', '" . addslashes($msg['urltext']) . "')";
-// echo $sql . "\n";
+        $sql = "insert into messages $newindex (" .
+	  "mid, pid, tid, aid, state, flags, " .
+	  "name, email, date, ip, subject, message, url, urltext, video" .
+	  ") values (" .
+	  $msg['mid'] . ", " .
+	  $msg['pid'] . ", " .
+	  $msg['tid'] . ", " .
+	  $msg['aid'] . ", '" .
+	  $msg['state'] . "', '" .
+	  $msg['flags'] . "', '" .
+	  addslashes($msg['name']) . "', '" .
+	  addslashes($msg['email']) . "', '" .
+	  addslashes($msg['date']) . "', '" .
+	  addslashes($msg['ip']) . "', '" .
+	  addslashes($msg['subject']) . "', '" .
+	  addslashes($msg['message']) . "', '" .
+	  addslashes($msg['url']) . "', '" .
+	  addslashes($msg['urltext']) . "', '" .
+	  addslashes($msg['video']) . "')";
+	// echo $sql . "\n";
         mysql_db_query($fdb, $sql) or sql_warn($sql);
 
         if (!$msg['pid']) {
@@ -236,8 +254,14 @@ echo $sql . "\n";
           $thread = mysql_fetch_array($res3);
           mysql_free_result($res3);
 
-          $sql = "insert into threads" . $newindex . " (tid, mid, replies, tstamp) values (" . $thread['tid'] . ", " . $thread['mid'] . ", " . $thread['replies'] . ", " . $thread['tstamp'] . ")";
-// echo $sql . "\n";
+          $sql = "insert into threads $newindex (" .
+	    "tid, mid, replies, tstamp" .
+	    ") values (" .
+	    $thread['tid'] . ", " .
+	    $thread['mid'] . ", " .
+	    $thread['replies'] . ", " .
+	    $thread['tstamp'] . ")";
+	  // echo $sql . "\n";
           mysql_db_query($fdb, $sql) or sql_warn($sql);
         }
       }
@@ -259,7 +283,7 @@ echo $sql . "\n";
     }
 
     $sql = "select max(tid) from threads" . $index['iid'] . " where mid < $omaxmid";
-// echo $sql . "\n";
+    // echo $sql . "\n";
     $res3 = mysql_db_query($fdb, $sql) or sql_error($sql);
 
     list($omaxtid) = mysql_fetch_row($res3);

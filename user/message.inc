@@ -133,6 +133,66 @@ function blank_extra($tpl, $tag, $bool)
     $tpl->set_var($tag, "");
 }
 
+
+function embed_youtube_video($url)
+{
+  if (preg_match("#^http://(\w+\.)*youtube\.com/v/([a-zA-Z0-9_]+)#", $url, $regs)) {
+    $tag = $regs[2];
+  } else if (preg_match("#^http://(\w+\.)*youtube\.com/watch\?v=([a-zA-Z0-9_]+)#", $url, $regs)) {
+    $tag = $regs[2];
+  } else {
+    # not a youtube vid
+    return null;
+  }
+
+# return "youtube tag '$tag'<p>\n";
+  return
+    "<object>\n".
+    "<param name=\"movie\" value=\"http://www.youtube.com/v/$tag\"></param>\n".
+    "<embed src=\"http://www.youtube.com/v/$tag\"".
+	" type=\"application/x-shockwave-flash\"</embed>\n".
+    "</object><p>\n";
+}
+
+function embed_html5_video($url)
+{
+  # only support ogg and mp4
+  if (!preg_match("/\.(og[gvm]|mp[4v])$/i", $url))
+    return null;
+
+# return "html5 '$url'<p>\n";
+  return
+    "<video src=\"$url\" controls=\"controls\">\n" .
+    "Your browser does not support HTML5 and/or this codec.\n" .
+    "</video><p>\n";
+}
+
+function embed_video($url)
+{
+  # Make sure we start with http. We don't allow relative video refs (yet?).
+  # Probably uneccessary, since url validation happens on post. Still, we never
+  # know what might be lurking in the db.
+  if (!preg_match("#^http://#", $url)) {
+    if (preg_match("#^//#", $url)) {
+      $url = "http:$url";
+    } else if (preg_match("#^/#", $url)) {
+      $url = "http:/$url";
+    } else {
+      $url = "http://$url";
+    }
+  }
+
+  # try youtube
+  $out = embed_youtube_video($url);
+  if (!is_null($out)) return $out;
+
+  # try html5
+  $out = embed_html5_video($url);
+  if (!is_null($out)) return $out;
+
+  return "$url is not a supported video type. Must be youtube link or ogg/mp4<p>\n";
+}
+
 function postprocess($msg)
 {
   $out = '';
@@ -153,6 +213,9 @@ function postprocess($msg)
     $out .=
       "<ul><li class=\"url\"><a href=\"$url\"$target>$text</a></li></ul>\n";
   }
+
+  if (!empty($msg['video']))
+    $out .= embed_video($msg['video']);
 
   return $out;
 }

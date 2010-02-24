@@ -1,4 +1,4 @@
-<?
+<?php
 
 class MakeAclIdsBigint extends DatabaseMigration {
   public function migrate() {

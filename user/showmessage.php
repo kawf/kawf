@@ -120,7 +120,7 @@ if (isset($tthreads_by_tid[$msg['tid']]) &&
 $tpl->set_var("THREADLINKS", $threadlinks);
 
 /* create a new message based on current for postform */
-$nmsg['msg'] = $nmsg['subject'] = $nmsg['urltext'] = "";
+$nmsg['msg'] = $nmsg['subject'] = $nmsg['urltext'] = $nmsg['video'] = "";
 $nmsg['aid'] = $msg['aid'];
 $nmsg['pmid'] = $msg['mid']; 	/* new pmid is current message */
 $nmsg['tid'] = $msg['tid'];
