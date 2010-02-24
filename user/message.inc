@@ -136,9 +136,9 @@ function blank_extra($tpl, $tag, $bool)
 
 function embed_youtube_video($url)
 {
-  if (preg_match("#^http://(\w+\.)*youtube\.com/v/([a-zA-Z0-9_]+)#", $url, $regs)) {
+  if (preg_match("#^http://(\w+\.)*youtube\.com/v/([a-zA-Z0-9_\-]+)#", $url, $regs)) {
     $tag = $regs[2];
-  } else if (preg_match("#^http://(\w+\.)*youtube\.com/watch\?v=([a-zA-Z0-9_]+)#", $url, $regs)) {
+  } else if (preg_match("#^http://(\w+\.)*youtube\.com/watch\?v=([a-zA-Z0-9_\-]+)#", $url, $regs)) {
     $tag = $regs[2];
   } else {
     # not a youtube vid
