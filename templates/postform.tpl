@@ -39,7 +39,7 @@ This thread is locked. No replies are allowed.<br>
   <td><textarea class="text" wrap="soft" name="message" rows="10" cols="55">{MESSAGE}</textarea></td>
 </tr>
 <tr>
-  <th>Optional Link URL:</th>
+  <th>Link URL:</th>
   <td><input class="text" type="text" name="url" value="{URLLINK}" size="80"></td>
 </tr>
 <tr>
@@ -47,11 +47,11 @@ This thread is locked. No replies are allowed.<br>
   <td><input class="text" type="text" name="urltext" value="{URLTEXT}" size=80></td>
 </tr>
 <tr>
-  <th>Optional Image URL:</th>
+  <th>Image URL:</th>
   <td><input class="text" type="text" name="imageurl" value="{IMAGEURL}" size="80"></td>
 </tr>
 <tr>
-  <th>Optional Video URL:</th>
+  <th>Video URL:</th>
   <td><input class="text" type="text" name="video" value="{VIDEO}" size="80"></td>
 </tr>
 <tr>
