@@ -44,23 +44,15 @@ $index = find_msg_index($thread['mid']);
 
 /* TZ: tzoff is difference between php server and viewer, not SQL server and viewer */
 $tzoff=isset($user->tzoff)?$user->tzoff:0;
-
-/* TZ: unixtime is seconds since epoch */
-$sql = "select mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, ip, subject, message, url, urltext, flags, name, email, views, changes from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
-$result = mysql_query($sql) or sql_error($sql);
-while ($message = mysql_fetch_array($result)) {
-  /* msg['date'] is time local to user... strftime would normally be
-     time local to php server */
-  $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime'] - $tzoff);
-  $message['pmid'] = $message['pid'];
-  $messages[] = $message;
-}
-
-$index++;
-if (isset($indexes[$index])) {
+$tid = $thread['tid'];
+for ($index=0; isset($indexes[$index]); $index++) {
+  $fid = $indexes[$index]['iid'];
   /* TZ: unixtime is seconds since epoch */
-  $sql = "select mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, ip, subject, message, url, urltext, flags, name, email, views, changes from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
-  $result = mysql_query($sql) or sql_error($sql);
+  $sql = "select " .
+    "mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, ip, subject, " .
+    "message, url, urltext, video, flags, name, email, views, changes " .
+    "from f_messages$fid where tid = '$tid' order by mid";
+  $result=mysql_query($sql) or sql_error($sql);
   while ($message = mysql_fetch_array($result)) {
     /* msg['date'] is time local to user... strftime would normally be
        time local to php server */

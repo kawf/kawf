@@ -26,6 +26,13 @@ function print_collapsed($thread, $msg, $replies)
       $string .= " (nt)";
   }
 
+  if (isset($flags['Video'])) {
+    if (!isset($user->pref['SimpleHTML']))
+      $string .= " <img src=\"/pics/video.gif\" alt=\"contains video\">";
+    else
+      $string .= " (vid)";
+  }
+
   if (isset($flags['Picture'])) {
     if (!isset($user->pref['SimpleHTML']))
       $string .= " <img src=\"/pics/pic.gif\" alt=\"contains picture\">";

@@ -132,6 +132,14 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
       $urltext = preg_replace("/\"/", "&quot;", $urltext);
       $tpl->set_var("URLTEXT", $urltext);
 
+      if (!isset($msg['video']))
+	$url = "";
+      else
+	$url = $msg['video'];
+      $url = preg_replace("/&/", "&amp;", $url);
+      $url = preg_replace("/\"/", "&quot;", $url);
+      $tpl->set_var("VIDEO", $url);
+
       if (!isset($msg['imageurl']))
 	$imageurl = "";
       else
