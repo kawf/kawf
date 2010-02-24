@@ -18,9 +18,9 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
   $ttable = "f_threads" . $iid;
 
   if (isset($request['OffTopic']))
-    $status = "OffTopic";
+    $msg['state'] = "OffTopic";
   else
-    $status = "Active";
+    $msg['state'] = "Active";
 
   $flags[] = "NewStyle";
 
@@ -30,14 +30,15 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
   if (!empty($msg['url']) || preg_match("/<[[:space:]]*a[[:space:]]+href/i", $msg['message']))
     $flags[] = "Link";
 
-  if (!empty($msg['video']) || preg_match("/<[[:space:]]*video[[:space:]]+src/i", $msg['message']))
-    $flags[] = "Video";
-
   if (!empty($msg['imageurl']) || preg_match("/<[[:space:]]*img[[:space:]]+src/i", $msg['message']))
     $flags[] = "Picture";
 
+  if (!empty($msg['video']) || preg_match("/<[[:space:]]*video[[:space:]]+src/i", $msg['message']))
+    $flags[] = "Video";
+
   $msg['flags'] = implode(",", $flags);
 
+  /* IMAGEURL HACK */
   /* prepend image url to new message for entry into the db */
   if (!empty($msg['imageurl']))
     $msg['message'] = "<center><img src=\"" . $msg['imageurl'] . "\"></center><p>" . $msg['message'];
@@ -49,9 +50,11 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
   $result = mysql_query($sql);
 
   if (!$result) {
-    /* fail, its a dup */
+    /* fail, its a DUP! */
     $newmessage = false;
-    if (mysql_errno() != 1062)	/* something bad happened if insert did not generate dup entry error */
+
+    /* something bad happened if insert did not generate dup entry error */
+    if (mysql_errno() != 1062)
       sql_error($sql);
 
     /* get current mid */
@@ -60,8 +63,8 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
     if (!$msg['mid'])
       sql_error('failed to get mid for ' . $request['postcookie']);
 
-    /* back up old message */
-    $omsg = sql_querya("select * from $mtable where mid = '" . addslashes($msg['mid']) ."'");
+    /* get up old message state */
+    $omsg = sql_querya("select state from $mtable where mid = '" . addslashes($msg['mid']) ."'");
 
     /* update with new message */
     $sql = "update $mtable set " .
@@ -74,7 +77,7 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
 	"url = '" . addslashes($msg['url']) . "', " .
 	"urltext = '" . addslashes($msg['urltext']) . "', " .
 	"video = '" . addslashes($msg['video']) . "', " .
-	"state = '$status' " .
+	"state = '" . $msg['state'] ."' " .
 	"where mid = '" . addslashes($msg['mid']) . "' and state = 'Active'";
     $result = mysql_query($sql) or sql_error($sql);
 
@@ -86,7 +89,9 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
     /* unwind post count for old message */
     $user->post($fid, $omsg['state'], -1);
   } else {
+    /* Everything is ok, post */
     $newmessage = true;
+
     /* Grab a new mid, this should work reliably */
     do {
       $sql = "select max(id) + 1 from f_unique where fid = $fid and type = 'Message'";
@@ -121,7 +126,7 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
 	    . addslashes($msg['url']) . "', '"
 	    . addslashes($msg['urltext']) ."', '"
 	    . addslashes($msg['video']) ."', '"
-	    . $status . "' );";
+	    . $msg['state'] . "' );";
 
     $result = mysql_query($sql) or sql_error($sql);
 
@@ -160,12 +165,13 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
 
     /* update index for new message */
     if (!$msg['pmid']) {
+      $status = $msg['state'];
       $sql = "update f_indexes set $status = $status + 1 where iid = $iid";
       mysql_query($sql) or sql_error($sql);
     }
 
-    /* bump post count */
-    $user->post($fid, $status, 1);
+    /* bump post count for user */
+    $user->post($fid, $msg['state'], 1);
   }
 
   $sql = "insert into f_updates ( fid, mid ) values ( $fid, '" . addslashes($msg['mid']) . "' )";

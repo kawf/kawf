@@ -105,39 +105,26 @@ if ($_REQUEST['preview'])
 if ($_REQUEST['imgpreview'])
     $imgpreview = 1;
 
-if (!isset($_REQUEST['message'])) {
-  /* hit "edit" link */
+if (!isset($_POST['message'])) {
+  /* hit "edit" link, prefill postform (step 1) */
   $preview = 1;
 
-  /* extract imageurl, remove from message */
-  if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/s", $nmsg['message'], $regs)) {
+  /* IMAGEURL HACK */
+  /* extract imageurl, strip from existing (old) message */
+  if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/s", $msg['message'], $regs)) {
     $nmsg['imageurl'] = $regs[1];
     $nmsg['message'] = $regs[2];
   }
+
   /* Synthesize state based on the state of the existing message. */ 
   $exposeemail = !empty($msg['email']);
   $offtopic = ($msg['state'] == 'OffTopic');
 } else {
-  /* form summitted */
-
-  /* handle subject */
-  $nmsg['subject'] = stripcrap($_REQUEST['subject'], $subject_tags);
-
-  /* handle message */
-  $nmsg['message'] = $_REQUEST['message'];
-  /* remove any imageurl (to be replaced by _REQUEST'd imageurl below) */
-  if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/s", $nmsg['message'], $regs))
-    $nmsg['message'] = $regs[2];
-  $nmsg['message'] = stripcrap($nmsg['message'], $standard_tags);
-
-  /* handle urls and imgs */
-  $nmsg['url'] = stripcrapurl($_REQUEST['url']);
-  $nmsg['urltext'] = stripcrap($_REQUEST['urltext']);
-  $nmsg['video'] = stripcrapurl($_REQUEST['video']);
-  $nmsg['imageurl'] = stripcrapurl($_REQUEST['imageurl']);
-
-  $exposeemail = $_REQUEST['ExposeEmail'];
-  $offtopic = $_REQUEST['OffTopic'];
+  /* form submitted via edit (step 2) */
+  preprocess($nmsg, $_POST, true /* strip existing inline image */);
+  
+  $exposeemail = $_POST['ExposeEmail'];
+  $offtopic = $_POST['OffTopic'];
 }
 
 if (isset($ad_generic)) {
@@ -209,14 +196,6 @@ if (strlen($nmsg['subject']) > 100) {
   $nmsg['subject'] = substr($nmsg['subject'], 0, 100);
 }
 
-/* Strip any tags from the data */
-
-if (!empty($nmsg['url']) && !preg_match("/^[a-z]+:\/\//i", $nmsg['url']))
-  $nmsg['url'] = "http://".$nmsg['url'];
-
-if (!empty($nmsg['imageurl']) && !preg_match("/^[a-z]+:\/\//i", $nmsg['imageurl']))
-  $nmsg['imageurl'] = "http://".$nmsg['imageurl'];
-
 /* first time around, there is an imageurl set, and the user
    did not preview, force the action to "preview" */
 if ((!empty($nmsg['imageurl']) || !empty($nmsg['video']))
@@ -282,8 +261,9 @@ if (isset($error) || isset($preview)) {
   if (!empty($nmsg['imageurl']) || preg_match("/<[[:space:]]*img[[:space:]]+src/i", $nmsg['message']))
     $flagset[] = "Picture";
 
-  $flagset = implode(",", $flagset);
+  $nmsg['flags'] = implode(",", $flagset);
 
+  /* IMAGEURL HACK */
   /* prepend new imageurl for diffing and for entry into the db */
   if (!empty($nmsg['imageurl']))
     $nmsg['message'] = "<center><img src=\"" . $nmsg['imageurl']. "\"></center><p>\n" . $nmsg['message'];
@@ -314,18 +294,23 @@ if (isset($error) || isset($preview)) {
 
   $diff = diff($old, $new);
 
+  $mtable = "f_messages" . $indexes[$index]['iid'];
+
   /* Add it into the database */
-  $sql = "update f_messages" . $indexes[$index]['iid'] . " set " .
+  $sql = "update $mtable set " .
 	"name = '" . addslashes($nmsg['name']) . "', " .
 	"email = '" . addslashes($nmsg['email']) . "', " .
-	"flags = '$flagset', " .
-	"state = '" . addslashes($nmsg['state']) . "', " .
+	"flags = '" . $nmsg['flags'] . "', " .
 	"subject = '" . addslashes($nmsg['subject']) . "', " .
 	"message = '" . addslashes($nmsg['message']) . "', " .
 	"url = '" . addslashes($nmsg['url']) . "', " .
 	"urltext = '" . addslashes($nmsg['urltext']) . "', " .
 	"video = '" . addslashes($nmsg['video']) . "', " .
-	"changes = CONCAT(changes, 'Edited by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), ' from $remote_addr\n" . addslashes($diff) . "\n') " .
+	"state = '" . $nmsg['state'] . "', " .
+	"changes = CONCAT(changes, 'Edited by " .
+	    addslashes($user->name) . "/" . $user->aid .
+	    " at ', NOW(), ' from $remote_addr\n" .
+	    addslashes($diff) . "\n') " .
 	"where mid = '" . addslashes($mid) . "'";
   mysql_query($sql) or sql_error($sql);
 
