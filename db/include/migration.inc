@@ -1,4 +1,4 @@
-<?
+<?php
 
 $kawf_base = realpath(dirname(__FILE__) . "/../..");
 include_once($kawf_base . "/config/config.inc");

@@ -1,4 +1,4 @@
-<?
+<?php
 
 class AddProxyType extends DatabaseMigration {
   public function migrate() {

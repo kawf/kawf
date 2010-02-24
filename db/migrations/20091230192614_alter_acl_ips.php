@@ -1,4 +1,4 @@
-<?
+<?php
 
 class AlterAclIps extends DatabaseMigration {
   public function migrate() {

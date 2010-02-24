@@ -1,4 +1,4 @@
-<?
+<?php
 
 class CreateAclIpTables extends DatabaseMigration {
   public function migrate() {
