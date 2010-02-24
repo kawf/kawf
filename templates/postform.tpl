@@ -47,12 +47,12 @@ This thread is locked. No replies are allowed.<br>
   <td><input class="text" type="text" name="urltext" value="{URLTEXT}" size=80></td>
 </tr>
 <tr>
-  <th>Optional Video URL:</th>
-  <td><input class="text" type="text" name="video" value="{VIDEO}" size="80"></td>
-</tr>
-<tr>
   <th>Optional Image URL:</th>
   <td><input class="text" type="text" name="imageurl" value="{IMAGEURL}" size="80"></td>
+</tr>
+<tr>
+  <th>Optional Video URL:</th>
+  <td><input class="text" type="text" name="video" value="{VIDEO}" size="80"></td>
 </tr>
 <tr>
   <th style="padding-top: 0.5em;" valign="top">Post Message:</th>
