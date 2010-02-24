@@ -30,7 +30,7 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
   if (!empty($msg['url']) || preg_match("/<[[:space:]]*a[[:space:]]+href/i", $msg['message']))
     $flags[] = "Link";
 
-  if (!empty($msg['video']) || preg_match("/<[[:space:]]*a[[:space:]]+video/i", $msg['message']))
+  if (!empty($msg['video']) || preg_match("/<[[:space:]]*video[[:space:]]+src/i", $msg['message']))
     $flags[] = "Video";
 
   if (!empty($msg['imageurl']) || preg_match("/<[[:space:]]*img[[:space:]]+src/i", $msg['message']))

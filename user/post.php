@@ -178,6 +178,7 @@ if (isset($_POST['postcookie'])) {
 
   $msg['urltext'] = stripcrap($_POST['urltext']);
   $msg['imageurl'] = stripcrapurl($_POST['imageurl']);
+  $msg['video'] = stripcrap($_POST['video']);
 
   if (!empty($msg['imageurl']) && !preg_match("/^[a-z]+:\/\//i", $msg['imageurl']))
     $msg['imageurl'] = "http://".$msg['imageurl'];
