@@ -133,6 +133,19 @@ function blank_extra($tpl, $tag, $bool)
     $tpl->set_var($tag, "");
 }
 
+function normalize_url_scheme($url)
+{
+  if (preg_match("#^https?://#", $url))
+    return $url;
+
+  if (preg_match("#^//#", $url))
+    return "http:$url";
+
+  if (preg_match("#^/#", $url))
+    return "http:/$url";
+ 
+  return "http://$url";
+}
 
 function embed_youtube_video($url)
 {
@@ -163,24 +176,13 @@ function embed_html5_video($url)
 # return "html5 '$url'<p>\n";
   return
     "<p><video src=\"$url\" controls=\"controls\">\n" .
-    "Your browser does not support HTML5 and/or this codec.\n" .
+    "Your browser <a href=\"http://en.wikipedia.org/wiki/HTML5_video#Browser_support\">does not support HTML5 and/or this codec</a>.\n" .
     "</video></p>\n";
 }
 
 function embed_video($url)
 {
-  # Make sure we start with http. We don't allow relative video refs (yet?).
-  # Probably uneccessary, since url validation happens on post. Still, we never
-  # know what might be lurking in the db.
-  if (!preg_match("#^http://#", $url)) {
-    if (preg_match("#^//#", $url)) {
-      $url = "http:$url";
-    } else if (preg_match("#^/#", $url)) {
-      $url = "http:/$url";
-    } else {
-      $url = "http://$url";
-    }
-  }
+  $url = normalize_url_scheme($url);
 
   # try youtube
   $out = embed_youtube_video($url);
@@ -193,18 +195,45 @@ function embed_video($url)
   return "$url is not a supported video type. Must be youtube link or ogg/mp4<p>\n";
 }
 
+function preprocess(&$msg, $req)
+{
+  $msg['subject'] = stripcrap($req['subject'], $subject_tags);
+  $msg['message'] = stripcrap($req['message'], $standard_tags);
+  $msg['urltext'] = stripcrap($req['urltext']);
+
+  $msg['url'] = stripcrapurl($req['url']);
+  if (!empty($msg['url']))
+    $msg['url'] = normalize_url_scheme($msg['url']);
+
+  $msg['imageurl'] = stripcrapurl($req['imageurl']);
+  if (!empty($msg['imageurl']))
+    $msg['imageurl'] = normalize_url_scheme($msg['imageurl']);
+
+  $msg['video'] = stripcrap($req['video']);
+  if (!empty($msg['video']))
+    $msg['video'] = normalize_url_scheme($msg['video']);
+}
+
 function postprocess($msg)
 {
   $out = '';
+
+  if (!empty($msg['video']))
+    $out .= embed_video($msg['video']);
+
+  /* Due to imageurl hack, image is always right before message, since
+     it is stored inline.  To fix this, we would have to pull out imageurl in
+     showmessage before rendering, like we do in preview and edit. */
+  if (!empty($msg['imageurl'])) {
+    $url = $msg['imageurl'];
+    $out .= "<center><img src=\"$url\" alt=\"$url\"></center><p>\n";
+  }
 
   if (!empty($msg['message'])) {
     // todo: make sure softbreak avoids pre
     // $out .= nl2br(softbreaklongwords($msg['message'],78));
     $out .= nl2brPre::out($msg['message']);
   }
-
-  if (!empty($msg['video']))
-    $out .= embed_video($msg['video']);
 
   if (!empty($msg['url'])) {
     $url = $msg['url'];
@@ -274,14 +303,6 @@ function render_message($tpl, $msg, $viewer, $owner=null)
   }
 
   $message = postprocess($msg);
-
-  /* if 'imageurl' is set, it means the message itself does not have the
-     image (such as for edit or preview) in it. */
-  /* prepend imageurl, but only to rendering, not to message itself. */
-  if (!empty($msg['imageurl'])) {
-    $url = $msg['imageurl'];
-    $message = "<center><img src=\"$url\" alt=\"$url\"></center><p>\n" . $message;
-  }
 
   if (!empty($message)) {
     $tpl->set_var("MSG_MESSAGE", $message);

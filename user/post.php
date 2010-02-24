@@ -153,8 +153,11 @@ $msg['aid'] = $user->aid;
 $msg['flags'] = 'NewStyle';
 
 if (isset($_POST['postcookie'])) {
-  $preview = $_POST['preview'];
-  $imgpreview = $_POST['imgpreview'];
+  if ($_POST['preview'])
+    $preview = 1;
+
+  if ($_POST['imgpreview'])
+    $imgpreview = 1;
 
   /* FIXME: Sanitize integers */
   $msg['mid'] = $_POST['mid'];
@@ -171,21 +174,9 @@ if (isset($_POST['postcookie'])) {
   else
     $msg['email'] = "";
 
-  /* Strip any tags from the data */
-  $msg['message'] = stripcrap($_POST['message'], $standard_tags);
-  $msg['subject'] = stripcrap($_POST['subject'], $subject_tags);
+  preprocess($msg, $_POST);
 
-  $msg['url'] = stripcrapurl($_POST['url']);
-  if (!empty($msg['url']) && !preg_match("/^[a-z]+:\/\//i", $msg['url']))
-    $msg['url'] = "http://".$msg['url'];
-
-  $msg['urltext'] = stripcrap($_POST['urltext']);
-  $msg['imageurl'] = stripcrapurl($_POST['imageurl']);
-  $msg['video'] = stripcrap($_POST['video']);
-
-  if (!empty($msg['imageurl']) && !preg_match("/^[a-z]+:\/\//i", $msg['imageurl']))
-    $msg['imageurl'] = "http://".$msg['imageurl'];
-
+  /* find parent for "Re: */
   if (isset($msg['pmid'])) {
     $index = find_msg_index($msg['pmid']);
     if (isset($index)) {
@@ -197,16 +188,19 @@ if (isset($_POST['postcookie'])) {
     }
   }
 
-  if (empty($msg['subject']) && strlen($msg['subject']) == 0)
+  if (empty($msg['subject']) && strlen($msg['subject']) == 0) {
     $error["subject_req"] = true;
-  elseif (isset($parent) && $msg['subject'] == "Re: " . $parent['subject'] && empty($msg['message']) && strlen($msg['message']) == 0 && empty($msg['url']))
+  } elseif (isset($parent) && $msg['subject'] == "Re: " . $parent['subject'] &&
+    empty($msg['message']) && strlen($msg['message']) == 0 &&
+    empty($msg['url'])) {
     $error["subject_change"] = true;
-  elseif (strlen($msg['subject']) > 100) {
-    /* Subject is too long */
+  } elseif (strlen($msg['subject']) > 100) {
     $error["subject_too_long"] = true;
     $msg['subject'] = substr($msg['subject'], 0, 100);
   }
 
+  /* first time around, there is an imageurl set, and the user
+   did not preview, force the action to "preview" */
   if ((!empty($msg['imageurl']) || !empty($msg['video']))
     && !isset($imgpreview)) {
     $preview = 1;
@@ -232,7 +226,7 @@ if (isset($_POST['postcookie'])) {
 } else {
   /* somebody hit post.phtml directly, just generate blank post form */
   $msg['message'] = $msg['subject'] = "";
-  $msg['url'] = $msg['urltext'] = $msg['imageurl'] = "";
+  $msg['url'] = $msg['urltext'] = $msg['imageurl'] = $msg['video'] = "";
 
   /* Guaranteed no picture */
   $tpl->set_var("image", "");
