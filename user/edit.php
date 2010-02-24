@@ -30,6 +30,7 @@ $tpl->set_block("edit", "disabled");
 $tpl->set_block("edit", "edit_locked");
 $tpl->set_block("edit", "error");
 $tpl->set_block("error", "image");
+$tpl->set_block("error", "video");
 $tpl->set_block("error", "subject_req");
 $tpl->set_block("error", "subject_too_long");
 $tpl->set_block("edit", "preview");
@@ -40,6 +41,7 @@ message_set_block($tpl);
 
 $errors = array(
   "image",
+  "video",
   "subject_req",
   "subject_too_long",
 );
@@ -218,12 +220,18 @@ if (!empty($nmsg['imageurl']) && !preg_match("/^[a-z]+:\/\//i", $nmsg['imageurl'
 
 /* first time around, there is an imageurl set, and the user
    did not preview, force the action to "preview" */
-if (!empty($nmsg['imageurl']) && !isset($imgpreview))
+if ((!empty($nmsg['imageurl']) || !empty($nmsg['video']))
+  && !isset($imgpreview)) {
   $preview = 1;
+}
 
-if ((isset($error) || isset($preview)) && !empty($nmsg['imageurl'])) {
-  $error["image"] = true;
+if ((isset($error) || isset($preview))) {
   $imgpreview = 1;
+  if (!empty($nmsg['imageurl']))
+    $error["image"] = true;
+
+  if (!empty($nmsg['video']))
+    $error["video"] = true;
 }
 
 /* render new message */
