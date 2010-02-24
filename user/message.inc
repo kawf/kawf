@@ -156,7 +156,7 @@ function embed_html5_video($url)
 # return "html5 '$url'<p>\n";
   return
     "<p><video src=\"$url\" controls=\"controls\">\n" .
-    "Your browser does not support HTML5 and/or this codec.\n" .
+    "Your browser <a href=\"http://en.wikipedia.org/wiki/HTML5_video#Browser_support\">does not support HTML5 and/or this codec</a>.\n" .
     "</video></p>\n";
 }
 
