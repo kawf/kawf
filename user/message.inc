@@ -147,10 +147,10 @@ function embed_youtube_video($url)
 
 # return "youtube tag '$tag'<p>\n";
   return
-    "<object>\n".
+    "<object width=\"600\" height=\"360\">\n".
     "<param name=\"movie\" value=\"http://www.youtube.com/v/$tag\"></param>\n".
     "<embed src=\"http://www.youtube.com/v/$tag\"".
-	" type=\"application/x-shockwave-flash\"</embed>\n".
+	" type=\"application/x-shockwave-flash\" width=\"600\" height=\"360\"</embed>\n".
     "</object><p>\n";
 }
 
