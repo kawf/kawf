@@ -31,6 +31,7 @@ $tpl->set_block("disabled", "noreplies");
 $tpl->set_block("post", "locked");
 $tpl->set_block("post", "error");
 $tpl->set_block("error", "image");
+$tpl->set_block("error", "video");
 $tpl->set_block("error", "subject_req");
 $tpl->set_block("error", "subject_change");
 $tpl->set_block("error", "subject_too_long");
@@ -44,6 +45,7 @@ message_set_block($tpl);
 
 $errors = array(
   "image",
+  "video",
   "subject_req",
   "subject_change",
   "subject_too_long",
@@ -204,12 +206,18 @@ if (isset($_POST['postcookie'])) {
     $msg['subject'] = substr($msg['subject'], 0, 100);
   }
 
-  if (!empty($msg['imageurl']) && !isset($imgpreview))
+  if ((!empty($msg['imageurl']) || !empty($msg['video']))
+    && !isset($imgpreview)) {
     $preview = 1;
+  }
 
-  if ((isset($error) || isset($preview)) && !empty($msg['imageurl'])) {
+  if ((isset($error) || isset($preview))) {
     $imgpreview = 1;
-    $error["image"] = true;
+    if(!empty($msg['imageurl']))
+      $error["image"] = true;
+
+    if(!empty($msg['video']))
+      $error["video"] = true;
   }
  
   render_message($tpl, $msg, $user);
