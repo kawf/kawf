@@ -81,9 +81,10 @@ see which browsers support what.</p>
 &lt;pre&gt;<pre>  Preformatted text</pre>&lt;/pre&gt;
 
 <?php
-if(isset($_REQUEST['page']))
+if(isset($_REQUEST['page'])) {
     $page=$_REQUEST['page'];
     echo "<p><a href=\"$page\">Return to Forums</a></p>\n";
+}
 ?>
 
 </body>
