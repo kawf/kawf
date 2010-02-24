@@ -55,12 +55,6 @@ if ($msg['aid'] != $user->aid) {
   exit;
 }
 
-$message = $msg['message'];
-if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/", $message, $regs)) {
-  $imageurl = $regs[1];
-  $message = $regs[2];
-}
-
 if (isset($ad_generic)) {
   $urlroot = "/ads";
   /* We get our money from ads, make sure it's there */
