@@ -147,11 +147,11 @@ function embed_youtube_video($url)
 
 # return "youtube tag '$tag'<p>\n";
   return
-    "<object width=\"600\" height=\"360\">\n".
+    "<p><object width=\"600\" height=\"360\">\n".
     "<param name=\"movie\" value=\"http://www.youtube.com/v/$tag\"></param>\n".
     "<embed src=\"http://www.youtube.com/v/$tag\"".
 	" type=\"application/x-shockwave-flash\" width=\"600\" height=\"360\"</embed>\n".
-    "</object><p>\n";
+    "</object></p>\n";
 }
 
 function embed_html5_video($url)
@@ -162,9 +162,9 @@ function embed_html5_video($url)
 
 # return "html5 '$url'<p>\n";
   return
-    "<video src=\"$url\" controls=\"controls\">\n" .
+    "<p><video src=\"$url\" controls=\"controls\">\n" .
     "Your browser does not support HTML5 and/or this codec.\n" .
-    "</video><p>\n";
+    "</video></p>\n";
 }
 
 function embed_video($url)
