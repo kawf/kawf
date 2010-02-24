@@ -203,6 +203,9 @@ function postprocess($msg)
     $out .= nl2brPre::out($msg['message']);
   }
 
+  if (!empty($msg['video']))
+    $out .= embed_video($msg['video']);
+
   if (!empty($msg['url'])) {
     $url = $msg['url'];
     // $target = " target=\"_blank\"";
@@ -213,9 +216,6 @@ function postprocess($msg)
     $out .=
       "<ul><li class=\"url\"><a href=\"$url\"$target>$text</a></li></ul>\n";
   }
-
-  if (!empty($msg['video']))
-    $out .= embed_video($msg['video']);
 
   return $out;
 }
