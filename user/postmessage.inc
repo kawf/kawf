@@ -38,8 +38,8 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
 
   $msg['flags'] = implode(",", $flags);
 
-  /* IMAGEURL HACK */
-  /* prepend image url to new message for entry into the db */
+  /* IMAGEURL HACK - prepend before insert*/
+  /* for entry into the db */
   if (!empty($msg['imageurl']))
     $msg['message'] = "<center><img src=\"" . $msg['imageurl'] . "\"></center><p>" . $msg['message'];
 

@@ -73,13 +73,7 @@ unset($tpl->varkeys["DOMAIN"]);
 unset($tpl->varvals["DOMAIN"]);
 $tpl->set_var("DOMAIN", $_domain);
 
-$index = find_msg_index($mid);
-
-$sql = "select * from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'";
-$result = mysql_query($sql) or sql_error($sql);
-
-/* get existing message */
-$nmsg = $msg = mysql_fetch_array($result);
+$nmsg = $msg = fetch_message($user, $mid);
 
 /* pick up new remote_addr */
 $nmsg['ip'] = $remote_addr;
@@ -110,19 +104,12 @@ if (!isset($_POST['message'])) {
   /* hit "edit" link, prefill postform (step 1) */
   $preview = 1;
 
-  /* IMAGEURL HACK */
-  /* extract imageurl, strip from existing (old) message */
-  if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/s", $msg['message'], $regs)) {
-    $nmsg['imageurl'] = $regs[1];
-    $nmsg['message'] = $regs[2];
-  }
-
   /* Synthesize state based on the state of the existing message. */ 
   $exposeemail = !empty($msg['email']);
   $offtopic = ($msg['state'] == 'OffTopic');
 } else {
   /* form submitted via edit (step 2) */
-  preprocess($nmsg, $_POST, true /* strip existing inline image */);
+  preprocess($nmsg, $_POST);
   
   $exposeemail = $_POST['ExposeEmail'];
   $offtopic = $_POST['OffTopic'];
@@ -197,6 +184,9 @@ if (strlen($nmsg['subject']) > 100) {
   $nmsg['subject'] = substr($nmsg['subject'], 0, 100);
 }
 
+/* render new message */
+render_message($tpl, $nmsg, $user);
+
 /* first time around, there is an imageurl set, and the user
    did not preview, force the action to "preview" */
 if ((!empty($nmsg['imageurl']) || !empty($nmsg['video']))
@@ -212,9 +202,6 @@ if ((isset($error) || isset($preview))) {
   if (!empty($nmsg['video']))
     $error["video"] = true;
 }
-
-/* render new message */
-render_message($tpl, $nmsg, $user);
 
 if (!isset($preview))
   $tpl->set_var("preview", "");
@@ -264,8 +251,8 @@ if (isset($error) || isset($preview)) {
 
   $nmsg['flags'] = implode(",", $flagset);
 
-  /* IMAGEURL HACK */
-  /* prepend new imageurl for diffing and for entry into the db */
+  /* IMAGEURL HACK - prepend before insert */
+  /* for diffing and for entry into the db */
   if (!empty($nmsg['imageurl']))
     $nmsg['message'] = "<center><img src=\"" . $nmsg['imageurl']. "\"></center><p>\n" . $nmsg['message'];
 
