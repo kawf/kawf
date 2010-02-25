@@ -190,6 +190,7 @@ function embed_video($url)
 
 function preprocess(&$msg, $req)
 {
+  global $subject_tags, $standard_tags;
   $msg['subject'] = stripcrap($req['subject'], $subject_tags);
   $msg['message'] = stripcrap($req['message'], $standard_tags);
   $msg['urltext'] = stripcrap($req['urltext']);
