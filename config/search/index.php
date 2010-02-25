@@ -166,6 +166,7 @@ if ($posterAID==996) $posterAID='';
 
 $flagNT=isset($_GET['flagNT'])?$_GET['flagNT']:'';
 $flagPIC=isset($_GET['flagPIC'])?$_GET['flagPIC']:'';
+$flagVID=isset($_GET['flagVID'])?$_GET['flagVID']:'';
 $flagURL=isset($_GET['flagURL'])?$_GET['flagURL']:'';
 
 $startDate=addslashes($_GET['startDate']);
@@ -264,6 +265,9 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 							<br>
 							<img src="http://<?=$hostname?>/pics/pic.gif">
 							<?drawFlagSel('flagPIC',$flagPIC)?>
+							<br>
+							<img src="http://<?=$hostname?>/pics/video.gif">
+							<?drawFlagSel('flagVID',$flagVID)?>
 							<br>
 							<img src="http://<?=$hostname?>/pics/url.gif">
 							<?drawFlagSel('flagURL',$flagURL)?>
@@ -470,7 +474,7 @@ function search_results($useIndexedSearch)
 	global $forumID;
 	global $searchTxt, $searchSubj, $searchMsg, $searchUrl, $showMessages;
 	global $posterName, $posterAID;
-	global $flagNT, $flagPIC, $flagURL;
+	global $flagNT, $flagPIC, $flagVID; $flagURL;
 	global $startDate, $endDate;
 	global $sortBy, $sortDir;
 
@@ -539,6 +543,11 @@ function search_results($useIndexedSearch)
 		$sql2 .= " and m.flags like '%Picture%' ";
 	if ($flagPIC == "0")
 		$sql2 .= " and not( m.flags like '%Picture%') ";
+		
+	if ($flagVID == "1")
+		$sql2 .= " and m.flags like '%Video%' ";
+	if ($flagVID == "0")
+		$sql2 .= " and not( m.flags like '%Video%') ";
 		
 	if ($flagURL == "1")
 		$sql2 .= " and m.flags like '%Link%' ";
