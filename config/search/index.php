@@ -401,10 +401,13 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 								<?if (strpos($row['flags'],'Picture')) {?>
 									<img src="http://<?=$hostname?>/pics/pic.gif">
 								<?}?>
+								<?if (strpos($row['flags'],'Video')) {?>
+									<img src="http://<?=$hostname?>/pics/video.gif">
+								<?}?>
 								<?if (strpos($row['flags'],'Link')) {?>
 									<img src="http://<?=$hostname?>/pics/url.gif">
 								<?}
-								if ($showMessages!="" && (!strpos($row['flags'],'NoText') || strpos($row['flags'],'Picture') || strpos($row['flags'],'Link'))) {
+								if ($showMessages!="" && (!strpos($row['flags'],'NoText') || strpos($row['flags'],'Picture') || strpos($row['flags'],'Video') || strpos($row['flags'],'Link'))) {
 									$msg = str_replace(chr(13),"<br>",$row['message']);
 									//if ($row['url']) 
 									//	$msg .= '<a href="' . $row['url'] . '" target="_blank">' . $row['urltext'] . '</a>';
