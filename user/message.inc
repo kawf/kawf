@@ -41,7 +41,6 @@ function _message_unset_block_extras($tpl)
 function _message_render_extras($tpl, $msg, $viewer, $owner)
 {
   global $forum, $thread;
-
   /* moderator/locker tools (based on viewer) */
   $moderator = $viewer->admin() || $viewer->capable($forum['fid'], 'Moderate');
   $locker = $viewer->admin() || $viewer->capable($forum['fid'], 'Lock');
@@ -191,6 +190,7 @@ function embed_video($url)
 function preprocess(&$msg, $req)
 {
   global $subject_tags, $standard_tags;
+
   $msg['subject'] = stripcrap($req['subject'], $subject_tags);
   $msg['message'] = stripcrap($req['message'], $standard_tags);
   $msg['urltext'] = stripcrap($req['urltext']);
@@ -212,18 +212,15 @@ function postprocess($msg)
 {
   $out = '';
 
-  /* FIXME: order: video, image, message, url */
+  /* Order: image, video, message, url */
+
+  if (!empty($msg['imageurl'])) {
+    $url = $msg['imageurl'];
+    $out .= "<p><img src=\"$url\" alt=\"$url\"></p>\n";
+  }
 
   if (!empty($msg['video']))
     $out .= embed_video($msg['video']);
-
-  /* Due to imageurl hack, image is always right before message, since
-     it is stored inline.  To fix this, we would have to pull out imageurl in
-     showmessage before rendering, like we do in preview and edit. */
-  if (!empty($msg['imageurl'])) {
-    $url = $msg['imageurl'];
-    $out .= "<center><img src=\"$url\" alt=\"$url\"></center><p>\n";
-  }
 
   if (!empty($msg['message']))
     $out .= nl2brPre::out($msg['message']);
@@ -350,6 +347,17 @@ function fetch_message($user, $mid, $what = '*')
     /* msg['date'] is time local to user... strftime would normally be
        time local to PHP server */
     $msg['date'] = strftime("%Y-%m-%d %H:%M:%S", $msg['unixtime'] - $tzoff);
+
+    /* IMAGEURL HACK - extract from message */
+    /* Strip from existing (old) message if it doesn't already have an
+       imageurl. Theoretically, users shouldn't be able to add <p>'s to their
+       message, so this should ONLY be in messages that were prepended with
+       images automatcially by post/edit */
+    if (empty($msg['imageurl']) &&
+      preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/s", $msg['message'], $regs)) {
+      $msg['imageurl'] = $regs[1];
+      $msg['message'] = $regs[2];
+    } 
 
     return $msg;
 }
