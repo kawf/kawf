@@ -25,7 +25,7 @@ This thread is locked. No replies are allowed.<br>
   <th>Logged in as:</th>
   <td style="padding: 0.5em;">
     <b>{USER_NAME}</b>&nbsp;&nbsp;&nbsp;<a href="/preferences.phtml?page={PAGE}">Preferences</a>
-  | <a href="/tips/"><b>Posting Tips</b></a>
+  | <a href="/tips/?page={PAGE}"><b>Posting Tips</b></a>
   </td>
 </tr>
 <tr>
