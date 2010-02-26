@@ -178,7 +178,7 @@ function embed_youtube_video($url)
 	" type=\"application/x-shockwave-flash\" width=\"600\" height=\"360\"></embed>\n".
     "</object><br>\n";
 
-  $out .= "YouTube <a href=\"$$url\">$tag</a>\n";
+  $out .= "YouTube <a href=\"$url\">$tag</a>\n";
 
   return "<p class=\"youtube\">$out</p>";
 }
