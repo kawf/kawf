@@ -103,12 +103,12 @@ function find_thread_index($tid)
   return -1;
 }
 
-if (ereg("^/[a-z]*/([a-z\.]*)$", $script_name . $path_info, $regs)) {
+if (preg_match("#^/[a-z]*/([a-z\.]*)$#", $script_name . $path_info, $regs)) {
   if (isset($scripts[$regs[1] . ""])) {
     include($scripts[$regs[1] . ""]);
   } else
     err_not_found("no script for '$regs[1]'");
 } else
-  err_not_found("ereg '$script_name$path_info' failed");
+  err_not_found("preg_match '$script_name$path_info' failed");
 
 ?>
