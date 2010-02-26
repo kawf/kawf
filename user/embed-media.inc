@@ -75,7 +75,7 @@ function embed_html5_video($url)
 function tag_media($out, $prefix, $url, $text, $class, $redirect=false)
 {
   if ($redirect)
-    $out .= "$prefix<a href=\"/redirect.phtml?refresh&url=".urlencode($url)."\" target=\"_blank\">$text</a>";
+    $out .= "$prefix<a href=\"/redirect.phtml?refresh&amp;url=".urlencode($url)."\" target=\"_blank\">$text</a>";
   else
     $out .= "$prefix<a href=\"$url\" target=\"_blank\">$text</a>";
 
