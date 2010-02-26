@@ -135,6 +135,8 @@ function blank_extra($tpl, $tag, $bool)
 
 function normalize_url_scheme($url)
 {
+  if (!validate_url($url)) return '';
+
   if (preg_match("#^[^/]*:#", $url))
     return $url;
 
@@ -188,7 +190,7 @@ function postprocess($msg)
     $out .= nl2brPre::out($msg['message']);
   }
 
-  if (!empty($msg['url'])) {
+  if (!empty($msg['url']) && validate_url($msg['url'])) {
     $url = $msg['url'];
     // $target = " target=\"_blank\"";
     if (!empty($msg['urltext']))
