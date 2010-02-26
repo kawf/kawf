@@ -1,5 +1,6 @@
 <?php
-$url = $_REQUEST['url'];
+$url = stripslashes($_REQUEST['url']);
+if (empty($url)) $url = $_SERVER['HTTP_REFERER'];
 
 if(is_array($url)) {
   // Redirect to the first non-empty value in the array.
