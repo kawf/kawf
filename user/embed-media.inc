@@ -1,8 +1,23 @@
 <?php
-function tag_media($out, $prefix, $url, $text, $class)
+$video_embedders = array ('redtube', 'vimeo', 'youtube', 'html5');
+
+function embed_redtube_video($url)
 {
-  $out .= "$prefix<a href=\"/redirect.phtml?url=$url\" target=\"_blank\">$text</a>";
-  return "<div class=\"$class\">\n$out\n<br></div>";
+  if (preg_match("#^http://(\w+\.)*redtube\.com/([0-9]+)#", $url, $regs)) {
+    $tag = $regs[2];
+  } else {
+    return null;
+  }
+
+  $out =
+    "<object width=\"600\" height=\"360\">\n".
+    "<param name=\"movie\" value=\"http://embed.redtube.com/player/></param>\n".
+    "<param name=\"FlashVars\" value=\"id=$tag\"></param>\n".
+    "<embed src=\"http://embed.redtube.com/player/?id=$tag\"".
+	" type=\"application/x-shockwave-flash\" width=\"600\" height=\"360\"></embed>\n".
+    "</object><br>\n";
+
+  return tag_media($out, "RedTube ", $url, $tag, "redtube");
 }
 
 function embed_vimeo_video($url)
@@ -10,7 +25,6 @@ function embed_vimeo_video($url)
   if (preg_match("#^http://(\w+\.)*vimeo\.com/([0-9]+)#", $url, $regs)) {
     $tag = $regs[2];
   } else {
-    # not a vimeo vid
     return null;
   }
 
@@ -31,7 +45,6 @@ function embed_youtube_video($url)
   } else if (preg_match("#^http://(\w+\.)*youtube\.com/watch\?v=([a-zA-Z0-9_\-]+)#", $url, $regs)) {
     $tag = $regs[2];
   } else {
-    # not a youtube vid
     return null;
   }
 
@@ -59,21 +72,23 @@ function embed_html5_video($url)
   return tag_media($out, "", $url, "HTML5", "html5");
 }
 
+function tag_media($out, $prefix, $url, $text, $class)
+{
+  $out .= "$prefix<a href=\"/redirect.phtml?url=$url\" target=\"_blank\">$text</a>";
+  return "<div class=\"$class\">\n$out\n<br></div>";
+}
+
 function embed_video($url)
 {
   $url = normalize_url_scheme($url);
 
-  # try vimeo
-  $out = embed_vimeo_video($url);
-  if (!is_null($out)) return $out;
+  global $video_embedders;
 
-  # try youtube
-  $out = embed_youtube_video($url);
-  if (!is_null($out)) return $out;
-
-  # try html5
-  $out = embed_html5_video($url);
-  if (!is_null($out)) return $out;
+  foreach ($video_embedders as $embedder) {
+      $f = "embed_".$embedder."_video";
+      $out = $f($url);
+      if (!is_null($out)) return $out;
+  }
 
   return "'$url' is not a supported video type. Must be YouTube/Vimeo link or ogg/mp4<p>\n";
 }
