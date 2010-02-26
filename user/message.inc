@@ -149,10 +149,10 @@ function embed_vimeo_video($url)
   }
 
   $out =
-    "<object width=\"600\" height=\"360\">\n".
+    "<object width=\"640\" height=\"360\">\n".
     "<param name=\"movie\" value=\"http://vimeo.com/moogaloop.swf?clip_id=$tag\"></param>\n".
     "<embed src=\"http://vimeo.com/moogaloop.swf?clip_id=$tag\"".
-	" type=\"application/x-shockwave-flash\" width=\"600\" height=\"360\"></embed>\n".
+	" type=\"application/x-shockwave-flash\" width=\"640\" height=\"360\"></embed>\n".
     "</object><br>\n";
 
   $out .= "Vimeo <a href=\"$url\">$tag</a>\n";
