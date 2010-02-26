@@ -123,6 +123,12 @@ td.messageinfo a:link { color: #66f; }
 td.messageinfo a:visited { color: #96e; }
 td.messageinfo a:hover { color: #008; }
 
+/* url tag below videos */
+.video p { font-size: 75%; color: #666; }
+.video p a:link { color: #66f; }
+.video p a:visited { color: #96e; }
+.video p a:hover { color: #008; }
+
 /* embedded url in message */
 .message li.url { list-style: disc outside none; }
 

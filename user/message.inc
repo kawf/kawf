@@ -139,6 +139,27 @@ function normalize_url_scheme($url)
   return "http://$url";
 }
 
+function embed_vimeo_video($url)
+{
+  if (preg_match("#^http://(\w+\.)*vimeo\.com/([0-9]+)#", $url, $regs)) {
+    $tag = $regs[2];
+  } else {
+    # not a vimeo vid
+    return null;
+  }
+
+  $out =
+    "<object width=\"600\" height=\"360\">\n".
+    "<param name=\"movie\" value=\"http://vimeo.com/moogaloop.swf?clip_id=$tag\"></param>\n".
+    "<embed src=\"http://vimeo.com/moogaloop.swf?clip_id=$tag\"".
+	" type=\"application/x-shockwave-flash\" width=\"600\" height=\"360\"></embed>\n".
+    "</object><br>\n";
+
+  $out .= "Vimeo <a href=\"$url\">$tag</a>\n";
+
+  return "<p class=\"vimeo\">$out</p>";
+}
+
 function embed_youtube_video($url)
 {
   if (preg_match("#^http://(\w+\.)*youtube\.com/v/([a-zA-Z0-9_\-]+)#", $url, $regs)) {
@@ -150,13 +171,16 @@ function embed_youtube_video($url)
     return null;
   }
 
-# return "youtube tag '$tag'<p>\n";
-  return
-    "<p><object width=\"600\" height=\"360\">\n".
+  $out =
+    "<object width=\"600\" height=\"360\">\n".
     "<param name=\"movie\" value=\"http://www.youtube.com/v/$tag\"></param>\n".
     "<embed src=\"http://www.youtube.com/v/$tag\"".
 	" type=\"application/x-shockwave-flash\" width=\"600\" height=\"360\"></embed>\n".
-    "</object></p>\n";
+    "</object><br>\n";
+
+  $out .= "YouTube <a href=\"$$url\">$tag</a>\n";
+
+  return "<p class=\"youtube\">$out</p>";
 }
 
 function embed_html5_video($url)
@@ -165,16 +189,23 @@ function embed_html5_video($url)
   if (!preg_match("/\.(og[gvm]|mp[4v])$/i", $url))
     return null;
 
-# return "html5 '$url'<p>\n";
-  return
-    "<p><video src=\"$url\" controls=\"controls\">\n" .
+  $out =
+    "<video src=\"$url\" controls=\"controls\">\n" .
     "Your browser <a href=\"http://en.wikipedia.org/wiki/HTML5_video#Browser_support\">does not support HTML5 and/or this codec</a>.\n" .
-    "</video></p>\n";
+    "</video><br>\n";
+
+  $out .= "<p class=\"HTML5\"><a href=\"$url\">HTML5</a></p>";
+
+  return $out;
 }
 
 function embed_video($url)
 {
   $url = normalize_url_scheme($url);
+
+  # try vimeo
+  $out = embed_vimeo_video($url);
+  if (!is_null($out)) return $out;
 
   # try youtube
   $out = embed_youtube_video($url);
@@ -216,11 +247,11 @@ function postprocess($msg)
 
   if (!empty($msg['imageurl'])) {
     $url = $msg['imageurl'];
-    $out .= "<p><img src=\"$url\" alt=\"$url\"></p>\n";
+    $out .= "<p class=\"imageurl\"><img src=\"$url\" alt=\"$url\"></p>\n";
   }
 
   if (!empty($msg['video']))
-    $out .= embed_video($msg['video']);
+    $out .= "<div class=\"video\">".embed_video($msg['video'])."</div>";
 
   if (!empty($msg['message']))
     $out .= nl2brPre::out($msg['message']);
