@@ -79,7 +79,7 @@ function tag_media($out, $prefix, $url, $text, $class, $redirect=false)
   else
     $out .= "$prefix<a href=\"$url\" target=\"_blank\">$text</a>";
 
-  return "<div class=\"$class\">\n$out\n<br></div>";
+  return "<div class=\"$class\">\n$out<br>\n</div>";
 }
 
 function embed_video($url)
