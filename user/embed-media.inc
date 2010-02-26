@@ -72,9 +72,13 @@ function embed_html5_video($url)
   return tag_media($out, "", $url, "HTML5", "html5");
 }
 
-function tag_media($out, $prefix, $url, $text, $class)
+function tag_media($out, $prefix, $url, $text, $class, $redirect=false)
 {
-  $out .= "$prefix<a href=\"/redirect.phtml?url=$url\" target=\"_blank\">$text</a>";
+  if ($redirect)
+    $out .= "$prefix<a href=\"/redirect.phtml?url=$url\" target=\"_blank\">$text</a>";
+  else
+    $out .= "$prefix<a href=\"$url\" target=\"_blank\">$text</a>";
+
   return "<div class=\"$class\">\n$out\n<br></div>";
 }
 
@@ -96,6 +100,6 @@ function embed_video($url)
 function embed_image($url)
 {
   $out = "<img src=\"$url\" alt=\"$url\">\n";
-  return tag_media("", "", $url, $out, "imageurl");
+  return tag_media("", "", $url, $out, "imageurl", true /* hide referer */);
 }
 ?>
