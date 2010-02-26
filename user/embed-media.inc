@@ -75,7 +75,7 @@ function embed_video($url)
   $out = embed_html5_video($url);
   if (!is_null($out)) return $out;
 
-  return "$url is not a supported video type. Must be youtube link or ogg/mp4<p>\n";
+  return "'$url' is not a supported video type. Must be YouTube/Vimeo link or ogg/mp4<p>\n";
 }
 
 function embed_image($url)
