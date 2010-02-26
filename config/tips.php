@@ -21,7 +21,12 @@ require_once("util.inc");
 
 <h2><a name="7">Inserting images, video and links</a></h2>
 <h3>Images</h3>
-<p>There are two ways to add a picture to a Forum posting.  The first is to use the box in the posting dialogue called "Image URL".  If you put the URL to a picture in this box then it will appear within your post. The second way is to use the appropriate HTML within the body of the message itself.  This can be useful for posting multiple pictures in the same post.  Here is the sample code:</p>
+<p>There are two ways to add a picture to a Forum posting.  The first is to use
+the box in the posting dialogue labeled "<b>Image URL</b>".  If you put the URL
+to a picture in this box then it will appear within your post. The second way
+is to use the appropriate HTML within the body of the message itself.  This can
+be useful for posting multiple pictures in the same post.  Here is the sample
+code:</p>
 <pre>
 &lt;img src="http://www.the_location_of_your_pic.com/your_pic_name1.jpg"&gt;
 &lt;img src="http://www.the_location_of_your_pic.com/your_pic_name2.jpg"&gt;
@@ -29,7 +34,8 @@ require_once("util.inc");
 </pre>
 
 <h3>Videos</h3>
-<p>You can add video as well. If you use the posting dialog called "Video URL",
+<p>You can add video as well. If you use the posting dialog labeled "<b>Video
+URL:</b>",
 you can enter a YouTube or Vimeo link:</p>
 <ul>
 <li>http://www.youtube.com/watch?v=XXXXXXXXXXX</li>
@@ -56,13 +62,22 @@ Please read
 see which browsers support what.</p>
 
 <h3>URLs</h3>
-<p>Be nice when you code your own hyper links;</p>
+<p>You can use the boxes in the posting box labeled "<b>Link Url:</b>" and
+"<b>Link Text:</b>" to add an external link. The actual URL goes in the first,
+and the text you want to be clickable goes in the second box, which is
+optional. If you omit the link text, the actual URL will appear as the
+clickable text.</p>
+
+<p>You can also embed links directly in your text. If you want, be nice when
+you code your own hyper links;</p>
+<pre>target="_blank"</pre>
+<p>after your href will open a new tab/browser rather than navigating somebody
+away from here:</p>
 <pre>
 &lt;a href="http://url_here" target="_blank"&gt;&lt;img src="http://url_here"&gt;&lt;/a&gt;
 &lt;a href="http://url_here" target="_blank"&gt;text_here&lt;/a&gt;
 </pre>
 
-<p>target="_blank" will open a new tab/browser rather than navigating somebody away from here.</p>
 
 <h2><a name="7">Formatting messages using bold, italics, etc.</a></h2>
 <p>You can modify your text with various HTML tags.  Make sure you use both a starting tag and a close tag.</p>
