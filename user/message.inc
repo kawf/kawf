@@ -169,11 +169,11 @@ function postprocess($msg)
 
   if (!empty($msg['imageurl'])) {
     $url = $msg['imageurl'];
-    $out .= "<div class=\"media\">".embed_image($msg['imageurl'])."</div>";
+    $out .= "<div class=\"media\">\n".embed_image($msg['imageurl'])."\n</div>\n";
   }
 
   if (!empty($msg['video']))
-    $out .= "<div class=\"media\">".embed_video($msg['video'])."</div>";
+    $out .= "<div class=\"media\">\n".embed_video($msg['video'])."\n</div>\n";
 
   if (!empty($msg['message']))
     $out .= nl2brPre::out($msg['message']);
@@ -186,7 +186,7 @@ function postprocess($msg)
     else
       $text = $msg['url'];
     $out .=
-      "<ul><li class=\"url\"><a href=\"$url\"$target>$text</a></li></ul>\n";
+      "<ul><li class=\"url\"><a href=\"$url\"$target>$text</a></li></ul>";
   }
 
   return $out;
@@ -307,7 +307,7 @@ function fetch_message($user, $mid, $what = '*')
        message, so this should ONLY be in messages that were prepended with
        images automatcially by post/edit */
     if (empty($msg['imageurl']) &&
-      preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>(.*)$/s", $msg['message'], $regs)) {
+      preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>\s*(.*)$/s", $msg['message'], $regs)) {
       $msg['imageurl'] = $regs[1];
       $msg['message'] = $regs[2];
     } 

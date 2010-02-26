@@ -124,10 +124,13 @@ td.messageinfo a:visited { color: #96e; }
 td.messageinfo a:hover { color: #008; }
 
 /* url tag below media */
-.media p { font-size: 75%; color: #666; }
-.media p a:link { color: #66f; }
-.media p a:visited { color: #96e; }
-.media p a:hover { color: #008; }
+.media { font-size: 75%; color: #666; }
+.media a:link { color: #66f; }
+.media a:visited { color: #96e; }
+.media a:hover { color: #008; }
+
+/* no image borders */
+.imageurl img { border-style: none }
 
 /* embedded url in message */
 .message li.url { list-style: disc outside none; }
