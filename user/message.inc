@@ -225,6 +225,13 @@ function embed_video($url)
   return "$url is not a supported video type. Must be youtube link or ogg/mp4<p>\n";
 }
 
+function embed_image($url)
+{
+  $out = "<img src=\"$url\" alt=\"$url\"><br>\n";
+  $out .= "<a href=\"$url\">Link</a></p>\n";
+  return "<p class=\"imageurl\">$out</p>";
+}
+
 function preprocess(&$msg, $req)
 {
   global $subject_tags, $standard_tags;
@@ -254,11 +261,11 @@ function postprocess($msg)
 
   if (!empty($msg['imageurl'])) {
     $url = $msg['imageurl'];
-    $out .= "<p class=\"imageurl\"><img src=\"$url\" alt=\"$url\"></p>\n";
+    $out .= "<div class=\"media\">".embed_image($msg['imageurl'])."</div>";
   }
 
   if (!empty($msg['video']))
-    $out .= "<div class=\"video\">".embed_video($msg['video'])."</div>";
+    $out .= "<div class=\"media\">".embed_video($msg['video'])."</div>";
 
   if (!empty($msg['message'])) {
     // todo: make sure softbreak avoids pre
