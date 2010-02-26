@@ -1,12 +1,22 @@
 <?php
 class nl2brPre {
+    private static function nl2br($string, $xhtml=false)
+    {
+	switch (version_compare(phpversion(), '5.3.0')) {
+	    case -1:
+		if ($xhtml)
+		    return preg_replace("#<br>#","<br />", nl2br($string));
+		return nl2br($string);
+	    default:
+		return nl2br($string, $xhtml);
+	}
+    }
+
     public static function out($string, $xhtml=false, $verbose=false)
     {
 	/* if no <pre> tag, just return normal nl2br */
-	if (strpos($string, "<pre>") === false) {
-	    // return nl2br($string, $xhtml); // php 5.3.x
-	    return nl2br($string);
-	}
+	if (strpos($string, "<pre>") === false)
+	    nl2brPre::nl2br($string, $xhtml);
 
 	if ($verbose) echo "checking ". strlen($string)." byte length '".nl2brPre::cook($string)."'\n";
 
@@ -14,7 +24,7 @@ class nl2brPre {
 	$out = '';
 	while ($start < strlen($string)) {
 	    $i = nl2brPre::find_tag($string, $pos);
-	    $seg = nl2brPre::process(substr($string, $start, $pos-$start), $inp);
+	    $seg = nl2brPre::process(substr($string, $start, $pos-$start), $inp, $xhtml);
 
 	    /* we got the pre in munge if we needed it, advance the ptr */
 	    if ($i==-1) $pos += 6;
@@ -44,7 +54,7 @@ class nl2brPre {
 	return $out;
     }
 
-    private static function process($seg, $inp)
+    private static function process($seg, $inp, $xhtml)
     {
 	if ($inp>0) {
 	    $seg = str_replace('<','&lt;',$seg);
@@ -52,7 +62,7 @@ class nl2brPre {
 	    /* close with unmunged tag */
 	    $seg .= '</pre>';
 	} else {
-	    $seg = nl2br($seg);
+	    $seg = nl2brPre::nl2br($seg, $xhtml);
 	}
 
 	return $seg;
