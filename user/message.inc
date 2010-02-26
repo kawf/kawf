@@ -155,7 +155,7 @@ function embed_vimeo_video($url)
 	" type=\"application/x-shockwave-flash\" width=\"640\" height=\"360\"></embed>\n".
     "</object><br>\n";
 
-  $out .= "Vimeo <a href=\"$url\">$tag</a>\n";
+  $out .= "Vimeo <a href=\"$url\" target=\"_blank\">$tag</a>\n";
 
   return "<p class=\"vimeo\">$out</p>";
 }
@@ -178,7 +178,7 @@ function embed_youtube_video($url)
 	" type=\"application/x-shockwave-flash\" width=\"600\" height=\"360\"></embed>\n".
     "</object><br>\n";
 
-  $out .= "YouTube <a href=\"$url\">$tag</a>\n";
+  $out .= "YouTube <a href=\"$url\" target=\"_blank\">$tag</a>\n";
 
   return "<p class=\"youtube\">$out</p>";
 }
@@ -194,7 +194,7 @@ function embed_html5_video($url)
     "Your browser <a href=\"http://en.wikipedia.org/wiki/HTML5_video#Browser_support\">does not support HTML5 and/or this codec</a>.\n" .
     "</video><br>\n";
 
-  $out .= "<p class=\"HTML5\"><a href=\"$url\">HTML5</a></p>";
+  $out .= "<p class=\"HTML5\"><a href=\"$url\" target=\"_blank\">HTML5</a></p>";
 
   return $out;
 }
@@ -221,7 +221,7 @@ function embed_video($url)
 function embed_image($url)
 {
   $out = "<img src=\"$url\" alt=\"$url\"><br>\n";
-  $out .= "<a href=\"$url\">Link</a></p>\n";
+  $out .= "<a href=\"$url\" target=\"_blank\">Link</a></p>\n";
   return "<p class=\"imageurl\">$out</p>";
 }
 
