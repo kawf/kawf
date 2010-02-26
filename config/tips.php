@@ -30,10 +30,11 @@ require_once("util.inc");
 
 <h3>Videos</h3>
 <p>You can add video as well. If you use the posting dialog called "Video URL",
-you can enter a youtube link:</p>
+you can enter a YouTube or Vimeo link:</p>
 <ul>
 <li>http://www.youtube.com/watch?v=XXXXXXXXXXX</li>
 <li>http://www.youtube.com/v/XXXXXXXXXX</li>
+<li>http://vimeo.com/XXXXXXXX</li>
 </ul>
 <p>or a .ogv (Theora) or .mp4 (h.264) video:</p>
 <ul>
