@@ -1,8 +1,8 @@
 <?php
 function tag_media($out, $prefix, $url, $text, $class)
 {
-  $out .= "$prefix<a href=\"$url\" target=\"_blank\">$text</a>\n";
-  return "<p class=\"$class\">$out</p>";
+  $out .= "$prefix<a href=\"/redirect.phtml?url=$url\" target=\"_blank\">$text</a>";
+  return "<div class=\"$class\">\n$out\n<br></div>";
 }
 
 function embed_vimeo_video($url)
@@ -80,7 +80,7 @@ function embed_video($url)
 
 function embed_image($url)
 {
-  $out = "<img src=\"$url\" alt=\"$url\"><br>\n";
-  return tag_media($out, "", $url, "Link to image", "imageurl");
+  $out = "<img src=\"$url\" alt=\"$url\">\n";
+  return tag_media("", "", $url, $out, "imageurl");
 }
 ?>
