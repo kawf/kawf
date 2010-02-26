@@ -134,7 +134,7 @@ function blank_extra($tpl, $tag, $bool)
 
 function normalize_url_scheme($url)
 {
-  if (preg_match("#^https?://#", $url))
+  if (preg_match("#^[^/]*:#", $url))
     return $url;
 
   if (preg_match("#^//#", $url))
