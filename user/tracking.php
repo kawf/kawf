@@ -2,7 +2,6 @@
 
 $user->req();
 
-require_once("printcollapsed.inc");
 require_once("printsubject.inc");
 require_once("listthread.inc");
 require_once("filter.inc");
