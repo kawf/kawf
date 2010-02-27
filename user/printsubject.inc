@@ -88,7 +88,7 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
 
   $page = $tpl->get_var("PAGE");
 
-  return append_tools($user, $string, $forum, $msg, $page);
+  return append_tools($user, $string, $forum, $thread, $msg, $page);
 }
 
 function print_collapsed($thread, $msg, $replies)
@@ -162,10 +162,10 @@ function print_collapsed($thread, $msg, $replies)
 
   $page = $tpl->get_var("PAGE");
 
-  return append_tools($user, $string, $forum, $msg, $page) . "</li>\n";
+  return append_tools($user, $string, $forum, $thread, $msg, $page) . "</li>\n";
 }
 
-function append_tools($user, $string, $forum, $msg, $page)
+function append_tools($user, $string, $forum, $thread, $msg, $page)
 {
   $stoken = $user->token();
   switch ($msg['state']) {
