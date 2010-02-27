@@ -178,7 +178,7 @@ function display_thread($thread)
 
 $numshown = 0;
 
-if ($curpage == 1) {
+if ($curpage == 1 && $enable_global_messages) {
   /* PHP has a 32 bit limit even tho the type is a BIGINT, 64 bits */
   for ($i = 0; $i < 32; $i++) {
     $gmsg = sql_querya("select * from f_global_messages where gid = $i");

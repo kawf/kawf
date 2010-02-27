@@ -44,6 +44,9 @@ $Debug = 0;
 /* User token expiration in 15 minute increments: 3 means 45 minutes. */
 $user_token_expiration = 7;
 
+/* Enable global messages */
+$enable_global_messages = false;
+
 /* allow user to override default in a separate file (prevents merge problems
    when using source control */
 if (is_file(dirname(__FILE__) . "/setup-local.inc") )
