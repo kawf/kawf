@@ -12,10 +12,10 @@ function page_header($title)
 </head>
 
 <body>
-<table class="outer" border="0" cellspacing="0" cellpadding="1" align="center">
+<table class="outer">
   <tr>
     <td>
-      <table class="inner" border="0" align="center" cellspacing="0" cellpadding="5">
+      <table class="inner">
         <tr>
           <th class="heading"><?echo $title;?></th>
         </tr>
@@ -52,8 +52,8 @@ function page_footer()
 function page_show_message($message)
 {
 ?>
-             <table border="0" align="" width="100%">
-                <th class="message"><?echo $message;?></th>
+             <table class="message">
+                <td><?echo $message;?></td>
               </tr>
             </table>
 <?php
@@ -71,9 +71,9 @@ function page_sql_error($sql)
 function page_die($title = "Error", $message = "Unknown error")
 {
 ?>
-  <table border="0" align="" width="100%">
+  <table class="error">
     <tr>
-      <td class="error"><b><?echo $title;?></b><br><?echo $message;?></td>
+      <td><b><?echo $title;?></b><br><?echo $message;?></td>
     </tr>
   </table>
 <?php

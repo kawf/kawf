@@ -15,19 +15,18 @@ $result = sql_query("select u_pending.*, u_users.name, u_users.email from u_pend
 
 <p>
 
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr><td bgcolor="#99999">
-<table width="100%" cellpadding="3" cellspacing="1" border="0">
+<table class="contents">
 
 <tr bgcolor="#D0D0D0">
-<td>date</td>
-<td>aid</td>
-<td>Screen Name</td>
-<td>E-mail</td>
-<td>Type</td>
-<td>Status</td>
-<td>Cookie</td>
-<td>Data</td>
+<th>Date</th>
+<th>AID</th>
+<th>Screen Name</th>
+<th>E-mail</th>
+<th>Type</th>
+<th>Status</th>
+<th>Cookie</th>
+<th>Data</th>
+<th>Action</th>
 </tr>
 
 <?php
@@ -46,8 +45,8 @@ while ($request = sql_fetch_array($result)) {
 }
 if(isset($requestlist)) {
     foreach ($requestlist as $request) {
-      $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
-      echo "<tr bgcolor=\"$bgcolor\">\n";
+      $i = ($count % 2);
+      echo "<tr class=\"row$i\">\n";
       echo "<td>" . $request['tstamp'] . "</td>\n";
       echo "<td>" . $request['aid'] . "</td>\n";
       echo "<td>" . $request['name'] . "</td>\n";
@@ -64,7 +63,6 @@ if(isset($requestlist)) {
 }
 ?>
 
-</table></td></tr>
 </table>
 
 <?php

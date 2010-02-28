@@ -2,8 +2,19 @@ body { font-family: verdana, arial, geneva; font-size: smaller; }
 td { font-family: verdana, arial, geneva; }
 
 /* for stuff defined in include/page.inc */
-table.outer { background-color: #009; }
-table.inner { background-color: white; }
+.outer, .inner { border-collapse: collapse; margin-left:auto; margin-right: auto; }
+.outer { background-color: #009; }
+.outer td { border: 0px; padding: 1px; }
+.inner { background-color: white; }
+.inner th, .inner td { border: 0px; padding: 5px 10px; }
 .heading,.footing { text-align: left; color: #eef; background-color: #009; }
-.message,.error { background-color: #ccf; }
+.message,.error { width: 100%; border-collapse: collapse; }
+.message,.error td { background-color: #ccf; }
 .footing a { color: #eef; }
+
+/* contents */
+.contents { width: 100%; border-collapse: collapse; }
+.contents th, .contents td { border: 1px solid #999; padding: 1px 10px; }
+.contents th { text-align: left; font-weight: normal; background-color: #d0d0d0; border-color: #999; }
+.contents tr.row0 td { background-color: #ececff; border-color: #999; }
+.contents tr.row1 td { background-color: #f7f7f7; }

@@ -41,6 +41,7 @@ function print_pages()
 {
   global $numpages, $page;
 
+  echo "Page ";
   for ($i = 1; $i < $numpages + 1; $i++) {
     if ($i == $page)
       echo "<font size=\"+1\">";
@@ -54,7 +55,6 @@ function print_pages()
 
 print_pages();
 ?>
-
 <br>
 
 <form action="admin.phtml" method="get">
@@ -69,8 +69,6 @@ Search Name: <input type="text" name="name">
 </form>
 <br>
 
-<br>
-
 <?php
 $skipaccounts = ($page - 1) * $accountsperpage;
 
@@ -79,12 +77,13 @@ if (!empty($where))
   $sql .= " where $where";
 $sql .= " order by aid limit $skipaccounts,$accountsperpage";
 $result = mysql_db_query($database, $sql) or sql_error($sql);
-
-echo "<table bgcolor=\"#99999\" width=\"100%\" cellpadding=\"3\" cellspacing=\"1\" border=\"0\">\n";
-echo "<tr bgcolor=\"#D0D0D0\"><td>aid</td><td>name</td><td>email</td><td>status</td></tr>\n";
+?>
+<table class="contents">
+<tr><th>aid</th><th>name</th><th>email</th><th>status</th></tr>
+<?php
 while ($acct = mysql_fetch_array($result)) {
-  $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
-  echo "<tr bgcolor=\"$bgcolor\"\n>";
+  $i = ($count % 2);
+  echo "<tr class=\"row$i\"\n>";
 ?>
     <td><a href="/account/<?php echo $acct['aid']; ?>.phtml"><?php echo $acct['aid']; ?></a></td>
     <td><?php echo stripslashes($acct['name']); ?></td>

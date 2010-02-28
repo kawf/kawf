@@ -12,16 +12,14 @@ $result = sql_query("select f_visits.*, u_users.name, u_users.email FROM f_visit
 
 <p>
 
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr><td bgcolor="#99999">
-<table width="100%" cellpadding="3" cellspacing="1" border="0">
+<table class="contents">
 
-<tr bgcolor="#D0D0D0">
-<td>ip</td>
-<td>aid</td>
-<td>date</td>
-<td>Screen Name</td>
-<td>E-mail</td>
+<tr>
+<th>ip</th>
+<th>aid</th>
+<th>date</th>
+<th>Screen Name</th>
+<th>E-mail</th>
 </tr>
 
 <?php
@@ -34,8 +32,8 @@ while ($request = sql_fetch_array($result)) {
 }
 if(isset($requestlist)) {
     foreach ($requestlist as $request) {
-      $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
-      echo "<tr bgcolor=\"$bgcolor\">\n";
+      $i = ($count % 2);
+      echo "<tr class=\"row$i\">\n";
       echo "<td>" . $request['ip'] . "</td>\n";
       echo "<td><a href=\"/account/" . $request['aid'] . ".phtml?verbose=1\">" . $request['aid'] . "</td>\n";
       echo "<td>" . $request['tstamp'] . "</td>\n";
@@ -47,7 +45,6 @@ if(isset($requestlist)) {
 }
 ?>
 
-</table></td></tr>
 </table>
 
 <?php
