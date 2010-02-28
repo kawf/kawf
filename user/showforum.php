@@ -1,6 +1,5 @@
 <?php
 
-require_once("printcollapsed.inc");
 require_once("printsubject.inc");
 require_once("listthread.inc");
 require_once("filter.inc");
@@ -197,13 +196,13 @@ if ($curpage == 1 && $enable_global_messages) {
 
 	if ($user->admin()) {
 	    if ($gmsg['state']=='Active') {
-		$state='state=Inactive'; $state_txt = "dg";
+		$state='state=Inactive'; $state_title = "Delete";$state_txt = "da";
 		$messages .= " (<font color=\"green\"><b>Active</b></font>)";
 	    } elseif ($gmsg['state']=='Inactive'){
-		$state='state=Active'; $state_txt = "ug";
+		$state='state=Active'; $state_title = "Undelete";$state_txt = "ug";
 		$messages .= " (<font color=\"red\"><b>Deleted</b></font>)";
 	    }
-	    $messages .= " <a href=\"/gmessage.phtml?$gid&amp;$state&amp;$gpage&amp;$gtoken\">$state_txt</a>";
+	    $messages .= " <a href=\"/gmessage.phtml?$gid&amp;$state&amp;$gpage&amp;$gtoken\" title=\"$state_title\">$state_txt</a>";
 	}
 
 	$messagelinks="<a href=\"/gmessage.phtml?$gid&amp;hide=1&amp;$gpage&amp;$gtoken\" class=\"up\" title=\"hide\">rm</a>";
