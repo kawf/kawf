@@ -18,24 +18,22 @@ $result = sql_query("select * from f_forums,f_indexes where f_forums.fid=f_index
 
 <p>
 
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr><td bgcolor="#99999">
-<table width="100%" cellpadding="3" cellspacing="1" border="0">
+<table class="contents">
 
-<tr bgcolor="#D0D0D0">
-<td>fid</td>
-<td>Name</td>
-<td>Shortname</td>
-<td>Active</td>
-<td>Moderated</td>
-<td>Deleted</td>
-<td>Offtopic</td>
+<tr>
+<th>fid</th>
+<th>Name</th>
+<th>Shortname</th>
+<th>Active</th>
+<th>Moderated</th>
+<th>Deleted</th>
+<th>Offtopic</th>
 </tr>
 
 <?php
 while ($forum = sql_fetch_array($result)) {
-  $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
-  echo "<tr bgcolor=\"$bgcolor\">\n";
+  $i = ($count & 1);
+  echo "<tr class=\"row$i\">\n";
   #echo "<td><a href=\"forumshow.phtml?fid=" . $forum['fid'] . "\">" . $forum['fid'] . "</a></td>\n";
   echo "<td>" . $forum['fid'] . "</td>\n";
   echo "<td><a href=\"forummodify.phtml?fid=" . $forum['fid'] . "\">" . $forum['name'] . "</a></td>\n";
@@ -50,7 +48,6 @@ while ($forum = sql_fetch_array($result)) {
 }
 ?>
 
-</table></td></tr>
 </table>
 
 <?php

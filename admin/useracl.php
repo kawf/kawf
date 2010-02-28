@@ -14,15 +14,13 @@ $result = sql_query("select f_moderators.*, u_users.name from f_moderators, u_us
 
 <p>
 
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr><td bgcolor="#99999" width="600">
-<table width="100%" cellpadding="3" cellspacing="1" border="0">
+<table class="contents">
 
-<tr bgcolor="#D0D0D0">
-<td>aid</td>
-<td>Screen Name</td>
-<td>Forums</td>
-<td>Capabilities</td>
+<tr>
+<th>aid</th>
+<th>Screen Name</th>
+<th>Forums</th>
+<th>Capabilities</th>
 </tr>
 
 <?php
@@ -47,8 +45,8 @@ while ($useracl = sql_fetch_array($result)) {
 }
 
 foreach ($acllist as $useracl) {
-  $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
-  echo "<tr bgcolor=\"$bgcolor\">\n";
+  $i = ($count % 2);
+  echo "<tr class=\"row$i\">\n";
   echo "<td><a href=\"useraclmodify.phtml?aid=" . $useracl['aid'] . "\">" . $useracl['aid'] . "</a></td>\n";
   echo "<td>" . $useracl['name'] . "</td>\n";
   echo "<td>" . join(", ", $useracl['fids']) . "</td>\n";
@@ -58,8 +56,6 @@ foreach ($acllist as $useracl) {
   $count++;
 }
 ?>
-
-</table></td></tr>
 </table>
 
 <?php

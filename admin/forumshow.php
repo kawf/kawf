@@ -16,45 +16,15 @@ if (isset($_GET['message']))
 ?>
 
 <a href="forummodify.phtml?fid=<?php echo $forum['fid']; ?>">Modify forum</a><p>
-
-<table width="100%" cellpadding="0" cellspacing="0" border="0">
-<tr><td bgcolor="#99999">
-<table width="100%" cellpadding="3" cellspacing="1" border="0">
-
-<tr>
-  <td bgcolor="#D0D0D0">fid</td>
-  <td bgcolor="#FFFFFF"><?php echo $forum['fid']; ?></td>
-</tr>
-<tr>
-  <td bgcolor="#D0D0D0">Name</td>
-  <td bgcolor="#FFFFFF"><?php echo $forum['name']; ?></td>
-</tr>
-<tr>
-  <td bgcolor="#D0D0D0">Short name</td>
-  <td bgcolor="#FFFFFF"><?php echo $forum['shortname']; ?></td>
-</tr>
-<tr>
-  <td bgcolor="#D0D0D0">Options</td>
-  <td bgcolor="#FFFFFF"><?php echo $forum['options']; ?></td>
-</tr>
-<tr>
-  <td bgcolor="#D0D0D0">Active</td>
-  <td bgcolor="#FFFFFF"><?php echo $forum['active']; ?></td>
-</tr>
-<tr>
-  <td bgcolor="#D0D0D0">Deleted</td>
-  <td bgcolor="#FFFFFF"><?php echo $forum['deleted']; ?></td>
-</tr>
-<tr>
-  <td bgcolor="#D0D0D0">Offtopic</td>
-  <td bgcolor="#FFFFFF"><?php echo $forum['offtopic']; ?></td>
-</tr>
-<tr>
-  <td bgcolor="#D0D0D0">Moderated</td>
-  <td bgcolor="#FFFFFF"><?php echo $forum['moderated']; ?></td>
-</tr>
-
-</table></td></tr>
+<table class="contents">
+<tr><th>fid</th><td><?php echo $forum['fid']; ?></td></tr>
+<tr><th>Name</th><td><?php echo $forum['name']; ?></td></tr>
+<tr><th>Short name</th><td><?php echo $forum['shortname']; ?></td></tr>
+<tr><th>Options</th><td><?php echo $forum['options']; ?></td></tr>
+<tr><th>Active</th><td><?php echo $forum['active']; ?></td></tr>
+<tr><th>Deleted</th><td><?php echo $forum['deleted']; ?></td></tr>
+<tr><th>Offtopic</th><td><?php echo $forum['offtopic']; ?></td></tr>
+<tr><th>Moderated</th><td><?php echo $forum['moderated']; ?></td></tr>
 </table>
 
 <?php
