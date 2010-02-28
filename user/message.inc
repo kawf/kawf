@@ -126,22 +126,6 @@ function blank_extra($tpl, $tag, $bool)
     $tpl->set_var($tag, "");
 }
 
-function normalize_url_scheme($url)
-{
-  if (!validate_url($url)) return '';
-
-  if (preg_match("#^[^/]*:#", $url))
-    return $url;
-
-  if (preg_match("#^//#", $url))
-    return "http:$url";
-
-  if (preg_match("#^/#", $url))
-    return "http:/$url";
- 
-  return "http://$url";
-}
-
 function preprocess(&$msg, $req)
 {
   global $subject_tags, $standard_tags;

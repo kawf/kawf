@@ -84,6 +84,22 @@ function validate_url($url)
   return true;
 }
 
+function normalize_url_scheme($url)
+{
+  if (!validate_url($url)) return '';
+
+  if (preg_match("#^[^/]*:#", $url))
+    return $url;
+
+  if (preg_match("#^//#", $url))
+    return "http:$url";
+
+  if (preg_match("#^/#", $url))
+    return "http:/$url";
+ 
+  return "http://$url";
+}
+
 function validate_number($number)
 {
   return (strspn($number, "0123456789") == strlen($number));
