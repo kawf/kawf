@@ -38,4 +38,4 @@ You can access the admin page at http://your.site.com/admin/gmessage.phtml
     * Change the status (active/inactive) of a global message
 
     * Reset all users "filter" bit for a global message, so the message is
-      "unhidden"
+      "unhidden" aka un-"remove" or unmark as "read" for EVERY user.
