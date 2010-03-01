@@ -21,8 +21,8 @@ $result = sql_query("select * from f_forums,f_indexes where f_forums.fid=f_index
 <table class="contents">
 
 <tr>
-<th>fid</th>
-<th>Name</th>
+<th>FID<br>(click to show)</th>
+<th>Name<br>(click to modify)</th>
 <th>Shortname</th>
 <th>Active</th>
 <th>Moderated</th>
@@ -34,8 +34,7 @@ $result = sql_query("select * from f_forums,f_indexes where f_forums.fid=f_index
 while ($forum = sql_fetch_array($result)) {
   $i = ($count & 1);
   echo "<tr class=\"row$i\">\n";
-  #echo "<td><a href=\"forumshow.phtml?fid=" . $forum['fid'] . "\">" . $forum['fid'] . "</a></td>\n";
-  echo "<td>" . $forum['fid'] . "</td>\n";
+  echo "<td><a href=\"forumshow.phtml?fid=" . $forum['fid'] . "\">" . $forum['fid'] . "</a></td>\n";
   echo "<td><a href=\"forummodify.phtml?fid=" . $forum['fid'] . "\">" . $forum['name'] . "</a></td>\n";
   echo "<td>" . $forum['shortname'] . "</td>\n";
   echo "<td>" . $forum['active'] . "</td>\n";

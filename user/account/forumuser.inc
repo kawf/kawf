@@ -36,7 +36,7 @@ class ForumUser {
       }
 
       if(strlen($this->timezone) && strlen($this->timezone)<6
-    	&& class_exists('DateTimeZone')) {
+	&& class_exists('DateTimeZone')) {
 	$this->timezone = $tz_to_name[$this->timezone];
 
 	$zoneUser= new DateTimeZone($this->timezone);
@@ -49,6 +49,9 @@ class ForumUser {
 	$this->tzoff =  $zoneLocal->getOffset($timeLocal)-
 			$zoneUser->getOffset($timeLocal);
       } else {
+	/* Workaround Debian bug 571762 */
+	/* http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=571762 */
+	date_default_timezone_set(@date_default_timezone_get());
 	$this->timezone = date_default_timezone_get();
       }
 
