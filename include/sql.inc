@@ -108,6 +108,19 @@ function sql_querya($sql)
   return $array;
 }
 
+function sql_queryh($sql)
+{
+  $result = sql_query($sql);
+  if (!mysql_num_rows($result))
+    return null;
+
+  $hash = mysql_fetch_assoc($result);
+
+  sql_free_result($result);
+
+  return $hash;
+}
+
 function sql_free_result($result)
 {
   mysql_free_result($result);

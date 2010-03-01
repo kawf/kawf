@@ -17,7 +17,6 @@ $_POST['config']="";
 include_once("$config.inc");
 require_once("sql.inc");
 require_once("util.inc");
-require_once("page.inc");
 require_once("forumuser.inc");
 
 sql_open($database);

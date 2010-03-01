@@ -1,7 +1,7 @@
 <?php
 
 # Update this to the proper migration when changing the schema.
-$SCHEMA_VERSION = "20100222212442";
+$SCHEMA_VERSION = "20100228013508";
 
 # f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
@@ -160,7 +160,7 @@ $create_global_messages_table = "
     url varchar(200) not null,
     name varchar(50) not null,
     date datetime not null default '0000-00-00 00:00:00',
-    state enum('Active','Inactive') not null default 'Active',
+    state enum('Active','Inactive') not null default 'Inactive',
     primary key (gid)
   )";
 

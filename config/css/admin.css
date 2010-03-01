@@ -3,11 +3,12 @@ td { font-family: verdana, arial, geneva; }
 
 /* for stuff defined in include/page.inc */
 .outer, .inner { border-collapse: collapse; margin-left:auto; margin-right: auto; }
-.outer { background-color: #009; }
+.outer { width: 800px; background-color: #009; }
 .outer td { border: 0px; padding: 1px; }
-.inner { background-color: white; }
+.inner { width: 100%; background-color: white; }
 .inner th, .inner td { border: 0px; padding: 5px 10px; }
 .heading,.footing { text-align: left; color: #eef; background-color: #009; }
+.right { text-align: right; }
 .message,.error { width: 100%; border-collapse: collapse; }
 .message,.error td { background-color: #ccf; }
 .footing a { color: #eef; }

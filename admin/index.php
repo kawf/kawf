@@ -15,6 +15,7 @@ $result = sql_query("select * from f_forums,f_indexes where f_forums.fid=f_index
 <a href="useracl.phtml">User ACLs</a>
 <a href="pending.phtml">Administer pending requests</a>
 <a href="showvisits.phtml">Show visits</a>
+<a href="gmessage.phtml">Edit global messages</a>
 
 <p>
 
@@ -50,5 +51,5 @@ while ($forum = sql_fetch_array($result)) {
 </table>
 
 <?php
-page_footer();
+page_footer(false /* no back link */);
 ?>

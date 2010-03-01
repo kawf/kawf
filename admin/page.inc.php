@@ -17,28 +17,31 @@ function page_header($title)
     <td>
       <table class="inner">
         <tr>
-          <th class="heading"><?echo $title;?></th>
+          <th colspan="2" class="heading"><?echo $title;?></th>
         </tr>
-        <tr> 
-          <td>
+        <tr>
+          <td colspan="2">
 <?php
 }
- 
-function page_footer()
+
+function page_footer($back=true)
 {
   global $user;
 ?>
          </td>
         </tr>
-<?php
-  if (isset($user)) {
-?>
-        <tr>
-          <th class="footing"><a href="logout.phtml?token=<? echo $user->token() ?>">Logout</a></th>
+        <tr class="footing">
+          <th>
+<?php if (isset($user)) { ?>
+	    <a href="logout.phtml?token=<? echo $user->token() ?>">Logout</a>
+<?php } ?>
+	  </th>
+          <th class="right">
+<?php if ($back) { ?>
+	    <a href="/admin/">Back to admin page</a>
+<?php } ?>
+	  </th>
         </tr>
-<?php
-  }
-?>
       </table>
     </td>
   </tr>
@@ -46,39 +49,14 @@ function page_footer()
 </body>
 </html>
 <?php
-} 
+}
 
 // Show a messgae
 function page_show_message($message)
 {
 ?>
-             <table class="message">
-                <td><?echo $message;?></td>
-              </tr>
+            <table class="message">
+              <tr><td><?echo $message;?></td></tr>
             </table>
 <?php
 }
- 
-function page_sql_error($sql)
-{
-  sql_error($sql, 1);
-
-  page_footer();
-
-  exit;
-}
-
-function page_die($title = "Error", $message = "Unknown error")
-{
-?>
-  <table class="error">
-    <tr>
-      <td><b><?echo $title;?></b><br><?echo $message;?></td>
-    </tr>
-  </table>
-<?php
-  page_footer();
-  exit;
-}
-
-?>
