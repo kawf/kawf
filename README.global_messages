@@ -27,9 +27,11 @@ You can access the admin page at http://your.site.com/admin/gmessage.phtml
     From there, you can:
 
     * Edit global messages (subject/url)
-      Note that the url can be *relative*, e.g., http://site.com/
-      This way, you can make links internal to your forum, e.g.
-      /other/msgs/1234.phtml
+      Note that the url can be *relative*, e.g.,
+      "http://site.com/other/msgs/1234" can be abbreviated
+      "/other/msgs/1234.phtml". This way, you can make links internal to your
+      forum, especially if several hostnames can be used to access the forum
+      (or both http and https).
 
     * Take "ownership" of a global message (set name)
 
