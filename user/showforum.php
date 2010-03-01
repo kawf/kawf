@@ -203,6 +203,7 @@ if ($curpage == 1 && $enable_global_messages) {
 		$messages .= " (<font color=\"red\"><b>Deleted</b></font>)";
 	    }
 	    $messages .= " <a href=\"/gmessage.phtml?$gid&amp;$state&amp;$gpage&amp;$gtoken\" title=\"$state_title\">$state_txt</a>";
+	    $messages .= " <a href=\"/admin/gmessage.phtml?$gid&amp;edit\" title=\"Edit message\" target=\"_blank\">edit</a>";
 	}
 
 	$messagelinks="<a href=\"/gmessage.phtml?$gid&amp;hide=1&amp;$gpage&amp;$gtoken\" class=\"up\" title=\"hide\">rm</a>";

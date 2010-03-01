@@ -19,12 +19,23 @@ Normal users can:
 
 Administrators can:
     see "inactive" global messages
-    "ug" (undelete global messages aka mark active)
-    "dg" (delete global messages aka mark inactive)
+    "ug" (undelete global message aka mark active)
+    "dg" (delete global message aka mark inactive)
+    "ed" (edit global message)
 
-TODO:
-    Make global message generator.
-    Make global message editor.
-    Currently, adminstrator has to add messages by manually walking the user
-    database to reuse an old gmessage that users have hidden to unmark its bit
-    in user->gmsgfilter.
+You can access the admin page at http://your.site.com/admin/gmessage.phtml
+    From there, you can:
+
+    * Edit global messages (subject/url)
+      Note that the url can be *relative*, e.g., http://site.com/
+      This way, you can make links internal to your forum, e.g.
+      /other/msgs/1234.phtml
+
+    * Take "ownership" of a global message (set name)
+
+    * Update the date of a global message (touch)
+
+    * Change the status (active/inactive) of a global message
+
+    * Reset all users "filter" bit for a global message, so the message is
+      "unhidden"
