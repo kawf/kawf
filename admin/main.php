@@ -15,8 +15,9 @@ ini_set("include_path", $include_path);
 include_once("$config.inc");
 require_once("sql.inc");
 require_once("util.inc");
-require_once("page.inc");
 require_once("adminuser.inc");
+
+require_once("page.inc.php");
 
 sql_open($database);
 
@@ -42,6 +43,7 @@ $scripts = array(
   "pendingdelete.phtml" => "pendingdelete.php",
 
   "showvisits.phtml" => "showvisits.php",
+  "gmessage.phtml" => "gmessage.php",
 
   "su.phtml" => "su.php",
   "admin.phtml" => "admin.php",
