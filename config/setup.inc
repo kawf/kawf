@@ -45,7 +45,7 @@ $Debug = 0;
 $user_token_expiration = 7;
 
 /* Enable global messages */
-$enable_global_messages = false;
+$enable_global_messages = true;
 
 /* allow user to override default in a separate file (prevents merge problems
    when using source control */
