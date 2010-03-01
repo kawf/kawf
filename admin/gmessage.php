@@ -37,8 +37,6 @@ function output_row($tpl, $msg)
     $tpl->set('name',$name);
 
     /* url */
-    if (!empty($msg['url']))
-	$msg['url'] = normalize_url_scheme($msg['url']);
     $date['args'] = build_args(array('touch'=>''));
     $date['title'] = 'Update time stamp';
     $tpl->set('date',$date);
@@ -150,7 +148,6 @@ function process_request($tpl, $arg)
 	    global $subject_tags;
 	    $subject = stripcrap($arg['subject'], $subject_tags);
 	    $url = stripcrapurl($arg['url']);
-	    if(!empty($url)) $url=normalize_url_scheme($url);
 	    $sqls[]="update f_global_messages set ".
 		    "subject = '$subject', url = '$url', ".
 		    "name = '$name', date = NOW() ".

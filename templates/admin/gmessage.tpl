@@ -5,11 +5,11 @@
 <form method="post" action="gmessage.phtml">
 <input type="hidden" name="gid" value="%[msg(gid)]">
 <input type="hidden" name="token" value="%[token]">
-<table>
+<table class="form">
     <tr>
-	<td>Slot %[msg(gid)]</td>
-	<td>Subject: <input type="text" name="subject" value="%[msg(subject)]"></td>
-	<td>URL: <input type="text" name="url" value="%[msg(url)]"></td>
+	<td>Slot&nbsp;%[msg(gid)]</td>
+	<td>Subject:&nbsp;<input type="text" name="subject" value="%[msg(subject)]"></td>
+	<td>URL:&nbsp;<input type="text" name="url" value="%[msg(url)]" size="50"></td>
 	<td><input type="submit" name="submit" value="Update"></td>
     </tr>
 </table>
@@ -20,7 +20,7 @@
 	<tr><th>GID</th><th>Subject</th><th>URL</th><th>Name</th><th>Date</th><th>Status</th><th>Hidden by</th></tr>
 %begin [row]
 	<tr class="row%[r]">
-	    <td><a href="gmessage.phtml?gid=%[msg(gid)]&amp;%[gid(args)]" title="Edit GID %[msg(gid)]">Slot %[msg(gid)]</a></td>
+	    <td><a href="gmessage.phtml?gid=%[msg(gid)]&amp;%[gid(args)]" title="Edit GID %[msg(gid)]">Slot&nbsp;%[msg(gid)]</a></td>
 	    <td>%[msg(subject)]</td>
 	    <td><a href="%[msg(url)]" target="_blank" title="Go here">%[msg(url)]</a></td>
 	    <td><a href="gmessage.phtml?token=%[token]&amp;gid=%[msg(gid)]&amp;%[name(args)]" title="%[name(title)]">%[msg(name)]</a></td>

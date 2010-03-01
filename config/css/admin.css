@@ -13,6 +13,9 @@ td { font-family: verdana, arial, geneva; }
 .message,.error td { background-color: #ccf; }
 .footing a { color: #eef; }
 
+.form { width: 100%; border-collapse: collapse; }
+.form td { padding: 5px 10px; }
+
 /* contents */
 .contents { width: 100%; border-collapse: collapse; }
 .contents th, .contents td { border: 1px solid #999; padding: 1px 10px; }
