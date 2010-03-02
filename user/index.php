@@ -1,3 +1,3 @@
 <?php
-header("Location: other/");
+header("Location: $default_page");
 ?>

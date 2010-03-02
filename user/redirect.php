@@ -11,7 +11,7 @@ if(is_array($url)) {
     }
   }
   if(!$oneurl) {
-    $oneurl = "/tracking.phtml";
+    $oneurl = $default_page;
   }
   $url = $oneurl;
 }

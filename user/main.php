@@ -93,6 +93,7 @@ $scripts = array(
   "preferences.phtml" => "preferences.php",
 
   "tracking.phtml" => "tracking.php",
+  "directory.phtml" => "directory.php",
 
   "redirect.phtml" => "redirect.php",
   "gmessage.phtml" => "gmessage.php",

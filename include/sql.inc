@@ -49,7 +49,7 @@ function sql_warn($sql, $link = "")
     echo "Error #", mysql_errno(), ": ", mysql_error(), "<br>\n";
 }
 
-function sql_error($sql, $link = "")
+function sql_error($sql = "", $link = "")
 {
   sql_warn($sql, $link);
   exit;

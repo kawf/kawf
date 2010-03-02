@@ -152,6 +152,12 @@ td.messageinfo a:hover { color: #008; }
 .postform tr th { background: #dfdfdf; text-align: right; padding: 0 0.3em 0 0.3em; }
 .postform tr td { background: #dfdfdf; }
 
+/* misc basic table */
+table.basic { margin-left:auto; margin-right:auto; border-collapse: collapse; width: 100%; }
+table.basic th, table.basic td { border: 1px solid #999; padding: 1px 10px; }
+table.basic th { background-color: #d0dce0; }
+div.footer { padding-top: 0.4em; padding-bottom: 0.4em; }
+
 /*********/
 /* hacks */
 /*********/
