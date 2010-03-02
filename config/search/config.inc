@@ -8,7 +8,7 @@ $forumname = "WAYOT";
 $hostname = "forums.wayot.org";
 
 /* config */
-$srcroot = "/usr/local/kawf";
+$srcroot = dirname(__FILE__)."/../..";
 $login_to_read = 1;
 
 ini_set("include_path", ini_get("include_path") .
