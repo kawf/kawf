@@ -7,11 +7,9 @@
 </head>
 
 <body>
-%begin [ad]
-<center>
-%[AD]
-</center>
-%end [ad]
+<div class="header">
+%include [templates/header.tpl]
+</div>
 
 <div class="contents">
 %[contents]
