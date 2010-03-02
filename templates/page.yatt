@@ -8,7 +8,7 @@
 
 <body>
 <div class="header">
-%include [templates/header.tpl]
+%include [header.tpl]
 </div>
 
 <div class="contents">
@@ -16,7 +16,7 @@
 </div>
 
 <div class="footer">
-%include [templates/footer.tpl]
+%include [footer.tpl]
 </div>
 
 </body>
