@@ -202,7 +202,7 @@ function process_request($tpl, $arg)
 }
 
 $tpl = new YATT();
-$tpl->load("$template_dir/admin/gmessage.tpl");
+$tpl->load("$template_dir/admin/gmessage.yatt");
 
 process_request($tpl,$_REQUEST);
 generate_table($tpl);

@@ -47,7 +47,7 @@ class YATT {
 
     # INTERNAL: read file, preprocess for includes, strip out comments
     function preprocess($fname) {
-        if (! ($data = file_get_contents($fname))) {
+        if (! ($data = file_get_contents($fname, FILE_USE_INCLUDE_PATH))) {
             $this->error('INCLUDE(%s): can not open file!', $fname);
             return '';
         }
@@ -57,7 +57,7 @@ class YATT {
 
         # fetch all includes (recursive!)
         return preg_replace_callback(
-                    '/^[ \t]*\%include[ \t]+\[([A-Za-z-_.]+)\][ \t]*$/im',
+                    '/^[ \t]*\%include[ \t]+\[([A-Za-z-_.\/]+)\][ \t]*$/im',
                     array(&$this, 'pp_callback'),
                     $data);
     }
