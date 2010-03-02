@@ -1,3 +1,3 @@
 <?php
-header("Location: tracking.phtml");
+header("Location: $default_page");
 ?>
