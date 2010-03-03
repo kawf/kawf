@@ -112,6 +112,6 @@ if (isset($success)) {
 } else
   $tpl->set_var("success", "");
 
-print generate_content('Finish Account Creation', $tpl->parse("content", "finish"));
+print generate_page('Finish Account Creation', $tpl->parse("content", "finish"));
 
 ?>

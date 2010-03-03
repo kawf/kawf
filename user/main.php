@@ -68,6 +68,10 @@ else {
 }
 $tpl->set_var("URL", $_url . $script_name . $path_info);
 
+/* Still needed for account templates */
+if (isset($domain) && strlen($domain))
+  $tpl->set_var("DOMAIN", $domain);
+
 $scripts = array(
   "" => "index.php",
 

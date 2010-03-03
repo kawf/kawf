@@ -1,4 +1,5 @@
 %begin [dir]
+<h2>Forum Directory</h2>
 <table class="basic">
     <tr><th>Forum</th><th>Posts</th></tr>
 %begin [row]
