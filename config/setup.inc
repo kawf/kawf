@@ -20,9 +20,6 @@ $create_disabled = false;
 /* Uncomment this if you want to force people to log in to read the forums */
 #$login_to_read = 1;
 
-/* Comment this out if you want to add your own advertising stuff */
-$ad_generic = 1;
-
 /* This is used to set the DOMAIN variable in templates */
 $domain = "kawf.org";
 

@@ -19,5 +19,7 @@ $m=postprocess($msg);
 $tpl = new Template($template_dir, "comment");
 $tpl->set_file("plain", "plain-message.tpl");
 $tpl->set_var("MSG_MESSAGE", $m);
+
+/* no header or footer or anything, just print the message */
 $tpl->pparse("MSG_MESSAGE", "plain");
 ?>

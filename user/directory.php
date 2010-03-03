@@ -17,5 +17,5 @@ for ($i=0; $row = mysql_fetch_assoc($res); $i++) {
 }
 $dir->parse("dir");
 
-echo generate_page('Directory', $dir->output());
+print generate_page('Directory', $dir->output());
 ?>

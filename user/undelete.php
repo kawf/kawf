@@ -1,4 +1,5 @@
 <?php
+require_once("page-yatt.inc.php");
 
 $user->req();
 $stoken = $user->token();
@@ -36,12 +37,7 @@ $tpl->set_block("undel", "disabled");
 
 message_set_block($tpl);
 
-$tpl->set_var("FORUM_NAME", $forum['name']);
-$tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 $tpl->parse("FORUM_HEADER", "forum_header");
-
-$tpl->parse("HEADER", "header");
-$tpl->parse("FOOTER", "footer");
 
 $index = find_msg_index($mid);
 
@@ -58,15 +54,6 @@ if ($msg['aid'] != $user->aid) {
 /* update to new ip */
 $msg['ip'] = $remote_addr;
 
-if (isset($ad_generic)) {
-  $urlroot = "/ads";
-  /* We get our money from ads, make sure it's there */
-  require_once("ads.inc");
-
-  $ad = ads_view("$ad_generic,${ad_base}_" . $forum['shortname'], "_top");
-  $tpl->_set_var("AD", $ad);
-}
-
 if (!isset($forum['opt.PostEdit'])) {
   $tpl->set_var(array(
     "image" => "",
@@ -75,7 +62,7 @@ if (!isset($forum['opt.PostEdit'])) {
     "accept" => "",
   ));
 
-  $tpl->pparse("CONTENT", "post");
+  print generate_page('Undelete Message Denied',$tpl->parse("CONTENT", "disabled"));
   exit;
 }
 
@@ -88,5 +75,5 @@ $tpl->set_var("PAGE", $_page);
 
 $tpl->parse("PREVIEW", "message");
 
-$tpl->pparse("CONTENT", "undel");
+print generate_page('Undelete Message',$tpl->parse("CONTENT", "undel"));
 ?>

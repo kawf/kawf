@@ -7,6 +7,7 @@ require_once("filter.inc");
 require_once("strip.inc");
 require_once("message.inc");
 require_once("postform.inc");
+require_once("page-yatt.inc.php");
 
 $tpl->set_file(array(
   "showmessage" => "showmessage.tpl",
@@ -52,15 +53,6 @@ $thread = mysql_fetch_array($result);
 $options = explode(",", $thread['flags']);
 foreach ($options as $name => $value)
   $thread["flag.$value"] = true;
-
-if (isset($ad_generic)) {
-  $urlroot = "/ads";
-  /* We get our money from ads, make sure it's there */
-  require_once("ads.inc");
-
-  $ad = ads_view("$ad_generic,${ad_base}_" . $forum['shortname'], "_top");
-  $tpl->_set_var("AD", $ad);
-}
 
 /* UGLY hack, kludge, etc to workaround nasty ordering problem */
 $_page = $tpl->get_var("PAGE");
@@ -133,7 +125,5 @@ render_postform($tpl, "post", $user, $nmsg);
 
 $tpl->parse("MESSAGE", "message");
 
-$tpl->parse("HEADER", "header");
-$tpl->parse("FOOTER", "footer");
-$tpl->pparse("CONTENT", "showmessage");
+print generate_page($pmsg['subject'], $tpl->parse("CONTENT", "showmessage"));
 ?>

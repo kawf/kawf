@@ -1,16 +1,3 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>{DOMAIN} Forums: {FORUM_NAME}</title>
-<link rel=StyleSheet href="{CSS_HREF}" type="text/css">
-</head>
-
-<body bgcolor="#ffffff">
-
-{HEADER}
-
-<hr width="100%" size="1">
-
 <table width="100%">
 <tr>
 {FORUM_HEADER}
@@ -44,9 +31,3 @@
   </td>
 </tr>
 </table>
-
-{FOOTER}
-
-</body>
-</html>
-

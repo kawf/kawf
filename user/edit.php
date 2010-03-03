@@ -19,6 +19,7 @@ if (!isset($mid) || !isset($forum)) {
 require_once("strip.inc");
 require_once("diff.inc");
 require_once("message.inc");
+require_once("page-yatt.inc.php");
 
 $tpl->set_file(array(
   "edit" => "edit.tpl",
@@ -60,17 +61,7 @@ if ($Debug) {
 
 $tpl->parse("FORUM_HEADER", "forum_header");
 
-$tpl->parse("HEADER", "header");
-$tpl->parse("FOOTER", "footer");
-
-$tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
-
-/* UGLY hack, kludge, etc to workaround nasty ordering problem */
-$_domain = $tpl->get_var("DOMAIN");
-unset($tpl->varkeys["DOMAIN"]);
-unset($tpl->varvals["DOMAIN"]);
-$tpl->set_var("DOMAIN", $_domain);
 
 $nmsg = $msg = fetch_message($user, $mid);
 
@@ -114,15 +105,6 @@ if (!isset($_POST['message'])) {
   $offtopic = $_POST['OffTopic'];
 }
 
-if (isset($ad_generic)) {
-  $urlroot = "/ads";
-  /* We get our money from ads, make sure it's there */
-  require_once("ads.inc");
-
-  $ad = ads_view("$ad_generic,${ad_base}_" . $forum['shortname'], "_top");
-  $tpl->_set_var("AD", $ad);
-}
-
 if (!isset($forum['opt.PostEdit'])) {
   $tpl->set_var(array(
     "edit_locked" => "",
@@ -132,7 +114,7 @@ if (!isset($forum['opt.PostEdit'])) {
     "accept" => "",
   ));
 
-  $tpl->pparse("CONTENT", "post");
+  print generate_page('Edit Message Denied', $tpl->parse("CONTENT", "disabled"));
   exit;
 }
 
@@ -156,7 +138,7 @@ if (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')) {
     "accept" => "",
   ));
 
-  $tpl->pparse("CONTENT", "post");
+  print generate_page('Edit Message Denied', $tpl->parse("CONTENT", "edit_locked"));
   exit;
 }
 
@@ -307,5 +289,5 @@ if (isset($error) || isset($preview)) {
   $tpl->set_var("MSG_MID", $mid);
 }
 
-$tpl->pparse("CONTENT", "edit");
+print generate_page('Edit Message',$tpl->parse("CONTENT", "edit"));
 ?>

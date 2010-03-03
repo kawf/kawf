@@ -11,6 +11,8 @@
 %include [header.tpl]
 </div>
 
+<hr width="100%" size="1">
+
 <div class="contents">
 %[contents]
 </div>
