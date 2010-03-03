@@ -129,5 +129,5 @@ render_postform($tpl, "post", $user, $nmsg);
 
 $tpl->parse("MESSAGE", "message");
 
-print generate_page($pmsg['subject'], $tpl->parse("CONTENT", "showmessage"));
+print generate_page($msg['subject'], $tpl->parse("CONTENT", "showmessage"));
 ?>
