@@ -12,6 +12,9 @@ $tpl->set_block("preferences", "error");
 $tpl->set_block("preferences", "signature");
 $tpl->set_block("preferences", "timezone", "_timezone");
 
+if (isset($domain) && strlen($domain))
+  $tpl->set_var("DOMAIN", $domain);
+
 $success = "";
 $error = "";
 

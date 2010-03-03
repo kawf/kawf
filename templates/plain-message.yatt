@@ -1,0 +1,3 @@
+%begin [page]
+<div class="message">%[message]</div>
+%end [page]

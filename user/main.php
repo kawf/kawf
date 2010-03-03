@@ -62,8 +62,6 @@ else
 $tpl->parse("CSS", "css");
 */
 
-$tpl->set_var("CSS_HREF", css_href());
-
 /* $_page saved off for others here for use in resused template that recurse,
    or for the set_var order sensitivity for vars within blocks */
 $_page = $_REQUEST['page'];
@@ -78,9 +76,6 @@ else {
     $_url .= ":" . $server_port;
 }
 $tpl->set_var("URL", $_url . $script_name . $path_info);
-
-if (isset($domain) && strlen($domain))
-  $tpl->set_var("DOMAIN", $domain);
 
 $scripts = array(
   "" => "index.php",
