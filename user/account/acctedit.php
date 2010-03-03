@@ -2,6 +2,7 @@
 
 require_once("strip.inc");
 require_once("validate.inc");
+require_once("page-yatt.inc.php");
 
 $aid = $user->aid;
 
@@ -137,8 +138,6 @@ if (empty($error)) {
 }
 $tpl->set_var("token", $user->token());
 
-$tpl->parse("HEADER", "header");
-$tpl->parse("FOOTER", "footer");
-$tpl->pparse("content", "edit");
+print generate_page('Edit Account', $tpl->parse("content", "edit"));
 
 ?>

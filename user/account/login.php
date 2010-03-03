@@ -1,4 +1,5 @@
 <?php
+require_once('page-yatt.inc.php');
 
 if (isset($_POST['forgotpassword'])) {
   if (isset($_POST['email']) && !empty($_POST['email']))
@@ -62,7 +63,5 @@ if (isset($message) && !empty($message))
 else
   $tpl->set_var("message", "");
 
-$tpl->parse("HEADER", "header");
-$tpl->parse("FOOTER", "footer");
-$tpl->pparse("content", "login");
+print generate_page('Login',$tpl->parse("content", "login"));
 ?>

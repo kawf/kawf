@@ -1,14 +1,3 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>{DOMAIN} Forums: Login</title>
-<link rel=StyleSheet href="{CSS_HREF}" type="text/css">
-</head>
-
-<body bgcolor="#ffffff">
-
-{HEADER}
-
 <h1>Accounts - Login</h1><p>
 
 <form action="login.phtml" method="post" name="form">
@@ -43,9 +32,3 @@
 document.form.email.focus();
 -->
 </script>
-
-{FOOTER}
-
-</body>
-</html>
-
