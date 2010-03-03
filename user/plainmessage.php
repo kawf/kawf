@@ -14,7 +14,7 @@ if ($raw) {
 
 mark_thread_read($msg, $user);
 
-$m=postprocess($msg, true /* plain */);
+$m=postprocess($msg);
 
 $tpl = new YATT($template_dir, "plain-message.yatt");
 $tpl->set("message", $m);

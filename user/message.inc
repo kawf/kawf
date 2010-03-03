@@ -147,7 +147,7 @@ function preprocess(&$msg, $req)
     $msg['video'] = normalize_url_scheme($msg['video']);
 }
 
-function postprocess($msg, $plain=false)
+function postprocess($msg, $noembed=false)
 {
   $out = '';
 
@@ -155,13 +155,13 @@ function postprocess($msg, $plain=false)
 
   if (!empty($msg['imageurl'])) {
     $url = $msg['imageurl'];
-    if ($plain) $out .= "<p>Image: <a href=\"$url\">$url</a></p>\n";
+    if ($noembed) $out .= "<p>Image: <a href=\"$url\">$url</a></p>\n";
     else $out .= "<div class=\"media\">\n".embed_image($url)."\n</div>\n";
   }
 
   if (!empty($msg['video'])) {
     $url = $msg['video'];
-    if ($plain) $out .= "<p>Video: <a href=\"$url\">$url</a></p>\n";
+    if ($noembed) $out .= "<p>Video: <a href=\"$url\">$url</a></p>\n";
     else $out .= "<div class=\"media\">\n".embed_video($url)."\n</div>\n";
   }
 
@@ -175,7 +175,7 @@ function postprocess($msg, $plain=false)
       $text = $msg['urltext'];
     else
       $text = $msg['url'];
-    if ($plain)
+    if ($noembed)
       $out .= "<p>URL: <a href=\"$url\">$text</a></p>";
     else
       $out .= "<ul><li class=\"url\"><a href=\"$url\"$target>$text</a></li></ul>";
