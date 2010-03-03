@@ -1,4 +1,5 @@
 <?php
+require_once("page-yatt.inc.php");
 
 $tpl->set_file(array(
   "forgotpassword" => "account/forgotpassword.tpl",
@@ -43,7 +44,5 @@ if (isset($_REQUEST['email'])) {
   $tpl->set_var("success", "");
 }
 
-$tpl->parse("HEADER", "header");
-$tpl->parse("FOOTER", "footer");
-$tpl->pparse("content", "forgotpassword");
+print generate_page('Forgot Password',$tpl->parse("content", "forgotpassword"));
 ?>

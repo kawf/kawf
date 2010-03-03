@@ -1,18 +1,3 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>{DOMAIN} Forums: Forgot Password</title>
-<link rel=StyleSheet href="{CSS_HREF}" type="text/css">
-</head>
-
-<body bgcolor="#ffffff">
-
-{HEADER}
-
-<table width="600">
-<tr>
-<td>
-
 <h1>Accounts - Forgot Password</h1><p>
 
 <p><h2>Password Retrieval</h2><p>
@@ -32,13 +17,3 @@ Email address: <input type="text" name="email" value="{EMAIL}"><br>
 <!-- BEGIN success -->
 We have sent a message detailing the remaining steps to {EMAIL}<br>
 <!-- END success -->
-
-</td>
-</tr>
-</table>
-
-{FOOTER}
-
-</body>
-</html>
-

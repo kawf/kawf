@@ -1,14 +1,3 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>{DOMAIN} Forums: Edit Account</title>
-<link rel=StyleSheet href="{CSS_HREF}" type="text/css">
-</head>
-
-<body bgcolor="#ffffff" text="#000000" link="#0000cc" vlink="#0000cc" alink="#0000cc" style="text-decoration: none">
-
-{HEADER}
-
 <h1>Account - Edit</h1><p>
 
 <!-- BEGIN error -->
@@ -38,9 +27,3 @@ Your password has been changed<p>
 <input type="hidden" name="page" value="{PAGE}">
 <input type="hidden" name="token" value="{token}">
 </form>
-
-{FOOTER}
-
-</body>
-</html>
-

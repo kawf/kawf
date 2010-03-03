@@ -1,18 +1,3 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>{DOMAIN} Forums: Finish Validation</title>
-<link rel=StyleSheet href="{CSS_HREF}" type="text/css">
-</head>
-
-<body bgcolor="#ffffff">
-
-{HEADER}
-
-<table width="600">
-<tr>
-<td>
-
 <h1>Accounts - Finish</h1><p>
 
 <!-- BEGIN error -->
@@ -61,12 +46,3 @@ Cookie <input type="text" name="cookie" length="15" maxlength="15"><br>
 <input type="submit" value="Finish">
 </form>
 <!-- END form -->
-
-</td>
-</tr>
-</table>
-
-</body>
-
-{FOOTER}
-

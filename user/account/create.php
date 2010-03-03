@@ -1,6 +1,7 @@
 <?php
 
 include_once("strip.inc");
+require_once("page-yatt.inc.php");
 
 /* Delete the logged in user */
 unset($user);
@@ -146,7 +147,5 @@ if (!empty($error)) {
 } else
   $tpl->set_var("error", "");
 
-$tpl->parse("HEADER", "header");
-$tpl->parse("FOOTER", "footer");
-$tpl->pparse("content", "create");
+print generate_page('Create Account',$tpl->parse("content", "create"));
 ?>

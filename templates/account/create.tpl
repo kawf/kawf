@@ -1,18 +1,3 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>{DOMAIN} Forums: Create Account</title>
-<link rel=StyleSheet href="{CSS_HREF}" type="text/css">
-</head>
-
-<body bgcolor="#ffffff">
-
-{HEADER}
-
-<table width="600">
-<tr>
-<td>
-
 <h1>Accounts - Create</h1><p>
 
 
@@ -52,13 +37,3 @@ be complete.</p>
 <p>Creation of new accounts has been temporarily disabled.</p>
 <p>Use your browser's BACK button to return to the Login screen.</p>
 <!-- END disabled -->
-
-</td>
-</tr>
-</table>
-
-{FOOTER}
-
-</body>
-</html>
-

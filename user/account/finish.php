@@ -1,5 +1,7 @@
 <?php
 
+require_once("page-yatt.inc.php");
+
 $tpl->set_file("finish", "account/finish.tpl");
 
 $tpl->set_block("finish", "form");
@@ -110,8 +112,6 @@ if (isset($success)) {
 } else
   $tpl->set_var("success", "");
 
-$tpl->parse("HEADER", "header");
-$tpl->parse("FOOTER", "footer");
-$tpl->pparse("content", "finish");
+print generate_content('Finish Account Creation', $tpl->parse("content", "finish"));
 
 ?>
