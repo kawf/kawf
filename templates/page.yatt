@@ -8,7 +8,7 @@
 
 <body>
 <div class="header">
-%include [header.tpl]
+%include [header.yatt]
 </div>
 
 <div class="contents">
@@ -16,7 +16,7 @@
 </div>
 
 <div class="footer">
-%include [footer.tpl]
+%include [footer.yatt]
 </div>
 
 </body>
