@@ -3,6 +3,7 @@
 require_once("listthread.inc");
 require_once("filter.inc");
 require_once("message.inc");
+require_once("page-yatt.inc.php");
 
 require_once("textwrap.inc");
 require_once("notices.inc");
@@ -23,15 +24,6 @@ if (isset($tthreads[$msg['tid']]) &&
       $tthreads[$msg['tid']]['unixtime'] < $msg['unixtime']) {
   $sql = "update f_tracking set tstamp = NOW() where tid = " . $msg['tid'] . " and aid = " . $user->aid;
   mysql_query($sql) || sql_warn($sql);
-}
-
-if (isset($ad_generic)) {
-  $urlroot = "/ads";
-  /* We get our money from ads, make sure it's there */
-  require_once("ads.inc");
-
-  $ad = ads_view("$ad_generic,$ad_base_" . $forum['shortname'], "_top");
-  $tpl->_set_var("AD", $ad);
 }
 
 $index = find_thread_index($tid);
@@ -123,7 +115,5 @@ $messagestr = list_thread(print_message, $messages, $tree, reset($tree), $thread
 
 $tpl->set_var("MESSAGES", $messagestr);
 
-$tpl->parse("HEADER", "header");
-$tpl->parse("FOOTER", "footer");
-$tpl->pparse("CONTENT", "showthread");
+print generate_page($forum['name'],$tpl->parse("CONTENT", "showthread"));
 ?>

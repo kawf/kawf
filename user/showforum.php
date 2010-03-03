@@ -6,6 +6,7 @@ require_once("filter.inc");
 require_once("thread.inc");
 require_once("textwrap.inc");
 require_once("notices.inc");
+require_once("page-yatt.inc.php");
 
 $tpl->set_file(array(
   "showforum" => "showforum.tpl",
@@ -67,20 +68,10 @@ function threads($key)
   return $numthreads;
 }
 
-$tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
 $tpl->set_var("FORUM_NOTICES", get_notices_html($forum, $user->aid));
 $tpl->parse("FORUM_HEADER", "forum_header");
-
-if (isset($ad_generic)) {
-  $urlroot = "/ads";
-  /* We get our money from ads, make sure it's there */
-  require_once("ads.inc");
-
-  $ad = ads_view("$ad_generic,${ad_base}_" . $forum['shortname'], "_top");
-  $tpl->_set_var("AD", $ad);
-}
 
 /* Figure out how many total threads the user can see */
 $numthreads = 0;
@@ -402,7 +393,5 @@ unset($thread);
 require_once("postform.inc");
 render_postform($tpl, "post", $user);
 
-$tpl->parse("HEADER", "header");
-$tpl->parse("FOOTER", "footer");
-$tpl->pparse("content", "showforum");
+print generate_page($forum['name'], $tpl->parse("content", "showforum"));
 ?>

@@ -1,20 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>{DOMAIN} Forums: Post a message</title>
-<link rel=StyleSheet href="{CSS_HREF}" type="text/css">
-</head>
-
-<body bgcolor="#ffffff">
 {DEBUG}
-
-{HEADER}
-
 <center>
 {AD}
 </center>
-
-<hr width="100%" size="1">
 
 <table width="100%">
 <tr>
@@ -101,9 +88,3 @@ what kinds of video are supported.</i></p>
 </table>
 <p>
 <!-- END accept -->
-
-{FOOTER}
-
-</body>
-</html>
-

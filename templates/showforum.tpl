@@ -1,20 +1,3 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>{DOMAIN} Forums: {FORUM_NAME}</title>
-<link rel=StyleSheet href="{CSS_HREF}" type="text/css">
-</head>
-
-<body bgcolor="#ffffff">
-
-{HEADER}
-
-<center>
-{AD}
-</center>
-
-<hr width="100%" size="1">
-
 <table width="100%">
 <tr>
 {FORUM_HEADER}
@@ -91,16 +74,7 @@
   <td align="right" valign="bottom">{NUMTHREADS} threads in {NUMPAGES} pages</td>
 </tr>
 </table>
-
 <div class="forumpost">
 <a name="post"><img src="/pics/post.gif" alt="post message"></a>
 {FORM}
 </div>
-
-<!-- b>{ACTIVE_USERS}</b> users and <b>{ACTIVE_GUESTS}</b> guests have been browsing the forums in the last 15 minutes<p -->
-
-{FOOTER}
-
-</body>
-</html>
-

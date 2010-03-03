@@ -1,14 +1,3 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title>{DOMAIN} Forums: Preferences</title>
-<link rel=StyleSheet href="{CSS_HREF}" type="text/css">
-</head>
-
-<body bgcolor="#ffffff">
-
-{HEADER}
-
 <img src="/pics/change.gif" alt="change preferences"><br>
 
 <!-- BEGIN error -->
@@ -93,9 +82,3 @@ Timezone
 </table>
 
 </form>
-
-{FOOTER}
-
-</body>
-</html>
-

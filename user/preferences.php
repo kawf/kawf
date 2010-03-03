@@ -4,6 +4,7 @@ $user->req();
 
 require_once("strip.inc");
 require_once("timezone.inc");
+require_once("page-yatt.inc.php");
 
 $tpl->set_file("preferences", "preferences.tpl");
 
@@ -126,7 +127,5 @@ if(isset($user->timezone))
 else
     $tpl->set_var("US_Pacific", " selected=\"selected\"");
 
-$tpl->parse("HEADER", "header");
-$tpl->parse("FOOTER", "footer");
-$tpl->pparse("CONTENT", "preferences");
+print generate_page('Preferences',$tpl->parse("CONTENT", "preferences"));
 ?>

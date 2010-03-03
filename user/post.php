@@ -17,6 +17,7 @@ if (!isset($forum)) {
 require_once("textwrap.inc");
 require_once("strip.inc");
 require_once("message.inc");
+require_once("page-yatt.inc.php");
 
 $tpl->set_file(array(
   "post" => "post.tpl",
@@ -54,20 +55,7 @@ $errors = array(
 $tpl->set_var("FORUM_NOTICES", "");
 $tpl->parse("FORUM_HEADER", "forum_header");
 
-$tpl->parse("HEADER", "header");
-$tpl->parse("FOOTER", "footer");
-
-$tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
-
-if (isset($ad_generic)) {
-  $urlroot = "/ads";
-  /* We get our money from ads, make sure it's there */
-  require_once("ads.inc");
-
-  $ad = ads_view("$ad_generic,${ad_base}_" . $forum['shortname'], "_top");
-  $tpl->_set_var("AD", $ad);
-}
 
 if (!$user->capable($forum['fid'], 'Delete')) {
   if (!isset($_POST['tid'])) {
@@ -82,7 +70,7 @@ if (!$user->capable($forum['fid'], 'Delete')) {
         "noreplies" => "",
       ));
 
-      $tpl->pparse("CONTENT", "post");
+      print generate_page('Post Message Denied',$tpl->parse("CONTENT", "nonewthreads"));
       exit;
     }
   } else {
@@ -97,7 +85,7 @@ if (!$user->capable($forum['fid'], 'Delete')) {
         "nonewthreads" => "",
       ));
 
-      $tpl->pparse("CONTENT", "post");
+      print generate_page('Post Message Denied',$tpl->parse("CONTENT", "noreplies"));
       exit;
     }
   }
@@ -125,7 +113,7 @@ if ($_POST['tid']) {
       "accept" => "",
     ));
 
-    $tpl->pparse("CONTENT", "post");
+    print generate_page('Post Message Denied', $tpl->parse("CONTENT", "locked"));
     exit;
   }
 }
@@ -347,5 +335,6 @@ if (!$accepted || isset($preview)) {
 }
 
 $tpl->parse("PREVIEW", "message");
-$tpl->pparse("CONTENT", "post");
+
+print generate_page('Post Message', $tpl->parse("CONTENT", "post"));
 ?>

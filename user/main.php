@@ -54,11 +54,6 @@ mysql_query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
 
 $tpl = new Template($template_dir, "comment");
 
-$tpl->set_file(array(
-  "header" => "header.tpl",
-  "footer" => "footer.tpl",
-));
-
 /*
 if ($ua->property('browser') == "ns" && $ua->property('maj_ver') == 4 && $ua->property('platform') == "mac")
   $tpl->set_file("css", "css/ns4mac.tpl");
