@@ -147,7 +147,7 @@ function preprocess(&$msg, $req)
     $msg['video'] = normalize_url_scheme($msg['video']);
 }
 
-function postprocess($msg)
+function postprocess($msg, $plain=false)
 {
   $out = '';
 
@@ -155,14 +155,18 @@ function postprocess($msg)
 
   if (!empty($msg['imageurl'])) {
     $url = $msg['imageurl'];
-    $out .= "<div class=\"media\">\n".embed_image($msg['imageurl'])."\n</div>\n";
+    if ($plain) $out .= "<p>Image: <a href=\"$url\">$url</a></p>\n";
+    else $out .= "<div class=\"media\">\n".embed_image($url)."\n</div>\n";
   }
 
-  if (!empty($msg['video']))
-    $out .= "<div class=\"media\">\n".embed_video($msg['video'])."\n</div>\n";
+  if (!empty($msg['video'])) {
+    $url = $msg['video'];
+    if ($plain) $out .= "<p>Video: <a href=\"$url\">$url</a></p>\n";
+    else $out .= "<div class=\"media\">\n".embed_video($url)."\n</div>\n";
+  }
 
   if (!empty($msg['message']))
-    $out .= nl2brPre::out($msg['message']);
+    $out .= nl2brPre::out($msg['message'])."\n";
 
   if (!empty($msg['url']) && validate_url($msg['url'])) {
     $url = $msg['url'];
@@ -171,8 +175,10 @@ function postprocess($msg)
       $text = $msg['urltext'];
     else
       $text = $msg['url'];
-    $out .=
-      "<ul><li class=\"url\"><a href=\"$url\"$target>$text</a></li></ul>";
+    if ($plain)
+      $out .= "<p>URL: <a href=\"$url\">$text</a></p>";
+    else
+      $out .= "<ul><li class=\"url\"><a href=\"$url\"$target>$text</a></li></ul>";
   }
 
   return $out;

@@ -1,5 +1,5 @@
 <?php
-require_once("template.inc");
+require_once("lib/YATT/YATT.class.php");
 require_once("message.inc");
 
 $raw = isset($_REQUEST['raw']);
@@ -14,12 +14,10 @@ if ($raw) {
 
 mark_thread_read($msg, $user);
 
-$m=postprocess($msg);
+$m=postprocess($msg, true /* plain */);
 
-$tpl = new Template($template_dir, "comment");
-$tpl->set_file("plain", "plain-message.tpl");
-$tpl->set_var("MSG_MESSAGE", $m);
-
-/* no header or footer or anything, just print the message */
-$tpl->pparse("MSG_MESSAGE", "plain");
+$tpl = new YATT($template_dir, "plain-message.yatt");
+$tpl->set("message", $m);
+$tpl->parse("page");
+print $tpl->output();
 ?>
