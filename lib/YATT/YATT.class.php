@@ -22,6 +22,8 @@ function &my_pop(&$array) {
 }
 
 class YATT {
+    # Where to pull the templates from
+    var $template_path;
 
     # Holds the template tree
     var $obj;
@@ -47,7 +49,10 @@ class YATT {
 
     # INTERNAL: read file, preprocess for includes, strip out comments
     function preprocess($fname) {
-        if (! ($data = file_get_contents($fname, FILE_USE_INCLUDE_PATH))) {
+	if ($this->template_path)
+	    $fname = $this->template_path . '/' . $fname;
+
+        if (! ($data = file_get_contents($fname))) {
             $this->error('INCLUDE(%s): can not open file!', $fname);
             return '';
         }
@@ -176,9 +181,11 @@ class YATT {
     }
 
     # Create a new YATT instance.
-    function YATT() {
+    function YATT($template_path = null, $filename = null) {
         $this->errors = array();
         $this->obj = array('ROOT', '', '');
+	$this->template_path = $template_path;
+	if ($filename != null) $this->load($filename);
     }
 
     # Return output, starting at a given node

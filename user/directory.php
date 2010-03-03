@@ -2,7 +2,7 @@
 require_once("page-yatt.inc.php");
 
 $dir = new YATT();
-$dir->load("$template_dir/directory.tpl");
+$dir->load("$template_dir/directory.yatt");
 
 $res = mysql_query("select fid,name,shortname from f_forums where options like '%Searchable%' order by name") or sql_error();
 
