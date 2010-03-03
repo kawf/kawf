@@ -1,8 +1,4 @@
 {DEBUG}
-<center>
-{AD}
-</center>
-
 <table width="100%">
 <tr>
 {FORUM_HEADER}
