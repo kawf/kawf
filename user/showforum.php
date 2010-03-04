@@ -314,10 +314,8 @@ while ($numshown < $threadsperpage) {
     if ($user->valid())
       $sql .= "or $mtable.aid = " . $user->aid;
 
-    $sql .= " )";
-    
     /* Sort all of the messages by date and descending order */
-    $sql .= " order by $ttable.tid desc";
+    $sql .= ") order by $ttable.tid desc";
 
     /* Limit to the maximum number of threads per page */
     $sql .= " limit $skipthreads," . ($threadsperpage - $numshown);
