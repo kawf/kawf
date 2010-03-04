@@ -4,6 +4,9 @@
 <head>
 <title>%[domain] Forums: %[title]</title>
 <link rel=StyleSheet href="%[css_href]" type="text/css">
+%begin [bch]
+<link rel=StyleSheet href="%[browser_css_href]" type="text/css">
+%end [bch]
 </head>
 
 <body>

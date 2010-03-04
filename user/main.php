@@ -29,38 +29,10 @@ require_once("timezone.inc");
 require_once("acl_ip_ban.inc");
 require_once("acl_ip_ban_list.inc");
 
-/*
-require_once("phpSniff.class.php");
-
-if($_SERVER['HTTP_REFERER']) {
-    $a=split("/", $_SERVER['HTTP_REFERER']);
-    if($a[2]=='forums.audiworld.com') {
-        err_not_found();
-	exit;
-    }
-}
-
-$ua = new phpSniff();
-
-# Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)
-# Mozilla/4.7 (Macintosh; U; PPC)
-$ulkludge =
-	($ua->property('browser') == "ns" && $ua->property('maj_ver') == 4 && $ua->property('platform') == "mac") ||
-	($ua->property('browser') == "ie" && $ua->property('maj_ver') == 5 && $ua->property('platform') == "win");
-*/
-
 sql_open($database);
 mysql_query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
 
 $tpl = new Template($template_dir, "comment");
-
-/*
-if ($ua->property('browser') == "ns" && $ua->property('maj_ver') == 4 && $ua->property('platform') == "mac")
-  $tpl->set_file("css", "css/ns4mac.tpl");
-else
-  $tpl->set_file("css", "css/standard.tpl");
-$tpl->parse("CSS", "css");
-*/
 
 /* $_page saved off for others here for use in resused template that recurse,
    or for the set_var order sensitivity for vars within blocks */

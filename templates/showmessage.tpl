@@ -20,7 +20,7 @@
 <div class="showmessage">
 {MESSAGE}
 <a name="thread"><b>Thread:</b></a><br>
-<table class="thread">
+<table class="threads">
 <tr class="{CLASS}">
 <td>
 {THREAD}

@@ -73,7 +73,18 @@ mt_srand(getmicrotime());
 function css_href($filename="main.css")
 {
     global $css_dir, $css_href_dir;
+
+    if (!file_exists("$css_dir/$filename"))
+	return null;
+
     $time = filemtime("$css_dir/$filename");
     return "$css_href_dir/$filename?$time";
+}
+
+function browser_css_href()
+{
+    require_once("phpSniff.class.php");
+    $ua = new phpSniff();
+    return css_href("browser-".$ua->property('browser').".css");
 }
 ?>
