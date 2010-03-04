@@ -30,7 +30,7 @@
       In Reply to: <a href="{PMSG_MID}.phtml">{PMSG_SUBJECT}</a> posted by <b>{PMSG_NAME}</b> on {PMSG_DATE}<br>
 <!-- END parent -->
     </td>
-    <td class="tools" align="right" nowrap="nowrap">
+    <td class="tools">
 <!-- BEGIN owner -->
       <a href="/{FORUM_SHORTNAME}/edit.phtml?mid={MSG_MID}&amp;page={PAGE}">Edit</a> |
 <!-- BEGIN delete -->

@@ -10,13 +10,9 @@
   | <a href="../"><b>Return to {FORUM_NAME}</b></a>
 </div>
 
-<table class="showthread">
-<tr><td>
-<ul>
+<div class="showthread">
 {MESSAGES}
-</ul>
-</td></tr>
-</table>
+</div>
 
 <div class="tools">
     <a href="/tips/?page={PAGE}" target="_blank">Forum Tips</a>
