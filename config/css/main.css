@@ -3,9 +3,22 @@
 /***********/
 body { font-family: verdana, arial, geneva; font-size: smaller}
 
+/* shortcuts */
 .error { color: red; }
 .warning { color: green; }
-.tools { font-size: 85%; }	/* mini-links */
+.left { text-align: left; }
+.right { text-align: right; }
+.top { vertical-align: top; }
+.bottom { vertical-align: bottom; }
+
+/* misc headers/footers */
+.forumheader, .messageheader { width: 100%; border-collapse: collapse; }
+div.header { padding-top: 0; padding-bottom: 0.4em; }
+div.footer { padding-top: 0.4em; padding-bottom: 0; }
+
+/* little links that do stuff */
+.tools { width: 100%; font-size: 85%; }	/* mini-links */
+div.tools { margin-left: 2px; }  /* hack to match table indent */
 
 /* post/edit informational text */
 .info {
@@ -15,7 +28,9 @@ body { font-family: verdana, arial, geneva; font-size: smaller}
     color: #008;
 }
 
-.messagelinks a { text-decoration: none; }
+/* thread layout */
+.threads { width: 100%; }
+.threadlinks { vertical-align: top; }
 .threadlinks a { text-decoration: none; }
 a.ut { color: #d00; }
 a:hover.ut { color: #f00; text-decoration: underline;}
@@ -30,6 +45,7 @@ ul {margin-left: 1em; padding-left: 1em;}
 /*************************/
 /* showforum/showmessage */
 /*************************/
+
 /* normal */
 .row0 { background: #f8f8f8 }
 .row1 { background: #e8e8e8 }
@@ -62,32 +78,32 @@ ul.thread {
 /* showthread */
 /**************/
 /* first row is flush left */
-ul.showthread { margin-left: 0; padding-left: 0; }
+.showthread ul { margin-left: 0; padding-left: 0; }
 
 /* get rid of bullets */
-ul.showthread li { list-style: none outside; }
+.showthread li { list-style: none outside; }
 
 /* highlight subject */
-ul.showthread tr.messagesubjectrow td { background: #eeeeee; }
+.showthread tr.messagesubjectrow td { background: #eeeeee; }
 
 /* right/left padding for subject highlight for it and everything under it */
-ul.showthread tr td { padding-left: 6px; padding-right: 6px; }
-ul.showthread .messageblock div { padding-left: 6px; padding-right: 6px; }
+.showthread tr td { padding-left: 6px; padding-right: 6px; }
+.showthread .messageblock div { padding-left: 6px; padding-right: 6px; }
 
 /* message subject in showthread - no bold, no link decoration */
-ul.showthread .messageblock .subject a {
+.showthread .messageblock .subject a {
     text-decoration: none;
     font-weight: normal;
     /* for all type of links (visited, etc) */
     color: #008;
 }
-ul.showthread .messageblock .subject a:hover {
+.showthread .messageblock .subject a:hover {
     color: #00f; text-decoration: underline;
 }
 
 /* signature in showthread */
 /*
-ul.showthread .signature {
+.showthread .signature {
     visibility: hidden;
     overflow: hidden;
     max-height: 10px;
@@ -114,6 +130,7 @@ ul.showthread .signature {
 
 /* message header/info */
 td.messageinfo {
+    width: 100%;
     font-size: 85%;
     color: #666;
     /* leave space below info section */
@@ -152,12 +169,19 @@ td.messageinfo a:hover { color: #008; }
 .postform tr th { background: #dfdfdf; text-align: right; padding: 0 0.3em 0 0.3em; }
 .postform tr td { background: #dfdfdf; }
 
+/***************/
+/* preferences */
+/***************/
+.preferences tr { background: #ccc; }
+.preferences th { text-align: left; }
+.preferences th, .preferences td { padding: 5px; }
+.preferences .prefheader { font-weight: bold; text-align: right; padding: 10px; }
+td.signaturepreview { background-color: white; border: 5px solid #ccc; }
+
 /* misc basic table */
 table.basic { margin-left:auto; margin-right:auto; border-collapse: collapse; width: 100%; }
 table.basic th, table.basic td { border: 1px solid #999; padding: 1px 10px; }
 table.basic th { background-color: #d0dce0; }
-div.header { padding-top: 0; padding-bottom: 0.4em; }
-div.footer { padding-top: 0.4em; padding-bottom: 0; }
 
 /*********/
 /* hacks */

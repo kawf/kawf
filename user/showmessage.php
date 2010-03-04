@@ -103,11 +103,11 @@ if ($user->valid()) {
 
 if (isset($tthreads_by_tid[$msg['tid']]) &&
    ($thread['unixtime'] > $tthreads_by_tid[$msg['tid']]['unixtime'])) {
-  $tpl->set_var("BGCOLOR", "#ccccee");
+  $tpl->set_var("CLASS", "trow1");
   if (count($messages) > 1)
     $threadlinks .= "<br><a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "&amp;time=" . time() . "\" class=\"up\" title=\"Update thread\">up</a>";
 } else
-  $tpl->set_var("BGCOLOR", "#eeeeee");
+  $tpl->set_var("CLASS", "row1");
 
 $tpl->set_var("THREADLINKS", $threadlinks);
 

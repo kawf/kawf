@@ -1,38 +1,38 @@
-<table width="100%">
+<table class="forumheader">
 <tr>
 {FORUM_HEADER}
 </tr>
 </table>
 
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
-<tr class="tools">
-  <td align="left">
+<table class="tools">
+<tr>
+  <td class="left">
   <a href="/tips/?page={PAGE}" target="_blank">Forum Tips</a>
 | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
 | <a href="#post"><b>Post New Thread</b></a>
   </td>
-  <td align="right">
+  <td class="right">
 <!-- BEGIN update_all -->
     <a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a>
 <!-- END update_all -->
   </td>
 </tr>
-<tr class="tools">
-  <td align="left" valign="bottom"><b>Page:</b> {PAGES}</td>
-  <td align="right" valign="bottom">{NUMTHREADS} threads in {NUMPAGES} pages</td>
+<tr class="bottom">
+  <td class="left"><b>Page:</b> {PAGES}</td>
+  <td class="right">{NUMTHREADS} threads in {NUMPAGES} pages</td>
 </tr>
 </table>
 
 
 <!-- BEGIN normal -->
-<table width="100%" border="0" cellpadding="2" cellspacing="2">
+<table class="threads">
 <!-- BEGIN row -->
 <tr class="{CLASS}">
   <td>
 {MESSAGES}
   </td>
-  <td class="messagelinks" valign="top">
-{MESSAGELINKS}
+  <td class="threadlinks">
+{THREADLINKS}
   </td>
 </tr>
 <!-- END row -->
@@ -45,10 +45,10 @@
 <!-- END row -->
 <!-- END simple -->
 
-<table width="100%">
-<tr class="tools">
-  <td align="left" valign="bottom"><b>Page:</b> {PAGES}</td>
-  <td align="right" valign="bottom">{NUMTHREADS} threads in {NUMPAGES} pages</td>
+<table class="tools">
+<tr>
+  <td class="left"><b>Page:</b> {PAGES}</td>
+  <td class="right">{NUMTHREADS} threads in {NUMPAGES} pages</td>
 </tr>
 </table>
 <div class="forumpost">

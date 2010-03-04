@@ -197,10 +197,10 @@ if ($curpage == 1 && $enable_global_messages) {
 	    $messages .= " <a href=\"/admin/gmessage.phtml?$gid&amp;edit\" title=\"Edit message\" target=\"_blank\">edit</a>";
 	}
 
-	$messagelinks="<a href=\"/gmessage.phtml?$gid&amp;hide=1&amp;$gpage&amp;$gtoken\" class=\"up\" title=\"hide\">rm</a>";
+	$threadlinks="<a href=\"/gmessage.phtml?$gid&amp;hide=1&amp;$gpage&amp;$gtoken\" class=\"up\" title=\"hide\">rm</a>";
 
 	$tpl->set_var("MESSAGES", "<ul class=\"thread\"><li>$messages</ul>");
-	$tpl->set_var("MESSAGELINKS", $messagelinks);
+	$tpl->set_var("THREADLINKS", $threadlinks);
 	$tpl->parse("_row", "row", true);
 	$numshown++;
       }
@@ -247,18 +247,18 @@ if (isset($tthreads)) {
       $tthreadsshown++;
 
       /* If the thread is tracked, we know they are a user already */
-      $messagelinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\" class=\"ut\" title=\"Untrack thread\">ut</a>";
+      $threadlinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\" class=\"ut\" title=\"Untrack thread\">ut</a>";
       if ($count > 1) {
         if (!isset($user->pref['Collapsed']))
-          $messagelinks .= "<br>";
+          $threadlinks .= "<br>";
         else
-          $messagelinks .= " ";
+          $threadlinks .= " ";
 
-        $messagelinks .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "&amp;time=$time\" class=\"up\" title=\"Update thread\">up</a>";
+        $threadlinks .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "&amp;time=$time\" class=\"up\" title=\"Update thread\">up</a>";
       }
 
       $tpl->set_var("MESSAGES", $messagestr);
-      $tpl->set_var("MESSAGELINKS", $messagelinks);
+      $tpl->set_var("THREADLINKS", $threadlinks);
 
       $tpl->parse("_row", "row", true);
     }
@@ -360,14 +360,14 @@ while ($numshown < $threadsperpage) {
 
     if ($user->valid()) {
       if (isset($tthreads_by_tid[$thread['tid']]))
-        $messagelinks = " <a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\" class=\"ut\" title=\"Untrack thread\">ut</a>";
+        $threadlinks = " <a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\" class=\"ut\" title=\"Untrack thread\">ut</a>";
       else
-        $messagelinks = " <a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\" class=\"tt\" title=\"Track thread\">tt</a>";
+        $threadlinks = " <a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\" class=\"tt\" title=\"Track thread\">tt</a>";
     } else
-      $messagelinks = "";
+      $threadlinks = "";
 
     $tpl->set_var("MESSAGES", $messagestr);
-    $tpl->set_var("MESSAGELINKS", $messagelinks);
+    $tpl->set_var("THREADLINKS", $threadlinks);
 
     $tpl->parse("_row", "row", true);
   }

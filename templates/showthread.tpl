@@ -1,33 +1,25 @@
-<table width="100%">
+<table class="forumheader">
 <tr>
 {FORUM_HEADER}
 </tr>
 </table>
 
-<table width="100%">
-<tr class="tools">
-  <td align="left">
+<div class="tools">
     <a href="/tips/?page={PAGE}" target="_blank">Forum Tips</a>
   | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
   | <a href="../"><b>Return to {FORUM_NAME}</b></a>
-  </td>
-</tr>
-</table>
+</div>
 
-<table>
+<table class="showthread">
 <tr><td>
-<ul class="showthread">
+<ul>
 {MESSAGES}
 </ul>
 </td></tr>
 </table>
 
-<table width="100%">
-<tr class="tools">
-  <td align="left">
+<div class="tools">
     <a href="/tips/?page={PAGE}" target="_blank">Forum Tips</a>
   | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
   | <a href="../"><b>Return to {FORUM_NAME}</b></a>
-  </td>
-</tr>
-</table>
+</div>

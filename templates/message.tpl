@@ -1,11 +1,11 @@
 <div class="messageblock">
 {MSG_DEBUG}
-<table class="messageheader" width="100%" border="0" cellspacing="0" cellpadding="0">
+<table class="messageheader">
   <tr class="messagesubjectrow">
-    <td class="subject" align="left" colspan="2">{MSG_SUBJECT}</td>
+    <td class="subject" colspan="2">{MSG_SUBJECT}</td>
   </tr>
   <tr class="messageinforow">
-    <td class="messageinfo" align="left">
+    <td class="messageinfo">
 <!-- BEGIN forum_mod -->
       Source: {MSG_IP} {MSG_EMAIL}
 <!-- BEGIN admin -->

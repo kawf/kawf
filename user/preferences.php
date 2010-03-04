@@ -4,6 +4,7 @@ $user->req();
 
 require_once("strip.inc");
 require_once("timezone.inc");
+require_once("nl2brPre.inc");
 require_once("page-yatt.inc.php");
 
 $tpl->set_file("preferences", "preferences.tpl");
@@ -53,8 +54,9 @@ if (isset($_POST['submit'])) {
 
 /*
   if ($_REQUEST['signature'] != $user->signature)
-    $success .= "Updated signature<p>";
+    $success .= "Updated signature";
 */
+
   $user->signature($_REQUEST['signature']);
 
   $threadsperpage = $_REQUEST['threadsperpage'];
@@ -70,13 +72,13 @@ if (isset($_POST['submit'])) {
   }
 /*
  if ($threadsprepage] != $user->threadsperpage)
-    $success .= "Threads per page has been set to $threadsperpage<p>\n";
+    $success .= "Threads per page has been set to $threadsperpage\n";
 */
   $user->threadsperpage($threadsperpage);
 
 /*
  if ($_REQUEST['timezone'] != $user->timezone)
-    $success .= "Timezone has been set to " . $_REQUEST['timezone'] . "<p>\n";
+    $success .= "Timezone has been set to " . $_REQUEST['timezone'] . "\n";
 */
   $user->set_timezone($_REQUEST['timezone']);
 
@@ -96,11 +98,11 @@ do_option('AutoUpdateTracking');
 do_option('OldestFirst');
 
 if (!empty($success))
-  $text = $success . "<p>\n";
+  $text = $success . "<br>\n";
 else
   $text = "";
 
-$text .= "To change your password or update your preferences, please fill out the information below.";
+$text .= 'To change your password or update your preferences, please fill out the information below and click "Update".';
 if (empty($error))
   $tpl->set_var("error", "");
 else
@@ -109,8 +111,8 @@ else
 if (empty($user->signature))
   $tpl->set_var("signature", "");
 
-$tpl->set_var("SIGNATURE_COOKED", nl2br($user->signature));
-$tpl->set_var("SIGNATURE", $user->signature);
+$tpl->set_var("SIGNATURE_COOKED", nl2brPre::out($user->signature));
+$tpl->set_var("SIGNATURE", htmlspecialchars($user->signature));
 $tpl->set_var("THREADSPERPAGE", $user->threadsperpage);
 $tpl->set_var("TEXT", $text);
 $tpl->set_var("PAGE", htmlspecialchars($_REQUEST['page'], ENT_QUOTES));

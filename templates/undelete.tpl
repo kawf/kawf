@@ -1,4 +1,4 @@
-<table width="100%">
+<table class="forumheader">
 <tr>
 {FORUM_HEADER}
 </tr>

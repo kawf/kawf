@@ -1,11 +1,11 @@
-<table width="100%">
+<table class="forumheader">
 <tr>
 {FORUM_HEADER}
 </tr>
 </table>
 
-<table width="100%">
-<tr class="tools">
+<table class="tools">
+<tr>
   <td align="left">
     <a href="/{FORUM_SHORTNAME}/threads/{MSG_TID}.phtml#{MSG_MID}">All messages</a>
   | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
@@ -20,12 +20,12 @@
 <div class="showmessage">
 {MESSAGE}
 <a name="thread"><b>Thread:</b></a><br>
-<table width="100%">
-<tr bgcolor="{BGCOLOR}">
+<table class="thread">
+<tr class="{CLASS}">
 <td>
 {THREAD}
 </td>
-<td class="threadlinks" valign="top">
+<td class="threadlinks">
 {THREADLINKS}
 </td>
 </tr>
@@ -34,8 +34,8 @@
 {FORM}
 </div>
 
-<table width="100%">
-<tr class="tools">
+<table class="tools">
+<tr>
   <td align="left">
     <a href="/{FORUM_SHORTNAME}/threads/{MSG_TID}.phtml#{MSG_MID}">All messages</a>
   | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
