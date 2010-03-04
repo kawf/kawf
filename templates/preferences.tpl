@@ -23,7 +23,7 @@
   <tr>
     <td class="prefheader">Signature:</td>
     <td>
-      <textarea name="signature" rows=5 cols=80>{SIGNATURE}</textarea>
+      <textarea name="signature" rows=5 cols=85>{SIGNATURE}</textarea>
     </td>
   </tr>
 <!-- BEGIN signature -->
@@ -62,7 +62,7 @@ Timezone
     </td>
   </tr>
   <tr>
-    <td align="center">
+    <td class="submit">
     <input type="submit" name="submit" value="Update">
     </td>
     <td>

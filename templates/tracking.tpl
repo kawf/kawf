@@ -12,7 +12,9 @@
 <br>
 
 <!-- BEGIN update_all -->
-<div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a></div>
+<table class="tools"><tr>
+<td class="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a></td>
+</tr></table>
 <!-- END update_all -->
 
 <table class="threads">
@@ -38,7 +40,9 @@
 <br>
 
 <!-- BEGIN update_all -->
-<div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a></div>
+<table class="tools"><tr>
+<td class="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a></td>
+</tr></table>
 <!-- END update_all -->
 
 <!-- BEGIN row -->

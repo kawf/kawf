@@ -17,7 +17,7 @@ div.header { padding-top: 0; padding-bottom: 0.4em; }
 div.footer { padding-top: 0.4em; padding-bottom: 0; }
 
 /* little links that do stuff */
-.tools { width: 100%; font-size: 85%; }	/* mini-links */
+.tools { white-space: nowrap; width: 100%; font-size: 85%; }	/* mini-links */
 div.tools { margin-left: 2px; }  /* hack to match table indent */
 
 /* post/edit informational text */
@@ -77,8 +77,11 @@ ul.thread {
 /**************/
 /* showthread */
 /**************/
+/* make a little room */
+.showthread { padding-top: 6px; }
+
 /* first row is flush left */
-.showthread ul { margin-left: 0; padding-left: 0; }
+.showthread > ul { margin-left: 0; padding-left: 0; }
 
 /* get rid of bullets */
 .showthread li { list-style: none outside; }
@@ -147,7 +150,7 @@ td.messageinfo a:hover { color: #008; }
 .media a:hover { color: #008; }
 
 /* no image borders */
-.imageurl img { border-style: none }
+.imageurl img { border-style: none; }
 
 /* embedded url in message */
 .message li.url { list-style: disc outside none; }
@@ -166,8 +169,11 @@ td.messageinfo a:hover { color: #008; }
     padding: 5px;
 }
 
-.postform tr th { background: #dfdfdf; text-align: right; padding: 0 0.3em 0 0.3em; }
-.postform tr td { background: #dfdfdf; }
+.postform tr { background: #dfdfdf; }
+.postform th { text-align: right; padding: 0.3em; }
+.postform tr.input td { padding: 0; }
+.postform th.top { vertical-align: top; }
+.postform td { padding: 0.5em; }
 
 /***************/
 /* preferences */
@@ -175,6 +181,7 @@ td.messageinfo a:hover { color: #008; }
 .preferences tr { background: #ccc; }
 .preferences th { text-align: left; }
 .preferences th, .preferences td { padding: 5px; }
+.preferences td.submit { text-align: center; }
 .preferences .prefheader { font-weight: bold; text-align: right; padding: 10px; }
 td.signaturepreview { background-color: white; border: 5px solid #ccc; }
 
