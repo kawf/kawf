@@ -316,9 +316,6 @@ while ($numshown < $threadsperpage) {
 
     $sql .= " )";
     
-    if ($user->aid != 996) 
-      $sql .= " and $mtable.aid != 996";
-
     /* Sort all of the messages by date and descending order */
     $sql .= " order by $ttable.tid desc";
 

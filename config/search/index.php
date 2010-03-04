@@ -11,11 +11,6 @@ if($login_to_read) {
     sql_close($database);
 
     apache_note('aid',$user->aid);
-
-    if($user->aid == 996) {
-	header("Location: not-found.php");
-	exit;
-    }
 }
 ?>
 
@@ -161,8 +156,6 @@ $showMessages=$_GET['showMessages']?1:0;
 
 $posterName=addslashes($_GET['posterName']);
 $posterAID=is_numeric($_GET['posterAID'])?$_GET['posterAID']:'';
-
-if ($posterAID==996) $posterAID='';
 
 $flagNT=isset($_GET['flagNT'])?$_GET['flagNT']:'';
 $flagPIC=isset($_GET['flagPIC'])?$_GET['flagPIC']:'';

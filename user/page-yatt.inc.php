@@ -4,6 +4,7 @@ require_once("lib/YATT/YATT.class.php");
 function generate_page($title, $contents)
 {
     global $tpl, $template_dir, $domain;
+    global $user;
 
     $page = new YATT($template_dir, 'page.yatt');
     $page->set('domain', $domain);
@@ -16,6 +17,11 @@ function generate_page($title, $contents)
     $page->set('browser_css_href', browser_css_href());
     $page->set('title', $title);
     $page->set('contents', $contents);
+
+    if ($user->valid()) {
+	$page->set('aid', $user->aid);
+	$page->parse('page.user');
+    }
     $page->parse('page');
 
     return $page->output();

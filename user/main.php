@@ -104,7 +104,6 @@ header("Cache-Control: private");
 
 $user = new ForumUser;
 $user->find_by_cookie();
-$tpl->set_var("AID", $user->aid);	// for hidden section in footer.tpl
 
 $IPBAN = AclIpBanList::find_matching_ban_list($_SERVER["REMOTE_ADDR"]);
 
@@ -244,9 +243,6 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
         $qual[] = "aid = " . $user->aid;
     }
 
-    if($user->aid != 996)
-      $sql .= " and aid != 996";
-
     if (isset($qual))
       $sql .= " and ( " . implode(" or ", $qual) . " )";
 
@@ -281,7 +277,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
 
 
 /* FIXME: This kills performance */
-update_visits();
+// update_visits();
 
 sql_close();
 ?>
