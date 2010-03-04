@@ -6,44 +6,37 @@
 </div>
 <!-- END error -->
 
-<form action="preferences.phtml?page={PAGE}" autocomplete="off" method="post">
+<form action="preferences.phtml?page={PAGE}" method="post">
 
-<table border="0" cellpadding="5" cellspacing="2">
-
-  <tr bgcolor="#cccccc">
-    <td colspan="2">
-      <p>{TEXT}
-    </td>
+<table class="preferences">
+  <tr>
+    <th colspan="2">
+      {TEXT}
+    </th>
   </tr>
-  <tr bgcolor="#cccccc">
+  <tr>
     <td colspan="2">
       <a href="/acctedit.phtml">Edit Password, Email Address or Screen Name</a>
     | <a href="/gmessage.phtml?gid=-1&amp;hide=0&amp;page={PAGE}&amp;token={USER_TOKEN}">Restore global messages</a>
     </td>
   </tr>
-  <tr bgcolor="#cccccc">
-    <td align="right" width="175">
-      <b>Signature:</b>
-    </td>
-    <td width="425">
-      <textarea wrap="soft" name="signature" rows=5 cols=40>{SIGNATURE}</textarea>
+  <tr>
+    <td class="prefheader">Signature:</td>
+    <td>
+      <textarea name="signature" rows=5 cols=80>{SIGNATURE}</textarea>
     </td>
   </tr>
 <!-- BEGIN signature -->
-  <tr bgcolor="#cccccc">
-    <td width="175">
-&nbsp;
-    </td>
-    <td width="425">
+  <tr>
+    <td class="prefheader">Signature Preview:</td>
+    <td class="signaturepreview">
 {SIGNATURE_COOKED}
     </td>
   </tr>
 <!-- END signature -->
-  <tr bgcolor="#cccccc">
-    <td align="right" width="175">
-    <b>Preferences:</b>
-    </td>
-    <td width="425">
+  <tr>
+    <td class="prefheader">Preferences:</td>
+    <td>
 <input type="checkbox" name="ShowOffTopic"{SHOWOFFTOPIC}> Show offtopic messages?<br>
 <!-- input type="checkbox" name="ShowModerated"{SHOWMODERATED}> Show moderated messages?<br -->
 <input type="checkbox" name="SecretEmail"{SECRETEMAIL}> Default to hide email address in postings?<br>
@@ -68,14 +61,12 @@ Timezone
       Threads per page <input type="text" size="3" name="threadsperpage" value="{THREADSPERPAGE}"><br>
     </td>
   </tr>
-  <tr bgcolor="#cccccc">
-    <td colspan="2" align="center">
-    <input type="submit" name="submit" value="Submit">
+  <tr>
+    <td align="center">
+    <input type="submit" name="submit" value="Update">
     </td>
-  </tr>
-  <tr bgcolor="#cccccc">
-    <td colspan="2" align="center">
-    <p><a href="{PAGE}"><b>Click here to return to the {DOMAIN} Discussion Forums</b></a>
+    <td>
+    <a href="{PAGE}"><b>Click here to return to the {DOMAIN} Discussion Forums</b></a>
     </td>
   </tr>
 </table>

@@ -1,14 +1,10 @@
-<table width="100%">
-<tr class="tools">
-  <td align="left">
+<div class="tools">
     <a href="/tips/?page={PAGE}" target="_blank"><b>Forum Tips</b></a>
   | <a href="/search/?page={PAGE}" target="_blank">Search Forums</a>
-  </td>
-</tr>
-</table>
+</div>
 
 <!-- BEGIN normal -->
-<table width="100%">
+<table class="forumheader">
 <tr>
 {FORUM_HEADER}
 </tr>
@@ -19,14 +15,14 @@
 <div align="right"><a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a></div>
 <!-- END update_all -->
 
-<table width="100%" border="0" cellpadding="2" cellspacing="2">
+<table class="threads">
 <!-- BEGIN row -->
 <tr class="{CLASS}">
   <td>
 {MESSAGES}
   </td>
-  <td valign="top">
-{MESSAGELINKS}
+  <td class="threadlinks">
+{THREADLINKS}
   </td>
 </tr>
 <!-- END row -->
@@ -34,7 +30,7 @@
 <!-- END normal -->
 
 <!-- BEGIN simple -->
-<table width="100%">
+<table class="forumheader">
 <tr>
 {FORUM_HEADER}
 </tr>
@@ -50,11 +46,7 @@
 <!-- END row -->
 <!-- END simple -->
 
-<table width="100%">
-<tr class="tools">
-  <td align="left">
+<div class="tools">
     <a href="/tips/?page={PAGE}" target="_blank"><b>Forum Tips</b></a>
   | <a href="/search/?page={PAGE}" target="_blank">Search Forums</a>
-  </td>
-</tr>
-</table>
+</div>

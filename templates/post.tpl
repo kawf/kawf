@@ -1,5 +1,5 @@
 {DEBUG}
-<table width="100%">
+<table class="forumheader">
 <tr>
 {FORUM_HEADER}
 </tr>
@@ -49,15 +49,11 @@ what kinds of video are supported.</i></p>
 </div>
 <!-- END error -->
 <!-- BEGIN preview -->
-<table width="100%">
-<tr><td class="info">Message Preview</td></tr>
-<tr class="tools">
-  <td><a href="/{FORUM_SHORTNAME}/">Cancel post and go back to the forum</a></td>
-</tr>
-<tr><td>
+<div class="info">Message Preview</div>
+<div class="tools"><a href="/{FORUM_SHORTNAME}/">Cancel post and go back to the forum</a></div>
+<div class="preview">
 {PREVIEW}
-</td></tr>
-</table>
+</div>
 <!-- END preview -->
 <!-- BEGIN duplicate -->
 <div class="warning">Duplicate message detected, overwriting</div><p>
@@ -70,17 +66,13 @@ what kinds of video are supported.</i></p>
 <!-- meta http-equiv="Refresh" content="10;url={PAGE}" -->
 <!-- END refresh_page -->
 
-<table width=100%>
-<tr><td class="info">Message Added</td></tr>
-<tr class="tools">
-  <td>
+<div class="info">Message Added</div>
+<div class="tools">
     <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml">Go to Your Message</a>
   | <a href="/{FORUM_SHORTNAME}/">Go back to the forum</a>
-  </td>
-</tr>
-<tr><td>
+</div>
+<div class="preview">
 {PREVIEW}
-</td></tr>
-</table>
+</div>
 <p>
 <!-- END accept -->
