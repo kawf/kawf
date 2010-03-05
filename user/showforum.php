@@ -18,9 +18,6 @@ $tpl->set_block("showforum", "update_all");
 $tpl->set_block("showforum", "simple");
 $tpl->set_block("showforum", "normal");
 
-$tpl->set_var("FORUM_NAME", $forum['name']);
-$tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
-
 if (isset($user->pref['SimpleHTML'])) {
   $table_block = "simple";
   $tpl->set_var("normal", "");
@@ -71,6 +68,7 @@ function threads($key)
   return $numthreads;
 }
 
+$tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
 $tpl->set_var("FORUM_NOTICES", get_notices_html($forum, $user->aid));
