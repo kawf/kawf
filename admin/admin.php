@@ -26,7 +26,7 @@ if (isset($_GET['name']) && !empty($_GET['name'])) {
 $sql = "select count(*) from u_users";
 if (!empty($where))
   $sql .= " where $where";
-$result = mysql_db_query($database, $sql) or sql_error($sql);
+$result = mysql_query($sql) or sql_error($sql);
 
 list($numaccounts) = mysql_fetch_row($result);
 
@@ -76,7 +76,7 @@ $sql = "select * from u_users";
 if (!empty($where))
   $sql .= " where $where";
 $sql .= " order by aid limit $skipaccounts,$accountsperpage";
-$result = mysql_db_query($database, $sql) or sql_error($sql);
+$result = mysql_query($sql) or sql_error($sql);
 ?>
 <table class="contents">
 <tr><th>aid</th><th>name</th><th>email</th><th>status</th></tr>
