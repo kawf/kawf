@@ -103,7 +103,7 @@ if (!isset($_POST['message'])) {
   preprocess($nmsg, $_POST);
   
   $exposeemail = $_POST['ExposeEmail'];
-  $offtopic = $_POST['OffTopic'];
+  $offtopic = isset($_POST['OffTopic']);
 }
 
 if (!isset($forum['opt.PostEdit'])) {
@@ -155,7 +155,11 @@ else
 /* update offtopic status */
 if ($msg['state'] == 'Active' && $offtopic)
   $nmsg['state'] = "OffTopic";
-else
+else if ($user->capable($forum['fid'], 'OffTopic') &&
+    $msg['state'] == 'OffTopic' && !$offtopic) {
+  /* user can't unset offtopic unless he has offtopic capabilities */
+  $nmsg['state'] = "Active";
+} else
   $nmsg['state'] = $msg['state'];
 
 if (empty($nmsg['subject']) && strlen($nmsg['subject']) == 0)
@@ -263,6 +267,9 @@ if (isset($error) || isset($preview)) {
     $new[]="video: " . $nmsg['video'];
 
   $diff = diff($old, $new);
+
+  if ($msg['state']!=$nmsg['state'])
+    $diff = "Changed from '".$msg['state']."' to '".$nmsg['state']."'\n". $diff;
 
   $mtable = "f_messages" . $indexes[$index]['iid'];
 
