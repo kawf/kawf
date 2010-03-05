@@ -160,11 +160,17 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
       else
 	$tpl->set_var("EXPOSEEMAIL", "");
 
-      if (!isset($forum['opt.OffTopic']))
+      if (!isset($forum['opt.OffTopic'])) {
 	$tpl->set_var("offtopic", "");
-      else {
+      } else if (!$user->capable($forum['fid'], 'OffTopic') &&
+	    isset($msg['state']) && $msg['state']=="OffTopic") {
+	/* user can't unset offtopic unless he has offtopic capabilities */
+	$tpl->set_var("offtopic", "");
+      } else {
 	if (isset($_REQUEST['preview']) || isset($_REQUEST['post']))
 	  $checked = $_REQUEST['OffTopic'];
+	else if (isset($msg['state']) && $msg['state']=="OffTopic")
+	  $checked = 1;
 	else
 	  $checked = 0;
 	if ($checked)
