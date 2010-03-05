@@ -57,7 +57,7 @@ what kinds of video are supported.</i></p>
     <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml">Go to Your Message</a>
   | <a href="/{FORUM_SHORTNAME}/">Go back to the forum</a>
 </div>
-<table class="tools">
+<table class="preview">
 <tr><td>
 {PREVIEW}
 </td></tr>
