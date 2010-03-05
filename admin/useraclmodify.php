@@ -5,7 +5,7 @@ $user->req("ForumAdmin");
 if(is_valid_integer($_REQUEST['aid'])) {
     $aid=$_REQUEST['aid'];
 } else {
-    err_not_found("invalid fid or aid");
+    err_not_found("Invalid FID or AID");
 }
 
 /* If submit is set, shove the data into the database (well, after some */
@@ -43,7 +43,7 @@ if (isset($_POST['submit'])) {
 if (!isset($aid)) {
   page_header("Modify User ACL");
 #  page_show_nav("1.2");
-  ads_die("", "No aid specified");
+  ads_die("", "No AID specified");
 }
 
 page_header("Modify User ACL $aid");

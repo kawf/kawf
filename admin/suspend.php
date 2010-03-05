@@ -3,7 +3,7 @@
 $user->req("ForumAdmin");
 
 if (!is_valid_integer($_GET['aid'])) {
-    Header("Location: /admin/?message=" . urlencode("No aid!"));
+    Header("Location: /admin/?message=" . urlencode("No AID!"));
     exit();
 }
 
@@ -15,7 +15,7 @@ $aid = $_GET['aid'];
 $uuser = new AccountUser;
 $uuser->find_by_aid((int)$aid);
 if (!$uuser->valid()) {
-    Header("Location: /admin/?message=" . urlencode("Invalid aid $aid"));
+    Header("Location: /admin/?message=" . urlencode("Invalid AID $aid"));
     exit();
 }
 
