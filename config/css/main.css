@@ -7,6 +7,7 @@ body { font-family: verdana, arial, geneva; font-size: smaller}
 .error { color: red; }
 .warning { color: green; }
 .left { text-align: left; }
+.center { text-align: center; }
 .right { text-align: right; }
 .top { vertical-align: top; }
 .bottom { vertical-align: bottom; }
@@ -17,7 +18,8 @@ div.header { padding-top: 0; padding-bottom: 0.4em; }
 div.footer { padding-top: 0.4em; padding-bottom: 0; }
 
 /* little links that do stuff */
-.tools { white-space: nowrap; width: 100%; font-size: 85%; }	/* mini-links */
+.tools, .smaller { width: 100%; font-size: 85%; }
+.tools { white-space: nowrap; }	/* mini-links */
 div.tools { margin-left: 2px; }  /* hack to match table indent */
 
 /* post/edit informational text */
