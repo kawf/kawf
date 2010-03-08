@@ -60,9 +60,11 @@ if ($Debug) {
 }
 
 $tpl->set_var("FORUM_NOTICES", "");
-$tpl->parse("FORUM_HEADER", "forum_header");
 
+$tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
+
+$tpl->parse("FORUM_HEADER", "forum_header");
 
 $nmsg = $msg = fetch_message($user, $mid);
 
