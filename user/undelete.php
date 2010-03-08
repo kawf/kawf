@@ -37,6 +37,9 @@ $tpl->set_block("undel", "disabled");
 
 message_set_block($tpl);
 
+$tpl->set_var("FORUM_NAME", $forum['name']);
+$tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
+
 $tpl->parse("FORUM_HEADER", "forum_header");
 
 $index = find_msg_index($mid);
