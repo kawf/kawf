@@ -71,6 +71,13 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
 
   $string .= "</font>";
 
+  if (isset($thread['flag.Sticky']) && !$msg['pmid']) {
+    if (!isset($user->pref['SimpleHTML']))
+      $string .= " (<font color=\"green\"><b>Sticky</b></font>)";
+    else
+      $string .= " (sticky)";
+  }
+
   if (isset($thread['flag.Locked']) && !$msg['pmid']) {
     if (!isset($user->pref['SimpleHTML']))
       $string .= " <img src=\"/pics/lock.gif\" alt=\"locked\">";
@@ -202,6 +209,10 @@ function append_tools($user, $string, $forum, $thread, $msg, $page)
       $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?tid=" . $msg['tid'] . "&amp;page=$page&amp;token=$stoken\" title=\"Unlock\">ul</a>";
     else
       $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?tid=" . $msg['tid'] . "&amp;page=$page&amp;token=$stoken\" title=\"Lock\">lt</a>";
+    if (isset($thread['flag.Sticky']))
+      $string .= " <a href=\"/" . $forum['shortname'] . "/sticky.phtml?tid=" . $msg['tid'] . "&amp;stick=0&amp;page=$page&amp;token=$stoken\" title=\"Unstick thread\">us</a>";
+    else
+      $string .= " <a href=\"/" . $forum['shortname'] . "/sticky.phtml?tid=" . $msg['tid'] . "&amp;stick=1&amp;page=$page&amp;token=$stoken\" title=\"Sticky thread\">st</a>";
   }
 
   return $string;
