@@ -212,6 +212,8 @@ if ($curpage == 1 && $enable_global_messages) {
   }
 }
 
+/* reset so threads per page is right */
+$numshown = 0;
 $tthreadsshow = 0;
 
 if (isset($tthreads)) {
