@@ -35,18 +35,12 @@ unset($tpl->varkeys["PAGE"]);
 unset($tpl->varvals["PAGE"]);
 $tpl->set_var("PAGE", $_page);
 
-/* Default it to the first page if none is specified */
-if (!isset($curpage))
-  $curpage = 1;
+$tpl->set_var("FORUM_NOTICES", get_notices_html($forum, $user->aid));
 
-/* Number of threads per page we're gonna list */
-if ($user->valid())
-  $threadsperpage = $user->threadsperpage;
-else
-  $threadsperpage = 50;
+$tpl->set_var("FORUM_NAME", $forum['name']);
+$tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
-if (!$threadsperpage)
-  $threadsperpage = 50;
+$tpl->parse("FORUM_HEADER", "forum_header");
 
 function threads($key)
 {
@@ -68,11 +62,83 @@ function threads($key)
   return $numthreads;
 }
 
-$tpl->set_var("FORUM_NAME", $forum['name']);
-$tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
+function gen_thread($thread)
+{
+  global $user, $forum;
 
-$tpl->set_var("FORUM_NOTICES", get_notices_html($forum, $user->aid));
-$tpl->parse("FORUM_HEADER", "forum_header");
+  if (!empty($thread['flags'])) {
+    $options = explode(",", $thread['flags']);
+    foreach ($options as $name => $value)
+      $thread["flag.$value"] = true;
+  }
+
+  list($messages, $tree) = fetch_thread($thread);
+  if (!isset($messages) || !count($messages))
+    return array(0, "", "");
+
+  $count = count($messages);
+
+  if (isset($user->pref['Collapsed']))
+    $messagestr = print_collapsed($thread, reset($messages), $count - 1);
+  else
+    $messagestr = list_thread(print_subject, $messages, $tree, reset($tree), $thread);
+
+  if (empty($messagestr))
+    return array(0, "", "");
+
+  $message = reset($messages);
+  $state = $message['state'];
+
+  return array($count, "<ul class=\"thread\">\n" . $messagestr . "</ul>", $state);
+}
+
+function gen_threadlinks($thread)
+{
+    global $user, $forum, $tthreads_by_tid, $script_name, $path_info;
+
+    /* not logged in, dont generate anything */
+    if (!$user->valid()) return '';
+    $tthread = $tthreads_by_tid[$thread['tid']];
+
+    /* is thread tracked by user? */
+    if (isset($tthread))  {
+      $tl = " <a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] .
+	"&amp;page=" . $script_name . $path_info .
+	"&amp;token=" . $user->token() .
+	"\" class=\"ut\" title=\"Untrack thread\">ut</a>";
+    } else {
+      $tl = " <a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] .
+	"&amp;page=" . $script_name . $path_info .
+	"&amp;token=" . $user->token() .
+	"\" class=\"tt\" title=\"Track thread\">tt</a>";
+    }
+
+    if (!isset($user->pref['Collapsed'])) $tl .= "<br>";
+    else $tl .= " ";
+
+    if (isset($tthread) && $thread['unixtime'] > $tthread['unixtime']) {
+      $tl .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] .
+	"&amp;page=" . $script_name . $path_info .
+	"&amp;token=" . $user->token() .
+	"&amp;time=" . time() .
+	"\" class=\"up\" title=\"Update thread\">up</a>";
+    }
+
+    return $tl;
+}
+
+/* Default it to the first page if none is specified */
+if (!isset($curpage))
+  $curpage = 1;
+
+/* Number of threads per page we're gonna list */
+if ($user->valid())
+  $threadsperpage = $user->threadsperpage;
+else
+  $threadsperpage = 50;
+
+if (!$threadsperpage)
+  $threadsperpage = 50;
 
 /* Figure out how many total threads the user can see */
 $numthreads = 0;
@@ -134,142 +200,129 @@ $tpl->set_var("PAGES", $pagestr);
 $tpl->set_var("NUMTHREADS", $numthreads);
 $tpl->set_var("NUMPAGES", $numpages);
 
-$time = time();
-$tpl->set_var("TIME", $time);
-
-function display_thread($thread)
-{
-  global $user, $forum;
-
-  if (!empty($thread['flags'])) {
-    $options = explode(",", $thread['flags']);
-    foreach ($options as $name => $value)
-      $thread["flag.$value"] = true;
-  }
-
-  list($messages, $tree) = fetch_thread($thread);
-  if (!isset($messages) || !count($messages))
-    return array(0, "", "");
-
-  $count = count($messages);
-
-  if (isset($user->pref['Collapsed']))
-    $messagestr = print_collapsed($thread, reset($messages), $count - 1);
-  else
-    $messagestr = list_thread(print_subject, $messages, $tree, reset($tree), $thread);
-
-  if (empty($messagestr))
-    return array(0, "", "");
-
-  $message = reset($messages);
-  $state = $message['state'];
-
-  return array($count, "<ul class=\"thread\">\n" . $messagestr . "</ul>", $state);
-}
+$tpl->set_var("TIME", time());
 
 $numshown = 0;
+$tthreadsshown = 0;
 
-if ($curpage == 1 && $enable_global_messages) {
-  /* PHP has a 32 bit limit even tho the type is a BIGINT, 64 bits */
-  $res = mysql_query("select * from f_global_messages where gid < 32 order by date desc") or sql_error();
-  while ($gmsg = mysql_fetch_assoc($res)) {
-    if (strlen($gmsg['url'])>0) {
-      if (!($user->gmsgfilter & (1 << $gmsg['gid'])) && ($user->admin() || $gmsg['state'] == "Active")) {
-	$tpl->set_var("CLASS", "grow" . ($numshown % 2));
-	$gid = "gid=" . $gmsg['gid'];
-	$gpage = "page=" . $script_name . $path_info;
-	$gtoken = "token=" . $user->token();
+if ($curpage == 1) {
+  /******************************/
+  /* show global messages first */
+  /******************************/
+  if ($enable_global_messages) {
+    /* PHP has a 32 bit limit even tho the type is a BIGINT, 64 bits */
+    $res = mysql_query("select * from f_global_messages where gid < 32 order by date desc") or sql_error();
+    while ($gmsg = mysql_fetch_assoc($res)) {
+      if (strlen($gmsg['url'])>0) {
+	if (!($user->gmsgfilter & (1 << $gmsg['gid'])) && ($user->admin() || $gmsg['state'] == "Active")) {
+	  $tpl->set_var("CLASS", "grow" . ($numshown % 2));
+	  $gid = "gid=" . $gmsg['gid'];
+	  $gpage = "page=" . $script_name . $path_info;
+	  $gtoken = "token=" . $user->token();
 
-	$messages = "<a href=\"" .
-	    $gmsg['url'] . "\" target=\"_top\">" .
-	    $gmsg['subject'] .  "</a>&nbsp;&nbsp;-&nbsp;&nbsp;<b>" .
-	    $gmsg['name'] .  "</b>&nbsp;&nbsp;<font size=-2><i>" .
-	    $gmsg['date'] .  "</i></font>";
+	  $messages = "<a href=\"" .
+	      $gmsg['url'] . "\" target=\"_top\">" .
+	      $gmsg['subject'] .  "</a>&nbsp;&nbsp;-&nbsp;&nbsp;<b>" .
+	      $gmsg['name'] .  "</b>&nbsp;&nbsp;<font size=-2><i>" .
+	      $gmsg['date'] .  "</i></font>";
 
-	if ($user->admin()) {
-	    if ($gmsg['state']=='Active') {
-		$state='state=Inactive'; $state_title = "Delete";$state_txt = "da";
-		$messages .= " (<font color=\"green\"><b>Active</b></font>)";
-	    } elseif ($gmsg['state']=='Inactive'){
-		$state='state=Active'; $state_title = "Undelete";$state_txt = "ug";
-		$messages .= " (<font color=\"red\"><b>Deleted</b></font>)";
-	    }
-	    $messages .= " <a href=\"/gmessage.phtml?$gid&amp;$state&amp;$gpage&amp;$gtoken\" title=\"$state_title\">$state_txt</a>";
-	    $messages .= " <a href=\"/admin/gmessage.phtml?$gid&amp;edit\" title=\"Edit message\" target=\"_blank\">edit</a>";
+	  // $messages .= " - <font color=\"blue\"><a href=\"/gmessage.phtml?$gid&amp;hide=1&amp;$gpage&amp;$gtoken\" class=\"up\" title=\"hide\"><b>Hide</a> Global Message</b></a>";
+
+	  if ($user->admin()) {
+	      if ($gmsg['state']=='Active') {
+		  $state='state=Inactive'; $state_title = "Delete";$state_txt = "da";
+		  $messages .= " (<font color=\"green\"><b>Active</b></font>)";
+	      } elseif ($gmsg['state']=='Inactive'){
+		  $state='state=Active'; $state_title = "Undelete";$state_txt = "ug";
+		  $messages .= " (<font color=\"red\"><b>Deleted</b></font>)";
+	      }
+	      $messages .= " <a href=\"/gmessage.phtml?$gid&amp;$state&amp;$gpage&amp;$gtoken\" title=\"$state_title\">$state_txt</a>";
+	      $messages .= " <a href=\"/admin/gmessage.phtml?$gid&amp;edit\" title=\"Edit message\" target=\"_blank\">edit</a>";
+	  }
+
+	  if ($user->valid())
+	      $threadlinks = "<a href=\"/gmessage.phtml?$gid&amp;hide=1&amp;$gpage&amp;$gtoken\" class=\"up\" title=\"hide\">rm</a>";
+	  else
+	      $threadlinks = '';
+
+	  $tpl->set_var("MESSAGES", "<ul class=\"thread\"><li>$messages</ul>");
+	  $tpl->set_var("THREADLINKS", $threadlinks);
+	  $tpl->parse("_row", "row", true);
+	  $numshown++;
 	}
+      }
+    }
+  }
 
-	if ($user->valid())
-	    $threadlinks = "<a href=\"/gmessage.phtml?$gid&amp;hide=1&amp;$gpage&amp;$gtoken\" class=\"up\" title=\"hide\">rm</a>";
-        else
-	    $threadlinks = '';
+  /* reset so threads per page is right */
+  $numshown = 0;
 
-	$tpl->set_var("MESSAGES", "<ul class=\"thread\"><li>$messages</ul>");
+  /**********************/
+  /* show stickies next */
+  /**********************/
+  foreach ($indexes as $index) {
+    $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $index['iid'] . " where flags like '%Sticky%'";
+    $result = mysql_query($sql) or sql_error($sql);
+    while ($thread = mysql_fetch_assoc($result)) {
+	list($count, $messagestr) = gen_thread($thread);
+	if (!$count)
+	  continue;
+
+	$threadlinks = gen_threadlinks($thread);
+
+	$tpl->set_var("CLASS", "srow" . ($numshown % 2));
+	$tpl->set_var("MESSAGES", $messagestr);
 	$tpl->set_var("THREADLINKS", $threadlinks);
 	$tpl->parse("_row", "row", true);
+
+	$threadshown[$thread['tid']] = 'true';
 	$numshown++;
+	$tthreadsshown++;
+    }
+  }
+
+  /*****************************/
+  /* show tracked threads next */
+  /*****************************/
+  if (isset($tthreads)) {
+    reset($tthreads);
+    while (list(, $tthread) = each($tthreads)) {
+      $index = find_thread_index($tthread['tid']);
+      if (!isset($index))
+	continue;
+
+      /* Some people have duplicate threads tracked, they'll eventually fall */
+      /*  off, but for now this is a simple workaround */
+      if (isset($threadshown[$tthread['tid']]))
+	continue;
+
+      /* TZ: unixtime is seconds since epoch */ 
+      $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tthread['tid']) . "'";
+      $result = mysql_query($sql) or sql_error($sql);
+
+      if (!mysql_num_rows($result))
+	continue;
+
+      $thread = mysql_fetch_array($result);
+      if ($thread['unixtime'] > $tthread['unixtime']) {
+	list($count, $messagestr) = gen_thread($thread);
+	if (!$count)
+	  continue;
+
+	$threadlinks = gen_threadlinks($thread);
+
+	$tpl->set_var("CLASS", "trow" . ($numshown % 2));
+	$tpl->set_var("MESSAGES", $messagestr);
+	$tpl->set_var("THREADLINKS", $threadlinks);
+	$tpl->parse("_row", "row", true);
+
+	$threadshown[$thread['tid']] = 'true';
+	$numshown++;
+	$tthreadsshown++;
       }
     }
   }
-}
-
-/* reset so threads per page is right */
-$numshown = 0;
-$tthreadsshow = 0;
-
-if (isset($tthreads)) {
-  reset($tthreads);
-  while (list(, $tthread) = each($tthreads)) {
-    $index = find_thread_index($tthread['tid']);
-    if (!isset($index))
-      continue;
-
-    /* Some people have duplicate threads tracked, they'll eventually fall */
-    /*  off, but for now this is a simple workaround */
-    if (isset($threadshown[$tthread['tid']]))
-      continue;
-   
-    /* TZ: unixtime is seconds since epoch */ 
-    $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tthread['tid']) . "'";
-    $result = mysql_query($sql) or sql_error($sql);
-
-    if (!mysql_num_rows($result))
-      continue;
-
-    $thread = mysql_fetch_array($result);
-    if ($thread['unixtime'] > $tthread['unixtime']) {
-      $threadshown[$thread['tid']] = 'true';
-
-      if ($curpage != 1)
-        continue;
-
-      $tpl->set_var("CLASS", "trow" . ($numshown % 2));
-
-      list($count, $messagestr) = display_thread($thread);
-
-      if (!$count)
-        continue;
-
-      $numshown++;
-      $tthreadsshown++;
-
-      /* If the thread is tracked, we know they are a user already */
-      $threadlinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\" class=\"ut\" title=\"Untrack thread\">ut</a>";
-      if ($count > 1) {
-        if (!isset($user->pref['Collapsed']))
-          $threadlinks .= "<br>";
-        else
-          $threadlinks .= " ";
-
-        $threadlinks .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "&amp;time=$time\" class=\"up\" title=\"Update thread\">up</a>";
-      }
-
-      $tpl->set_var("MESSAGES", $messagestr);
-      $tpl->set_var("THREADLINKS", $threadlinks);
-
-      $tpl->parse("_row", "row", true);
-    }
-  }
-}
+} /* $curpage == 1 */
 
 if (!$tthreadsshown)
   $tpl->set_var("update_all", "");
@@ -343,7 +396,7 @@ while ($numshown < $threadsperpage) {
     if (isset($threadshown[$thread['tid']]))
       continue;
 
-    list($count, $messagestr) = display_thread($thread);
+    list($count, $messagestr) = gen_thread($thread);
 
     if (!$count)
       continue;
@@ -359,13 +412,7 @@ while ($numshown < $threadsperpage) {
 
     $numshown++;
 
-    if ($user->valid()) {
-      if (isset($tthreads_by_tid[$thread['tid']]))
-        $threadlinks = " <a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\" class=\"ut\" title=\"Untrack thread\">ut</a>";
-      else
-        $threadlinks = " <a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\" class=\"tt\" title=\"Track thread\">tt</a>";
-    } else
-      $threadlinks = "";
+    $threadlinks = gen_threadlinks($thread);
 
     $tpl->set_var("MESSAGES", $messagestr);
     $tpl->set_var("THREADLINKS", $threadlinks);

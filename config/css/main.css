@@ -52,6 +52,10 @@ ul {margin-left: 1em; padding-left: 1em;}
 .row0 { background: #f8f8f8 }
 .row1 { background: #e8e8e8 }
 
+/* sticky */
+.srow0 { background: #ddffdd }
+.srow1 { background: #cceecc }
+
 /* tracked */
 .trow0 { background: #ddddff }
 .trow1 { background: #ccccee }

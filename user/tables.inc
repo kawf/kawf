@@ -1,7 +1,7 @@
 <?php
 
 # Update this to the proper migration when changing the schema.
-$SCHEMA_VERSION = "20100301010835";
+$SCHEMA_VERSION = "20100309013229";
 
 # f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
@@ -34,7 +34,7 @@ $create_thread_table = "
     tid int not null auto_increment,
     mid int not null,
     replies int not null,
-    flags set('Locked') not null,
+    flags set('Locked','Sticky') not null,
     tstamp datetime not null,
     primary key (tid)
   )";

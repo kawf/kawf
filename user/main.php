@@ -98,6 +98,7 @@ $fscripts = array(
   "lock.phtml" => "lock.php",
   "unlock.phtml" => "unlock.php",
   "changestate.phtml" => "changestate.php",
+  "sticky.phtml" => "sticky.php",
 );
 
 header("Cache-Control: private");
