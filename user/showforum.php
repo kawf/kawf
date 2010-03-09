@@ -198,7 +198,10 @@ if ($curpage == 1 && $enable_global_messages) {
 	    $messages .= " <a href=\"/admin/gmessage.phtml?$gid&amp;edit\" title=\"Edit message\" target=\"_blank\">edit</a>";
 	}
 
-	$threadlinks="<a href=\"/gmessage.phtml?$gid&amp;hide=1&amp;$gpage&amp;$gtoken\" class=\"up\" title=\"hide\">rm</a>";
+	if ($user->valid())
+	    $threadlinks = "<a href=\"/gmessage.phtml?$gid&amp;hide=1&amp;$gpage&amp;$gtoken\" class=\"up\" title=\"hide\">rm</a>";
+        else
+	    $threadlinks = '';
 
 	$tpl->set_var("MESSAGES", "<ul class=\"thread\"><li>$messages</ul>");
 	$tpl->set_var("THREADLINKS", $threadlinks);
