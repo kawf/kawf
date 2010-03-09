@@ -171,10 +171,10 @@ $numshown = 0;
 
 if ($curpage == 1 && $enable_global_messages) {
   /* PHP has a 32 bit limit even tho the type is a BIGINT, 64 bits */
-  for ($i = 0; $i < 32; $i++) {
-    $gmsg = sql_querya("select * from f_global_messages where gid = $i");
-    if ($gmsg && strlen($gmsg['url'])>0) {
-      if (!($user->gmsgfilter & (1 << $i)) && ($user->admin() || $gmsg['state'] == "Active")) {
+  $res = mysql_query("select * from f_global_messages where gid < 32 order by date desc") or sql_error();
+  while ($gmsg = mysql_fetch_assoc($res)) {
+    if (strlen($gmsg['url'])>0) {
+      if (!($user->gmsgfilter & (1 << $gmsg['gid'])) && ($user->admin() || $gmsg['state'] == "Active")) {
 	$tpl->set_var("CLASS", "grow" . ($numshown % 2));
 	$gid = "gid=" . $gmsg['gid'];
 	$gpage = "page=" . $script_name . $path_info;
