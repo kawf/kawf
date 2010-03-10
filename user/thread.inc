@@ -84,7 +84,7 @@ function gen_threadlinks($thread, $collapse = false)
     if (isset($user->pref['Collapsed']) || $collapse) $tl .= " ";
     else $tl .= "<br>";
 
-    if (isset($tthread) && $thread['unixtime'] > $tthread['unixtime']) {
+    if (is_thread_bumped($thread)) {
       $tl .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] .
 	"&amp;page=" . $script_name . $path_info .
 	"&amp;token=" . $user->token() .
