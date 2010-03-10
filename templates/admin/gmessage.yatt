@@ -7,10 +7,13 @@
 <input type="hidden" name="token" value="%[token]">
 <table class="form">
     <tr>
-	<td>Slot&nbsp;%[msg(gid)]</td>
-	<td>Subject:&nbsp;<input type="text" name="subject" value="%[msg(subject)]"></td>
-	<td>URL:&nbsp;<input type="text" name="url" value="%[msg(url)]" size="50"></td>
-	<td><input type="submit" name="submit" value="Update"></td>
+	<td>Subject:</td><td><input type="text" name="subject" value="%[msg(subject)]" size="80"></td>
+	<td rowspan="2"><input type="submit" name="submit" value="Update Slot %[msg(gid)]"></td>
+    </tr>
+    <tr>
+	<td>URL:</td><td><input type="text" name="url" value="%[msg(url)]" size="80"></td>
+    </tr>
+    <tr>
     </tr>
 </table>
 </form>
@@ -21,13 +24,13 @@
 %begin [row]
 	<tr class="row%[r]">
 	    <td><a href="gmessage.phtml?gid=%[msg(gid)]&amp;%[gid(args)]" title="Edit GID %[msg(gid)]">%[msg(gid)]</a></td>
-	    <td>%[msg(subject)]</td>
-	    <td><a href="%[msg(url)]" target="_blank" title="Go here">%[msg(url)]</a></td>
+	    <td class="smaller">%[msg(subject)]</td>
+	    <td class="smaller"><a href="%[msg(url)]" target="_blank" title="Go here">%[msg(url)]</a></td>
 	    <td><a href="gmessage.phtml?token=%[token]&amp;gid=%[msg(gid)]&amp;%[name(args)]" title="%[name(title)]">%[msg(name)]</a></td>
-	    <td><a href="gmessage.phtml?token=%[token]&amp;gid=%[msg(gid)]&amp;%[date(args)]" title="%[date(title)]">%[msg(date)]</a></td>
-	    <td><a href="%[state(url)]?token=%[token]&amp;gid=%[msg(gid)]&amp;%[state(args)]" title="%[state(title)]">%[msg(state)]</a></td>
+	    <td class="smaller"><a href="gmessage.phtml?token=%[token]&amp;gid=%[msg(gid)]&amp;%[date(args)]" title="%[date(title)]">%[msg(date)]</a></td>
+	    <td class="tools"><a href="%[state(url)]?token=%[token]&amp;gid=%[msg(gid)]&amp;%[state(args)]" title="%[state(title)]">%[msg(state)]</a></td>
 	    <td>%[hidden] users</td>
-	    <td>
+	    <td class="tools">
 	    <a href="gmessage.phtml?gid=%[msg(gid)]&amp;%[gid(args)]" title="Edit GID %[msg(gid)]">edit</a>
 %begin [unhide]
 	  | <a href="gmessage.phtml?token=%[token]&amp;gid=%[msg(gid)]&amp;unhide" title="Unhide from all users">unhide</a>
