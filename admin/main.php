@@ -53,34 +53,6 @@ $scripts = array(
 $user = new AdminUser;
 $user->find_by_cookie();
 
-function find_forum($shortname)
-{
-  global $forum, $indexes;
-
-  $sql = "select * from f_forums where shortname = '" . addslashes($shortname) . "'";
-  $result = mysql_query($sql) or sql_error($sql);
-
-  if (mysql_num_rows($result))
-    $forum = mysql_fetch_array($result);
-  else
-    return 0;
-
-  /* Short circuit it here */
-  if (isset($forum['version']) && $forum['version'] == 1) {
-    echo "This forum is currently undergoing maintenance, please try back in a couple of minutes\n";
-    exit;
-  }
-
-  /* Grab all of the indexes for the forum */
-  $sql = "select * from f_indexes where fid = " . $forum['fid'] . " order by iid";
-  $result = mysql_query($sql) or sql_error($sql);
-
-  while ($index = mysql_fetch_array($result))
-    $indexes[] = $index;
-
-  return 1;
-}
-
 function find_msg_index($mid)
 {
   global $indexes;

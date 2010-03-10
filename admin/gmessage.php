@@ -69,7 +69,6 @@ function output_row($tpl, $msg)
 	"gmsgfilter & (1<<$g)");
     $tpl->set('hidden',$hidden);
     if($hidden>0) $tpl->parse('table.row.unhide');
-    else $tpl->parse('table.row.nounhide');
 
     $tpl->parse('table.row');
     $tpl->reset();
