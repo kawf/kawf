@@ -7,10 +7,13 @@
 <input type="hidden" name="token" value="%[token]">
 <table class="form">
     <tr>
-	<td>Slot&nbsp;%[msg(gid)]</td>
-	<td>Subject:&nbsp;<input type="text" name="subject" value="%[msg(subject)]"></td>
-	<td>URL:&nbsp;<input type="text" name="url" value="%[msg(url)]" size="50"></td>
-	<td><input type="submit" name="submit" value="Update"></td>
+	<td>Subject:</td><td><input type="text" name="subject" value="%[msg(subject)]" size="80"></td>
+	<td rowspan="2"><input type="submit" name="submit" value="Update Slot %[msg(gid)]"></td>
+    </tr>
+    <tr>
+	<td>URL:</td><td><input type="text" name="url" value="%[msg(url)]" size="80"></td>
+    </tr>
+    <tr>
     </tr>
 </table>
 </form>
