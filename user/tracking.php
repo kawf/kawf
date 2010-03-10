@@ -52,7 +52,7 @@ function display_thread($thread)
   $count = count($messages);
 
   if (isset($user->pref['Collapsed']))
-    $messagestr = print_collapsed($thread, reset($messages), $count - 1);
+    $messagestr = print_subject($thread, reset($messages), $count - 1, true);
   else
     $messagestr = list_thread(print_subject, $messages, $tree, reset($tree), $thread);
 
