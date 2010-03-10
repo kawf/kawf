@@ -1,7 +1,7 @@
 <?php
 require_once("textwrap.inc");
 
-function print_subject($thread, $msg, $hiddenreplies = -1)
+function print_subject($thread, $msg, $replies = -1, $collapse = false)
 {
   global $vmid, $user, $tthreads_by_tid, $forum, $tpl;
 
@@ -62,12 +62,12 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
   if ($msg['state'] == 'OffTopic' && !isset($user->pref['SimpleHTML']))
     $string .= " <img src=\"/pics/ot.gif\" alt=\"off topic\">";
 
-  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>".$msg['name']."</b>&nbsp;&nbsp;<font size=-2><i>".$msg['date']."</i>";
+  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $msg['name'] . "</b>&nbsp;&nbsp;<font size=-2><i>" . $msg['date'] . "</i>";
 
-  if ($hiddenreplies >= 0)
-    $string .= " ($hiddenreplies " . ($hiddenreplies == 1 ? "reply" : "replies") . " hidden)";
+  if ($replies > 0)
+    $string .= " ($replies " . ($replies == 1 ? "reply" : "replies") . ($collapse?" hidden":"") . ")";
 
-  if ($msg['unixtime'] > 968889231)
+  if ($msg['views']>0)
     $string .= " (" . $msg['views'] . " view" . ($msg['views'] == 1 ? "" : "s") . ")";
 
   $string .= "</font>";
@@ -97,80 +97,6 @@ function print_subject($thread, $msg, $hiddenreplies = -1)
   $page = $tpl->get_var("PAGE");
 
   return append_tools($user, $string, $forum, $thread, $msg, $page);
-}
-
-function print_collapsed($thread, $msg, $replies)
-{
-  global $user, $forum, $tpl;
-
-  if (!empty($msg['flags'])) {
-    $flagexp = explode(",", $msg['flags']);
-    while (list(,$flag) = each($flagexp))
-      $flags[$flag] = "true";
-  }
-
-  $string = "<li>";
-
-  // $msg['subject']=wordwrap($msg['subject'],40,'<wbr>',1);
-
-  if (isset($user->pref['FlatThread']))
-    $string .= "<a href=\"/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
-  else
-    $string .= "<a href=\"/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
-
-  if (isset($flags['NoText'])) {
-    if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/nt.gif\" alt=\"no text\">";
-    else
-      $string .= " (nt)";
-  }
-
-  if (isset($flags['Picture'])) {
-    if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/pic.gif\" alt=\"contains picture\">";
-    else
-      $string .= " (pic)";
-  }
-
-  if (isset($flags['Video'])) {
-    if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/video.gif\" alt=\"contains video\">";
-    else
-      $string .= " (vid)";
-  }
-
-  if (isset($flags['Link'])) {
-    if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/url.gif\" alt=\"contains url\">";
-    else
-      $string .= " (link)";
-  }
-
-  if ($msg['state'] == 'OffTopic' && !isset($user->pref['SimpleHTML']))
-    $string .= " <img src=\"/pics/ot.gif\" alt=\"off topic\">";
-
-  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $msg['name'] . "</b>&nbsp;&nbsp;<font size=\"-2\"><i>" . $msg['date'] . "</i>";
-
-  $string .= " ($replies " . ($replies == 1 ? "reply" : "replies") . ")";
-
-  $string .= "</font>";
-
-  if (isset($thread['flag.Locked']) && !$msg['pmid']) {
-    if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/lock.gif\" alt=\"locked\">";
-    else
-      $string .= " (locked)";
-  }
-
-  if ($msg['state'] == 'OffTopic' && isset($user->pref['SimpleHTML']))
-    $string .= " (OffTopic)";
-
-  if ($msg['state'] != "Active" && $msg['state'] != "OffTopic")
-    $string .= " (" . $msg['state'] . ")";
-
-  $page = $tpl->get_var("PAGE");
-
-  return append_tools($user, $string, $forum, $thread, $msg, $page) . "</li>\n";
 }
 
 function append_tools($user, $string, $forum, $thread, $msg, $page)
