@@ -173,9 +173,8 @@ function find_msg_index($mid)
   global $indexes;
 
   reset($indexes);
-  while (list($key) = each($indexes))
-    if ($indexes[$key]['minmid'] <= $mid && $mid <= $indexes[$key]['maxmid'])
-      return $key;
+  foreach ($indexes as $k=>$v)
+    if ($v['minmid'] <= $mid && $mid <= $v['maxmid']) return $k;
 
   return null;
 }
@@ -184,10 +183,8 @@ function find_thread_index($tid)
 {
   global $indexes;
 
-  reset($indexes);
-  while (list($key) = each($indexes))
-    if ($indexes[$key]['mintid'] <= $tid && $indexes[$key]['maxtid'] >= $tid)
-      return $key;
+  foreach ($indexes as $k=>$v)
+    if ($v['mintid'] <= $tid && $tid <= $v['maxtid']) return $k;
 
   return null;
 }

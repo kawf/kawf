@@ -19,8 +19,8 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
 
   $msg['subject']=softbreaklongwords($msg['subject'],40);
 
-  if ($vmid == $msg['mid'])
-    $string .= "<font color=\"#ff0000\">" . $msg['subject'] . "</font>";
+  if (isset($vmid) && $vmid == $msg['mid'])
+    $string .= "<div class=\"vmid\">" . $msg['subject'] . "</div>";
   else {
     if (isset($user->pref['FlatThread']))
       $string .= "<a href=\"/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
@@ -62,7 +62,10 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
   if ($msg['state'] == 'OffTopic' && !isset($user->pref['SimpleHTML']))
     $string .= " <img src=\"/pics/ot.gif\" alt=\"off topic\">";
 
-  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;<b>" . $msg['name'] . "</b>&nbsp;&nbsp;<font size=-2><i>" . $msg['date'] . "</i>";
+  $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;";
+  $string .= "<div class=\"username\">" . $msg['name'] . "</div>&nbsp;&nbsp;";
+  $string .= "<div class=\"threadinfo\">";
+  $string .= "<i>" . $msg['date'] . "</i>";
 
   if ($replies > 0)
     $string .= " ($replies " . ($replies == 1 ? "reply" : "replies") . ($collapse?" hidden":"") . ")";
@@ -70,7 +73,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
   if ($msg['views']>0)
     $string .= " (" . $msg['views'] . " view" . ($msg['views'] == 1 ? "" : "s") . ")";
 
-  $string .= "</font>";
+  $string .= "</div>\n";
 
   if (isset($thread['flag.Sticky']) && !$msg['pmid']) {
     if (!isset($user->pref['SimpleHTML']))

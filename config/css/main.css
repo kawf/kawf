@@ -80,6 +80,12 @@ ul.thread {
     margin-bottom: 0.4em;
 }
 
+/* subject message line in thread listing */
+.vmid, .username, .threadinfo { display: inline; }
+.vmid { color: red; }
+.username { font-weight: bold; }
+.threadinfo { font-size: smaller; }
+
 /**************/
 /* showthread */
 /**************/
