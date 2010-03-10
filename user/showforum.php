@@ -79,7 +79,7 @@ function gen_thread($thread, $collapse = false)
   $count = count($messages);
 
   if (isset($user->pref['Collapsed']) || $collapse)
-    $messagestr = print_subject($thread, reset($messages), $count - 1, true);
+    $messagestr = "<li>".print_subject($thread, reset($messages), $count - 1, true)."</li>";
   else
     $messagestr = list_thread(print_subject, $messages, $tree, reset($tree), $thread);
 
