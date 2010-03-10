@@ -71,7 +71,7 @@ function gen_thread(&$thread, $collapse = false)
 
   list($messages, $tree) = fetch_thread($thread);
   if (!isset($messages) || !count($messages))
-    return array(0, "", "");
+    return null;
 
   $count = count($messages);
 
@@ -81,12 +81,12 @@ function gen_thread(&$thread, $collapse = false)
     $messagestr = list_thread(print_subject, $messages, $tree, reset($tree), $thread);
 
   if (empty($messagestr))
-    return array(0, "", "");
+    return null;
 
   $message = reset($messages);
   $state = $message['state'];
 
-  return $count?"<ul class=\"thread\">\n" . $messagestr . "</ul>":"";
+  return $count?"<ul class=\"thread\">\n" . $messagestr . "</ul>":null;
 }
 
 /* Default it to the first page if none is specified */
