@@ -1,6 +1,8 @@
 body { font-family: verdana, arial, geneva; font-size: smaller; }
 td { font-family: verdana, arial, geneva; }
 
+.tools { white-space: nowrap; font-size: 85%; }	/* mini-links */
+
 /* for stuff defined in include/page.inc */
 .outer, .inner { border-collapse: collapse; margin-left:auto; margin-right: auto; }
 .outer { width: 800px; background-color: #009; }

@@ -27,7 +27,7 @@
 	    <td><a href="gmessage.phtml?token=%[token]&amp;gid=%[msg(gid)]&amp;%[date(args)]" title="%[date(title)]">%[msg(date)]</a></td>
 	    <td><a href="%[state(url)]?token=%[token]&amp;gid=%[msg(gid)]&amp;%[state(args)]" title="%[state(title)]">%[msg(state)]</a></td>
 	    <td>%[hidden] users</td>
-	    <td>
+	    <td class="tools">
 	    <a href="gmessage.phtml?gid=%[msg(gid)]&amp;%[gid(args)]" title="Edit GID %[msg(gid)]">edit</a>
 %begin [unhide]
 	  | <a href="gmessage.phtml?token=%[token]&amp;gid=%[msg(gid)]&amp;unhide" title="Unhide from all users">unhide</a>
