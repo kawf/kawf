@@ -48,6 +48,10 @@ $enable_global_messages = true;
 /* $default_page = "/tracking.phtml"; */ /* old behavior */
 $default_page = "/directory.phtml";
 
+/* Workaround Debian bug 571762 */
+/* http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=571762 */
+date_default_timezone_set(@date_default_timezone_get());
+
 /* allow user to override default in a separate file (prevents merge problems
    when using source control */
 if (is_file(dirname(__FILE__) . "/setup-local.inc") )

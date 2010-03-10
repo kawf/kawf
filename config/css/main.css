@@ -32,7 +32,7 @@ div.tools { margin-left: 2px; }  /* hack to match table indent */
 
 /* thread layout */
 .threads { width: 100%; }
-.threadlinks { vertical-align: top; }
+.threadlinks { white-space: nowrap; vertical-align: top; }
 .threadlinks a { text-decoration: none; }
 a.ut { color: #d00; }
 a:hover.ut { color: #f00; text-decoration: underline;}
@@ -81,7 +81,6 @@ ul.thread {
 }
 
 /* subject message line in thread listing */
-.vmid, .username, .threadinfo { display: inline; }
 .vmid { color: red; }
 .username { font-weight: bold; }
 .threadinfo { font-size: smaller; }
