@@ -21,11 +21,11 @@
 %begin [row]
 	<tr class="row%[r]">
 	    <td><a href="gmessage.phtml?gid=%[msg(gid)]&amp;%[gid(args)]" title="Edit GID %[msg(gid)]">%[msg(gid)]</a></td>
-	    <td>%[msg(subject)]</td>
-	    <td><a href="%[msg(url)]" target="_blank" title="Go here">%[msg(url)]</a></td>
+	    <td class="smaller">%[msg(subject)]</td>
+	    <td class="smaller"><a href="%[msg(url)]" target="_blank" title="Go here">%[msg(url)]</a></td>
 	    <td><a href="gmessage.phtml?token=%[token]&amp;gid=%[msg(gid)]&amp;%[name(args)]" title="%[name(title)]">%[msg(name)]</a></td>
-	    <td><a href="gmessage.phtml?token=%[token]&amp;gid=%[msg(gid)]&amp;%[date(args)]" title="%[date(title)]">%[msg(date)]</a></td>
-	    <td><a href="%[state(url)]?token=%[token]&amp;gid=%[msg(gid)]&amp;%[state(args)]" title="%[state(title)]">%[msg(state)]</a></td>
+	    <td class="smaller"><a href="gmessage.phtml?token=%[token]&amp;gid=%[msg(gid)]&amp;%[date(args)]" title="%[date(title)]">%[msg(date)]</a></td>
+	    <td class="tools"><a href="%[state(url)]?token=%[token]&amp;gid=%[msg(gid)]&amp;%[state(args)]" title="%[state(title)]">%[msg(state)]</a></td>
 	    <td>%[hidden] users</td>
 	    <td class="tools">
 	    <a href="gmessage.phtml?gid=%[msg(gid)]&amp;%[gid(args)]" title="Edit GID %[msg(gid)]">edit</a>
