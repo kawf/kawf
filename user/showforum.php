@@ -88,7 +88,7 @@ function gen_thread($thread, $collapse = false)
   return array($count, "<ul class=\"thread\">\n" . $messagestr . "</ul>", $state);
 }
 
-function gen_threadlinks($thread)
+function gen_threadlinks($thread, $collapse = false)
 {
     global $user, $forum, $tthreads_by_tid, $script_name, $path_info;
 
@@ -109,8 +109,8 @@ function gen_threadlinks($thread)
 	"\" class=\"tt\" title=\"Track thread\">tt</a>";
     }
 
-    if (!isset($user->pref['Collapsed'])) $tl .= "<br>";
-    else $tl .= " ";
+    if (isset($user->pref['Collapsed']) || $collapse) $tl .= " ";
+    else $tl .= "<br>";
 
     if (isset($tthread) && $thread['unixtime'] > $tthread['unixtime']) {
       $tl .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] .
@@ -265,7 +265,7 @@ if ($curpage == 1) {
 	if (!$count)
 	  continue;
 
-	$threadlinks = gen_threadlinks($thread);
+	$threadlinks = gen_threadlinks($thread, true /*collapse */);
 
 	$tpl->set_var("CLASS", "srow" . ($numshown % 2));
 	$tpl->set_var("MESSAGES", $messagestr);
