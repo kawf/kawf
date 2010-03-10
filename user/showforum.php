@@ -62,7 +62,7 @@ function threads($key)
   return $numthreads;
 }
 
-function gen_thread($thread)
+function gen_thread($thread, $collapse = false)
 {
   global $user, $forum;
 
@@ -78,7 +78,7 @@ function gen_thread($thread)
 
   $count = count($messages);
 
-  if (isset($user->pref['Collapsed']))
+  if (isset($user->pref['Collapsed']) || $collapse)
     $messagestr = print_collapsed($thread, reset($messages), $count - 1);
   else
     $messagestr = list_thread(print_subject, $messages, $tree, reset($tree), $thread);
@@ -264,7 +264,7 @@ if ($curpage == 1) {
     $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $index['iid'] . " where flags like '%Sticky%'";
     $result = mysql_query($sql) or sql_error($sql);
     while ($thread = mysql_fetch_assoc($result)) {
-	list($count, $messagestr) = gen_thread($thread);
+	list($count, $messagestr) = gen_thread($thread, true /* collapse */);
 	if (!$count)
 	  continue;
 
