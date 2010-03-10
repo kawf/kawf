@@ -226,11 +226,13 @@ if ($curpage == 1) {
     $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $index['iid'] . " where flags like '%Sticky%'";
     $result = mysql_query($sql) or sql_error($sql);
     while ($thread = mysql_fetch_assoc($result)) {
-	list($count, $messagestr) = gen_thread($thread, true /* collapse */);
+	$collapse = !is_thread_bumped($thread);
+
+	list($count, $messagestr) = gen_thread($thread, $collapse);
 	if (!$count)
 	  continue;
 
-	$threadlinks = gen_threadlinks($thread, true /*collapse */);
+	$threadlinks = gen_threadlinks($thread, $collapse);
 
 	$tpl->set_var("CLASS", "srow" . ($numshown % 2));
 	$tpl->set_var("MESSAGES", $messagestr);
@@ -239,13 +241,13 @@ if ($curpage == 1) {
 
 	$threadshown[$thread['tid']] = 'true';
 	$numshown++;
-	$tthreadsshown++;
+	if (!$collapse) $tthreadsshown++;
     }
   }
 
-  /*****************************/
-  /* show tracked threads next */
-  /*****************************/
+  /****************************************/
+  /* show tracked and bumped threads next */
+  /****************************************/
   if (isset($tthreads)) {
     reset($tthreads);
     while (list(, $tthread) = each($tthreads)) {
