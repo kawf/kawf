@@ -105,7 +105,7 @@ while ($forum = mysql_fetch_array($result)) {
     if (!$count)
       continue;
 
-    if ($thread['unixtime'] > $tthread['unixtime']) {
+    if (is_thread_bumped($thread)) {
       $tpl->set_var("CLASS", "trow" . ($forumcount % 2));
       $forumupdated++;
     } else

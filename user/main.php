@@ -142,10 +142,11 @@ function find_forum($shortname)
   $sql = "select * from f_indexes where fid = " . $forum['fid'] . " and ( minmid != 0 or minmid < maxmid ) order by iid";
   $result = mysql_query($sql) or sql_error($sql);
 
+  /* build indexes shard id cache */
   while ($index = mysql_fetch_array($result))
     $indexes[] = $index;
 
-  /* Grab all of the tracking data for the user */
+  /* build tthreads_by_tid thread tracking cache */
   if ($user->valid()) {
     /* TZ: unixtime is seconds since epoch */
     $result = sql_query("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc");

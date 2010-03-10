@@ -16,8 +16,7 @@ $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 $tpl->parse("FORUM_HEADER", "forum_header");
 
 /* Mark the thread as read if need be */
-if (isset($tthreads[$msg['tid']]) &&
-      $tthreads[$msg['tid']]['unixtime'] < $msg['unixtime']) {
+if (is_msg_bumped($msg['tid'])) {
   $sql = "update f_tracking set tstamp = NOW() where tid = " . $msg['tid'] . " and aid = " . $user->aid;
   mysql_query($sql) || sql_warn($sql);
 }

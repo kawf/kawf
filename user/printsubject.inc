@@ -1,4 +1,5 @@
 <?php
+require_once("message.inc");
 
 function print_subject($thread, $msg, $replies = -1, $collapse = false)
 {
@@ -10,8 +11,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
       $flags[$flag] = true;
   }
 
-  $new = (isset($tthreads_by_tid[$msg['tid']]) &&
-      $tthreads_by_tid[$msg['tid']]['unixtime'] < $msg['unixtime']);
+  $new = is_msg_bumped($msg);
 
   if ($new)
     $string .= "<i><b>";

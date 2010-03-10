@@ -309,7 +309,7 @@ function fetch_message($user, $mid, $what = '*')
 
 function mark_thread_read($msg, $user)
 {
-  global $tthreads_by_tid, $forum;
+  global $forum;
 
   if (!$user->valid()) return;
 
@@ -318,8 +318,7 @@ function mark_thread_read($msg, $user)
   $unixtime = $msg['unixtime'];
 
   /* Mark the thread as read if need be */
-  if (isset($tthreads_by_tid[$tid]) &&
-      $tthreads_by_tid[$tid]['unixtime'] < $unixtime) {
+  if (is_msg_bumped($msg)) {
     /* TZ: f_tracking 'tstamp' is SQL server local time */
     $sql = "update f_tracking set tstamp = NOW() where fid = " . $forum['fid']
       . " and tid = " . $tid . " and aid = " . $user->aid;
@@ -327,4 +326,10 @@ function mark_thread_read($msg, $user)
   }
 }
 
+function is_msg_bumped($msg)
+{
+    global $tthreads_by_tid;
+    $tthread = $tthreads_by_tid[$msg['tid']];
+    return ($tthread && $msg['unixtime'] > $tthread['unixtime']);
+}
 ?>

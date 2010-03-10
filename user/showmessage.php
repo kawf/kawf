@@ -85,26 +85,15 @@ $threadmsg = "<ul class=\"thread\">\n";
 $threadmsg .= list_thread(print_subject, $messages, $tree, reset($tree), $thread, $path);
 $threadmsg .= "</ul>\n";
 
+$threadlinks = gen_threadlinks($thread);
+
+if ($thread['flag.Sticky'])
+  $tpl->set_var("CLASS", "srow0");
+else if (is_thread_bumped($thread))
+  $tpl->set_var("CLASS", "trow0");
+else
+  $tpl->set_var("CLASS", "row0");
 $tpl->set_var("THREAD", $threadmsg);
-
-/* generate threadlinks */
-if ($user->valid()) {
-  if (isset($tthreads_by_tid[$msg['tid']])) {
-    $threadlinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\" class=\"ut\" title=\"Untrack thread\">ut</a>";
-  } else {
-    $threadlinks = "<a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\" class=\"tt\" title=\"Track thread\">tt</a>";
-  }
-} else
-  $threadlinks = "";
-
-if (isset($tthreads_by_tid[$msg['tid']]) &&
-   ($thread['unixtime'] > $tthreads_by_tid[$msg['tid']]['unixtime'])) {
-  $tpl->set_var("CLASS", "trow1");
-  if (count($messages) > 1)
-    $threadlinks .= "<br><a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "&amp;time=" . time() . "\" class=\"up\" title=\"Update thread\">up</a>";
-} else
-  $tpl->set_var("CLASS", "row1");
-
 $tpl->set_var("THREADLINKS", $threadlinks);
 
 /* create a new message based on current for postform */

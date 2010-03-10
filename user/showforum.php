@@ -58,7 +58,8 @@ function threads($key)
   return $numthreads;
 }
 
-function gen_thread($thread, $collapse = false)
+/* Modifies $thread (explodes $thread['flags']) */
+function gen_thread(&$thread, $collapse = false)
 {
   global $user, $forum;
 
@@ -85,7 +86,7 @@ function gen_thread($thread, $collapse = false)
   $message = reset($messages);
   $state = $message['state'];
 
-  return array($count, "<ul class=\"thread\">\n" . $messagestr . "</ul>", $state);
+  return $count?"<ul class=\"thread\">\n" . $messagestr . "</ul>":"";
 }
 
 /* Default it to the first page if none is specified */
@@ -228,9 +229,8 @@ if ($curpage == 1) {
     while ($thread = mysql_fetch_assoc($result)) {
 	$collapse = !is_thread_bumped($thread);
 
-	list($count, $messagestr) = gen_thread($thread, $collapse);
-	if (!$count)
-	  continue;
+	$messagestr = gen_thread($thread, $collapse);
+	if (!$messagestr) continue;
 
 	$threadlinks = gen_threadlinks($thread, $collapse);
 
@@ -248,48 +248,42 @@ if ($curpage == 1) {
   /****************************************/
   /* show tracked and bumped threads next */
   /****************************************/
-  if (isset($tthreads)) {
-    reset($tthreads);
-    while (list(, $tthread) = each($tthreads)) {
-      $index = find_thread_index($tthread['tid']);
-      if (!isset($index))
-	continue;
+  foreach ($tthreads as $tthread) {
+    $index = find_thread_index($tthread['tid']);
+    if (!isset($index))
+      continue;
 
-      /* Some people have duplicate threads tracked, they'll eventually fall */
-      /*  off, but for now this is a simple workaround */
-      if (isset($threadshown[$tthread['tid']]))
-	continue;
+    $tid = $tthread['tid'];
 
-      /* TZ: unixtime is seconds since epoch */ 
-      $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tthread['tid']) . "'";
-      $result = mysql_query($sql) or sql_error($sql);
+    /* skip if we've already shown it as a sticky */
+    if (isset($threadshown[$tid]))
+      continue;
 
-      if (!mysql_num_rows($result))
-	continue;
+    /* TZ: unixtime is seconds since epoch */ 
+    $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tid) . "'";
+    $result = mysql_query($sql) or sql_error($sql);
 
-      $thread = mysql_fetch_array($result);
-      if ($thread['unixtime'] > $tthread['unixtime']) {
-	list($count, $messagestr) = gen_thread($thread);
-	if (!$count)
-	  continue;
+    if (!mysql_num_rows($result))
+      continue;
 
-	$threadlinks = gen_threadlinks($thread);
+    $thread = mysql_fetch_array($result);
+    if ($thread['unixtime'] > $tthread['unixtime']) {
+      $messagestr = gen_thread($thread);
+      if (!$messagestr) continue;
 
-	$tpl->set_var("CLASS", "trow" . ($numshown % 2));
-	$tpl->set_var("MESSAGES", $messagestr);
-	$tpl->set_var("THREADLINKS", $threadlinks);
-	$tpl->parse("_row", "row", true);
+      $threadlinks = gen_threadlinks($thread);
 
-	$threadshown[$thread['tid']] = 'true';
-	$numshown++;
-	$tthreadsshown++;
-      }
+      $tpl->set_var("CLASS", "trow" . ($numshown % 2));
+      $tpl->set_var("MESSAGES", $messagestr);
+      $tpl->set_var("THREADLINKS", $threadlinks);
+      $tpl->parse("_row", "row", true);
+
+      $threadshown[$thread['tid']] = 'true';
+      $numshown++;
+      $tthreadsshown++;
     }
   }
 } /* $curpage == 1 */
-
-if (!$tthreadsshown)
-  $tpl->set_var("update_all", "");
 
 $skipthreads = ($curpage - 1) * $threadsperpage;
 
@@ -318,7 +312,8 @@ while ($numshown < $threadsperpage) {
     $mtable = "f_messages" . $index['iid'];
 
     /* Get some more results */
-    $sql = "select $ttable.tid, $ttable.mid, $ttable.flags, $mtable.state from $ttable, $mtable where" .
+    $sql = "select UNIX_TIMESTAMP($ttable.tstamp) as unixtime," .
+	" $ttable.tid, $ttable.mid, $ttable.flags, $mtable.state from $ttable, $mtable where" .
 	" $ttable.tid >= " . $index['mintid'] . " and" .
 	" $ttable.tid <= " . $index['maxtid'] . " and" .
 	" $ttable.mid >= " . $index['minmid'] . " and" .
@@ -360,10 +355,8 @@ while ($numshown < $threadsperpage) {
     if (isset($threadshown[$thread['tid']]))
       continue;
 
-    list($count, $messagestr) = gen_thread($thread);
-
-    if (!$count)
-      continue;
+    $messagestr = gen_thread($thread);
+    if (!$messagestr) continue;
 
 /*
     if ($thread['state'] == 'Deleted')
@@ -372,9 +365,14 @@ while ($numshown < $threadsperpage) {
       $tpl->set_var("CLASS", "mrow" . ($numshown % 2));
     else
 */
+    if ($thread['flag.Sticky']) {	/* calculated by gen_thread() */
+      $tpl->set_var("CLASS", "srow" . ($numshown % 2));
+      if (is_thread_bumped($thread)) $tthreadsshown++;
+    } else if (is_thread_bumped($thread)) {
+      $tpl->set_var("CLASS", "trow" . ($numshown % 2));
+      $tthreadsshown++;
+    } else
       $tpl->set_var("CLASS", "row" . ($numshown % 2));
-
-    $numshown++;
 
     $threadlinks = gen_threadlinks($thread);
 
@@ -382,10 +380,15 @@ while ($numshown < $threadsperpage) {
     $tpl->set_var("THREADLINKS", $threadlinks);
 
     $tpl->parse("_row", "row", true);
+
+    $numshown++;
   }
 
   mysql_free_result($result);
 }
+
+if (!$tthreadsshown)
+  $tpl->set_var("update_all", "");
 
 if (!$numshown)
   $tpl->set_var($table_block, "<font size=\"+1\">No messages in this forum</font><br>");
