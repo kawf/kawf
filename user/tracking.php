@@ -114,18 +114,7 @@ while ($forum = mysql_fetch_array($result)) {
     $forumcount++;
     $numshown++;
 
-    /* If the thread is tracked, we know they are a user already */
-    $threadlinks = "<a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "\"><font color=\"#d00000\">ut</font></a>";
-    if ($count > 1) {
-      if (!isset($user->pref['Collapsed']))
-        $threadlinks .= "<br>";
-      else
-        $threadlinks .= " ";
-
-      if ($thread['unixtime'] > $tthread['unixtime'])
-        $threadlinks .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] . "&amp;page=" . $script_name . $path_info . "&amp;token=" . $user->token() . "&amp;time=$time\"><font color=\"#0000f0\">up</font></a>";
-    }
-
+    $threadlinks = gen_threadlinks($thread);
     $tpl->set_var("MESSAGES", $messagestr);
     $tpl->set_var("THREADLINKS", $threadlinks);
 
