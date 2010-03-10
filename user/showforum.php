@@ -185,8 +185,8 @@ if ($curpage == 1) {
 	  $messages = "<a href=\"" .
 	      $gmsg['url'] . "\" target=\"_top\">" .
 	      $gmsg['subject'] .  "</a>&nbsp;&nbsp;-&nbsp;&nbsp;" .
-	      "<div class=\"username\">" . $gmsg['name'] . "</div>&nbsp;&nbsp;" .
-	      "<div class=\"threadinfo\"><i>" . $gmsg['date'] . "</i></div>";
+	      "<span class=\"username\">" . $gmsg['name'] . "</span>&nbsp;&nbsp;" .
+	      "<span class=\"threadinfo\"><i>" . $gmsg['date'] . "</i></span>";
 
 	  // $messages .= " - <font color=\"blue\"><a href=\"/gmessage.phtml?$gid&amp;hide=1&amp;$gpage&amp;$gtoken\" class=\"up\" title=\"hide\"><b>Hide</a> Global Message</b></a>";
 

@@ -19,7 +19,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
   // $msg['subject']=wordwrap($msg['subject'],40,'<wbr>',1);
 
   if (isset($vmid) && $vmid == $msg['mid'])
-    $string .= "<div class=\"vmid\">" . $msg['subject'] . "</div>";
+    $string .= "<span class=\"vmid\">" . $msg['subject'] . "</span>";
   else {
     if (isset($user->pref['FlatThread']))
       $string .= "<a href=\"/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
@@ -62,8 +62,8 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
     $string .= " <img src=\"/pics/ot.gif\" alt=\"off topic\">";
 
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;";
-  $string .= "<div class=\"username\">" . $msg['name'] . "</div>&nbsp;&nbsp;";
-  $string .= "<div class=\"threadinfo\">";
+  $string .= "<span class=\"username\">" . $msg['name'] . "</span>&nbsp;&nbsp;";
+  $string .= "<span class=\"threadinfo\">";
   $string .= "<i>" . $msg['date'] . "</i>";
 
   if ($replies > 0)
@@ -72,7 +72,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
   if ($msg['views']>0)
     $string .= " (" . $msg['views'] . " view" . ($msg['views'] == 1 ? "" : "s") . ")";
 
-  $string .= "</div>\n";
+  $string .= "</span>\n";
 
   if (isset($thread['flag.Sticky']) && !$msg['pmid']) {
     if (!isset($user->pref['SimpleHTML']))
