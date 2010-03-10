@@ -94,4 +94,11 @@ function gen_threadlinks($thread, $collapse = false)
 
     return $tl;
 }
+
+function is_thread_bumped($thread)
+{
+    global $tthreads_by_tid;
+    $tthread = $tthreads_by_tid[$thread['tid']];
+    return ($tthread && $thread['unixtime'] > $tthread['unixtime']);
+}
 ?>
