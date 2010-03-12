@@ -240,7 +240,9 @@ if (isset($error) || isset($preview)) {
   /* IMAGEURL HACK - prepend before insert */
   /* for diffing and for entry into the db */
   if (!empty($nmsg['imageurl']))
-    $nmsg['message'] = "<center><img src=\"" . $nmsg['imageurl']. "\"></center><p>\n" . $nmsg['message'];
+    $nmsg['message'] = "<center><img src=\"" .
+      escapequotes($nmsg['imageurl']) . "\"></center><p>\n" .
+      $nmsg['message'];
 
   /* Create a diff for the old message and the new message */
 
@@ -298,4 +300,5 @@ if (isset($error) || isset($preview)) {
 }
 
 print generate_page('Edit Message',$tpl->parse("CONTENT", "edit"));
+// vim:sw=2
 ?>

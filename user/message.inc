@@ -142,7 +142,7 @@ function preprocess(&$msg, $req)
   if (!empty($msg['imageurl']))
     $msg['imageurl'] = normalize_url_scheme($msg['imageurl']);
 
-  $msg['video'] = stripcrap($req['video']);
+  $msg['video'] = stripcrapurl($req['video']);
   if (!empty($msg['video']))
     $msg['video'] = normalize_url_scheme($msg['video']);
 }
@@ -154,13 +154,13 @@ function postprocess($msg, $noembed=false)
   /* Order: image, video, message, url */
 
   if (!empty($msg['imageurl'])) {
-    $url = $msg['imageurl'];
+    $url = escapequotes($msg['imageurl']);
     if ($noembed) $out .= "<p>Image: <a href=\"$url\">$url</a></p>\n";
     else $out .= "<div class=\"media\">\n".embed_image($url)."\n</div>\n";
   }
 
   if (!empty($msg['video'])) {
-    $url = $msg['video'];
+    $url = escapequotes($msg['video']);
     if ($noembed) $out .= "<p>Video: <a href=\"$url\">$url</a></p>\n";
     else $out .= "<div class=\"media\">\n".embed_video($url)."\n</div>\n";
   }
@@ -169,7 +169,7 @@ function postprocess($msg, $noembed=false)
     $out .= nl2brPre::out($msg['message'])."\n";
 
   if (!empty($msg['url']) && validate_url($msg['url'])) {
-    $url = $msg['url'];
+    $url = escapequotes($msg['url']);
     // $target = " target=\"_blank\"";
     if (!empty($msg['urltext']))
       $text = $msg['urltext'];
@@ -300,7 +300,7 @@ function fetch_message($user, $mid, $what = '*')
        images automatcially by post/edit */
     if (empty($msg['imageurl']) &&
       preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>\s*(.*)$/s", $msg['message'], $regs)) {
-      $msg['imageurl'] = $regs[1];
+      $msg['imageurl'] = unescapequotes($regs[1]);
       $msg['message'] = $regs[2];
     } 
 
@@ -332,4 +332,5 @@ function is_msg_bumped($msg)
     $tthread = $tthreads_by_tid[$msg['tid']];
     return ($tthread && $msg['unixtime'] > $tthread['unixtime']);
 }
+// vim:sw=2
 ?>
