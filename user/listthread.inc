@@ -1,5 +1,7 @@
 <?php
 
+require_once("printsubject.inc");
+
 /* Recursive listing of a thread */
 function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = array(), $dontshow = 0)
 {
@@ -56,4 +58,5 @@ function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = a
 
   return $string;
 }
+// vim: sw=2
 ?>

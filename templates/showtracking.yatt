@@ -1,0 +1,66 @@
+%begin [header]
+<!--  <h3>Your tracked threads in %[forum(name)]</h3> -->
+<table class="forumheader">
+<tr>
+%[forum_header]
+</tr>
+</table>
+
+<table class="tools">
+<tr>
+  <td class="left">
+    <a href="/tips/?page=%[page]" target="_blank"><b>Forum Tips</b></a>
+  | <a href="/search/?forum=%[forum(shortname)]&amp;page=%[page]" target="_blank">Search Forums</a>
+  </td>
+  <td class="right">
+    <a href="/%[forum(shortname)]"><b>Back to %[forum(name)]</b></a>
+%begin [update_all]
+  | <a href="/%[forum(shortname)]/markuptodate.phtml?tid=all&amp;page=%[page]&amp;token=%[user_token]&amp;time=%[time]">Update all</a>
+%end [update_all]
+  </td>
+</tr>
+<tr>
+  <td class="left">
+    <b>Page:</b> %[pages]
+  </td>
+  <td class="right">
+    %[shown] tracked threads in %[numpages] pages
+  </td>
+</tr>
+</table>
+%end [header]
+
+%begin [normal]
+<table class="threads">
+%begin [row]
+<tr class="%[class]">
+  <td>
+%[messages]
+  </td>
+  <td class="threadlinks">
+%[threadlinks]
+  </td>
+</tr>
+%end [row]
+</table>
+%end [normal]
+
+%begin [simple]
+%begin [row]
+%[messages]
+%end [row]
+%end [simple]
+
+%begin [footer]
+<table class="tools">
+<tr>
+  <td class="left">
+    <b>Page:</b> %[pages]
+  </td>
+  <td class="right">
+    %[shown] tracked threads in %[numpages] pages
+  </td>
+</tr>
+</table>
+%end [footer]
+%[#] vim: sw=2

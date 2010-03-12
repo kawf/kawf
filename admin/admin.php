@@ -1,5 +1,7 @@
 <?php
 
+require_once("pagenav.inc.php");
+
 $user->req("ForumAdmin");
 
 page_header("User list");
@@ -37,23 +39,13 @@ else
 
 $numpages = ceil($numaccounts / $accountsperpage);
 
-function print_pages()
+function print_pages($page, $numpages)
 {
-  global $numpages, $page;
-
-  echo "Page ";
-  for ($i = 1; $i < $numpages + 1; $i++) {
-    if ($i == $page)
-      echo "<font size=\"+1\">";
-    echo "<a href=\"admin.phtml?page=$i\">$i</a> ";
-    if ($i == $page)
-      echo "</font>";
-  }
-
-  echo "<br>\n";
+  $fmt = "admin.phtml?page=%d";
+  print "Page: " . gen_pagenav($fmt, $page, $numpages) . "<br>\n";
 }
 
-print_pages();
+print_pages($page, $numpages);
 ?>
 <br>
 
@@ -96,8 +88,9 @@ echo "</table>\n";
 
 echo "<br>\n";
 
-print_pages();
+print_pages($page, $numpages);
 
 page_footer();
 
+// vim: sw=2
 ?>

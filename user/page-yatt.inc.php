@@ -3,7 +3,7 @@ require_once("lib/YATT/YATT.class.php");
 
 function generate_page($title, $contents)
 {
-    global $tpl, $template_dir, $domain;
+    global $template_dir, $domain;
     global $user;
 
     $page = new YATT($template_dir, 'page.yatt');
@@ -26,3 +26,5 @@ function generate_page($title, $contents)
 
     return $page->output();
 }
+// vim: sw=2
+?>

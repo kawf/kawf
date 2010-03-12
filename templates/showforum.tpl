@@ -7,13 +7,14 @@
 <table class="tools">
 <tr>
   <td class="left">
-  <a href="/tips/?page={PAGE}" target="_blank">Forum Tips</a>
-| <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
-| <a href="#post"><b>Post New Thread</b></a>
+    <a href="/tips/?page={PAGE}" target="_blank">Forum Tips</a>
+  | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
+  | <a href="#post"><b>Post New Thread</b></a>
   </td>
   <td class="right">
+    <a href="/{FORUM_SHORTNAME}/tracking.phtml"><b>Tracked threads</b></a>
 <!-- BEGIN update_all -->
-    <a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a>
+  | <a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a>
 <!-- END update_all -->
   </td>
 </tr>
