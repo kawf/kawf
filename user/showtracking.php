@@ -4,6 +4,8 @@ require_once("thread.inc");
 require_once("pagenav.inc.php");
 require_once("page-yatt.inc.php");
 
+require_once("notices.inc");
+
 if (!$user->valid()) header("Location: /login.phtml?url=$url");
 
 $hdr = new Template($template_dir, "comment");
@@ -11,6 +13,7 @@ $hdr->set_file(array(
   "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
 ));
 
+$hdr->set_var("FORUM_NOTICES", get_notices_html($forum, $user->aid));
 $hdr->set_var("FORUM_NAME", $forum['name']);
 $hdr->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
