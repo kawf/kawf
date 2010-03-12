@@ -170,7 +170,7 @@ if ($curpage == 1) {
   /****************************************/
   /* show tracked and bumped threads next */
   /****************************************/
-  foreach ($tthreads as $tthread) {
+  if (count($tthreads)) foreach ($tthreads as $tthread) {
     $index = find_thread_index($tthread['tid']);
     if (!isset($index))
       continue;
