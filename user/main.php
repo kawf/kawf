@@ -85,6 +85,8 @@ if (!isset($dont_use_account)) {
 $fscripts = array(
   "" => "showforum.php",
 
+  "tracking.phtml" => "showtracking.php",
+
   "post.phtml" => "post.php",
   "edit.phtml" => "edit.php",
   "delete.phtml" => "delete.php",
@@ -168,15 +170,32 @@ function find_forum($shortname)
   return 1;
 }
 
+function mid_to_iid($mid)
+{
+  global $indexes;
+
+  $index = find_msg_index($tid);
+  if(!isset($index)) return null;
+  return $indexes[$index]['iid'];
+}
+
 function find_msg_index($mid)
 {
   global $indexes;
 
-  reset($indexes);
   foreach ($indexes as $k=>$v)
     if ($v['minmid'] <= $mid && $mid <= $v['maxmid']) return $k;
 
   return null;
+}
+
+function tid_to_iid($tid)
+{
+  global $indexes;
+
+  $index = find_thread_index($tid);
+  if(!isset($index)) return null;
+  return $indexes[$index]['iid'];
 }
 
 function find_thread_index($tid)
@@ -225,6 +244,13 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
   /* Now show that page */
   $curpage = $regs[2];
   require_once("showforum.php");
+} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/tracking\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
+  if (!find_forum($regs[1]))
+    err_not_found("Unknown forum " . $regs[1]);
+
+  /* Now show that page */
+  $curpage = $regs[2];
+  require_once("showtracking.php");
 } else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/msgs\/([0-9]+)\.(phtml|txt)$/", $script_name.$path_info, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
@@ -278,4 +304,5 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
 // update_visits();
 
 sql_close();
+// vim: sw=2
 ?>

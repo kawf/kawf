@@ -1,4 +1,8 @@
 <?php
+
+require_once("filter.inc");
+require_once("listthread.inc");
+
 function fetch_thread($thread, $vmid = 0)
 {
   global $user, $indexes;
@@ -60,6 +64,43 @@ function fetch_thread($thread, $vmid = 0)
   return array($messages, $tree, $path);
 }
 
+/* Modifies $thread (explodes $thread['flags']) */
+function gen_thread_flags(&$thread)
+{
+  if (!empty($thread['flags'])) {
+    $options = explode(",", $thread['flags']);
+    foreach ($options as $name => $value)
+      $thread["flag.$value"] = true;
+  }
+}
+
+/* Modifies $thread (explodes $thread['flags']) */
+function gen_thread(&$thread, $collapse = false)
+{
+  global $user, $forum;
+
+  gen_thread_flags($thread);
+
+  list($messages, $tree) = fetch_thread($thread);
+  if (!isset($messages) || !count($messages))
+    return null;
+
+  $count = count($messages);
+
+  if (isset($user->pref['Collapsed']) || $collapse)
+    $messagestr = "<li>".print_subject($thread, reset($messages), $count - 1, true)."</li>";
+  else
+    $messagestr = list_thread(print_subject, $messages, $tree, reset($tree), $thread);
+
+  if (empty($messagestr))
+    return null;
+
+  $message = reset($messages);
+  $state = $message['state'];
+
+  return $count?"<ul class=\"thread\">\n" . $messagestr . "</ul>":null;
+}
+
 function gen_threadlinks($thread, $collapse = false)
 {
     global $user, $forum, $tthreads_by_tid, $script_name, $path_info;
@@ -101,4 +142,6 @@ function is_thread_bumped($thread)
     $tthread = $tthreads_by_tid[$thread['tid']];
     return ($tthread && $thread['unixtime'] > $tthread['unixtime']);
 }
+
+// vim: sw=2
 ?>

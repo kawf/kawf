@@ -1,9 +1,7 @@
 <?php
 
-require_once("printsubject.inc");
-require_once("listthread.inc");
-require_once("filter.inc");
 require_once("thread.inc");
+require_once("pagenav.inc.php");
 require_once("page-yatt.inc.php");
 
 $tpl->set_file(array(
@@ -58,37 +56,6 @@ function threads($key)
   return $numthreads;
 }
 
-/* Modifies $thread (explodes $thread['flags']) */
-function gen_thread(&$thread, $collapse = false)
-{
-  global $user, $forum;
-
-  if (!empty($thread['flags'])) {
-    $options = explode(",", $thread['flags']);
-    foreach ($options as $name => $value)
-      $thread["flag.$value"] = true;
-  }
-
-  list($messages, $tree) = fetch_thread($thread);
-  if (!isset($messages) || !count($messages))
-    return null;
-
-  $count = count($messages);
-
-  if (isset($user->pref['Collapsed']) || $collapse)
-    $messagestr = "<li>".print_subject($thread, reset($messages), $count - 1, true)."</li>";
-  else
-    $messagestr = list_thread(print_subject, $messages, $tree, reset($tree), $thread);
-
-  if (empty($messagestr))
-    return null;
-
-  $message = reset($messages);
-  $state = $message['state'];
-
-  return $count?"<ul class=\"thread\">\n" . $messagestr . "</ul>":null;
-}
-
 /* Default it to the first page if none is specified */
 if (!isset($curpage))
   $curpage = 1;
@@ -112,53 +79,8 @@ while (list($key) = each($indexes))
 
 $numpages = ceil($numthreads / $threadsperpage);
 
-$startpage = $curpage - 4;
-if ($startpage < 1)
-  $startpage = 1;
-
-$endpage = $startpage + 9;
-if ($endpage > $numpages)
-  $endpage = $numpages;
-
-/*
-if ($endpage == $startpage)
-  $endpage++;
-*/
-
-$pagestr = "";
-
-if ($curpage > 1) {
-  $prevpage = $curpage - 1;
-  $pagestr .= "<a href=\"/" . $forum['shortname'] . "/pages/$prevpage.phtml\">&lt;&lt;&lt;</a> | ";
-}
-
-$pagestr .= "<a href=\"/" . $forum['shortname'] . "/pages/1.phtml\">";
-if ($curpage == 1)
-  $pagestr .= "<font size=\"+1\"><b>1</b></font>";
-else
-  $pagestr .= "1";
-$pagestr .= "</a>";
-
-if ($startpage == 1)
-  $startpage++;
-elseif ($startpage < $endpage)
-  $pagestr .= " ... ";
-
-for ($i = $startpage; $i <= $endpage; $i++) {
-  $pagestr .= " | <a href=\"/" . $forum['shortname'] . "/pages/" . $i . ".phtml\">";
-  if ($i == $curpage)
-    $pagestr .= "<font size=\"+1\"><b>$i</b></font>";
-  else
-    $pagestr .= $i;
-  $pagestr .= "</a>";
-}
-
-if ($curpage < $numpages) {
-  $nextpage = $curpage + 1;
-  $pagestr .= " | <a href=\"/" . $forum['shortname'] . "/pages/$nextpage.phtml\">&gt;&gt;&gt;</a>";
-}
-
-$tpl->set_var("PAGES", $pagestr);
+$fmt = "/" . $forum['shortname'] . "/pages/%d.phtml";
+$tpl->set_var("PAGES", gen_pagenav($fmt, $curpage, $numpages));
 
 $tpl->set_var("NUMTHREADS", $numthreads);
 $tpl->set_var("NUMPAGES", $numpages);
@@ -409,4 +331,6 @@ require_once("postform.inc");
 render_postform($tpl, "post", $user);
 
 print generate_page($forum['name'], $tpl->parse("content", "showforum"));
+
+// vim: sw=2
 ?>
