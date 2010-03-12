@@ -114,7 +114,7 @@ function process_trackedthreads($tthreads)
   $threadshown = array();
   $out['threads'] = array();
 
-  foreach ($tthreads as $tthread) {
+  if (count($tthreads)) foreach ($tthreads as $tthread) {
     $tid = $tthread['tid'];
     if (isset($threadshown[$tid])) continue;
 
