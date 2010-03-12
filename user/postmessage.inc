@@ -41,7 +41,9 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
   /* IMAGEURL HACK - prepend before insert*/
   /* for entry into the db */
   if (!empty($msg['imageurl']))
-    $msg['message'] = "<center><img src=\"" . $msg['imageurl'] . "\"></center><p>" . $msg['message'];
+    $msg['message'] = "<center><img src=\"" .
+      escapequotes($msg['imageurl']) . "\"></center><p>" .
+      $msg['message'];
 
   /* Add it into the database */
   /* Check to make sure this isn't a duplicate */
@@ -194,4 +196,5 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
 
   return $newmessage;
 }
+// vim:sw=2
 ?>

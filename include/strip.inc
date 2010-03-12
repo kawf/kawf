@@ -61,6 +61,10 @@ function stripcrapurl($string)
   return $string;
 }
 
+/* fix bug 2969654 - handle quotes in urls */
+function escapequotes($url) { return str_replace('"','%22',$url); }
+function unescapequotes($url) { return str_replace('%22','"',$url); }
+
 $valid_transports = array(
   "http" => true,
   "https" => true,
@@ -430,5 +434,5 @@ function striptag($message, $allowed_tags)
 
   return $n_message;
 }
-
+// vim:sw=2
 ?>
