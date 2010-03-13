@@ -1,4 +1,5 @@
 <?php
+require_once("pagenav.inc.php");
 
 $user->req("ForumAdmin");
 
@@ -7,7 +8,32 @@ page_header("Visits");
 if (isset($_GET['message']))
   page_show_message($_GET['message']);
 
-$result = sql_query("select f_visits.*, u_users.name, u_users.email FROM f_visits LEFT JOIN u_users ON u_users.aid = f_visits.aid order by f_visits.ip");
+$visitsperpage = 100;
+
+if (is_valid_integer($_GET['page']))
+  $page=$_GET['page'];
+else
+  $page = 1;
+
+$numvisits = sql_query1("select count(*) from f_visits");
+
+echo "$numvisits active user/ip pairs<br>\n";
+
+$numpages = ceil($numvisits / $visitsperpage);
+
+function print_pages($page, $numpages)
+{
+  $fmt = "showvisits.phtml?page=%d";
+  print "Page: " . gen_pagenav($fmt, $page, $numpages) . "<br>\n";
+}
+
+print_pages($page, $numpages);
+
+$skipvisits = ($page - 1) * $visitsperpage;
+
+$sql = "select f_visits.*, u_users.name, u_users.email FROM f_visits LEFT JOIN u_users ON u_users.aid = f_visits.aid order by f_visits.ip limit $skipvisits,$visitsperpage";
+
+$result = sql_query($sql) or sql_error($sql);
 ?>
 
 <p>
@@ -25,7 +51,7 @@ $result = sql_query("select f_visits.*, u_users.name, u_users.email FROM f_visit
 <?php
 $requests = Array();
 
-while ($request = sql_fetch_array($result)) {
+while ($request = sql_fetch_assoc($result)) {
   $key = $request['aid'] . $request['ip'];
   $requests[$key] = $request;
   $requestlist[] = &$requests[$key];
@@ -48,6 +74,6 @@ if(isset($requestlist)) {
 </table>
 
 <?php
-echo "$count active user/ip pairs<br>\n";
+print_pages($page, $numpages);
 page_footer();
 ?>

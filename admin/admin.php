@@ -70,7 +70,7 @@ $result = mysql_query($sql) or sql_error($sql);
 <table class="contents">
 <tr><th>aid</th><th>name</th><th>email</th><th>status</th></tr>
 <?php
-while ($acct = mysql_fetch_array($result)) {
+while ($acct = mysql_fetch_assoc($result)) {
   $i = ($count % 2);
   echo "<tr class=\"row$i\"\n>";
 ?>
