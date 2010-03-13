@@ -46,8 +46,6 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
     $tpl->set_block("enabled", "acct");
     $tpl->set_block("enabled", "noacct");
 
-    $tpl->set_block("acct", "offtopic");
-
     if (isset($thread) && !isset($forum['opt.PostReply']) && !$user->capable($forum['fid'], 'Delete')) {
       $tpl->set_var(array(
 	"enabled" => "",
@@ -67,6 +65,10 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
 	"noreplies" => "",
       ));
     } else if (isset($user->aid)) {
+
+      /**********************/
+      /* hidden form values */
+      /**********************/
       if (!isset($_REQUEST['postcookie']))
 	$postcookie = md5("post" . microtime());
       else
@@ -98,111 +100,76 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
 
       $tpl->set_var("HIDDEN", $hidden);
 
-      if (!isset($msg['subject']))
-	$subject = "";
-      else
-	$subject = $msg['subject'];
-      $subject = preg_replace("/&lt;/", "<", $subject);
-      $subject = preg_replace("/&gt;/", ">", $subject);
-      $subject = preg_replace("/\"/", "&quot;", $subject);
-      $tpl->set_var("SUBJECT", $subject);
+      /*********************/
+      /* message and links */
+      /*********************/
+      $tpl->set_var("SUBJECT", escape_form($msg['subject']));
 
-      if (!isset($msg['message']))
-	$message = "";
+      if (isset($msg['message']))
+	$tpl->set_var("MESSAGE", $msg['message']);
       else
-	$message = $msg['message'];
-      // $message = preg_replace("/&lt;/", "<", $message);
-      // $message = preg_replace("/&gt;/", ">", $message);
-      $tpl->set_var("MESSAGE", $message);
+	$tpl->set_var("MESSAGE", '');
 
-      if (!isset($msg['url']))
-	$url = "";
-      else
-	$url = $msg['url'];
-      $url = preg_replace("/&/", "&amp;", $url);
-      $url = preg_replace("/\"/", "&quot;", $url);
-      $tpl->set_var("URLLINK", $url);
-
-      if (!isset($msg['urltext']))
-	$urltext = "";
-      else
-	$urltext = $msg['urltext'];
-      $urltext = preg_replace("/&lt;/", "<", $urltext);
-      $urltext = preg_replace("/&gt;/", ">", $urltext);
-      $urltext = preg_replace("/\"/", "&quot;", $urltext);
-      $tpl->set_var("URLTEXT", $urltext);
-
-      if (!isset($msg['video']))
-	$url = "";
-      else
-	$url = $msg['video'];
-      $url = preg_replace("/&/", "&amp;", $url);
-      $url = preg_replace("/\"/", "&quot;", $url);
-      $tpl->set_var("VIDEO", $url);
-
-      if (!isset($msg['imageurl']))
-	$imageurl = "";
-      else
-	$imageurl = $msg['imageurl'];
-      $imageurl = preg_replace("/&amp;/", "&", $imageurl);
-      $imageurl = preg_replace("/\"/", "&quot;", $imageurl);
-      $tpl->set_var("IMAGEURL", $imageurl);
+      $tpl->set_var("URLLINK", escape_form_url($msg['url']));
+      $tpl->set_var("URLTEXT", escape_form($msg['urltext']));
+      $tpl->set_var("VIDEO", escape_form_url($msg['url']));
+      $tpl->set_var("IMAGEURL", escape_form($msg['imageurl']));
 
       $tpl->set_var("USER_NAME", $user->name);
       $tpl->set_var("USER_EMAIL", $user->email);
 
-      if (isset($_REQUEST['preview']) || isset($_REQUEST['post']))
-	$checked = $_REQUEST['ExposeEmail'];
-      else
-	$checked = !isset($user->pref['SecretEmail']);
-      if ($checked)
-	$tpl->set_var("EXPOSEEMAIL", " checked");
-      else
-	$tpl->set_var("EXPOSEEMAIL", "");
-
-      if (!isset($forum['opt.OffTopic'])) {
-	$tpl->set_var("offtopic", "");
-      } else if (!$user->capable($forum['fid'], 'OffTopic') &&
-	    isset($msg['state']) && $msg['state']=="OffTopic") {
-	/* user can't unset offtopic unless he has offtopic capabilities */
-	$tpl->set_var("offtopic", "");
+      /***************/
+      /* check boxes */
+      /***************/
+      if (isset($_REQUEST['preview']) || isset($_REQUEST['post'])) {
+	/* preview/post - take values submitted by user */
+	$offtopic = $_REQUEST['OffTopic'];
+	$expose_email = $_REQUEST['ExposeEmail'];
+	$email_followup = $_REQUEST['EmailFollowup'];
+	$track_thread = isset($_REQUEST['TrackThread']);
+      } else if (isset($msg['mid'])) {
+	/* edit existing message - take values from old msg */
+	$offtopic = ($msg['state']=="OffTopic");
+	$expose_email = !empty($msg['email']);
+	$email_followup = is_msg_etracked($msg);
+	$track_thread = is_msg_tracked($msg);
       } else {
-	if (isset($_REQUEST['preview']) || isset($_REQUEST['post']))
-	  $checked = $_REQUEST['OffTopic'];
-	else if (isset($msg['state']) && $msg['state']=="OffTopic")
-	  $checked = 1;
-	else
-	  $checked = 0;
-	if ($checked)
-	  $tpl->set_var("OFFTOPIC", " checked");
-	else
-	  $tpl->set_var("OFFTOPIC", "");
+	/* new message - defaults */
+	$offtopic = false;
+	$expose_email = !isset($user->pref['SecretEmail']);
+	$email_followup = false;
+	$track_thread = isset($user->pref['AutoTrack']);
       }
 
-      if (isset($_REQUEST['preview']) || isset($_REQUEST['post']))
-	$checked = $_REQUEST['EmailFollowup'];
-      else
-	$checked = 0;
-      if ($checked)
-	$tpl->set_var("EMAILFOLLOWUP", " checked");
-      else
-	$tpl->set_var("EMAILFOLLOWUP", "");
+      /*************/
+      /* overrides */
+      /*************/
+      if (!isset($forum['opt.OffTopic'])) {
+	/* forum doesn't allow offtopic, hide checkbox */
+	$offtopic = false;
+	$offtopic_hidden = true;
+      }
 
-      if (isset($_REQUEST['preview']) || isset($_REQUEST['post']))
-	$checked = isset($_REQUEST['TrackThread']);
-      else
-	$checked = isset($user->pref['AutoTrack']) ||
-		   (isset($msg['tid']) && isset($tthreads_by_tid[$msg['tid']]));
-      if ($checked)
-	$tpl->set_var("TRACKTHREAD", " checked");
-      else
-	$tpl->set_var("TRACKTHREAD", "");
+      if ($offtopic && !$user->capable($forum['fid'], 'OffTopic')) {
+	/* if offtopic is set, user can't unset w/o perms */
+	$offtopic_hidden = true;
+      }
+
+      /* can't set email_followup if thread is not tracked */
+      if (!$track_thread) $email_followup = false;
 
       $tpl->set_var(array(
+	"OFFTOPIC_TYPE" => $offtopic_hidden?"hidden":"checkbox",
+	"OFFTOPIC" => $offtopic?" checked":"",
+	"OFFTOPIC_TEXT" => $offtopic_hidden?"":"Mark as offtopic?<br>",
+	"EXPOSEEMAIL" => $expose_email?" checked":"",
+	"EMAILFOLLOWUP" => $email_followup?" checked":"",
+	"TRACKTHREAD" => $track_thread?" checked":"",
 	"ACTION" => $action,
 	"noacct" => "",
 	"disabled" => "",
       ));
+
       $tpl->set_var("token", $user->token());
       $tpl->parse("acct", "acct");	/* This fixed URL and PAGE for some reason */
     } else {
@@ -215,4 +182,5 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
 
     $tpl->parse("FORM", "postform");
 }
+// vim: sw=2
 ?>

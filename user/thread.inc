@@ -136,6 +136,19 @@ function gen_threadlinks($thread, $collapse = false)
     return $tl;
 }
 
+function is_thread_etracked($thread)
+{
+    global $tthreads_by_tid;
+    $tthread = $tthreads_by_tid[$thread['tid']];
+    return ($tthread && isset($tthread['option']['SendEmail']));
+}
+
+function is_thread_tracked($thread)
+{
+    global $tthreads_by_tid;
+    return isset($tthreads_by_tid[$thread['tid']]);
+}
+
 function is_thread_bumped($thread)
 {
     global $tthreads_by_tid;

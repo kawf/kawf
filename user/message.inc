@@ -241,8 +241,11 @@ function render_message($tpl, $msg, $viewer, $owner=null)
   /* Show CURRENT email information of user */
   if ($moderator || ($viewer->valid() && $expose_email)) {
     /* Lame spamification */
-    $email = preg_replace("/@/", "&#" . ord('@') . ";", stripcrap($owner->email));
-    $tpl->set_var("MSG_NAMEEMAIL", "<a href=\"mailto:" . $email . "\">" . $msg['name'] . "</a>");
+    $name = $msg['name'];
+    $email = preg_replace("/@/", "&#64;", stripcrap($owner->email));
+    $hidden = $expose_email?"":" (hidden)";
+    $tpl->set_var("MSG_NAMEEMAIL",
+      "<a href=\"mailto:$email\" title=\"e-mail $email$hidden\">$name</a>");
   } else {
     $tpl->set_var("MSG_NAMEEMAIL", $msg['name']);
   }
@@ -335,6 +338,19 @@ function mark_thread_read($msg, $user)
       . " and tid = " . $tid . " and aid = " . $user->aid;
     mysql_query($sql) or sql_warn($sql);
   }
+}
+
+function is_msg_etracked($msg)
+{
+    global $tthreads_by_tid;
+    $tthread = $tthreads_by_tid[$msg['tid']];
+    return ($tthread && isset($tthread['option']['SendEmail']));
+}
+
+function is_msg_tracked($msg)
+{
+    global $tthreads_by_tid;
+    return isset($tthreads_by_tid[$msg['tid']]);
 }
 
 function is_msg_bumped($msg)
