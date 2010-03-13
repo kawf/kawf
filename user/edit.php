@@ -96,14 +96,19 @@ if (!isset($_POST['message'])) {
   $preview = 1;
 
   /* Synthesize state based on the state of the existing message. */ 
-  $exposeemail = !empty($msg['email']);
   $offtopic = ($msg['state'] == 'OffTopic');
+  $expose_email = !empty($msg['email']);
+  $send_email = is_msg_etracked($msg);
+  $track_thread = is_msg_tracked($msg);
 } else {
   /* form submitted via edit (step 2) */
   preprocess($nmsg, $_POST);
   
-  $exposeemail = $_POST['ExposeEmail'];
   $offtopic = isset($_POST['OffTopic']);
+  $expose_email = isset($_POST['ExposeEmail']);
+  $send_email = isset($_POST['EmailFollowup']);
+  /* automatically track thread if user requested email notification */
+  $track_thread = isset($_POST['TrackThread']) || $send_email;
 }
 
 if (!isset($forum['opt.PostEdit'])) {
@@ -147,7 +152,7 @@ $tpl->set_var("edit_locked", "");
 
 /* Sanitize the strings */
 $nmsg['name'] = stripcrap($user->name);
-if ($exposeemail)
+if ($expose_email)
   $nmsg['email'] = stripcrap($user->email);
 else
   $nmsg['email'] = "";
@@ -246,10 +251,31 @@ if (isset($error) || isset($preview)) {
 
   /* Create a diff for the old message and the new message */
 
+  /* Record message state changes */
+  $diff = '';
+  if ($msg['state']!=$nmsg['state'])
+    $diff .= "Changed from '".$msg['state']."' to '".$nmsg['state']."'\n";
+
+  if (empty($msg['email']) && !empty($nmsg['email']))
+    $diff .= "Exposed e-mail address\n";
+  else if (!empty($msg['email']) && empty($nmsg['email']))
+    $diff .= "Hid e-mail address\n";
+
+  if ($send_email && !is_msg_etracked($msg))
+    $diff .= "Requested e-mail notification\n";
+  else if (!$send_email && is_msg_etracked($msg))
+    $diff .= "Cancelled e-mail notification\n";
+
+  if ($track_thread && !is_msg_tracked($msg))
+    $diff .= "Tracked message\n";
+  else if (!$track_thread && is_msg_tracked($msg))
+    $diff .= "Untracked message\n";
+
   /* Dump the \r's, we don't want them */
   $msg['message'] = preg_replace("/\r/", "", $msg['message']);
   $nmsg['message'] = preg_replace("/\r/", "", $nmsg['message']);
 
+  /* Synthesize fake records for optional links */
   $old[]="Subject: " . $msg['subject'];
   $old = array_merge($old, explode("\n", $msg['message']));
   if (!empty($msg['url'])) {
@@ -268,14 +294,10 @@ if (isset($error) || isset($preview)) {
   if (!empty($nmsg['video']))
     $new[]="video: " . $nmsg['video'];
 
-  $diff = diff($old, $new);
-
-  if ($msg['state']!=$nmsg['state'])
-    $diff = "Changed from '".$msg['state']."' to '".$nmsg['state']."'\n". $diff;
-
-  $mtable = "f_messages" . $indexes[$index]['iid'];
+  $diff .= diff($old, $new);
 
   /* Add it into the database */
+  $mtable = "f_messages" . $indexes[$index]['iid'];
   $sql = "update $mtable set " .
 	"name = '" . addslashes($nmsg['name']) . "', " .
 	"email = '" . addslashes($nmsg['email']) . "', " .
@@ -293,8 +315,18 @@ if (isset($error) || isset($preview)) {
 	"where mid = '" . addslashes($mid) . "'";
   mysql_query($sql) or sql_error($sql);
 
-  $sql = "insert into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($mid) . "' )";
-  mysql_query($sql); 
+  $sql = "replace into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($mid) . "' )";
+  mysql_query($sql) or sql_error($sql); 
+
+  if ($track_thread) {
+    $options = $send_email?"SendEmail":"";
+    $sql = "replace into f_tracking ( fid, tid, aid, options ) values ( " .
+      $forum['fid'] . ", '" . addslashes($nmsg['tid']) . "', '" . $user->aid . "', '$options' )";
+  } else {
+    $sql = "delete from f_tracking where fid = " . $forum['fid'] .
+      " and tid = '" . addslashes($nmsg['tid']) . "' and aid = '" . $user->aid . "'";
+  } 
+  mysql_query($sql) or sql_error($sql); 
 
   $tpl->set_var("MSG_MID", $mid);
 }

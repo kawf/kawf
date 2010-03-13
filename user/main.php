@@ -154,6 +154,13 @@ function find_forum($shortname)
     $result = sql_query("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc");
 
     while ($tthread = mysql_fetch_array($result)) {
+      /* explode 'f_tracking' options set column */
+      if (!empty($tthread['options'])) {
+	$options = explode(',', $tthread['options']);
+	foreach ($options as $v) {
+	  $tthread['option'][$v]=true;
+	}
+      }
       $tthreads[] = $tthread;
       if (isset($tthreads_by_tid[$tthread['tid']])) {
         if ($tthread['unixtime'] > $tthreads_by_tid[$tthread['tid']]['unixtime'])

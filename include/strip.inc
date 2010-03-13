@@ -65,6 +65,28 @@ function stripcrapurl($string)
 function escapequotes($url) { return str_replace('"','%22',$url); }
 function unescapequotes($url) { return str_replace('%22','"',$url); }
 
+/* postform processing */
+function escape_form($msg)
+{
+  if (!isset($msg)) return '';
+
+  $msg = preg_replace("/&lt;/", "<", $msg);
+  $msg = preg_replace("/&gt;/", ">", $msg);
+  $msg = preg_replace("/\"/", "&quot;", $msg);
+  
+  return $msg;
+}
+
+function escape_form_url($url)
+{
+  if (!isset($url)) return '';
+
+  $url = preg_replace("/&/", "&amp;",  $url);
+  $url = preg_replace("/\"/", "&quot;", $url);
+  
+  return $url;
+}
+
 $valid_transports = array(
   "http" => true,
   "https" => true,

@@ -60,10 +60,8 @@ This thread is locked. No replies are allowed.<br>
   <input type="submit" name="preview" value="Preview Message">
   <input type="submit" name="post" value="{SUBMITTEXT}"><br>
   <!-- <input type="reset" value="Reset Message"><br> -->
-<!-- BEGIN offtopic -->
-  <input type="checkbox" name="OffTopic"{OFFTOPIC}>
-    Mark as offtopic?<br>
-<!-- END offtopic -->
+  <input type="{OFFTOPIC_TYPE}" name="OffTopic"{OFFTOPIC}>
+    {OFFTOPIC_TEXT}
   <input type="checkbox" name="ExposeEmail"{EXPOSEEMAIL}>
     Show email address in post?<br>
   <input type="checkbox" name="EmailFollowup"{EMAILFOLLOWUP}>
