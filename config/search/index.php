@@ -3,6 +3,10 @@ include("config.inc");
 include("util.inc");
 
 if($login_to_read) {
+    /* Workaround Debian bug 571762 */
+    /* http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=571762 */
+    date_default_timezone_set(@date_default_timezone_get());
+
     include("forumuser.inc");
 
     sql_open($database);
