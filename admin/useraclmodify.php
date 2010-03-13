@@ -61,7 +61,7 @@ page_header("Modify User ACL $aid");
 $result = sql_query("select * from f_moderators where aid = '" . addslashes($aid) . "'");
 
 $count = 0;
-while ($acl = sql_fetch_array($result)) {
+while ($acl = sql_fetch_assoc($result)) {
   $capabilities = explode(",", $acl['capabilities']);
 
   foreach ($capabilities as $value)

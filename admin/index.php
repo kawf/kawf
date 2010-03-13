@@ -32,7 +32,7 @@ $result = sql_query("select * from f_forums,f_indexes where f_forums.fid=f_index
 </tr>
 
 <?php
-while ($forum = sql_fetch_array($result)) {
+while ($forum = sql_fetch_assoc($result)) {
   $i = ($count & 1);
   echo "<tr class=\"row$i\">\n";
   echo "<td><a href=\"forumshow.phtml?fid=" . $forum['fid'] . "\">" . $forum['fid'] . "</a></td>\n";

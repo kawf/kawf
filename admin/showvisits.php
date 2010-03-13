@@ -25,7 +25,7 @@ $result = sql_query("select f_visits.*, u_users.name, u_users.email FROM f_visit
 <?php
 $requests = Array();
 
-while ($request = sql_fetch_array($result)) {
+while ($request = sql_fetch_assoc($result)) {
   $key = $request['aid'] . $request['ip'];
   $requests[$key] = $request;
   $requestlist[] = &$requests[$key];
