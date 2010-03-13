@@ -27,7 +27,7 @@ $result = sql_query("select f_moderators.*, u_users.name from f_moderators, u_us
 $acllist = Array();
 $useracls = Array();
 
-while ($useracl = sql_fetch_array($result)) {
+while ($useracl = sql_fetch_assoc($result)) {
   $key = $useracl['aid'] . $useracl['capabilities'];
 
   /* If the entry doesn't exist already or the capabilities are different */

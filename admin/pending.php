@@ -33,7 +33,7 @@ $result = sql_query("select u_pending.*, u_users.name, u_users.email from u_pend
 $p = Array();
 $requests = Array();
 
-while ($request = sql_fetch_array($result)) {
+while ($request = sql_fetch_assoc($result)) {
   $key = $request['aid'] . $request['type'];
 
   /* If the entry doesn't exist already or the capabilities are different */

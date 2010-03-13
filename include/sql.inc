@@ -136,6 +136,11 @@ function sql_fetch_array($result)
   return mysql_fetch_array($result);
 }
 
+function sql_fetch_assoc($result)
+{
+  return mysql_fetch_assoc($result);
+}
+
 function sql_last_insert_id()
 {
   return mysql_insert_id();
