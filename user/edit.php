@@ -242,14 +242,11 @@ if (isset($error) || isset($preview)) {
 
   $nmsg['flags'] = implode(",", $flagset);
 
-  /* IMAGEURL HACK - prepend before insert */
-  /* for diffing and for entry into the db */
-  if (!empty($nmsg['imageurl']))
-    $nmsg['message'] = "<center><img src=\"" .
-      escapequotes($nmsg['imageurl']) . "\"></center><p>\n" .
-      $nmsg['message'];
-
   /* Create a diff for the old message and the new message */
+
+  /* IMAGEURL HACK - extract imageurl from old msg */
+  /* for diffing */
+  $msg = image_url_hack_extract($msg);
 
   /* Record message state changes */
   $diff = '';
@@ -282,6 +279,8 @@ if (isset($error) || isset($preview)) {
     $old[]="urltext: " . $msg['urltext'];
     $old[]="url: " . $msg['url'];
   }
+  if (!empty($msg['imageurl']))
+    $old[]="imageurl: " . $msg['imageurl'];
   if (!empty($msg['video']))
     $old[]="video: " . $msg['video'];
 
@@ -291,10 +290,16 @@ if (isset($error) || isset($preview)) {
     $new[]="urltext: " . $nmsg['urltext'];
     $new[]="url: " . $nmsg['url'];
   }
+  if (!empty($nmsg['imageurl']))
+    $new[]="imageurl: " . $nmsg['imageurl'];
   if (!empty($nmsg['video']))
     $new[]="video: " . $nmsg['video'];
 
   $diff .= diff($old, $new);
+
+  /* IMAGEURL HACK - prepend before insert */
+  /* for diffing and for entry into the db */
+  $nmsg = image_url_hack_insert($nmsg);
 
   /* Add it into the database */
   $mtable = "f_messages" . $indexes[$index]['iid'];

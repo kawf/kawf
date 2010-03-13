@@ -272,6 +272,34 @@ function render_message($tpl, $msg, $viewer, $owner=null)
     _message_unset_block_extras($tpl);
 }
 
+/* prepend message with imageurl */
+function image_url_hack_insert($msg)
+{
+  if (empty($msg['imageurl'])) return $msg;
+
+  $msg['message'] = "<center><img src=\"" .
+    escapequotes($msg['imageurl']) . "\"></center><p>\n" .
+    $msg['message'];
+
+  return $msg;
+}
+
+/* strip imageurl from message and fill in $msg['imageurl'] */
+function image_url_hack_extract($msg)
+{
+    /* Strip from existing (old) message if it doesn't already have an
+       imageurl. Theoretically, users shouldn't be able to add <p>'s to their
+       message, so this should ONLY be in messages that were prepended with
+       images automatcially by post/edit */
+    if (empty($msg['imageurl']) &&
+      preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>\s*(.*)$/s", $msg['message'], $regs)) {
+      $msg['imageurl'] = unescapequotes($regs[1]);
+      $msg['message'] = $regs[2];
+    }
+
+    return $msg;
+}
+
 function fetch_message($user, $mid, $what = '*')
 {
     global $indexes;
@@ -297,17 +325,7 @@ function fetch_message($user, $mid, $what = '*')
     $msg['date'] = strftime("%Y-%m-%d %H:%M:%S", $msg['unixtime'] - $tzoff);
 
     /* IMAGEURL HACK - extract from message */
-    /* Strip from existing (old) message if it doesn't already have an
-       imageurl. Theoretically, users shouldn't be able to add <p>'s to their
-       message, so this should ONLY be in messages that were prepended with
-       images automatcially by post/edit */
-    if (empty($msg['imageurl']) &&
-      preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>\s*(.*)$/s", $msg['message'], $regs)) {
-      $msg['imageurl'] = unescapequotes($regs[1]);
-      $msg['message'] = $regs[2];
-    } 
-
-    return $msg;
+    return image_url_hack_extract($msg);
 }
 
 function mark_thread_read($msg, $user)
