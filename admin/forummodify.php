@@ -52,7 +52,7 @@ if (!is_valid_integer($_GET['fid'])) {
 $forum = sql_querya("select * from f_forums,f_indexes where f_forums.fid=f_indexes.fid and f_forums.fid = '" . addslashes($_GET['fid']) . "'");
 $options = explode(",", $forum['options']);
 
-foreach ($options as $name => $value)
+foreach ($options as $value)
   $options[$value] = true;
 
 page_header("Modify '" . $forum['name'] . "' fid=".$forum['fid']);

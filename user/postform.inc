@@ -16,7 +16,7 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
     $debug .= "imgpreview = $imgpreview\n";
     $debug .= "_REQUEST:\n";
     foreach ($_REQUEST as $k => $v) {
-      if (!is_numeric($k) && strlen($v)>0)
+      if (!is_numeric($k) && is_scalar($v))
 	$debug.=" $k => $v\n";
     }
 
@@ -24,7 +24,7 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
       if (isset($msg)) {
 	$debug .= "msg:\n";
 	foreach ($msg as $k => $v) {
-	  if (!is_numeric($k) && strlen($v)>0)
+	  if (!is_numeric($k) && is_scalar($v))
 	    $debug.=" $k => $v\n";
 	}
       }
@@ -115,7 +115,7 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
       $tpl->set_var("URLLINK", escape_form_url($msg['url']));
       $tpl->set_var("URLTEXT", escape_form($msg['urltext']));
       $tpl->set_var("VIDEO", escape_form_url($msg['url']));
-      $tpl->set_var("IMAGEURL", escape_form($msg['imageurl']));
+      $tpl->set_var("IMAGEURL", escape_form_url($msg['imageurl']));
 
       $tpl->set_var("USER_NAME", $user->name);
       $tpl->set_var("USER_EMAIL", $user->email);
