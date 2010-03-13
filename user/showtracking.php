@@ -26,6 +26,7 @@ if (!isset($curpage))
   $curpage = 1;
 
 $tpp = $user->threadsperpage;
+if ($tpp<=0) $tpp=20;
 
 $out = process_trackedthreads($tthreads);
 $numpages = ceil($out['numshown']/$tpp);
