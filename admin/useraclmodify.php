@@ -62,7 +62,7 @@ $count = 0;
 while ($acl = sql_fetch_array($result)) {
   $capabilities = explode(",", $acl['capabilities']);
 
-  foreach ($capabilities as $name => $value)
+  foreach ($capabilities as $value)
     $capabilities[$value] = true;
 ?>
 
