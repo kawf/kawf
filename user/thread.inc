@@ -3,7 +3,7 @@
 require_once("filter.inc");
 require_once("listthread.inc");
 
-function fetch_thread($thread, $vmid = 0)
+function get_thread_messages($thread, $vmid = 0)
 {
   global $user, $indexes;
 
@@ -11,28 +11,14 @@ function fetch_thread($thread, $vmid = 0)
   $tzoff=isset($user->tzoff)?$user->tzoff:0;
 
   $index = find_msg_index($thread['mid']);
-  if (isset($indexes[$index])) {
+  /* find my messages and later */
+  for (;isset($indexes[$index]); $index++) {
     /* TZ: unixtime is seconds since epoch */
     $sql = "select mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, subject, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
     $result = mysql_query($sql) or sql_error($sql);
-    while ($message = mysql_fetch_array($result)) {
+    while ($message = mysql_fetch_assoc($result)) {
       /* msg['date'] is time local to user... strftime would normally be
 	 time local to php server */
-      $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime'] - $tzoff);
-      $message['pmid'] = $message['pid'];
-      $messages[] = $message;
-    }
-  }
-
-  /* TODO: what is this for? */
-  $index++;
-  if (isset($indexes[$index])) {
-    /* TZ: unixtime is seconds since epoch */
-    $sql = "select mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, subject, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
-    $result = mysql_query($sql) or sql_error($sql);
-    while ($message = mysql_fetch_array($result)) {
-      /* msg['date'] is time local to user... strftime would normally be
-         time local to php server */
       $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime'] - $tzoff);
       $message['pmid'] = $message['pid'];
       $messages[] = $message;
@@ -64,24 +50,41 @@ function fetch_thread($thread, $vmid = 0)
   return array($messages, $tree, $path);
 }
 
+function get_thread($tid)
+{
+  $iid = tid_to_iid($tid);
+  if (!isset($iid)) return null;
+
+  $t = "f_threads$iid";
+  $tid = addslashes($tid);
+  $sql =
+    "select *, UNIX_TIMESTAMP(tstamp) as unixtime from $t where tid = '$tid'";
+  $result = mysql_query($sql) or sql_error($sql);
+  if (!mysql_num_rows($result)) return null;
+
+  $thread = mysql_fetch_assoc($result);
+  if (!isset($thread)) return null;
+
+  gen_thread_flags($thread);
+  return $thread;
+}
+
+
 /* Modifies $thread (explodes $thread['flags']) */
 function gen_thread_flags(&$thread)
 {
   if (!empty($thread['flags'])) {
     $options = explode(",", $thread['flags']);
-    foreach ($options as $name => $value)
-      $thread["flag.$value"] = true;
+    foreach ($options as $value)
+      $thread['flag'][$value] = true;
   }
 }
 
-/* Modifies $thread (explodes $thread['flags']) */
-function gen_thread(&$thread, $collapse = false)
+function gen_thread($thread, $collapse = false)
 {
   global $user, $forum;
 
-  gen_thread_flags($thread);
-
-  list($messages, $tree) = fetch_thread($thread);
+  list($messages, $tree) = get_thread_messages($thread);
   if (!isset($messages) || !count($messages))
     return null;
 

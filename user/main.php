@@ -24,6 +24,7 @@ ini_set("include_path", $include_path);
 include_once("$config.inc");
 require_once("sql.inc");
 require_once("util.inc");
+require_once("filter.inc");
 require_once("forumuser.inc");
 require_once("timezone.inc");
 require_once("acl_ip_ban.inc");
@@ -115,8 +116,8 @@ function update_visits()
   $ip = "'" . addslashes($_SERVER['REMOTE_ADDR']) . "'";
   $aid = -1;
 
-  if($user->valid())
-    $aid=$user->aid;
+  if ($user->valid())
+    $aid = $user->aid;
 
   $sql = "insert into f_visits ( aid, ip ) values ( $aid, $ip ) on duplicate key update tstamp=NOW()";
   mysql_query($sql) or sql_error($sql);
@@ -140,20 +141,44 @@ function find_forum($shortname)
     exit;
   }
 
+  $indexes = build_indexes($forum['fid']);
+  list($tthreads, $tthreads_by_tid) = build_tthreads($forum['fid']);
+
+  $options = explode(",", $forum['options']);
+  foreach ($options as $value)
+    $forum["opt.$value"] = true;
+
+  return 1;
+}
+
+function build_indexes($fid)
+{
+  $indexes = array();
+
   /* Grab all of the indexes for the forum */
-  $sql = "select * from f_indexes where fid = " . $forum['fid'] . " and ( minmid != 0 or minmid < maxmid ) order by iid";
+  $sql = "select * from f_indexes where fid = $fid and ( minmid != 0 or minmid < maxmid ) order by iid";
   $result = mysql_query($sql) or sql_error($sql);
 
   /* build indexes shard id cache */
-  while ($index = mysql_fetch_array($result))
+  while ($index = mysql_fetch_assoc($result))
     $indexes[] = $index;
+  
+  return $indexes;
+}
+
+function build_tthreads($fid)
+{
+  global $user;
 
   /* build tthreads_by_tid thread tracking cache */
   if ($user->valid()) {
     /* TZ: unixtime is seconds since epoch */
-    $result = sql_query("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc");
+    $result = sql_query("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = $fid and aid = " . $user->aid . " order by tid desc");
 
     while ($tthread = mysql_fetch_array($result)) {
+      if (filter_thread($tthread['tid']))
+	continue;
+
       /* explode 'f_tracking' options set column */
       if (!empty($tthread['options'])) {
 	$options = explode(',', $tthread['options']);
@@ -169,26 +194,26 @@ function find_forum($shortname)
         $tthreads_by_tid[$tthread['tid']] = $tthread;
     }
   }
-
-  $options = explode(",", $forum['options']);
-  foreach ($options as $name => $value)
-    $forum["opt.$value"] = true;
-
-  return 1;
+  return array($tthreads, $tthreads_by_tid);
 }
 
 function mid_to_iid($mid)
 {
   global $indexes;
 
-  $index = find_msg_index($tid);
-  if(!isset($index)) return null;
+  $index = find_msg_index($mid);
+  if (!isset($index)) return null;
   return $indexes[$index]['iid'];
 }
 
 function find_msg_index($mid)
 {
   global $indexes;
+
+  if (!isset($indexes) || !count($indexes)) {
+    err_not_found("indexes cache is empty");
+    exit;
+  }
 
   foreach ($indexes as $k=>$v)
     if ($v['minmid'] <= $mid && $mid <= $v['maxmid']) return $k;
@@ -201,13 +226,18 @@ function tid_to_iid($tid)
   global $indexes;
 
   $index = find_thread_index($tid);
-  if(!isset($index)) return null;
+  if (!isset($index)) return null;
   return $indexes[$index]['iid'];
 }
 
 function find_thread_index($tid)
 {
   global $indexes;
+
+  if (!isset($indexes) || !count($indexes)) {
+    err_not_found("indexes cache is empty");
+    exit;
+  }
 
   foreach ($indexes as $k=>$v)
     if ($v['mintid'] <= $tid && $tid <= $v['maxtid']) return $k;

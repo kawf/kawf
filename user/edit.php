@@ -18,6 +18,7 @@ if (!isset($mid) || !isset($forum)) {
 
 require_once("strip.inc");
 require_once("diff.inc");
+require_once("thread.inc");
 require_once("message.inc");
 require_once("page-yatt.inc.php");
 
@@ -126,17 +127,9 @@ if (!isset($forum['opt.PostEdit'])) {
 
 $tpl->set_var("disabled", "");
 
-$index = find_thread_index($msg['tid']);
-$sql = "select * from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($msg['tid']) . "'";
-$result = mysql_query($sql) or sql_error($sql);
+$thread = get_thread($msg['tid']);
 
-$thread = mysql_fetch_array($result);
-
-$options = explode(",", $thread['flags']);
-foreach ($options as $name => $value)
-  $thread["flag.$value"] = true;
-
-if (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')) {
+if (isset($thread['flag']['Locked']) && !$user->capable($forum['fid'], 'Lock')) {
   $tpl->set_var(array(
     "error" => "",
     "preview" => "",
@@ -302,8 +295,12 @@ if (isset($error) || isset($preview)) {
   $nmsg = image_url_hack_insert($nmsg);
 
   /* Add it into the database */
-  $mtable = "f_messages" . $indexes[$index]['iid'];
-  $sql = "update $mtable set " .
+  $iid = mid_to_iid($mid);
+  if (!isset($iid)) {
+    err_not_found("message $mid has no iid");
+    exit;
+  }
+  $sql = "update f_messages$iid set " .
 	"name = '" . addslashes($nmsg['name']) . "', " .
 	"email = '" . addslashes($nmsg['email']) . "', " .
 	"flags = '" . $nmsg['flags'] . "', " .

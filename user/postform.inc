@@ -60,7 +60,7 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
 	"locked" => "",
 	"noreplies" => "",
       ));
-    } else if (isset($thread) && isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')) {
+    } else if (isset($thread) && isset($thread['flag']['Locked']) && !$user->capable($forum['fid'], 'Lock')) {
       $tpl->set_var(array(
 	"enabled" => "",
 	"nonewthreads" => "",

@@ -42,12 +42,16 @@ $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
 $tpl->parse("FORUM_HEADER", "forum_header");
 
-$index = find_msg_index($mid);
+$iid = mid_to_iid($mid);
+if (!isset($iid)) {
+  echo "Invalid message!\n";
+  exit;
+}
 
-$sql = "select * from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'";
+$sql = "select * from f_messages$iid  where mid = '" . addslashes($mid) . "'";
 $result = mysql_query($sql) or sql_error($sql);
 
-$msg = mysql_fetch_array($result);
+$msg = mysql_fetch_assoc($result);
 
 if ($msg['aid'] != $user->aid) {
   echo "This message does not belong to you!\n";

@@ -16,6 +16,7 @@ if (!isset($forum)) {
 
 require_once("textwrap.inc");
 require_once("strip.inc");
+require_once("thread.inc");
 require_once("message.inc");
 require_once("page-yatt.inc.php");
 
@@ -94,17 +95,9 @@ if (!$user->capable($forum['fid'], 'Delete')) {
 $tpl->set_var("disabled", "");
 
 if ($_POST['tid']) {
-  $index = find_thread_index($_POST['tid']);
-  $sql = "select * from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($_POST['tid']) . "'";
-  $result = mysql_query($sql) or sql_error($sql);
+  $thread = get_thread($_POST['tid']);
 
-  $thread = mysql_fetch_array($result);
-
-  $options = explode(",", $thread['flags']);
-  foreach ($options as $name => $value)
-    $thread["flag.$value"] = true;
-
-  if (isset($thread['flag.Locked']) && !$user->capable($forum['fid'], 'Lock')) {
+  if (isset($thread['flag']['Locked']) && !$user->capable($forum['fid'], 'Lock')) {
     $tpl->set_var(array(
       "error" => "",
       "preview" => "",
@@ -172,7 +165,7 @@ if (isset($_POST['postcookie'])) {
       $result = mysql_query($sql) or sql_error($sql);
 
       if (mysql_num_rows($result))
-        $parent = mysql_fetch_array($result);
+        $parent = mysql_fetch_assoc($result);
     }
   }
 
@@ -226,7 +219,7 @@ if (isset($_POST['postcookie'])) {
     $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($pid) . "'";
     $result = mysql_query($sql) or sql_error($sql);
 
-    $pmsg = mysql_fetch_array($result);
+    $pmsg = mysql_fetch_assoc($result);
 
     /* munge subject line */
     if (preg_match("/^re:/i", $pmsg['subject'], $sregs))
@@ -298,7 +291,7 @@ if (!$accepted || isset($preview)) {
       "PHPVERSION" => phpversion(),
     ));
 
-    while ($track = mysql_fetch_array($result)) {
+    while ($track = mysql_fetch_assoc($result)) {
       $uuser = new ForumUser;
       $uuser->find_by_aid((int)$track['aid']);
 

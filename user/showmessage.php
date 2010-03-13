@@ -45,14 +45,7 @@ if ($msg['pmid'] != 0)
 mark_thread_read($msg, $user);
 
 /* generate message subjects in the thread this message is a part of */
-$index = find_thread_index($msg['tid']);
-$sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . $msg['tid'] . "'";
-$result = mysql_query($sql) or sql_error($sql);
-$thread = mysql_fetch_array($result);
-
-$options = explode(",", $thread['flags']);
-foreach ($options as $name => $value)
-  $thread["flag.$value"] = true;
+$thread = get_thread($msg['tid']);
 
 /* UGLY hack, kludge, etc to workaround nasty ordering problem */
 $_page = $tpl->get_var("PAGE");
@@ -79,7 +72,7 @@ render_message($tpl, $msg, $user, $uuser);	/* viewer, message owner */
 
 $vmid = $msg['mid'];
 
-list($messages, $tree, $path) = fetch_thread($thread, $vmid);
+list($messages, $tree, $path) = get_thread_messages($thread, $vmid);
 
 $threadmsg = "<ul class=\"thread\">\n";
 $threadmsg .= list_thread(print_subject, $messages, $tree, reset($tree), $thread, $path);
@@ -87,7 +80,7 @@ $threadmsg .= "</ul>\n";
 
 $threadlinks = gen_threadlinks($thread);
 
-if ($thread['flag.Sticky'])
+if ($thread['flag']['Sticky'])
   $tpl->set_var("CLASS", "srow0");
 else if (is_thread_bumped($thread))
   $tpl->set_var("CLASS", "trow0");

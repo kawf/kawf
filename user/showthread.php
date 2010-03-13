@@ -2,6 +2,7 @@
 
 require_once("listthread.inc");
 require_once("filter.inc");
+require_once("thread.inc");
 require_once("message.inc");
 require_once("page-yatt.inc.php");
 
@@ -21,22 +22,15 @@ if (is_msg_bumped($msg['tid'])) {
   mysql_query($sql) || sql_warn($sql);
 }
 
-$index = find_thread_index($tid);
-$sql = "select * from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tid) . "'";
-$result = mysql_query($sql) or sql_error($sql);
-
-$thread = mysql_fetch_array($result);
-
-$options = explode(",", $thread['flags']);
-foreach ($options as $name => $value)
-  $thread["flag.$value"] = true;
+$thread = get_thread($tid);
 
 $index = find_msg_index($thread['mid']);
 
 /* TZ: tzoff is difference between php server and viewer, not SQL server and viewer */
 $tzoff=isset($user->tzoff)?$user->tzoff:0;
 $tid = $thread['tid'];
-for ($index=0; isset($indexes[$index]); $index++) {
+/* look for my message and later */
+for (; isset($indexes[$index]); $index++) {
   $fid = $indexes[$index]['iid'];
   /* TZ: unixtime is seconds since epoch */
   $sql = "select " .
@@ -44,7 +38,7 @@ for ($index=0; isset($indexes[$index]); $index++) {
     "message, url, urltext, video, flags, name, email, views, changes " .
     "from f_messages$fid where tid = '$tid' order by mid";
   $result=mysql_query($sql) or sql_error($sql);
-  while ($message = mysql_fetch_array($result)) {
+  while ($message = mysql_fetch_assoc($result)) {
     /* msg['date'] is time local to user... strftime would normally be
        time local to php server */
     $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime'] - $tzoff);

@@ -90,7 +90,7 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
      so we can deterministically place the | bars such that every combination
      looks right. Edit/Delete/Undelete all have | after in message.tpl */
 
-  if (!$viewer->valid() || (isset($thread['flag.Locked']) && !$locker)) {
+  if (!$viewer->valid() || (isset($thread['flag']['Locked']) && !$locker)) {
     /* viewer not logged in, or does not have lock permissions and
        thread is locked */
     $reply = false;
@@ -314,7 +314,7 @@ function fetch_message($user, $mid, $what = '*')
     $sql = "select $what, UNIX_TIMESTAMP(date) as unixtime from f_messages"
 	. $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) .  "'";
     $result = mysql_query($sql) or sql_error($sql);
-    $msg = mysql_fetch_array($result);
+    $msg = mysql_fetch_assoc($result);
 
     /* FIXME: translate pid -> pmid */
     if (!isset($msg['pmid']))
