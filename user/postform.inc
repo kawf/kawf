@@ -46,6 +46,8 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
     $tpl->set_block("enabled", "acct");
     $tpl->set_block("enabled", "noacct");
 
+    $tpl->set_block("acct", "offtopic");
+
     if (isset($thread) && !isset($forum['opt.PostReply']) && !$user->capable($forum['fid'], 'Delete')) {
       $tpl->set_var(array(
 	"enabled" => "",
@@ -144,24 +146,19 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
       /*************/
       /* overrides */
       /*************/
-      if (!isset($forum['opt.OffTopic'])) {
-	/* forum doesn't allow offtopic, hide checkbox */
-	$offtopic = false;
-	$offtopic_hidden = true;
-      }
+      /* forum doesn't allow offtopic, hide checkbox */
+      if (!isset($forum['opt.OffTopic']))
+	$tpl->set_var("offtopic", "");
 
-      if ($offtopic && !$user->capable($forum['fid'], 'OffTopic')) {
-	/* if offtopic is set, user can't unset w/o perms */
-	$offtopic_hidden = true;
-      }
+      /* if offtopic is set, user can't unset w/o perms */
+      if ($offtopic && !$user->capable($forum['fid'], 'OffTopic'))
+	$tpl->set_var("offtopic", "");
 
       /* can't set email_followup if thread is not tracked */
       if (!$track_thread) $email_followup = false;
 
       $tpl->set_var(array(
-	"OFFTOPIC_TYPE" => $offtopic_hidden?"hidden":"checkbox",
 	"OFFTOPIC" => $offtopic?" checked":"",
-	"OFFTOPIC_TEXT" => $offtopic_hidden?"":"Mark as offtopic?<br>",
 	"EXPOSEEMAIL" => $expose_email?" checked":"",
 	"EMAILFOLLOWUP" => $email_followup?" checked":"",
 	"TRACKTHREAD" => $track_thread?" checked":"",
