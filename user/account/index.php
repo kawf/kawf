@@ -67,7 +67,7 @@ if(array_key_exists('noob', $_GET)) {
 	if(mysql_num_rows($res1)) {
 	  echo "<h2>Accounts created from ".$uuser->createip."</h2>\n";
 	  print_header();
-	  while ($u = sql_fetch_array($res1)) {
+	  while ($u = sql_fetch_assoc($res1)) {
 	    $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
 	    $uu = new ForumUser;
 	    $uu->find_by_aid((int)$u['aid'], false);
@@ -90,7 +90,7 @@ if(array_key_exists('noob', $_GET)) {
 
     if($verbose>0) {
       $res1 = sql_query("select fid,shortname from f_forums order by fid");
-      while ($f = sql_fetch_array($res1)) {
+      while ($f = sql_fetch_assoc($res1)) {
 	$forums[] = $f;
       }
 
@@ -102,7 +102,7 @@ if(array_key_exists('noob', $_GET)) {
 	if(mysql_num_rows($res2)>0) {
 	  echo " <td class=\"outer\"><table class=\"inner\">\n";
 	  echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\" colspan=\"2\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
-	  while ($msg = sql_fetch_array($res2)) {
+	  while ($msg = sql_fetch_assoc($res2)) {
 	    echo "  <tr bgcolor=\"#ECECFF\">";
 	    echo "<td class=\"inner\">".$msg['ip']."</td>";
 	    echo "<td class=\"inner\">".$msg['name']."</td>";
@@ -125,7 +125,7 @@ if(array_key_exists('noob', $_GET)) {
 	    if(mysql_num_rows($res2)>0) {
 	      echo " <td class=\"outer\"><table class=\"inner\">\n";
 	      echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\" colspan=\"2\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
-	      while ($msg = sql_fetch_array($res2)) {
+	      while ($msg = sql_fetch_assoc($res2)) {
 		echo "  <tr bgcolor=\"#ECECFF\">";
 		if($msg['aid']!=$uuser->aid) {
 		    echo "<td class=\"inner\"><a$v0 href=\"/account/".$msg['aid'].".phtml?$page\">".$msg['aid']."</a></td>";
@@ -157,7 +157,7 @@ function get_stats($uu)
   $stats['offtopic']=0;
 
   if(mysql_num_rows($result)) {
-      while($index = mysql_fetch_array($result)) {
+      while($index = mysql_fetch_assoc($result)) {
 	  if($index['status'] == "Active") $stats['active']+=(int)$index['count'];
 	  if($index['status'] == "Deleted") $stats['deleted']+=(int)$index['count'];
 	  if($index['status'] == "OffTopic") $stats['offtopic']+=(int)$index['count'];
