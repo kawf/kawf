@@ -26,11 +26,8 @@ if (isset($_GET['name']) && !empty($_GET['name'])) {
 }
 
 $sql = "select count(*) from u_users";
-if (!empty($where))
-  $sql .= " where $where";
-$result = mysql_query($sql) or sql_error($sql);
-
-list($numaccounts) = mysql_fetch_row($result);
+if (!empty($where)) $sql .= " where $where";
+$numaccounts = sql_query1($sql) or sql_error($sql);
 
 if (!empty($where))
   echo "$numaccounts matching accounts<br>\n";
