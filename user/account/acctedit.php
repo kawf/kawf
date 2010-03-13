@@ -59,7 +59,8 @@ if (isset($_POST['submit'])) {
     $name = preg_replace("/</", "&lt;", $name);
     $name = preg_replace("/>/", "&gt;", $name);
 
-    $user->name($name);
+    if (!empty($name))
+	$user->name($name);
   }
 
   if (!empty($email)) {
