@@ -443,13 +443,13 @@ function striptag($message, $allowed_tags)
   }
 
   /* prevent ppl from making empty nested tags, eg <sub><sup></sup></sub> */
-  $start = $n_message;
   while (strlen($n_message)>0) {
+    $last = $n_message;
     foreach ($allowed_tags as $tag => $etag) {
       $n_message = str_ireplace("<$tag></$tag>", "", $n_message);
     }
     /* we have converged. stop */
-    if ($start == $n_message) break;
+    if ($last == $n_message) break;
   }
 
   return $n_message;
