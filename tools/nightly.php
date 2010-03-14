@@ -28,26 +28,13 @@ sql_open($database);
 if(!ini_get('safe_mode'))
     set_time_limit(0);
 
-function find_msg_index($mid)
-{
-  global $indexes;
-
-  reset($indexes);
-  while (list($key) = each($indexes))
-    if ($indexes[$key]['minmid'] <= $mid && $indexes[$key]['maxmid'] >= $mid)
-      return $indexes[$key]['iid'];
-
-  return -1;
-}
-
 function find_thread_index($tid)
 {
   global $indexes;
 
-  reset($indexes);
-  while (list($key) = each($indexes))
-    if ($indexes[$key]['mintid'] <= $tid && $indexes[$key]['maxtid'] >= $tid)
-      return $indexes[$key]['iid'];
+  foreach ($indexes as $index)
+    if ($index['mintid'] <= $tid && $index['maxtid'] >= $tid)
+      return $index['iid'];
 
   return -1;
 }
@@ -127,15 +114,13 @@ while ($forum = sql_fetch_array($res1)) {
   sql_query("delete from f_unique where fid = " . $forum['fid'] . " and type = 'Message' and id < $maxmid");
   sql_query("delete from f_unique where fid = " . $forum['fid'] . " and type = 'Thread' and id < $maxtid");
 
-  unset($indexes);
+  $indexes=array();
 
   /* Grab all of the indexes for the forum */
   $res2 = sql_query("select * from f_indexes where fid = " . $forum['fid'] . " order by iid");
 
-  while ($index = mysql_fetch_array($res2))
+  while ($index = mysql_fetch_assoc($res2))
     $indexes[] = $index;
-
-  $index = end($indexes);
 
   echo ", cleaning up tracking";
   /* Clear out tracking */
@@ -156,10 +141,13 @@ while ($forum = sql_fetch_array($res1)) {
 
   echo " OK";
 
-  /* Kludge for now */
+  /* DONT SHARD for now */
   continue;
 
-  unset($indexes);
+  /* when to shard */
+  $msgsperindex = 1000000;
+
+  $indexes=array();
 
   /* Grab all of the indexes for the forum */
   $sql = "select * from indexes order by iid";
@@ -292,7 +280,7 @@ echo $sql . "\n";
     mysql_db_query($fdb, $sql) or sql_error($sql);
   }
 
-  unset($indexes);
+  $indexes=array();
 
   /* Grab all of the indexes for the forum */
   $sql = "select * from indexes order by iid";
