@@ -128,9 +128,7 @@ if ($Debug) {
 }
 
 /* create brand new message */
-/* TZ: format to viewing user's local time */
-$tzoff = isset($user->tzoff)?$user->tzoff:0;
-$msg['date'] = strftime("%Y-%m-%d %H:%M:%S", time() - $tzoff);
+$msg['date'] = gen_date($user);
 $msg['ip'] = $remote_addr;
 $msg['aid'] = $user->aid;
 $msg['flags'] = 'NewStyle';
