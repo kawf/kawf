@@ -12,7 +12,7 @@
 <table class="tools">
 <tr>
  <td class="left">
-    <a href="/tips/?page={PAGE}" target="_blank"><b>Forum Tips</b></a>
+    <a href="/tips/?page={PAGE}" target="_blank">Forum Tips</a>
   | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forum</a>
   | <a href="/{FORUM_SHORTNAME}"><b>Go to {FORUM_NAME}</b></a>
   </td>
@@ -56,6 +56,6 @@
 <!-- END simple -->
 
 <div class="tools">
-    <a href="/tips/?page={PAGE}" target="_blank"><b>Forum Tips</b></a>
+    <a href="/tips/?page={PAGE}" target="_blank">Forum Tips</a>
   | <a href="/search/?page={PAGE}" target="_blank">Search Forums</a>
 </div>
