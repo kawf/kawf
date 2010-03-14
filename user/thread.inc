@@ -90,9 +90,10 @@ function gen_thread($thread, $collapse = false)
 
   $count = count($messages);
 
-  if (isset($user->pref['Collapsed']) || $collapse)
-    $messagestr = "<li>".print_subject($thread, reset($messages), $count - 1, true)."</li>";
-  else
+  if (isset($user->pref['Collapsed']) || $collapse) {
+    if ($count>1) $hidden = " class=\"hidden\"";
+    $messagestr = "<li$hidden>".print_subject($thread, reset($messages), $count - 1, true)."</li>";
+  } else
     $messagestr = list_thread(print_subject, $messages, $tree, reset($tree), $thread);
 
   if (empty($messagestr))

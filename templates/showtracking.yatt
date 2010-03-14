@@ -11,13 +11,13 @@
   <td class="left">
     <a href="/tips/?page=%[page]" target="_blank"><b>Forum Tips</b></a>
   | <a href="/search/?forum=%[forum(shortname)]&amp;page=%[page]" target="_blank">Search Forums</a>
+  | <a href="/%[forum(shortname)]"><b>Back to %[forum(name)]</b></a>
   </td>
-  <td class="right">
-    <a href="/%[forum(shortname)]"><b>Back to %[forum(name)]</b></a>
 %begin [update_all]
-  | <a href="/%[forum(shortname)]/markuptodate.phtml?tid=all&amp;page=%[page]&amp;token=%[user_token]&amp;time=%[time]">Update all</a>
-%end [update_all]
+  <td class="right">
+    <a href="/%[forum(shortname)]/markuptodate.phtml?tid=all&amp;page=%[page]&amp;token=%[user_token]&amp;time=%[time]">Update all</a>
   </td>
+%end [update_all]
 </tr>
 <tr>
   <td class="left">

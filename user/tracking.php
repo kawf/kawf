@@ -24,6 +24,7 @@ if (isset($user->pref['SimpleHTML'])) {
   $tpl->set_var("simple", "");
 }
 
+$tpl->set_block($table_block, "hr", "_hr");
 $tpl->set_block($table_block, "row", "_row");
 $tpl->set_block($table_block, "update_all", "_update_all");
 $tpl->set_var("USER_TOKEN", $user->token());
@@ -41,6 +42,7 @@ $sql = "select * from f_forums order by fid";
 $result = mysql_query($sql) or sql_error($sql);
 
 $numshown = 0;
+$first = true;
 
 while ($forum = mysql_fetch_assoc($result)) {
   $tpl->set_var("FORUM_NAME", $forum['name']);
@@ -53,6 +55,7 @@ while ($forum = mysql_fetch_assoc($result)) {
   $forumcount = $forumupdated = 0;
 
   $tpl->set_var("_row", "");
+  $tpl->set_var("_hr", "");
   if (count($tthreads_by_tid)) foreach ($tthreads_by_tid as $tthread) {
     $iid = tid_to_iid($tthread['tid']);
     /* tstamp is LOCALTIME of SQL server, unixtime is seconds since epoch */
@@ -71,15 +74,17 @@ while ($forum = mysql_fetch_assoc($result)) {
     } else
       $tpl->set_var("CLASS", "row" . ($forumcount % 2));
 
-    $forumcount++;
-    $numshown++;
-
     $threadlinks = gen_threadlinks($thread, true /* always collapse */);
     $tpl->set_var("MESSAGES", $messagestr);
     $tpl->set_var("THREADLINKS", $threadlinks);
 
     $tpl->parse("_row", "row", true);
+
+    $forumcount++;
+    $numshown++;
   }
+
+  if ($forumcount>0)
 
   if ($forumupdated)
     $tpl->parse("_update_all", "update_all");
@@ -87,6 +92,8 @@ while ($forum = mysql_fetch_assoc($result)) {
     $tpl->set_var("_update_all", "");
 
   if ($forumcount) {
+    if (!$first) $tpl->parse("_hr", "hr", true);
+    $first = false;
     /* HACK: ugly */
     unset($tpl->varkeys['forum_header']);
     unset($tpl->varvals['forum_header']);
