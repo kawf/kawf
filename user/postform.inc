@@ -122,7 +122,7 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
 
       $tpl->set_var("URLLINK", escape_form_url($msg['url']));
       $tpl->set_var("URLTEXT", escape_form($msg['urltext']));
-      $tpl->set_var("VIDEO", escape_form_url($msg['url']));
+      $tpl->set_var("VIDEO", escape_form_url($msg['video']));
       $tpl->set_var("IMAGEURL", escape_form_url($msg['imageurl']));
 
       $tpl->set_var("USER_NAME", $user->name);
