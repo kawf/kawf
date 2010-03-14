@@ -307,9 +307,6 @@ function fetch_message($user, $mid, $what = '*')
     /* Grab the actual message */
     $index = find_msg_index($mid);
 
-    /* TZ: tzoff is difference between PHP server and viewer, not SQL server and viewer */
-    $tzoff = isset($user->tzoff)?$user->tzoff:0;
-
     /* TZ: unixtime is seconds since epoch */
     $sql = "select $what, UNIX_TIMESTAMP(date) as unixtime from f_messages"
 	. $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) .  "'";
@@ -322,10 +319,22 @@ function fetch_message($user, $mid, $what = '*')
 
     /* msg['date'] is time local to user... strftime would normally be
        time local to PHP server */
-    $msg['date'] = strftime("%Y-%m-%d %H:%M:%S", $msg['unixtime'] - $tzoff);
+    $msg['date'] = gen_date($user, $msg['unixtime']);
 
     /* IMAGEURL HACK - extract from message */
     return image_url_hack_extract($msg);
+}
+
+function gen_date($user, $unixtime = null)
+{
+    /* TZ: tzoff is difference between PHP server and viewer, not SQL server and viewer */
+    $tzoff = isset($user->tzoff)?$user->tzoff:0;
+
+    if (!isset($unixtime)) $unixtime=time();
+
+    /* msg['date'] is time local to user... strftime would normally be
+       time local to PHP server */
+    return strftime("%Y-%m-%d %H:%M:%S", $unixtime - $tzoff);
 }
 
 function mark_thread_read($msg, $user)

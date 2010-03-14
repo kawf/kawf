@@ -26,8 +26,6 @@ $thread = get_thread($tid);
 
 $index = find_msg_index($thread['mid']);
 
-/* TZ: tzoff is difference between php server and viewer, not SQL server and viewer */
-$tzoff=isset($user->tzoff)?$user->tzoff:0;
 $tid = $thread['tid'];
 /* look for my message and later */
 for (; isset($indexes[$index]); $index++) {
@@ -39,9 +37,7 @@ for (; isset($indexes[$index]); $index++) {
     "from f_messages$fid where tid = '$tid' order by mid";
   $result=mysql_query($sql) or sql_error($sql);
   while ($message = mysql_fetch_assoc($result)) {
-    /* msg['date'] is time local to user... strftime would normally be
-       time local to php server */
-    $message['date'] = strftime("%Y-%m-%d %H:%M:%S", $message['unixtime'] - $tzoff);
+    $message['date'] = gen_date($user, $message['unixtime']);
     $message['pmid'] = $message['pid'];
     $messages[] = $message;
   }

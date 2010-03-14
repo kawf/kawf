@@ -170,13 +170,17 @@ function build_tthreads($fid)
 {
   global $user;
 
+  $tthreads = array();
+  $tthreads_by_tid = array();
+
   /* build tthreads_by_tid thread tracking cache */
   if ($user->valid()) {
     /* TZ: unixtime is seconds since epoch */
     $result = sql_query("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = $fid and aid = " . $user->aid . " order by tid desc");
 
     while ($tthread = mysql_fetch_array($result)) {
-      if (filter_thread($tthread['tid']))
+      $tid = $tthread['tid'];
+      if (filter_thread($tid))
 	continue;
 
       /* explode 'f_tracking' options set column */
@@ -186,12 +190,14 @@ function build_tthreads($fid)
 	  $tthread['option'][$v]=true;
 	}
       }
+
+      /* skip duplicate tracking entries if its older */
+      if (isset($tthreads_by_tid[$tid]) &&
+	$tthread['unixtime'] < $tthreads_by_tid[$tid]['unixtime'])
+	continue;
+
+      $tthreads_by_tid[$tid] = $tthread;
       $tthreads[] = $tthread;
-      if (isset($tthreads_by_tid[$tthread['tid']])) {
-        if ($tthread['unixtime'] > $tthreads_by_tid[$tthread['tid']]['unixtime'])
-          $tthreads_by_tid[$tthread['tid']] = $tthread;
-      } else
-        $tthreads_by_tid[$tthread['tid']] = $tthread;
     }
   }
   return array($tthreads, $tthreads_by_tid);
