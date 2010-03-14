@@ -31,7 +31,7 @@ if (!isset($curpage))
 $tpp = $user->threadsperpage;
 if ($tpp<=0) $tpp=20;
 
-$out = process_tthreads($tthreads);
+$out = process_tthreads();
 $numpages = ceil($out['numshown']/$tpp);
 
 if ($numpages && $curpage>$numpages) {
@@ -108,36 +108,6 @@ $yatt->parse("footer");
 
 print generate_page("Your tracked threads in " . $forum['name'],
   $yatt->output());
-
-function process_tthreads($tthreads)
-{
-  $numshown = 0;
-  $threadshown = array();
-  $out['threads'] = array();
-
-  if (count($tthreads)) foreach ($tthreads as $tthread) {
-    $tid = $tthread['tid'];
-    if (isset($threadshown[$tid]))
-      continue;
-
-    $thread = get_thread($tid);
-    if (!isset($thread))
-      continue;
-
-    $new = ($thread['unixtime'] > $tthread['unixtime']);
-    $sticky = isset($thread['flag']['Sticky']);
-
-    $t['sticky'] = $sticky;
-    $t['new'] = $new;
-    $t['thread'] = $thread;
-    $out['threads'][]=$t;
-
-    $threadshown[$tid] = true;
-    $numshown++;
-  }
-  $out['numshown']=$numshown;
-  return $out;
-}
 
 function parse_row($yatt, $block, $class, $thread, $collapse=false)
 {
