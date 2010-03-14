@@ -75,7 +75,7 @@ if (!$user->capable($forum['fid'], 'Delete')) {
       exit;
     }
   } else {
-    if (!isset($forum['opt.PostReply'])) {
+    if (!isset($forum['option']['PostReply'])) {
       $tpl->set_var(array(
         "locked" => "",
         "error" => "",
