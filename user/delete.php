@@ -58,7 +58,7 @@ if ($msg['aid'] != $user->aid) {
   exit;
 }
 
-if (!isset($forum['opt.PostEdit'])) {
+if (!isset($forum['option']['PostEdit'])) {
   $tpl->set_var(array(
     "image" => "",
     "preview" => "",

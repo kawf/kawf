@@ -112,7 +112,7 @@ if (!isset($_POST['message'])) {
   $track_thread = isset($_POST['TrackThread']) || $send_email;
 }
 
-if (!isset($forum['opt.PostEdit'])) {
+if (!isset($forum['option']['PostEdit'])) {
   $tpl->set_var(array(
     "edit_locked" => "",
     "error" => "",

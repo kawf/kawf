@@ -61,7 +61,7 @@ if ($msg['aid'] != $user->aid) {
 /* update to new ip */
 $msg['ip'] = $remote_addr;
 
-if (!isset($forum['opt.PostEdit'])) {
+if (!isset($forum['option']['PostEdit'])) {
   $tpl->set_var(array(
     "image" => "",
     "preview" => "",

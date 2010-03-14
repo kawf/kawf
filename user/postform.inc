@@ -48,13 +48,13 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
 
     $tpl->set_block("acct", "offtopic");
 
-    if (isset($thread) && !isset($forum['opt.PostReply']) && !$user->capable($forum['fid'], 'Delete')) {
+    if (isset($thread) && !isset($forum['option']['PostReply']) && !$user->capable($forum['fid'], 'Delete')) {
       $tpl->set_var(array(
 	"enabled" => "",
 	"locked" => "",
 	"nonewthreads" => "",
       ));
-    } else if (!isset($thread) && !isset($forum['opt.PostThread']) && !$user->capable($forum['fid'], 'Delete')) {
+    } else if (!isset($thread) && !isset($forum['option']['PostThread']) && !$user->capable($forum['fid'], 'Delete')) {
       $tpl->set_var(array(
 	"enabled" => "",
 	"locked" => "",
@@ -147,7 +147,7 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
       /* overrides */
       /*************/
       /* forum doesn't allow offtopic, hide checkbox */
-      if (!isset($forum['opt.OffTopic']))
+      if (!isset($forum['option']['OffTopic']))
 	$tpl->set_var("offtopic", "");
 
       /* if offtopic is set, user can't unset w/o perms */
