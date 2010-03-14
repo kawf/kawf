@@ -147,7 +147,7 @@ function find_forum($shortname)
 
   $options = explode(",", $forum['options']);
   foreach ($options as $value)
-    $forum["opt.$value"] = true;
+    $forum['option'][$value] = true;
 
   return 1;
 }

@@ -62,7 +62,7 @@ $tpl->parse("FORUM_HEADER", "forum_header");
 
 if (!$user->capable($forum['fid'], 'Delete')) {
   if (!isset($_POST['tid'])) {
-    if (!isset($forum['opt.PostThread'])) {
+    if (!isset($forum['option']['PostThread'])) {
       $tpl->set_var(array(
         "locked" => "",
         "error" => "",
