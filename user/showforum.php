@@ -153,6 +153,7 @@ if ($curpage == 1) {
     $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $index['iid'] . " where flags like '%Sticky%'";
     $result = mysql_query($sql) or sql_error($sql);
     while ($thread = mysql_fetch_assoc($result)) {
+	gen_thread_flags($thread);
 	$collapse = !is_thread_bumped($thread);
 
 	$messagestr = gen_thread($thread, $collapse);
@@ -175,24 +176,16 @@ if ($curpage == 1) {
   /* show tracked and bumped threads next */
   /****************************************/
   if (count($tthreads)) foreach ($tthreads as $tthread) {
-    $index = find_thread_index($tthread['tid']);
-    if (!isset($index))
-      continue;
-
     $tid = $tthread['tid'];
 
     /* skip if we've already shown it as a sticky */
     if (isset($threadshown[$tid]))
       continue;
 
-    /* TZ: unixtime is seconds since epoch */ 
-    $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tid) . "'";
-    $result = mysql_query($sql) or sql_error($sql);
-
-    if (!mysql_num_rows($result))
+    $thread = get_thread($tid);
+    if (!isset($thread))
       continue;
 
-    $thread = mysql_fetch_array($result);
     if ($thread['unixtime'] > $tthread['unixtime']) {
       $messagestr = gen_thread($thread);
       if (!$messagestr) continue;
@@ -277,10 +270,11 @@ while ($numshown < $threadsperpage) {
 
   $skipthreads += mysql_num_rows($result);
 
-  while ($thread = mysql_fetch_array($result)) {
+  while ($thread = mysql_fetch_assoc($result)) {
     if (isset($threadshown[$thread['tid']]))
       continue;
 
+    gen_thread_flags($thread);
     $messagestr = gen_thread($thread);
     if (!$messagestr) continue;
 
@@ -291,7 +285,7 @@ while ($numshown < $threadsperpage) {
       $tpl->set_var("CLASS", "mrow" . ($numshown % 2));
     else
 */
-    if ($thread['flag.Sticky']) {	/* calculated by gen_thread() */
+    if ($thread['flag']['Sticky']) {	/* calculated by gen_thread_flags() */
       $tpl->set_var("CLASS", "srow" . ($numshown % 2));
       if (is_thread_bumped($thread)) $tthreadsshown++;
     } else if (is_thread_bumped($thread)) {

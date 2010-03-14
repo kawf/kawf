@@ -8,7 +8,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
-    while (list(,$flag) = each($flagexp))
+    foreach ($flagexp as $flag)
       $flags[$flag] = true;
   }
 
@@ -75,14 +75,14 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
 
   $string .= "</span>\n";
 
-  if (isset($thread['flag.Sticky']) && !$msg['pmid']) {
+  if (isset($thread['flag']['Sticky']) && !$msg['pmid']) {
     if (!isset($user->pref['SimpleHTML']))
       $string .= " (<font color=\"green\"><b>Sticky</b></font>)";
     else
       $string .= " (sticky)";
   }
 
-  if (isset($thread['flag.Locked']) && !$msg['pmid']) {
+  if (isset($thread['flag']['Locked']) && !$msg['pmid']) {
     if (!isset($user->pref['SimpleHTML']))
       $string .= " <img src=\"/pics/lock.gif\" alt=\"locked\">";
     else
@@ -135,11 +135,11 @@ function append_tools($user, $string, $forum, $thread, $msg, $page)
   }
 
   if ($user->capable($forum['fid'], 'Lock') && !$msg['pmid']) {
-    if (isset($thread['flag.Locked']))
+    if (isset($thread['flag']['Locked']))
       $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?tid=" . $msg['tid'] . "&amp;page=$page&amp;token=$stoken\" title=\"Unlock\">ul</a>";
     else
       $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?tid=" . $msg['tid'] . "&amp;page=$page&amp;token=$stoken\" title=\"Lock\">lt</a>";
-    if (isset($thread['flag.Sticky']))
+    if (isset($thread['flag']['Sticky']))
       $string .= " <a href=\"/" . $forum['shortname'] . "/sticky.phtml?tid=" . $msg['tid'] . "&amp;stick=0&amp;page=$page&amp;token=$stoken\" title=\"Unstick thread\">us</a>";
     else
       $string .= " <a href=\"/" . $forum['shortname'] . "/sticky.phtml?tid=" . $msg['tid'] . "&amp;stick=1&amp;page=$page&amp;token=$stoken\" title=\"Sticky thread\">st</a>";

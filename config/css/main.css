@@ -73,6 +73,7 @@ ul {margin-left: 1em; padding-left: 1em;}
 .grow1 { background: #eecccc }
 
 ul.thread li { list-style: circle outside none; }
+ul.thread li.hidden { list-style: disc outside none; }
 
 /* subject thread listing spacing */
 ul.thread {

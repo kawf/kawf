@@ -31,7 +31,7 @@ if (!isset($curpage))
 $tpp = $user->threadsperpage;
 if ($tpp<=0) $tpp=20;
 
-$out = process_trackedthreads($tthreads);
+$out = process_tthreads($tthreads);
 $numpages = ceil($out['numshown']/$tpp);
 
 if ($numpages && $curpage>$numpages) {
@@ -109,7 +109,7 @@ $yatt->parse("footer");
 print generate_page("Your tracked threads in " . $forum['name'],
   $yatt->output());
 
-function process_trackedthreads($tthreads)
+function process_tthreads($tthreads)
 {
   $numshown = 0;
   $threadshown = array();
@@ -117,25 +117,15 @@ function process_trackedthreads($tthreads)
 
   if (count($tthreads)) foreach ($tthreads as $tthread) {
     $tid = $tthread['tid'];
-    if (isset($threadshown[$tid])) continue;
-
-    $iid = tid_to_iid($tid);
-    if (!isset($iid)) continue;
-
-    /* TZ: unixtime is seconds since epoch */
-    $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$iid" . " where tid = '" . addslashes($tid) . "'";
-    $result = mysql_query($sql) or sql_error($sql);
-
-    if (!mysql_num_rows($result))
+    if (isset($threadshown[$tid]))
       continue;
 
-    $thread = mysql_fetch_assoc($result);
-
-    /* only need flags */
-    gen_thread_flags($thread);
+    $thread = get_thread($tid);
+    if (!isset($thread))
+      continue;
 
     $new = ($thread['unixtime'] > $tthread['unixtime']);
-    $sticky = isset($thread['flag.Sticky']);
+    $sticky = isset($thread['flag']['Sticky']);
 
     $t['sticky'] = $sticky;
     $t['new'] = $new;

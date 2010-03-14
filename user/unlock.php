@@ -21,16 +21,16 @@ if (!$user->is_valid_token($_REQUEST['token'])) {
   err_not_found('Invalid token');
 }
 
-$index = find_thread_index($tid);
-if (!isset($index)) {
+$iid = tid_to_iid($tid);
+if (!isset($iid)) {
   echo "Invalid thread!\n";
   exit;
 }
 
-$sql = "select * from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tid) . "'";
+$sql = "select * from f_threads$iid where tid = '" . addslashes($tid) . "'";
 $result = mysql_query($sql) or sql_error($sql);
 
-$thread = mysql_fetch_array($result);
+$thread = mysql_fetch_assoc($result);
 
 $options = explode(",", $thread['flags']);
 foreach ($options as $name => $value) {
@@ -40,10 +40,10 @@ foreach ($options as $name => $value) {
 
 $flags = implode(",", $options);
 
-$sql = "update f_threads" . $indexes[$index]['iid'] . " set flags = '" . addslashes($flags) . "' where tid = '" . addslashes($tid) . "'";
+$sql = "update f_threads$iid set flags = '" . addslashes($flags) . "' where tid = '" . addslashes($tid) . "'";
 mysql_query($sql) or sql_error($sql);
 
-sql_query("update f_messages" . $indexes[$index]['iid'] . " set " .
+sql_query("update f_messages$iid set " .
         "changes = CONCAT(changes, 'Unlocked by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), '\n') " .
         "where mid = '" . addslashes($thread['mid']) . "'");
 

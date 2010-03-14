@@ -24,6 +24,7 @@ if (isset($user->pref['SimpleHTML'])) {
   $tpl->set_var("simple", "");
 }
 
+$tpl->set_block($table_block, "hr", "_hr");
 $tpl->set_block($table_block, "row", "_row");
 $tpl->set_block($table_block, "update_all", "_update_all");
 $tpl->set_var("USER_TOKEN", $user->token());
@@ -37,72 +38,34 @@ $tpl->set_var("PAGE", $_page);
 $time = time();
 $tpl->set_var("TIME", $time);
 
-function display_thread($thread)
-{
-  global $user, $forum;
-
-  $options = explode(",", $thread['flags']);
-  foreach ($options as $name => $value)
-    $thread["flag.$value"] = true;
-
-  list($messages, $tree) = fetch_thread($thread);
-  if (!isset($messages) || !count($messages))
-    return array(0, "");
-
-  $count = count($messages);
-
-  if (isset($user->pref['Collapsed']))
-    $messagestr = "<li>".print_subject($thread, reset($messages), $count - 1, true)."</li>";
-  else
-    $messagestr = list_thread(print_subject, $messages, $tree, reset($tree), $thread);
-
-  if (empty($messagestr))
-    return array(0, "");
-
-  return array($count, "<ul class=\"thread\">\n" . $messagestr . "</ul>");
-}
-
 $sql = "select * from f_forums order by fid";
 $result = mysql_query($sql) or sql_error($sql);
 
 $numshown = 0;
+$first = true;
 
-while ($forum = mysql_fetch_array($result)) {
+while ($forum = mysql_fetch_assoc($result)) {
   $tpl->set_var("FORUM_NAME", $forum['name']);
   $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
-  unset($indexes);
-
-  $sql = "select * from f_indexes where fid = " . $forum['fid'];
-  $res2 = mysql_query($sql) or sql_error($sql);
-
-  $numindexes = mysql_num_rows($res2);
-
-  for ($i = 0; $i < $numindexes; $i++)
-    $indexes[$i] = mysql_fetch_array($res2);
-
-  /* tstamp is LOCALTIME of SQL server, unixtime is seconds since epoch */
-  $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = " . $forum['fid'] . " and aid = " . $user->aid . " order by tid desc";
-  $res2 = mysql_query($sql) or sql_error($sql);
+  /* rebuild caches per forum */
+  $indexes = build_indexes($forum['fid']);
+  list($tthreads, $tthreads_by_tid) = build_tthreads($forum['fid']);
 
   $forumcount = $forumupdated = 0;
 
-  unset($tthreads_by_tid);
-
   $tpl->set_var("_row", "");
-
-  while ($tthread = mysql_fetch_array($res2)) {
-    $tthreads_by_tid[$tthread['tid']] = $tthread;
-
-    $index = find_thread_index($tthread['tid']);
+  $tpl->set_var("_hr", "");
+  if (count($tthreads_by_tid)) foreach ($tthreads_by_tid as $tthread) {
+    $iid = tid_to_iid($tthread['tid']);
     /* tstamp is LOCALTIME of SQL server, unixtime is seconds since epoch */
-    $thread = sql_querya("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tthread['tid']) . "'");
+    $thread = sql_querya("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$iid where tid = '" . addslashes($tthread['tid']) . "'");
     if (!$thread)
       continue;
 
-    list($count, $messagestr) = display_thread($thread);
+    $messagestr = gen_thread($thread, true /* always collapse */);
 
-    if (!$count)
+    if (!isset($messagestr))
       continue;
 
     if (is_thread_bumped($thread)) {
@@ -111,15 +74,17 @@ while ($forum = mysql_fetch_array($result)) {
     } else
       $tpl->set_var("CLASS", "row" . ($forumcount % 2));
 
-    $forumcount++;
-    $numshown++;
-
-    $threadlinks = gen_threadlinks($thread);
+    $threadlinks = gen_threadlinks($thread, true /* always collapse */);
     $tpl->set_var("MESSAGES", $messagestr);
     $tpl->set_var("THREADLINKS", $threadlinks);
 
     $tpl->parse("_row", "row", true);
+
+    $forumcount++;
+    $numshown++;
   }
+
+  if ($forumcount>0)
 
   if ($forumupdated)
     $tpl->parse("_update_all", "update_all");
@@ -127,6 +92,8 @@ while ($forum = mysql_fetch_array($result)) {
     $tpl->set_var("_update_all", "");
 
   if ($forumcount) {
+    if (!$first) $tpl->parse("_hr", "hr", true);
+    $first = false;
     /* HACK: ugly */
     unset($tpl->varkeys['forum_header']);
     unset($tpl->varvals['forum_header']);
@@ -147,4 +114,5 @@ if (!$numshown)
 $tpl->set_var("token", $user->token());
 
 print generate_page('Your Tracked Threads', $tpl->parse("CONTENT", "tracking"));
+// vim: sw=2
 ?>
