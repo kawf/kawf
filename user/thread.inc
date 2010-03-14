@@ -135,6 +135,42 @@ function gen_threadlinks($thread, $collapse = false)
     return $tl;
 }
 
+function process_tthreads($just_count = false)
+{
+  global $tthreads;
+
+  $numshown = 0;
+  $threadshown = array();
+  $out['threads'] = array();
+
+  if (count($tthreads)) foreach ($tthreads as $tthread) {
+    $tid = $tthread['tid'];
+    if (isset($threadshown[$tid]))
+      continue;
+
+    $thread = get_thread($tid);
+    if (!isset($thread))
+      continue;
+
+    if (!$just_count) {
+      $new = ($thread['unixtime'] > $tthread['unixtime']);
+      $sticky = isset($thread['flag']['Sticky']);
+
+      $t['sticky'] = $sticky;
+      $t['new'] = $new;
+      $t['thread'] = $thread;
+      $out['threads'][]=$t;
+
+      $threadshown[$tid] = true;
+    }
+    $numshown++;
+  }
+  if ($just_count) return $numshown;
+
+  $out['numshown']=$numshown;
+  return $out;
+}
+
 function is_thread_etracked($thread)
 {
     global $tthreads_by_tid;

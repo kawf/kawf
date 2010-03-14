@@ -12,7 +12,9 @@
   | <a href="#post"><b>Post New Thread</b></a>
   </td>
   <td class="right">
+<!-- BEGIN tracked_threads -->
     <a href="/{FORUM_SHORTNAME}/tracking.phtml"><b>Tracked threads</b></a>
+<!-- END tracked_threads -->
 <!-- BEGIN update_all -->
   | <a href="/{FORUM_SHORTNAME}/markuptodate.phtml?tid=all&amp;page={PAGE}&amp;token={USER_TOKEN}&amp;time={TIME}">Update all</a>
 <!-- END update_all -->

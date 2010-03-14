@@ -10,6 +10,7 @@ $tpl->set_file(array(
 ));
 
 $tpl->set_block("showforum", "restore_gmsgs");
+$tpl->set_block("showforum", "tracked_threads");
 $tpl->set_block("showforum", "update_all");
 $tpl->set_block("showforum", "simple");
 $tpl->set_block("showforum", "normal");
@@ -302,6 +303,9 @@ while ($numshown < $threadsperpage) {
 
   mysql_free_result($result);
 }
+
+if (!process_tthreads(true /* just count */))
+  $tpl->set_var("tracked_threads", "");
 
 if (!$tthreadsshown)
   $tpl->set_var("update_all", "");
