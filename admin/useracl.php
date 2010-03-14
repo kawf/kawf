@@ -1,4 +1,5 @@
 <?php
+require_once("pagenav.inc.php");
 
 $user->req("ForumAdmin");
 
@@ -7,7 +8,32 @@ page_header("Forum User ACL");
 if (isset($_GET['message']))
   page_show_message($_GET['message']);
 
-$result = sql_query("select f_moderators.*, u_users.name from f_moderators, u_users where u_users.aid = f_moderators.aid order by aid");
+$rowsperpage = 100;
+
+if (is_valid_integer($_GET['page']))
+  $page=$_GET['page'];
+else
+  $page = 1;
+
+$sql = "select count(*) from f_moderators, u_users where u_users.aid = f_moderators.aid";
+$numrows = sql_query1($sql) or sql_error($sql);
+echo "$numrows total user ACL records<br>\n";
+
+$numpages = ceil($numrows / $rowsperpage);
+
+function print_pages($page, $numpages)
+{
+  $fmt = "useracl.phtml?page=%d";
+  print "Page: " . gen_pagenav($fmt, $page, $numpages) . "<br>\n";
+}
+
+print_pages($page, $numpages);
+
+$sql = "select f_moderators.*, u_users.name from f_moderators, u_users where u_users.aid = f_moderators.aid";
+$skiprows = ($page - 1) * $rowsperpage;
+$sql .= " order by aid limit $skiprows,$rowsperpage";
+
+$result = sql_query($sql) or sql_error($sql);
 ?>
 
 <a href="useracladd.phtml">Add new user ACL</a>
@@ -59,5 +85,7 @@ foreach ($acllist as $useracl) {
 </table>
 
 <?php
+print_pages($page, $numpages);
 page_footer();
+// vim: sw=2
 ?>
