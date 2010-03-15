@@ -321,9 +321,9 @@ if (isset($error) || isset($preview)) {
   mysql_query($sql) or sql_error($sql); 
 
   if ($track_thread)
-    thread_track($forum['fid'], $nmsg['tid'], $send_email?"SendEmail":"");
+    track_thread($forum['fid'], $nmsg['tid'], $send_email?"SendEmail":"");
   else
-    thread_untrack($forum['fid'], $nmsg['tid']);
+    untrack_thread($forum['fid'], $nmsg['tid']);
 
   $tpl->set_var("MSG_MID", $mid);
 }
