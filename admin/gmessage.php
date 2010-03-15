@@ -131,6 +131,7 @@ function process_request($tpl, $arg)
     if (!count($arg)) return;
 
     dump($arg);
+    $args = '';
 
     if (isset($arg['gid']) && is_numeric($arg['gid'])) {
 	$gid = $arg['gid'];
@@ -143,7 +144,7 @@ function process_request($tpl, $arg)
 
 	$name = $user->name;
 
-	if (isset($arg['submit']) && $arg['submit'] == 'Update') {
+	if (isset($arg['submit']) && $arg['submit'] == "Update Slot $gid") {
 	    global $subject_tags;
 	    $subject = stripcrap($arg['subject'], $subject_tags);
 	    $url = stripcrapurl($arg['url']);
@@ -196,7 +197,8 @@ function process_request($tpl, $arg)
 	    else generate_edit_form($tpl, $gid);
 	}
 
-	if (count($sqls)) header("Location: /admin/gmessage.phtml$args");
+	if (count($sqls))
+	   header("Location: /admin/gmessage.phtml$args");
     }
 }
 
