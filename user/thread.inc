@@ -171,13 +171,25 @@ function process_tthreads($just_count = false)
   return $out;
 }
 
+function log_backtrace($bt)
+{
+  foreach ($bt as $r) {
+    $out = sprintf("%s in %s at line %d", $r['file'], $r['function'],
+      $r['line']);
+    error_log("  $out");
+  }
+}
+
 function untrack_thread($fid, $tid)
 {
   global $user;
 
-  $fid = addslashes($fid);
-  $tid = addslashes($tid);
   $aid = $user->aid;
+
+  if (!is_numeric($fid) || !is_numeric($tid) || $fid<=0 || $tid<=0) {
+      error_log("fid=$fid tid=$tid aid=$aid");
+      log_backtrace(debug_backtrace());
+  }
 
   $sql = "delete from f_tracking where ". "
     fid = '$fid' and tid = '$tid' and aid = '$aid '";
@@ -188,13 +200,16 @@ function untrack_thread($fid, $tid)
 function track_thread($fid, $tid, $options='')
 {
   global $user;
-
-  $fid = addslashes($fid);
-  $tid = addslashes($tid);
+  
   $aid = $user->aid;
 
-  /* hack until we have uniq key */
-  untrack_thread($fid, $tid);
+  if (!is_numeric($fid) || !is_numeric($tid) || $fid<=0 || $tid<=0) {
+      error_log("fid=$fid tid=$tid aid=$aid");
+      log_backtrace(debug_backtrace());
+      $sql = "delete from f_tracking where fid = '0' or tid = '0'";
+      mysql_query($sql) or sql_error($sql);
+      return;
+  }
 
   /* use replace because we might have a uniq key */
   $sql = "replace into f_tracking ( fid, tid, aid, options ) values ( " .

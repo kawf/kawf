@@ -176,24 +176,17 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
   $sql = "insert into f_updates ( fid, mid ) values ( $fid, '" . addslashes($msg['mid']) . "' )";
   mysql_query($sql);
 
-  $where = "fid = $fid and aid = '" . $user->aid . "' and tid = '" . addslashes($msg['tid']) . "'";
-  $sql = "select * from f_tracking where $where";
-  $result = mysql_query($sql) or sql_error($sql);
+  $where = "fid = '$fid' and aid = '" . $user->aid . "' and tid = '" . addslashes($msg['tid']) . "'";
+  $count = sql_query1("select count(*) from f_tracking where $where");
   if (isset($request['TrackThread'])) {
     $options = "";
 
     if (isset($request['EmailFollowup']))
       $options = "SendEmail";
 
-    if (!mysql_num_rows($result)) {
-      $sql = "insert into f_tracking ( fid, tid, aid, options ) values (  $fid, '" . addslashes($msg['tid']) . "', '" . addslashes($user->aid) . "', '$options' )";
-      mysql_query($sql) or sql_error($sql);
-    }
+    if (!$count) track_thread($fid, $msg['tid'], $options);
   } else {
-    if (mysql_num_rows($result)) {
-      $sql = "delete from f_tracking where $where";
-      mysql_query($sql) or sql_error($sql);
-    }
+    if ($count) untrack_thread($fid, $msg['tid']);
   }
 
   return $newmessage;

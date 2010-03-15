@@ -57,8 +57,6 @@ function filter_messages(&$messages, $tree, $siblings, $path = array())
 
 function filter_thread($tid)
 {
-  if ($tid<=0) return true;
-
   $iid = tid_to_iid($tid);
   if (!isset($iid)) {
     err_not_found("thread $tid has no iid");
