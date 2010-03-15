@@ -181,6 +181,8 @@ function build_tthreads($fid)
     while ($tthread = mysql_fetch_assoc($result)) {
       $tid = $tthread['tid'];
 
+      if ($tid<=0) continue;
+
       /* HACK: f_tracking is missing a uniq key. Ditch dupe entries */
       /* Hopefully won't happen if migration 20100314063313 is applied */
       if (isset($tthreads_by_tid[$tid])) {
