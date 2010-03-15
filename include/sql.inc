@@ -85,12 +85,12 @@ function sql_execute($sql)
 function sql_query1($sql)
 {
   $result = sql_query($sql);
-  if (!mysql_num_rows($result))
+  if (!sql_num_rows($result))
     return null;
 
-  list($var) = mysql_fetch_row($result);
+  list($var) = sql_fetch_row($result);
 
-  mysql_free_result($result);
+  sql_free_result($result);
 
   return $var;
 }
@@ -98,10 +98,10 @@ function sql_query1($sql)
 function sql_querya($sql)
 {
   $result = sql_query($sql);
-  if (!mysql_num_rows($result))
+  if (!sql_num_rows($result))
     return null;
 
-  $array = mysql_fetch_array($result);
+  $array = sql_fetch_array($result);
 
   sql_free_result($result);
 
@@ -111,14 +111,29 @@ function sql_querya($sql)
 function sql_queryh($sql)
 {
   $result = sql_query($sql);
-  if (!mysql_num_rows($result))
+  if (!sql_num_rows($result))
     return null;
 
-  $hash = mysql_fetch_assoc($result);
+  $hash = sql_fetch_assoc($result);
 
   sql_free_result($result);
 
   return $hash;
+}
+
+function sql_query1c($sql)
+{
+  $out = array();
+  $result = sql_query($sql);
+  if (!sql_num_rows($result))
+    return null;
+
+  while ($row = sql_fetch_array($result))
+    $out[] = $row[0];
+
+  sql_free_result($result);
+
+  return $out;
 }
 
 function sql_free_result($result)
@@ -129,6 +144,11 @@ function sql_free_result($result)
 function sql_num_rows($result)
 {
   return mysql_num_rows($result);
+}
+
+function sql_fetch_row($result)
+{
+  return mysql_fetch_row($result);
 }
 
 function sql_fetch_array($result)

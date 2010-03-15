@@ -75,6 +75,22 @@ echo "Cleaning visits\n";
 /* Clear out visits */
 sql_query("delete from f_visits where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 30");
 
+echo "Cleaning indexes\n";
+$iids = sql_query1c("select iid from f_indexes order by iid");
+foreach($iids as $iid) {
+    $res = sql_query1("show tables like \"f_messages$iid\"");
+    if (empty($res)) {
+	print "no f_messages$iid, deleting $iid from f_indexes\n";
+	sql_query("delete from f_indexes where iid='$iid'");
+    } else {
+	$res = sql_query1("show tables like \"f_threads$iid\"");
+	if (empty($res)) {
+	    print "no f_threads$iid, deleting $iid from f_indexes\n";
+	    sql_query("delete from f_indexes where iid='$iid'");
+	}
+    }
+}
+
 echo "Cleaning forums:";
 $res1 = sql_query("select * from f_forums,f_indexes where f_forums.fid=f_indexes.fid order by f_forums.fid");
 while ($forum = sql_fetch_array($res1)) {
