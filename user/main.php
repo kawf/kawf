@@ -178,8 +178,29 @@ function build_tthreads($fid)
     /* TZ: unixtime is seconds since epoch */
     $result = sql_query("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = $fid and aid = " . $user->aid . " order by tid desc");
 
-    while ($tthread = mysql_fetch_array($result)) {
+    while ($tthread = mysql_fetch_assoc($result)) {
       $tid = $tthread['tid'];
+
+      /* HACK: f_tracking is missing a uniq key. Ditch dupe entries */
+      /* Hopefully won't happen if migration 20100314063313 is applied */
+      if (isset($tthreads_by_tid[$tid])) {
+	if ($tthread['unixtime'] > $tthreads_by_tid[$tid]['unixtime']) {
+	  // echo "dup tracking entry for tid $tid, overwriting<br>\n";
+	  /* Crap. This one is newer than existing entry. Rebuild all of
+	   * $tthreads w/o any entries with this tid */
+	  $new = array();
+	  foreach ($tthreads as $t) {
+	    if ($t['tid']!=$tthread['tid']) $new[]=$tthread;
+	  }
+	  $tthreads[] = $new; 
+	} else {
+	  // echo "dup tracking entry for tid $tid, ignoring<br>\n";
+	  /* Throw it away. Don't add it to $tthreads_by_tid or $tthread */
+	  continue;
+	}
+      }
+
+      /* Throw away threads that we can't see */
       if (filter_thread($tid))
 	continue;
 
@@ -190,11 +211,6 @@ function build_tthreads($fid)
 	  $tthread['option'][$v]=true;
 	}
       }
-
-      /* skip duplicate tracking entries if its older */
-      if (isset($tthreads_by_tid[$tid]) &&
-	$tthread['unixtime'] < $tthreads_by_tid[$tid]['unixtime'])
-	continue;
 
       $tthreads_by_tid[$tid] = $tthread;
       $tthreads[] = $tthread;

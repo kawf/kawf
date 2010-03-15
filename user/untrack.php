@@ -1,4 +1,5 @@
 <?php
+require_once('thread.inc');
 
 if (!isset($forum)) {
   echo "Invalid forum\n";
@@ -8,17 +9,22 @@ if (!isset($forum)) {
 $page = $_REQUEST['page'];
 $tid = $_REQUEST['tid'];
 
-if (!$user->valid()) {
+if (!$user->valid() || !is_numeric($tid)) {
   header("Location: $page");
+  exit;
+}
+
+$index = find_thread_index($tid);
+if (!isset($index)) {
+  echo "Invalid thread!\n";
   exit;
 }
 
 if (!$user->is_valid_token($_REQUEST['token']))
   err_not_found("Invalid token"); 
 
-$sql = "delete from f_tracking where fid = " . $forum['fid'] . " and tid = '" . addslashes($tid) . "' and aid = '" . $user->aid . "'";
-mysql_query($sql) or sql_error($sql);
+untrack_thread($forum['fid'], $tid);
 
 Header("Location: $page");
-
+// vim: sw=2
 ?>
