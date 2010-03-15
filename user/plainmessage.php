@@ -12,7 +12,7 @@ if ($raw) {
     exit;
 }
 
-mark_thread_read($msg, $user);
+mark_thread_read($forum['fid'], $msg, $user);
 
 $m=postprocess($msg);
 

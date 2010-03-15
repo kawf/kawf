@@ -337,10 +337,28 @@ function gen_date($user, $unixtime = null)
     return strftime("%Y-%m-%d %H:%M:%S", $unixtime - $tzoff);
 }
 
-function mark_thread_read($msg, $user)
+function msg_state_changed($fid, $msg, $newstate)
 {
-  global $forum;
+  if (empty($msg['state'])) return;
 
+  /* Update the posting totals for the owner of the message */
+  $nuser = new ForumUser;
+  $nuser->find_by_aid((int)$msg['aid']);
+
+  if ($nuser->valid()) {
+    $nuser->post($fid, $newstate, 1);
+    $nuser->post($fid, $msg['state'], -1);
+  }
+
+  /* For the purposes of these calculations */
+  if ($msg['pmid'] == 0) {
+    $iid = mid_to_iid($msg['mid']);
+    sql_query("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $newstate = $newstate + 1 where iid = $iid");
+  }
+}
+
+function mark_thread_read($fid, $msg, $user)
+{
   if (!$user->valid()) return;
 
   $tid = $msg['tid'];
@@ -350,8 +368,8 @@ function mark_thread_read($msg, $user)
   /* Mark the thread as read if need be */
   if (is_msg_bumped($msg)) {
     /* TZ: f_tracking 'tstamp' is SQL server local time */
-    $sql = "update f_tracking set tstamp = NOW() where fid = " . $forum['fid']
-      . " and tid = " . $tid . " and aid = " . $user->aid;
+    $sql = "update f_tracking set tstamp = NOW() where fid = $fid" .
+      " and tid = " . $tid . " and aid = " . $user->aid;
     mysql_query($sql) or sql_warn($sql);
   }
 }

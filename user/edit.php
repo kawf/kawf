@@ -243,8 +243,11 @@ if (isset($error) || isset($preview)) {
 
   /* Record message state changes */
   $diff = '';
-  if ($msg['state']!=$nmsg['state'])
+  $state_changed = false;
+  if ($msg['state']!=$nmsg['state']) {
     $diff .= "Changed from '".$msg['state']."' to '".$nmsg['state']."'\n";
+    $state_changed = true;
+  }
 
   if (empty($msg['email']) && !empty($nmsg['email']))
     $diff .= "Exposed e-mail address\n";
@@ -318,7 +321,11 @@ if (isset($error) || isset($preview)) {
   mysql_query($sql) or sql_error($sql);
 
   $sql = "replace into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($mid) . "' )";
-  mysql_query($sql) or sql_error($sql); 
+  mysql_query($sql) or sql_error($sql);
+
+  /* update user post counts and f_indexes */
+  if ($state_changed)
+    msg_state_changed($forum['fid'], $msg, $nmsg['state']);
 
   if ($track_thread)
     track_thread($forum['fid'], $nmsg['tid'], $send_email?"SendEmail":"");
