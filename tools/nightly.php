@@ -122,7 +122,12 @@ while ($forum = sql_fetch_array($res1)) {
   while ($index = mysql_fetch_assoc($res2))
     $indexes[] = $index;
 
+  echo ", cleaning up upostcount";
+  sql_query("delete from f_upostcount where fid <=0 || aid <= 0 || count <=0");
+
   echo ", cleaning up tracking";
+  sql_query("delete from f_tracking where fid <=0 || tid <= 0 || aid <= 0 || tstamp > NOW()");
+
   /* Clear out tracking */
   $res2 = sql_query("select * from f_tracking where fid = " . $forum['fid'] . " and TO_DAYS(NOW()) - TO_DAYS(tstamp) > 30");
 

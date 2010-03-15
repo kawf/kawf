@@ -1,5 +1,6 @@
 <?php
 
+require_once("message.inc");
 require_once("mailfrom.inc");
 require_once("textwrap.inc");
 
@@ -17,9 +18,9 @@ if (!$user->is_valid_token($_REQUEST['token'])) {
   err_not_found('Invalid token');
 }
 
-$index = find_msg_index($mid);
+$iid = mid_to_iid($mid);
 
-$msg = sql_querya("select mid, aid, pid, state, subject, flags from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'");
+$msg = sql_querya("select mid, aid, pid, state, subject, flags from f_messages$iid where mid = '" . addslashes($mid) . "'");
 
 if (!isset($msg['pmid']))
   $msg['pmid'] = $msg['pid'];
@@ -83,24 +84,14 @@ if (isset($flags)) {
 } else
   $flagset = "";
 
-sql_query("update f_messages" . $indexes[$index]['iid'] . " set " .
+sql_query("update f_messages$iid set " .
 	"changes = CONCAT(changes, 'Changed to $state from ', state, ' by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), '\n'), " .
 	"flags = '" . addslashes($flagset) . "', " .
 	"state = '$state' " .
 	"where mid = '" . addslashes($mid) . "'");
 
-/* Update the posting totals for this user */
-$nuser = new ForumUser;
-$nuser->find_by_aid((int)$msg['aid']);
-
-if ($nuser->valid()) {
-  $nuser->post($forum['fid'], $state, 1);
-  $nuser->post($forum['fid'], $msg['state'], -1);
-}
-
-/* For the purposes of these calculations */
-if (!empty($msg['state']) && $msg['pmid'] == 0)
-  sql_query("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $state = $state + 1 where iid = " . $indexes[$index]['iid']);
+msg_state_changed($forum['fid'], $msg, $state);
 
 header("Location: $page");
+// vim: sw=2
 ?>

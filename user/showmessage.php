@@ -46,7 +46,7 @@ $uuser->find_by_aid((int)$msg['aid']);
 if ($msg['pmid'] != 0)
   $pmsg = fetch_message($user, $msg['pmid'], 'mid,subject,name' );
 
-mark_thread_read($msg, $user);
+mark_thread_read($forum['fid'], $msg, $user);
 
 /* generate message subjects in the thread this message is a part of */
 $thread = get_thread($msg['tid']);
