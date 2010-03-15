@@ -1,7 +1,7 @@
 <?php
 
 # Update this to the proper migration when changing the schema.
-$SCHEMA_VERSION = "20100314063313";
+$SCHEMA_VERSION = "20100314093346";
 
 # f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
@@ -102,7 +102,8 @@ $create_tracking_table = "
     aid int not null,
     tstamp timestamp,
     options set('SendEmail') not null,
-    unique key (fid, tid, aid)
+    unique key tid (fid, tid, aid),
+    key fid (fid, aid)
   )";
 
 $create_update_table = "
