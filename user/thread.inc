@@ -171,6 +171,38 @@ function process_tthreads($just_count = false)
   return $out;
 }
 
+function untrack_thread($fid, $tid)
+{
+  global $user;
+
+  $fid = addslashes($fid);
+  $tid = addslashes($tid);
+  $aid = $user->aid;
+
+  $sql = "delete from f_tracking where ". "
+    fid = '$fid' and tid = '$tid' and aid = '$aid '";
+
+  mysql_query($sql) or sql_error($sql);
+}
+
+function track_thread($fid, $tid, $options='')
+{
+  global $user;
+
+  $fid = addslashes($fid);
+  $tid = addslashes($tid);
+  $aid = $user->aid;
+
+  /* hack until we have uniq key */
+  untrack_thread($fid, $tid);
+
+  /* use replace because we might have a uniq key */
+  $sql = "replace into f_tracking ( fid, tid, aid, options ) values ( " .
+    "'$fid', '$tid', '$aid', '$options' )";
+
+  mysql_query($sql) or sql_error($sql);
+}
+
 function is_thread_etracked($thread)
 {
     global $tthreads_by_tid;

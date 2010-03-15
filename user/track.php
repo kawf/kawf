@@ -1,4 +1,6 @@
 <?php
+require_once('thread.inc');
+
 if (!isset($forum)) {
   echo "Invalid forum\n";
   exit;
@@ -7,7 +9,7 @@ if (!isset($forum)) {
 $page = $_REQUEST['page'];
 $tid = $_REQUEST['tid'];
 
-if (!$user->valid()) {
+if (!$user->valid() || !is_numeric($tid)) {
   header("Location: $page");
   exit;
 }
@@ -21,10 +23,8 @@ if (!isset($index)) {
 if (!$user->is_valid_token($_REQUEST['token']))
   err_not_found("Invalid token"); 
 
-if (!isset($tthreads_by_tid[$tid])) {
-  $sql = "insert into f_tracking ( fid, tid, aid, options ) values ( " . $forum['fid'] . ", '" . addslashes($tid) . "', '" . $user->aid . "', '' )";
-  mysql_query($sql) or sql_error($sql);
-}
+track_thread($forum['fid'], $tid);
 
 Header("Location: $page");
+// vim: sw=2
 ?>

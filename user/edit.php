@@ -322,15 +322,10 @@ if (isset($error) || isset($preview)) {
   $sql = "replace into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($mid) . "' )";
   mysql_query($sql) or sql_error($sql); 
 
-  if ($track_thread) {
-    $options = $send_email?"SendEmail":"";
-    $sql = "replace into f_tracking ( fid, tid, aid, options ) values ( " .
-      $forum['fid'] . ", '" . addslashes($nmsg['tid']) . "', '" . $user->aid . "', '$options' )";
-  } else {
-    $sql = "delete from f_tracking where fid = " . $forum['fid'] .
-      " and tid = '" . addslashes($nmsg['tid']) . "' and aid = '" . $user->aid . "'";
-  } 
-  mysql_query($sql) or sql_error($sql); 
+  if ($track_thread)
+    thread_track($forum['fid'], $nmsg['tid'], $send_email?"SendEmail":"");
+  else
+    thread_untrack($forum['fid'], $nmsg['tid']);
 
   $tpl->set_var("MSG_MID", $mid);
 }
