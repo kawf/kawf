@@ -148,7 +148,8 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
 	$offtopic = false;
 	$expose_email = !isset($user->pref['SecretEmail']);
 	$email_followup = false;
-	$track_thread = isset($user->pref['AutoTrack']);
+	/* if thread is already tracked, don't untrack it unless the user asks for it */
+	$track_thread = is_thread_tracked($thread) || isset($user->pref['AutoTrack']);
       }
 
       /*************/
