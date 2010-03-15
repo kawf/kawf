@@ -176,7 +176,7 @@ function process_request($tpl, $arg)
 
 	if (isset($arg['unhide'])) {
 	    $sqls[]="update u_users set ".
-		    "gmsgfilter = gmsgfilter & ~(1<<$gid)";
+		    "gmsgfilter = gmsgfilter & ~(1<<$gid) where gmsgfilter & (1<<$gid)";
 	}
 
 	if (count($sqls)) {
