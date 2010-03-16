@@ -228,7 +228,7 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 						<legend>Forums</legend>
 										
 						<?
-						$sql = "select * from f_forums where options like '%Searchable%'";
+						$sql = "select * from f_forums where options like '%Searchable%' order by name";
 						$rs = mysql_query($sql);
 
 						while ($row = mysql_fetch_assoc($rs)) {
