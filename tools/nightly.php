@@ -1,24 +1,5 @@
 <?php
-
-if (!isset($srcroot)) {
-    echo "Please run config/nightly.php, not this one.\n";	
-    exit(1);
-}
-
-/* First setup the path */
-$include_path = "$srcroot:$srcroot/lib:$srcroot/include:$srcroot/user";
-if (!isset($dont_use_account))
-  $include_path .= ":" . "$srcroot/user/account";
-
-if (isset($include_append))
-  $include_path .= ":" . $include_append;
-
-$old_include_path = ini_get("include_path");
-if (!empty($old_include_path))
-  $include_path .= ":" . $old_include_path;
-ini_set("include_path", $include_path);
-
-include_once("$config.inc");
+require_once('tools.inc.php');
 require_once("sql.inc");
 require_once("util.inc");
 require_once("user/tables.inc");

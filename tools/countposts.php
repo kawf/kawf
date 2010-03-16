@@ -1,81 +1,42 @@
-#!/usr/bin/php -q
 <?php
+require_once('tools.inc.php');
+require_once('sql.inc');
 
-if(!ini_get('safe_mode'))
-    set_time_limit(0);
+sql_open($database);
 
-function sql_error($sql)
-{
-  echo "<pre>$sql</pre>\n";
-  echo "Error #" . mysql_errno() . ": " . mysql_error() . "\n";
-  exit;
-}
+$dry_run = false;
 
-function sql_warn($sql)
-{
-  echo "<pre>$sql</pre>\n";
-  echo "Error #" . mysql_errno() . ": " . mysql_error() . "\n";
-}
-
-if (!mysql_connect("localhost", "root", "password"))
-  die("Unable to open local SQL server");
-
-$sql = "lock tables f_dupposts write, f_upostcount write";
-mysql_query($sql) or sql_error($sql);
-
-$sql = "select UNIX_TIMESTAMP(NOW())";
-$result = mysql_query($sql) or sql_error($sql);
-
-list($now) = mysql_fetch_row($result);
-
-echo "NOW() = $now\n";
-
-$sql = "delete from f_upostcount";
-mysql_query($sql) or sql_error($sql);
-
-sleep(2);
-
-$sql = "unlock tables";
-mysql_query($sql) or sql_error($sql);
-
-$sql = "select * from f_indexes order by iid";
-$result = mysql_query($sql) or sql_error($sql);
-
-while ($index = mysql_fetch_array($result)) {
-  echo "iid " . $index['iid'] . "\n";
-
-  $sql = "select aid, state from f_messages" . $index['iid'] . " where aid != 0 and UNIX_TIMESTAMP(date) <= $now";
-  $res2 = mysql_query($sql) or sql_error($sql);
-
-  echo mysql_num_rows($res2) . " messages\n";
-
-  $count = 0;
-  while (list($aid, $status) = mysql_fetch_row($res2)) {
-    if (($count % 1000) == 0)
-      echo "$count\n";
-    $count++;
-    $posts[$aid][$status]++;
-  }
-
-  mysql_free_result($res2);
-
-  if (isset($posts)) {
-    foreach ($posts as $aid => $val) {
-      foreach ($posts[$aid] as $status => $val) {
-        $sql = "update f_upostcount set count = count + $val where aid = $aid and fid = " . $index['fid'] . " and status = '$status'";
-echo $sql . "\n";
-        mysql_query($sql) or sql_error($sql);
-        if (!mysql_affected_rows()) {
-          $_sql = "insert into f_upostcount ( aid, fid, status, count ) values ( $aid, " . $index['fid'] . ", '$status', 0 )";
-echo $_sql . "\n";
-          mysql_query($_sql);
-echo $sql . "\n";
-          mysql_query($sql) or sql_error($sql);
-        }
-      }
+function count_state_by_aid($aid) {
+    $out = array();
+    $res = sql_query("select iid,fid from f_indexes order by iid");
+    while($row = sql_fetch_assoc($res)) {
+	$iid = $row['iid'];
+	$fid = $row['fid'];
+	foreach (array("Active","Offtopic","Deleted") as $state) {
+	    if (!isset($out[$fid])) $out[$fid]=array();
+	    if (!isset($out[$fid][$state])) $out[$fid][$state]=0;
+	    $out[$fid][$state] +=  sql_query1("select count(*) from f_messages$iid where aid='$aid' and state='$state'");
+	}
     }
-  }
+    return $out;
+}
 
-  unset($posts);
+$aids = sql_query1c("select aid from u_users order by aid");
+printf("%d users\n", count($aids));
+foreach ($aids as $aid) {
+    $out = count_state_by_aid($aid);
+    foreach ($out as $fid=>$f) {
+	$out = array();
+	foreach ($f as $status => $count) {
+	    if ($count>0)
+		$sql = "replace into f_upostcount ( aid, fid, status, count ) values ( '$aid', '$fid', '$status', '$count')";
+	    else
+		$sql = "delete from f_upostcount where aid = '$aid' and fid = '$fid' and status = '$status'";
+	    if (!$dry_run) sql_query($sql);
+
+	    if($count>0) $out[] = "$count $status";
+	}
+	if (count($out)) printf ("AID %d: FID: %d: %s\n", $aid, $fid, join(', ',$out));
+    }
 }
 ?>
