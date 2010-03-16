@@ -1,4 +1,4 @@
 <?php
-include('setup.inc');
-include("$srcroot/tools/nightly.php");
+require_once('setup.inc');
+require_once("$srcroot/tools/nightly.php");
 ?>
