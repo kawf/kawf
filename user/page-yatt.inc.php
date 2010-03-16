@@ -24,7 +24,7 @@ function generate_page($title, $contents)
     }
     $page->parse('page');
 
-    return $page->output();
+    return trim($page->output());
 }
 // vim: sw=2
 ?>
