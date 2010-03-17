@@ -17,10 +17,8 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
   $mtable = "f_messages" . $iid;
   $ttable = "f_threads" . $iid;
 
-  $where = "fid = '$fid' and aid = '" . $user->aid . "' and tid = '" . addslashes($msg['tid']) . "'";
-  $count = sql_query1("select count(*) from f_tracking where $where");
-  $track_thread = (isset($request['TrackThread']) && !$count);
-  $untrack_thread = (!isset($request['Trackthread']) && $count);
+  $track_thread = (isset($request['TrackThread']));
+  $untrack_thread = (!isset($request['Trackthread']));
 
   if (isset($request['OffTopic']))
     $msg['state'] = "OffTopic";
@@ -160,6 +158,16 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
       mysql_query($sql) or sql_error($sql);
     } else {
       $tid = addslashes($msg['tid']);
+
+      /* check to make sure we're not already tracking, or we're already 
+	 not tracking */
+      $where = "fid = '$fid' and aid = '" . $user->aid . "' and tid = '$tid'";
+      $count = sql_query1("select count(*) from f_tracking where $where");
+
+      /* override track/untrack accordingly */
+      if ($count) $track_thread = false;
+      else $untrack_thread = false;
+
       /* TZ: 'tstamp' is SQL server localtime */
       /* save current tstamp for track thread - bug 2969636 */
       if ($track_thread)
