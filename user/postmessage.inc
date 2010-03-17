@@ -17,6 +17,11 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
   $mtable = "f_messages" . $iid;
   $ttable = "f_threads" . $iid;
 
+  $where = "fid = '$fid' and aid = '" . $user->aid . "' and tid = '" . addslashes($msg['tid']) . "'";
+  $count = sql_query1("select count(*) from f_tracking where $where");
+  $track_thread = (isset($request['TrackThread']) && !$count);
+  $untrack_thread = (!isset($request['Trackthread']) && $count);
+
   if (isset($request['OffTopic']))
     $msg['state'] = "OffTopic";
   else
@@ -154,8 +159,12 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
       $sql = "update f_indexes set maxtid = " . $msg['tid'] . " where iid = $iid and maxtid < " . $msg['tid'];
       mysql_query($sql) or sql_error($sql);
     } else {
-      /* TZ: f_threadsXX 'tstamp' is SQL server local time */
-      $sql = "update $ttable set replies = replies + 1, tstamp = NOW() where tid = '" . addslashes($msg['tid']) . "'";
+      $tid = addslashes($msg['tid']);
+      /* TZ: 'tstamp' is SQL server localtime */
+      /* save current tstamp for track thread - bug 2969636 */
+      if ($track_thread)
+	$tstamp = sql_query1("select UNIX_TIMESTAMP(tstamp) from $ttable where tid = '$tid'");
+      $sql = "update $ttable set replies = replies + 1, tstamp = NOW() where tid = '$tid'";
       mysql_query($sql) or sql_error($sql);
     }
 
@@ -176,18 +185,11 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
   $sql = "insert into f_updates ( fid, mid ) values ( $fid, '" . addslashes($msg['mid']) . "' )";
   mysql_query($sql);
 
-  $where = "fid = '$fid' and aid = '" . $user->aid . "' and tid = '" . addslashes($msg['tid']) . "'";
-  $count = sql_query1("select count(*) from f_tracking where $where");
-  if (isset($request['TrackThread'])) {
-    $options = "";
+  if ($track_thread)
+    track_thread($fid, $msg['tid'], (isset($request['EmailFollowup']))?'SendEmail':'', $tstamp);
 
-    if (isset($request['EmailFollowup']))
-      $options = "SendEmail";
-
-    if (!$count) track_thread($fid, $msg['tid'], $options);
-  } else {
-    if ($count) untrack_thread($fid, $msg['tid']);
-  }
+  if ($untrack_thread)
+    untrack_thread($fid, $msg['tid']);
 
   return $newmessage;
 }

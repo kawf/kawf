@@ -8,6 +8,7 @@ if (!isset($forum)) {
 
 $page = $_REQUEST['page'];
 $tid = $_REQUEST['tid'];
+$time = $_REQUEST['time'];
 
 if (!$user->valid() || !is_numeric($tid)) {
   header("Location: $page");
@@ -23,7 +24,10 @@ if (!isset($index)) {
 if (!$user->is_valid_token($_REQUEST['token']))
   err_not_found("Invalid token"); 
 
-track_thread($forum['fid'], $tid);
+if (!is_numeric($time))
+  err_not_found("Invalid timestamp"); 
+
+track_thread($forum['fid'], $tid, '', $time);
 
 Header("Location: $page");
 // vim: sw=2
