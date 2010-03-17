@@ -10,10 +10,9 @@
  * returns true if ok, false if detected dup
 */
 
-function postmessage($user, $indexes, $fid, &$msg, $request)
+function postmessage($user, $fid, &$msg, $request)
 {
-  $index = end($indexes);
-  $iid = $index['iid'];
+  $iid = last_iid();
   $mtable = "f_messages" . $iid;
   $ttable = "f_threads" . $iid;
 
@@ -113,6 +112,7 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
 
     /* add the message to the db */
     /* TZ: f_messagesXX 'date' is SQL server local time */
+    /* FIXME: translate pid -> pmid */
     $sql = "insert into $mtable " .
 	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, video, state ) values ( '"
 	    . addslashes($msg['mid']) . "', '"
@@ -135,10 +135,9 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
     if (!$msg['pmid']) {
       /* Grab a new tid, this should work reliably */
       do {
-        $sql = "select max(id) + 1 from f_unique where fid = $fid and type = 'Thread'";
-        $result = mysql_query($sql) or sql_error($sql);
-
-        list ($msg['tid']) = mysql_fetch_row($result);
+        $msg['tid'] = sql_query1("select max(id) + 1 from f_unique where fid = $fid and type = 'Thread'");
+	if (!is_numeric($msg['tid']))
+	  sql_error('failed to get new tid for ' . $request['postcookie']);
 
         $sql = "insert into f_unique ( fid, type, id ) values ( $fid, 'Thread', " . $msg['tid'] . " )";
         $result = mysql_query($sql);
@@ -157,6 +156,9 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
       $sql = "update f_indexes set maxtid = " . $msg['tid'] . " where iid = $iid and maxtid < " . $msg['tid'];
       mysql_query($sql) or sql_error($sql);
     } else {
+      if (!is_numeric($msg['tid']))
+	sql_error('no tid on followup to ' . $msg['pmid'] . ' for ' . $request['postcookie']);
+
       $tid = addslashes($msg['tid']);
 
       /* check to make sure we're not already tracking, or we're already 

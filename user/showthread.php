@@ -28,21 +28,21 @@ if (is_msg_bumped($msg['tid'])) {
 
 $thread = get_thread($tid);
 
-$index = find_msg_index($thread['mid']);
-
 $tid = $thread['tid'];
 /* look for my message and later */
-for (; isset($indexes[$index]); $index++) {
-  $fid = $indexes[$index]['iid'];
+for ($index = find_msg_index($thread['mid']); isset($indexes[$index]); $index++) {
+  $iid = $indexes[$index]['iid'];
   /* TZ: unixtime is seconds since epoch */
   $sql = "select " .
     "mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, ip, subject, " .
     "message, url, urltext, video, flags, name, email, views, changes " .
-    "from f_messages$fid where tid = '$tid' order by mid";
+    "from f_messages$iid where tid = '$tid' order by mid";
   $result=mysql_query($sql) or sql_error($sql);
   while ($message = mysql_fetch_assoc($result)) {
     $message['date'] = gen_date($user, $message['unixtime']);
-    $message['pmid'] = $message['pid'];
+    /* FIXME: translate pid -> pmid */
+    if (!isset($message['pmid']) && isset($message['pid']))
+	$message['pmid'] = $message['pid'];
     $messages[] = $message;
   }
 }
@@ -68,7 +68,7 @@ filter_messages($messages, $tree, reset($tree));
 
 function print_message($thread, $msg)
 {
-  global $template_dir, $user, $forum, $indexes;
+  global $template_dir, $user, $forum;
   global $tpl; /* hack to get current page */
 
   $mtpl = new Template($template_dir, "comment");
@@ -76,8 +76,8 @@ function print_message($thread, $msg)
 
   message_set_block($mtpl);
 
-  $index = find_msg_index($msg['mid']);
-  $sql = "update f_messages" . $indexes[$index]['iid'] . " set views = views + 1 where mid = '" . addslashes($msg['mid']) . "'";
+  $iid = mid_to_iid($msg['mid']);
+  $sql = "update f_messages$iid set views = views + 1 where mid = '" . addslashes($msg['mid']) . "'";
   mysql_query($sql) or sql_warn($sql);
 
   $uuser = new ForumUser;

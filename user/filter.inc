@@ -64,6 +64,7 @@ function filter_thread($tid)
   }
 
   /* find thread starter */
+  /* FIXME: translate pid -> pmid */
   $sql = "select mid, tid, pid, aid, state from f_messages$iid where tid=$tid and pid=0";
   $result = sql_query($sql) or sql_error($sql);
 

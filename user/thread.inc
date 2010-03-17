@@ -7,15 +7,19 @@ function get_thread_messages($thread, $vmid = 0)
 {
   global $user, $indexes;
 
-  $index = find_msg_index($thread['mid']);
   /* find my messages and later */
-  for (;isset($indexes[$index]); $index++) {
+  for ($index = find_msg_index($thread['mid']); isset($indexes[$index]); $index++) {
+    $iid = $indexes[$index]['iid'];
+    /* FIXME: translate pid -> pmid */
     /* TZ: unixtime is seconds since epoch */
-    $sql = "select mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, subject, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
+    $sql = "select mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, subject, flags, name, email, views " .
+      "from f_messages$iid where tid = '" . $thread['tid'] . "' order by mid";
     $result = mysql_query($sql) or sql_error($sql);
     while ($message = mysql_fetch_assoc($result)) {
       $message['date'] = gen_date($user, $message['unixtime']);
-      $message['pmid'] = $message['pid'];
+      /* FIXME: translate pid -> pmid */
+      if (!isset($message['pmid']) && isset($message['pid']))
+	$message['pmid'] = $message['pid'];
       $messages[] = $message;
     }
   }

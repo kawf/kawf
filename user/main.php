@@ -231,6 +231,14 @@ function mid_to_iid($mid)
   return $indexes[$index]['iid'];
 }
 
+function last_iid()
+{
+  global $indexes;
+
+  $index = end($indexes);
+  return $index['iid'];
+}
+
 function find_msg_index($mid)
 {
   global $indexes;
@@ -320,9 +328,9 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
   /* See if the message number is legitimate */
   $mid = $regs[2];
   $fmt = $regs[3];
-  $index = find_msg_index($mid);
-  if (isset($index)) {
-    $sql = "select mid from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) . "'";
+  $iid = mid_to_iid($mid);
+  if (isset($iid)) {
+    $sql = "select mid from f_messages$iid where mid = '" . addslashes($mid) . "'";
     if (!$user->capable($forum['fid'], 'Delete')) {
       $qual[] = "state != 'Deleted' ";
       if ($user->valid())
@@ -348,9 +356,9 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
 
   /* See if the thread number is legitimate */
   $tid = $regs[2];
-  $index = find_thread_index($tid);
-  if (isset($index)) {
-    $sql = "select tid from f_threads" . $indexes[$index]['iid'] . " where tid = '" . addslashes($tid) . "'";
+  $iid = tid_to_iid($tid);
+  if (isset($iid)) {
+    $sql = "select tid from f_threads$iid where tid = '" . addslashes($tid) . "'";
     $result = mysql_query($sql) or sql_error($sql);
   }
 
