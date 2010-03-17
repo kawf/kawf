@@ -18,7 +18,7 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
   $ttable = "f_threads" . $iid;
 
   $track_thread = (isset($request['TrackThread']));
-  $untrack_thread = (!isset($request['Trackthread']));
+  $untrack_thread = (!isset($request['TrackThread']));
 
   if (isset($request['OffTopic']))
     $msg['state'] = "OffTopic";
