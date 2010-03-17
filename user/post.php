@@ -139,9 +139,9 @@ if (isset($_POST['postcookie'])) {
     $imgpreview = 1;
 
   /* FIXME: Sanitize integers */
-  $msg['mid'] = $_POST['mid'];
-  $msg['pmid'] = $_POST['pmid'];
-  $msg['tid'] = $_POST['tid'];
+  if (is_numeric($_POST['mid'])) $msg['mid'] = $_POST['mid'];
+  if (is_numeric($_POST['pmid'])) $msg['pmid'] = $_POST['pmid'];
+  if (is_numeric($_POST['tid'])) $msg['tid'] = $_POST['tid'];
 
   /* Sanitize the strings */
   $msg['name'] = stripcrap($user->name);
@@ -157,14 +157,13 @@ if (isset($_POST['postcookie'])) {
 
   /* find parent for "Re: */
   if (isset($msg['pmid'])) {
-    $index = find_msg_index($msg['pmid']);
-    if (isset($index)) {
-      $sql = "select * from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($msg['pmid']) . "'";
-      $result = mysql_query($sql) or sql_error($sql);
+    $iid = mid_to_iid($msg['pmid']);
+    if (!isset($iid)) sql_error("no iid for pmid " . $msg['pmid']);
+    $sql = "select * from f_messages$iid where mid = '" . addslashes($msg['pmid']) . "'";
+    $result = mysql_query($sql) or sql_error($sql);
 
-      if (mysql_num_rows($result))
-        $parent = mysql_fetch_assoc($result);
-    }
+    if (mysql_num_rows($result))
+      $parent = mysql_fetch_assoc($result);
   }
 
   if (empty($msg['subject']) && strlen($msg['subject']) == 0) {
@@ -210,16 +209,28 @@ if (isset($_POST['postcookie'])) {
   /* Guaranteed no picture */
   $tpl->set_var("image", "");
 
-  /* allow pid to come from _POST or _GET */
-  if (isset($_REQUEST['pid'])) {
+  /* allow pmid to come from _POST or _GET, either as pid or pmid, 
+     and populate hidden inputs in form with tid and pmid */
+  if (isset($_REQUEST['pid']) || isset($_REQUEST['pmid'])) {
     /* Grab the actual message */
-    $index = find_msg_index($pid);
-    $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages" . $indexes[$index]['iid'] . " where mid = '" . addslashes($pid) . "'";
+    if (is_numeric($_REQUEST['pmid'])) $pmid = $_REQUEST['pmid'];
+    else if (is_numeric($_REQUEST['pid'])) $pmid = $_REQUEST['pid'];
+
+    if (!isset($pmid)) sql_error("invalid pmid");
+
+    /* get requested parent message */
+    $iid = mid_to_iid($pmid);
+    if (!isset($iid)) sql_error("no iid for pmid $pmid");
+    $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages$iid where mid = '" . addslashes($pmid) . "'";
     $result = mysql_query($sql) or sql_error($sql);
 
     $pmsg = mysql_fetch_assoc($result);
 
-    /* munge subject line */
+    /* grab tid and pmid from parent */
+    $msg['tid'] = $pmsg['tid'];
+    $msg['pmid'] = $pmsg['mid'];
+
+    /* munge subject line from parent */
     if (preg_match("/^re:/i", $pmsg['subject'], $sregs))
       $msg['subject'] = $pmsg['subject'];
     /*
@@ -254,7 +265,7 @@ if (!$accepted || isset($preview)) {
   require_once("postmessage.inc");
 
   /* sets $msg['mid'] to the new message id */
-  if (postmessage($user, $indexes, $forum['fid'], $msg, $_POST) == true)
+  if (postmessage($user, $forum['fid'], $msg, $_POST) == true)
     $tpl->set_var("duplicate", "");
 
   require_once("mailfrom.inc");
@@ -263,9 +274,10 @@ if (!$accepted || isset($preview)) {
   $result = mysql_query($sql) or sql_error($sql);
 
   if (mysql_num_rows($result) > 0) {
-    # This is needed since $index may be trashed --jerdfelt
-    $index = find_msg_index($thread['mid']);
-    $sql = "select subject from f_messages" . $indexes[$index]['iid'] . " where mid = " . $thread['mid'];
+    $iid = mid_to_iid($thread['mid']);
+    if (!isset($iid)) sql_error("no iid for thread mid " . $thread['mid']);
+      
+    $sql = "select subject from f_messages$iid where mid = " . $thread['mid'];
     $res2 = mysql_query($sql) or sql_error($sql);
 
     list($t_subject) = mysql_fetch_row($res2);
@@ -328,4 +340,5 @@ if (!$accepted || isset($preview)) {
 $tpl->parse("PREVIEW", "message");
 
 print generate_page('Post Message', $tpl->parse("CONTENT", "post"));
+// vim: sw=2
 ?>

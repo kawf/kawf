@@ -22,7 +22,8 @@ $iid = mid_to_iid($mid);
 
 $msg = sql_querya("select mid, aid, pid, state, subject, flags from f_messages$iid where mid = '" . addslashes($mid) . "'");
 
-if (!isset($msg['pmid']))
+/* FIXME: translate pid -> pmid */
+if (!isset($msg['pmid']) && isset($msg['pid']))
   $msg['pmid'] = $msg['pid'];
 
 if (!empty($msg['flags'])) {

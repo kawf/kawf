@@ -230,6 +230,14 @@ function mid_to_iid($mid)
   return $indexes[$index]['iid'];
 }
 
+function last_iid()
+{
+  global $indexes;
+
+  $index = end($indexes);
+  return $index['iid'];
+}
+
 function find_msg_index($mid)
 {
   global $indexes;

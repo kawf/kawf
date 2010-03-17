@@ -38,7 +38,9 @@ for (; isset($indexes[$index]); $index++) {
   $result=mysql_query($sql) or sql_error($sql);
   while ($message = mysql_fetch_assoc($result)) {
     $message['date'] = gen_date($user, $message['unixtime']);
-    $message['pmid'] = $message['pid'];
+    /* FIXME: translate pid -> pmid */
+    if (!isset($message['pmid']) && isset($message['pid']))
+	$message['pmid'] = $message['pid'];
     $messages[] = $message;
   }
 }

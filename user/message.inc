@@ -314,7 +314,7 @@ function fetch_message($user, $mid, $what = '*')
     $msg = mysql_fetch_assoc($result);
 
     /* FIXME: translate pid -> pmid */
-    if (!isset($msg['pmid']))
+    if (!isset($msg['pmid']) && isset($msg['pid']))
       $msg['pmid'] = $msg['pid'];
 
     /* msg['date'] is time local to user... strftime would normally be
