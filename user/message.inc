@@ -302,14 +302,11 @@ function image_url_hack_extract($msg)
 
 function fetch_message($user, $mid, $what = '*')
 {
-    global $indexes;
-
     /* Grab the actual message */
-    $index = find_msg_index($mid);
+    $iid = mid_to_iid($mid);
 
     /* TZ: unixtime is seconds since epoch */
-    $sql = "select $what, UNIX_TIMESTAMP(date) as unixtime from f_messages"
-	. $indexes[$index]['iid'] . " where mid = '" . addslashes($mid) .  "'";
+    $sql = "select $what, UNIX_TIMESTAMP(date) as unixtime from f_messages$iid where mid = '" . addslashes($mid) .  "'";
     $result = mysql_query($sql) or sql_error($sql);
     $msg = mysql_fetch_assoc($result);
 

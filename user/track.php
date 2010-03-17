@@ -15,8 +15,8 @@ if (!$user->valid() || !is_numeric($tid)) {
   exit;
 }
 
-$index = find_thread_index($tid);
-if (!isset($index)) {
+$iid = tid_to_iid($tid);
+if (!isset($iid)) {
   echo "Invalid thread!\n";
   exit;
 }
