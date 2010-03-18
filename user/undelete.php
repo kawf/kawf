@@ -4,23 +4,23 @@ require_once("page-yatt.inc.php");
 $user->req();
 $stoken = $user->token();
 
-$page = $_REQUEST['page'];
+$_page = $_REQUEST['page'];
 $mid = $_REQUEST['mid'];
 
-if (isset($no)) {
-  header("Location: $page");
+if (isset($_POST['no'])) {
+  header("Location: $_page");
   exit;
 }
 
 if (isset($_POST['yes'])) {
-  header("Location: changestate.phtml?state=Active&mid=$mid&page=$page&token=$stoken");
+  header("Location: changestate.phtml?state=Active&mid=$mid&page=$_page&token=$stoken");
   exit;
 }
 
 /* Check the data to make sure they entered stuff */
 if (!isset($mid) || !isset($forum)) {
   /* Hmm, how did this happen? Redirect them back to the main page */
-  Header("Location: http://$server_name$script_name$path_info/");
+  header("Location: http://$server_name$script_name$path_info/");
   exit;
 }
 
@@ -48,7 +48,7 @@ if (!isset($iid)) {
   exit;
 }
 
-$sql = "select * from f_messages$iid  where mid = '" . addslashes($mid) . "'";
+$sql = "select * from f_messages$iid where mid = '" . addslashes($mid) . "'";
 $result = mysql_query($sql) or sql_error($sql);
 
 $msg = mysql_fetch_assoc($result);
@@ -77,7 +77,6 @@ $tpl->set_var("disabled", "");
 
 render_message($tpl, $msg, $user);
 
-/* $_page set by main.php from _REQUEST */
 $tpl->set_var("PAGE", $_page);
 
 $tpl->parse("PREVIEW", "message");

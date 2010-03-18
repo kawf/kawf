@@ -4,16 +4,16 @@ require_once("page-yatt.inc.php");
 $user->req();
 $stoken = $user->token();
 
-$page = $_REQUEST['page'];
+$_page = $_REQUEST['page'];
 $mid = $_REQUEST['mid'];
 
 if (isset($_POST['no'])) {
-  header("Location: $page");
+  header("Location: $_page");
   exit;
 }
 
 if (isset($_POST['yes'])) {
-  header("Location: changestate.phtml?state=Deleted&mid=$mid&page=$page&token=$stoken");
+  header("Location: changestate.phtml?state=Deleted&mid=$mid&page=$_page&token=$stoken");
   exit;
 }
 
@@ -25,6 +25,7 @@ if (!isset($mid) || !isset($forum)) {
 }
 
 require_once("strip.inc");
+require_once("message.inc");
 
 $tpl->set_file(array(
   "del" => "delete.tpl",	// do not call it delete, it is used by message.tpl
@@ -34,7 +35,6 @@ $tpl->set_file(array(
 
 $tpl->set_block("del", "disabled");
 
-require_once("message.inc");
 message_set_block($tpl);
 
 $tpl->set_var("FORUM_NAME", $forum['name']);
@@ -51,7 +51,7 @@ if (!isset($iid)) {
 $sql = "select * from f_messages$iid where mid = '" . addslashes($mid) . "'";
 $result = mysql_query($sql) or sql_error($sql);
 
-$msg = mysql_fetch_array($result);
+$msg = mysql_fetch_assoc($result);
 
 if ($msg['aid'] != $user->aid) {
   echo "This message does not belong to you!\n";
@@ -74,7 +74,6 @@ $tpl->set_var("disabled", "");
 
 render_message($tpl, $msg, $user);
 
-/* $_page set by main.php from _REQUEST */
 $tpl->set_var("PAGE", $_page);
 
 $tpl->parse("PREVIEW", "message");
