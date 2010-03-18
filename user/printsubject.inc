@@ -144,7 +144,8 @@ function append_tools($user, $string, $forum, $thread, $msg, $page)
       $string .= " <a href=\"/" . $forum['shortname'] . "/sticky.phtml?tid=" . $msg['tid'] . "&amp;stick=1&amp;page=$page&amp;token=$stoken\" title=\"Sticky thread\">st</a>";
   }
 
+  // if (!$msg['pmid']) $string .= sprintf(" %s (%d)", gen_date($user, $thread['unixtime']), $thread['unixtime']);
   return $string;
 }
-
+// vim: sw=2
 ?>

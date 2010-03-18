@@ -21,9 +21,9 @@ $where = " where ip in (" . implode (', ', $where) . ")";
 
 sql_open($database);
 
-$res = sql_query("select fid from f_forums");
-while ($forum = sql_fetch_array($res))
-  $fids[] = "select aid, ip, name, email from f_messages" . $forum['fid'] . $where;
+$cols = sql_query1c("select iid from f_indexes");
+foreach($cols as $iid)
+  $fids[] = "select aid, ip, name, email from f_messages$iid" . $where;
 
 $fids = implode(' UNION ', $fids);
 

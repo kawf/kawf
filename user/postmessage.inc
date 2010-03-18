@@ -10,12 +10,14 @@
  * returns true if ok, false if detected dup
 */
 
-function postmessage($user, $indexes, $fid, &$msg, $request)
+function postmessage($user, $fid, &$msg, $request)
 {
-  $index = end($indexes);
-  $iid = $index['iid'];
+  $iid = last_iid();
   $mtable = "f_messages" . $iid;
   $ttable = "f_threads" . $iid;
+
+  $track_thread = (isset($request['TrackThread']));
+  $untrack_thread = (!isset($request['TrackThread']));
 
   if (isset($request['OffTopic']))
     $msg['state'] = "OffTopic";
@@ -110,6 +112,7 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
 
     /* add the message to the db */
     /* TZ: f_messagesXX 'date' is SQL server local time */
+    /* FIXME: translate pid -> pmid */
     $sql = "insert into $mtable " .
 	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, video, state ) values ( '"
 	    . addslashes($msg['mid']) . "', '"
@@ -132,10 +135,9 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
     if (!$msg['pmid']) {
       /* Grab a new tid, this should work reliably */
       do {
-        $sql = "select max(id) + 1 from f_unique where fid = $fid and type = 'Thread'";
-        $result = mysql_query($sql) or sql_error($sql);
-
-        list ($msg['tid']) = mysql_fetch_row($result);
+        $msg['tid'] = sql_query1("select max(id) + 1 from f_unique where fid = $fid and type = 'Thread'");
+	if (!is_numeric($msg['tid']))
+	  sql_error('failed to get new tid for ' . $request['postcookie']);
 
         $sql = "insert into f_unique ( fid, type, id ) values ( $fid, 'Thread', " . $msg['tid'] . " )";
         $result = mysql_query($sql);
@@ -154,8 +156,25 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
       $sql = "update f_indexes set maxtid = " . $msg['tid'] . " where iid = $iid and maxtid < " . $msg['tid'];
       mysql_query($sql) or sql_error($sql);
     } else {
-      /* TZ: f_threadsXX 'tstamp' is SQL server local time */
-      $sql = "update $ttable set replies = replies + 1, tstamp = NOW() where tid = '" . addslashes($msg['tid']) . "'";
+      if (!is_numeric($msg['tid']))
+	sql_error('no tid on followup to ' . $msg['pmid'] . ' for ' . $request['postcookie']);
+
+      $tid = addslashes($msg['tid']);
+
+      /* check to make sure we're not already tracking, or we're already 
+	 not tracking */
+      $where = "fid = '$fid' and aid = '" . $user->aid . "' and tid = '$tid'";
+      $count = sql_query1("select count(*) from f_tracking where $where");
+
+      /* override track/untrack accordingly */
+      if ($count) $track_thread = false;
+      else $untrack_thread = false;
+
+      /* TZ: 'tstamp' is SQL server localtime */
+      /* save current tstamp for track thread - bug 2969636 */
+      if ($track_thread)
+	$tstamp = sql_query1("select UNIX_TIMESTAMP(tstamp) from $ttable where tid = '$tid'");
+      $sql = "update $ttable set replies = replies + 1, tstamp = NOW() where tid = '$tid'";
       mysql_query($sql) or sql_error($sql);
     }
 
@@ -176,18 +195,11 @@ function postmessage($user, $indexes, $fid, &$msg, $request)
   $sql = "insert into f_updates ( fid, mid ) values ( $fid, '" . addslashes($msg['mid']) . "' )";
   mysql_query($sql);
 
-  $where = "fid = '$fid' and aid = '" . $user->aid . "' and tid = '" . addslashes($msg['tid']) . "'";
-  $count = sql_query1("select count(*) from f_tracking where $where");
-  if (isset($request['TrackThread'])) {
-    $options = "";
+  if ($track_thread)
+    track_thread($fid, $msg['tid'], (isset($request['EmailFollowup']))?'SendEmail':'', $tstamp);
 
-    if (isset($request['EmailFollowup']))
-      $options = "SendEmail";
-
-    if (!$count) track_thread($fid, $msg['tid'], $options);
-  } else {
-    if ($count) untrack_thread($fid, $msg['tid']);
-  }
+  if ($untrack_thread)
+    untrack_thread($fid, $msg['tid']);
 
   return $newmessage;
 }

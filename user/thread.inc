@@ -7,15 +7,19 @@ function get_thread_messages($thread, $vmid = 0)
 {
   global $user, $indexes;
 
-  $index = find_msg_index($thread['mid']);
   /* find my messages and later */
-  for (;isset($indexes[$index]); $index++) {
+  for ($index = find_msg_index($thread['mid']); isset($indexes[$index]); $index++) {
+    $iid = $indexes[$index]['iid'];
+    /* FIXME: translate pid -> pmid */
     /* TZ: unixtime is seconds since epoch */
-    $sql = "select mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, subject, flags, name, email, views from f_messages" . $indexes[$index]['iid'] . " where tid = '" . $thread['tid'] . "' order by mid";
+    $sql = "select mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, subject, flags, name, email, views " .
+      "from f_messages$iid where tid = '" . $thread['tid'] . "' order by mid";
     $result = mysql_query($sql) or sql_error($sql);
     while ($message = mysql_fetch_assoc($result)) {
       $message['date'] = gen_date($user, $message['unixtime']);
-      $message['pmid'] = $message['pid'];
+      /* FIXME: translate pid -> pmid */
+      if (!isset($message['pmid']) && isset($message['pid']))
+	$message['pmid'] = $message['pid'];
       $messages[] = $message;
     }
   }
@@ -114,10 +118,12 @@ function gen_threadlinks($thread, $collapse = false)
 	"&amp;page=" . $script_name . $path_info .
 	"&amp;token=" . $user->token() .
 	"\" class=\"ut\" title=\"Untrack thread\">ut</a>";
+      // $tl .= sprintf(" %s (%d)", gen_date($user, $tthread['unixtime']), $tthread['unixtime']);
     } else {
       $tl = " <a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] .
 	"&amp;page=" . $script_name . $path_info .
 	"&amp;token=" . $user->token() .
+	"&amp;time=" . time() .	/* fix bug 2971483 - use page view time stamp for tracking */
 	"\" class=\"tt\" title=\"Track thread\">tt</a>";
     }
 
@@ -180,24 +186,8 @@ function log_backtrace($bt)
   }
 }
 
-function untrack_thread($fid, $tid)
-{
-  global $user;
-
-  $aid = $user->aid;
-
-  if (!is_numeric($fid) || !is_numeric($tid) || $fid<=0 || $tid<=0) {
-      error_log("fid=$fid tid=$tid aid=$aid");
-      log_backtrace(debug_backtrace());
-  }
-
-  $sql = "delete from f_tracking where ". "
-    fid = '$fid' and tid = '$tid' and aid = '$aid '";
-
-  mysql_query($sql) or sql_error($sql);
-}
-
-function track_thread($fid, $tid, $options='')
+/* fix: bug 2969636 and bug 2969636 allow $time parameter to set a track time */
+function track_thread($fid, $tid, $options='', $time=null)
 {
   global $user;
   
@@ -212,8 +202,31 @@ function track_thread($fid, $tid, $options='')
   }
 
   /* use replace because we might have a uniq key */
-  $sql = "replace into f_tracking ( fid, tid, aid, options ) values ( " .
-    "'$fid', '$tid', '$aid', '$options' )";
+  if (is_numeric($time)) {
+    $tstamp = strftime("%Y%m%d%H%M%S", $time);
+    $sql = "replace into f_tracking ( fid, tid, aid, options, tstamp ) values ( " .
+      "'$fid', '$tid', '$aid', '$options', '$tstamp' )";
+  } else
+    $sql = "replace into f_tracking ( fid, tid, aid, options ) values ( " .
+      "'$fid', '$tid', '$aid', '$options' )";
+
+  mysql_query($sql) or sql_error($sql);
+}
+
+
+function untrack_thread($fid, $tid)
+{
+  global $user;
+
+  $aid = $user->aid;
+
+  if (!is_numeric($fid) || !is_numeric($tid) || $fid<=0 || $tid<=0) {
+      error_log("fid=$fid tid=$tid aid=$aid");
+      log_backtrace(debug_backtrace());
+  }
+
+  $sql = "delete from f_tracking where ". "
+    fid = '$fid' and tid = '$tid' and aid = '$aid '";
 
   mysql_query($sql) or sql_error($sql);
 }

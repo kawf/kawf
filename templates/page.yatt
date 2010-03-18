@@ -10,9 +10,11 @@
 </head>
 
 <body>
+%begin [header]
 <div class="header">
 %include [header.yatt]
 </div>
+%end [header]
 
 <div class="contents">
 %[contents]

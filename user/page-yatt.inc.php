@@ -1,7 +1,7 @@
 <?php
 require_once("lib/YATT/YATT.class.php");
 
-function generate_page($title, $contents)
+function generate_page($title, $contents, $skip_header=false)
 {
     global $template_dir, $domain;
 
@@ -16,6 +16,8 @@ function generate_page($title, $contents)
     $page->set('browser_css_href', browser_css_href());
     $page->set('title', $title);
     $page->set('contents', $contents);
+    if (!$skip_header)
+      $page->parse('page.header');
     $page->parse('page');
 
     return trim($page->output());

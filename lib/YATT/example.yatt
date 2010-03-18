@@ -1,0 +1,49 @@
+%[#]
+%[#] This is a template comment
+%[#] This is stripped out by the template parser
+%[#]
+
+%[#] This is an include statement, it loads the file as if it were
+%[#] a part of this one. This should generate an error since missing.yatt
+%[#] isn't actually included with the example.
+%include [missing.yatt]
+
+%[#] This begins a block of text, blocks can be inside of other blocks.
+%begin [faz]
+
+Here is some static text to be printed when 'faz' is parsed.
+
+This is a variable: %[CRACK]
+
+%[#] Another random block of text: parsed with 'faz.test'
+%begin [test]
+
+recursive variable substitution in action:
+this is recursive: %[CORK_%[FNORK]] wheee!
+
+%end [test]
+
+
+some other stuff: %[FOO]
+some other stuff: %[BAR]
+
+undefined variables are bad: this should generate an error: %[UNDEFINED]
+
+%[#] How about another example?
+%begin [table]
+
+foo table header
+--------------
+%begin [row]
+FF: %[ROW_NAME]
+%end [row]
+--------------
+foo table footer
+
+%end [table]
+
+
+and some stuff down here!
+
+%end [faz]
+

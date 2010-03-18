@@ -22,6 +22,7 @@ function find_thread_index($tid)
 
 function count_threads($fid, $tag)
 {
+    /* FIXME: translate pid -> pmid */
     $sql="select count(distinct f_messages".$fid.".tid) from ".
         "f_indexes,f_messages".$fid." where ".$fid."=f_indexes.fid and ".
         "f_messages".$fid.".mid>=f_indexes.minmid and ".
@@ -215,6 +216,7 @@ echo $sql . "\n";
         $msg = mysql_fetch_array($res3);
         mysql_free_result($res3);
 
+	/* FIXME: translate pid -> pmid */
         $sql = "insert into messages $newindex (" .
 	  "mid, pid, tid, aid, state, flags, " .
 	  "name, email, date, ip, subject, message, url, urltext, video" .
@@ -237,6 +239,7 @@ echo $sql . "\n";
 	// echo $sql . "\n";
         mysql_db_query($fdb, $sql) or sql_warn($sql);
 
+	/* FIXME: translate pid -> pmid */
         if (!$msg['pid']) {
           $sql = "select * from threads" . $index['iid'] . " where tid = " . $msg['tid'];
           $res3 = mysql_db_query($fdb, $sql) or sql_error($sql);
@@ -297,6 +300,7 @@ echo $sql . "\n";
 */
 
   reset($indexes);
+  /* FIXME: translate pid -> pmid */
   while (list($key, $index) = each($indexes)) {
     $sql = "select count(*) from messages" . $index['iid'] . " where state = 'Active' and pid = 0 and mid > " . $index['minmid'] . " and mid < " . $index['maxmid'];
     $res2 = mysql_db_query($fdb, $sql) or sql_error($sql);
