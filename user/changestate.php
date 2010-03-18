@@ -10,17 +10,29 @@ $mid = $_REQUEST['mid'];
 
 $user->req();
 
-if ($state != 'Active' && $state != 'OffTopic' && $state != 'Moderated' && $state != 'Deleted') {
-  echo "Invalid state $state\n";
+if (empty($page)) {
+  echo "No page $page\n";
   exit;
 }
-if (!$user->is_valid_token($_REQUEST['token'])) {
-  err_not_found('Invalid token');
-}
+
+if ($state != 'Active' && $state != 'OffTopic' && $state != 'Moderated' && $state != 'Deleted')
+  err_not_found("Invalid state $state");
+
+if (!is_numeric($mid))
+  err_not_found("Invalid mid $mid");
 
 $iid = mid_to_iid($mid);
+if (!isset($iid))
+  err_not_found("Invalid mid $mid");
+
+if (!$user->is_valid_token($_REQUEST['token']))
+  err_not_found('Invalid token');
 
 $msg = sql_querya("select mid, aid, pid, state, subject, flags from f_messages$iid where mid = '" . addslashes($mid) . "'");
+
+/* don't do anything if no change */
+if ($msg['state'] == $state)
+  header("Location: $page");
 
 /* FIXME: translate pid -> pmid */
 if (!isset($msg['pmid']) && isset($msg['pid']))
