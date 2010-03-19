@@ -16,15 +16,17 @@ $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
 $tpl->parse("FORUM_HEADER", "forum_header");
 
+/* $tid set by main.php for showthread.php */
+$thread = get_thread($tid);
+if (!isset($thread))
+  err_not_found("No such thread $tid");
+
 /* Mark the thread as read if need be */
-if (is_msg_bumped($msg['tid'])) {
-  $sql = "update f_tracking set tstamp = NOW() where tid = " . $msg['tid'] . " and aid = " . $user->aid;
+if (is_thread_bumped($thread)) {
+  $sql = "update f_tracking set tstamp = NOW() where tid = $tid and aid = " . $user->aid;
   mysql_query($sql) || sql_warn($sql);
 }
 
-$thread = get_thread($tid);
-
-$tid = $thread['tid'];
 /* look for my message and later */
 for ($index = find_msg_index($thread['mid']); isset($indexes[$index]); $index++) {
   $iid = $indexes[$index]['iid'];
