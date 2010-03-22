@@ -145,8 +145,8 @@ if(array_key_exists('noob', $_GET)) {
     }
   }
 
-  if($_GET['page'])
-    echo "<p><a href=\"" . $_GET['page'] . "\">Return to forums</a></p>\n";
+  if(isset($_GET['page']))
+    echo "<p><a href=\"" . htmlspecialchars($_GET['page']) . "\">Return to forums</a></p>\n";
 
 function get_stats($uu)
 {
