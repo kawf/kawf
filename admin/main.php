@@ -51,7 +51,6 @@ $scripts = array(
 );
 
 $user = new AdminUser;
-$user->find_by_cookie();
 
 function find_msg_index($mid)
 {

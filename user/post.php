@@ -304,8 +304,7 @@ if (!$accepted || isset($preview)) {
     ));
 
     while ($track = mysql_fetch_assoc($result)) {
-      $uuser = new ForumUser;
-      $uuser->find_by_aid((int)$track['aid']);
+      $uuser = new ForumUser($track['aid']);
 
       $tpl->set_var("EMAIL", $uuser->email);
 

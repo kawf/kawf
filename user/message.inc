@@ -350,8 +350,7 @@ function msg_state_changed($fid, $msg, $newstate)
   if (empty($msg['state'])) return;
 
   /* Update the posting totals for the owner of the message */
-  $nuser = new ForumUser;
-  $nuser->find_by_aid((int)$msg['aid']);
+  $nuser = new ForumUser($msg['aid']);
 
   if ($nuser->valid()) {
     $nuser->post($fid, $newstate, 1);

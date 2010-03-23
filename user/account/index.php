@@ -2,13 +2,11 @@
 include 'noob.inc';
 
 $user= new ForumUser;
-$user->find_by_cookie();
-$uuser= new ForumUser;
 
 if (preg_match("/^\/[^\/]*\/([0-9]+)\.phtml$/", $script_name . $path_info, $regs)) {
-    $uuser->find_by_aid((int)$regs[1], false);
+    $uuser= new ForumUser($regs[1], false);
 } else if(empty($path_info) || $path_info =="/") {
-    $uuser->find_by_cookie();
+    $uuser= new ForumUser;	/* find by cookie */
     if(!$uuser->valid()) {	/* dont go to login page if user is invalid */
 	err_not_found("Unknown user");
     }
@@ -69,8 +67,7 @@ if(array_key_exists('noob', $_GET)) {
 	  print_header();
 	  while ($u = sql_fetch_assoc($res1)) {
 	    $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
-	    $uu = new ForumUser;
-	    $uu->find_by_aid((int)$u['aid'], false);
+	    $uu = new ForumUser($u['aid'], false);
 	    print_user($uu, get_stats($uu), $bgcolor);
 	    $count++;
 	  }
