@@ -11,6 +11,7 @@
 
 <body>
 %begin [header]
+<script src="%[js_href]" type="text/javascript"></script>
 <div class="header">
 %include [header.yatt]
 </div>

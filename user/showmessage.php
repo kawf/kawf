@@ -35,8 +35,7 @@ if (!empty($msg['flags'])) {
     $flags[$flag] = true;
 }
 
-$uuser = new ForumUser;
-$uuser->find_by_aid((int)$msg['aid']);
+$uuser = new ForumUser($msg['aid']);
 
 /* Grab some information about the parent (if there is one) */
 if ($msg['pmid'] != 0)

@@ -78,8 +78,7 @@ function print_message($thread, $msg)
   $sql = "update f_messages$iid set views = views + 1 where mid = '" . addslashes($msg['mid']) . "'";
   mysql_query($sql) or sql_warn($sql);
 
-  $uuser = new ForumUser;
-  $uuser->find_by_aid((int)$msg['aid']);
+  $uuser = new ForumUser($msg['aid']);
 
   $mtpl->set_var("parent", "");
 

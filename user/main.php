@@ -106,7 +106,6 @@ $fscripts = array(
 header("Cache-Control: private");
 
 $user = new ForumUser;
-$user->find_by_cookie();
 
 $IPBAN = AclIpBanList::find_matching_ban_list($_SERVER["REMOTE_ADDR"]);
 
