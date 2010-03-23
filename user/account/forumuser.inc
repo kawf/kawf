@@ -16,14 +16,20 @@ class ForumUser {
 
   var $shortname, $password, $cookie, $gmsgfilter;
 
+  function ForumUser($aid = null, $req = true)
+  {
+    if (isset($aid)) $this->find_by_aid((int)$aid, $req);
+    else $this->find_by_cookie();
+  }
+ 
   /* You shouldn't call this directly */
-  function find($where, $req=true)
+  function find($where, $req = true)
   {
     global $tz_to_name;
 
     $this->tzoff = 0;
 
-    $user = sql_querya("select * from u_users where $where");
+    $user = sql_queryh("select * from u_users where $where");
     if ($user) {
       foreach ($user as $type => $value) {
         $this->$type = $value;
@@ -55,9 +61,9 @@ class ForumUser {
       /* Set token time rounded down to 15 minutes UTC. */
       $this->tokentime = 900 * (int)(time() / 900);
 
-    } elseif ($req) {
+    } else if ($req) {
 	global $login_to_read;
-	if(isset($login_to_read)) $this->req();
+	if(isset($login_to_read) && $login_to_read) $this->req();
     }
 
     return $this;
@@ -65,7 +71,7 @@ class ForumUser {
 
   /* These functions are used to find a user - NOTE! always try to call find,
      even for invalid/non-existent users or tzoff wont ever get set! */
-  function find_by_aid($aid, $req=true)
+  function find_by_aid($aid, $req = true)
   {
     if (!is_int($aid)) return $this->find('0', $req);
 
