@@ -173,6 +173,9 @@ if ($curpage == 1) {
     }
   }
 
+  /* reset so threads per page is right */
+  $numshown = 0;
+
   /****************************************/
   /* show tracked and bumped threads next */
   /****************************************/
