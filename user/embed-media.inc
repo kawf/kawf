@@ -60,8 +60,8 @@ function embed_youtube_video($url)
 
 function embed_html5_video($url)
 {
-  # only support ogg and mp4
-  if (!preg_match("/\.(og[gvm]|mp[4v])$/i", $url))
+  # only support ogg, mp4, and webm
+  if (!preg_match("/\.(og[gvm]|mp[4v]|webm)$/i", $url))
     return null;
 
   $out =
@@ -94,7 +94,7 @@ function embed_video($url)
       if (!is_null($out)) return $out;
   }
 
-  return "'$url' is not a supported video type. Must be YouTube/Vimeo link or ogg/mp4<p>\n";
+  return "'$url' is not a supported video type. Must be YouTube/Vimeo link or ogg/mp4/WebM<p>\n";
 }
 
 function embed_image($url)
