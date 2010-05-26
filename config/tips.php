@@ -42,21 +42,24 @@ you can enter a YouTube or Vimeo link:</p>
 <li>http://www.youtube.com/v/XXXXXXXXXX</li>
 <li>http://vimeo.com/XXXXXXXX</li>
 </ul>
-<p>or a .ogv (Theora) or .mp4 (h.264) video:</p>
+<p>or a .ogv (Theora), .mp4 (h.264), .WebM (vp8) video:</p>
 <ul>
 <li>http://www.the_location_of_your_video.com/your_video_name.ogv</li>
 <li>http://www.the_location_of_your_video.com/your_video_name.mp4</li>
+<li>http://www.the_location_of_your_video.com/your_video_name.WebM</li>
 </ul>
 
 <p>You can also embed the HTML5 video tag directly</p>
 <pre>
 &lt;video src="http://www.the_location_of_your_video.com/your_video_name.ogv" controls="controls"&gt;&lt;/video&gt;
 &lt;video src="http://www.the_location_of_your_video.com/your_video_name.mp4" controls="controls"&gt;&lt;/video&gt;
+&lt;video src="http://www.the_location_of_your_video.com/your_video_name.WebM" controls="controls"&gt;&lt;/video&gt;
 </pre>
 
-<p><font color="red">Note that <em>only</em> Theora (ogg container) and h.264
-(mp4 container) are supported by HTML5!</font> To make matters worse, most
-browsers do not support both, and there is no format that all browsers support.
+<p><font color="red">Note that <em>only</em> Theora (ogg container), h.264 (mp4
+container), and vp8 (WebM container) are supported by HTML5!</font> To make
+matters worse, most browsers do not support all of them, and there is no format
+that all browsers support.
 Please read
 <a href="http://en.wikipedia.org/wiki/HTML5_video#Browser_support">this</a> to
 see which browsers support what.</p>
