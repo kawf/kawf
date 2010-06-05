@@ -11,6 +11,9 @@
     <img alt="" src="/pics/pixel.gif" width="1" height="1">
     </form>
   </td>  
+  <td class="center">
+    Hosting provided by <a href="http://quattroworld.com/">QuattroWorld</a>
+  </td>
   <td class="right">
     Powered by <a href="http://kawf.sourceforge.net/">Kawf</a>
   </td>
