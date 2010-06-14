@@ -13,9 +13,9 @@ function eugmove() {
 		return;
 	}
 
-	eug.style.right = (parseInt(eug.style.right) + 15) + "px";
+	eug.style.right = (parseInt(eug.style.right) + 20) + "px";
 	eug.style.top = (parseInt(eug.style.top) + v) + "px";
-	v = v * 1.1;
+	v = v + 1;
 
 	if (parseInt(eug.style.top) > (window.innerHeight + 50))
 		document.body.removeChild(eug);
@@ -38,7 +38,7 @@ function euginit(e) {
 		eug.style.position = "fixed";
 		eug.style.right = "-156px";
 		eug.style.top = "0px";
-		v = 1;
+		v = -1;
 		document.body.appendChild(eug);
 
 		setTimeout(eugmove, 1000);
