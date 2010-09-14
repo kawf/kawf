@@ -194,7 +194,7 @@ function track_thread($fid, $tid, $options='', $time=null)
   $aid = $user->aid;
 
   if (!is_numeric($fid) || !is_numeric($tid) || $fid<=0 || $tid<=0) {
-      error_log("fid=$fid tid=$tid aid=$aid");
+      error_log("track_thread(): fid=$fid tid=$tid aid=$aid");
       log_backtrace(debug_backtrace());
       $sql = "delete from f_tracking where fid = '0' or tid = '0'";
       mysql_query($sql) or sql_error($sql);

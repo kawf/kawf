@@ -89,6 +89,7 @@ function postmessage($user, $fid, &$msg, $request)
 
     /* unwind post count for old message */
     $user->post($fid, $omsg['state'], -1);
+    $track_thread = $untrack_thread = false;
   } else {
     /* Everything is ok, post */
     $newmessage = true;
@@ -195,10 +196,10 @@ function postmessage($user, $fid, &$msg, $request)
   $sql = "insert into f_updates ( fid, mid ) values ( $fid, '" . addslashes($msg['mid']) . "' )";
   mysql_query($sql);
 
-  if ($track_thread)
+  if ($track_thread && is_numeric($msg['tid']))
     track_thread($fid, $msg['tid'], (isset($request['EmailFollowup']))?'SendEmail':'', $tstamp);
 
-  if ($untrack_thread)
+  if ($untrack_thread && is_numeric($msg['tid']))
     untrack_thread($fid, $msg['tid']);
 
   return $newmessage;
