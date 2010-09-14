@@ -94,7 +94,7 @@ if (!$user->capable($forum['fid'], 'Delete')) {
 
 $tpl->set_var("disabled", "");
 
-if ($_POST['tid']) {
+if (is_numeric($_POST['tid'])) {
   $thread = get_thread($_POST['tid']);
 
   if (isset($thread['flag']['Locked']) && !$user->capable($forum['fid'], 'Lock')) {
