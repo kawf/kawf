@@ -40,10 +40,10 @@
       <b>Status locked</b>
 <!-- END statelocked -->
 <!-- END owner -->
-<!-- BEGIN p2freply -->
-      <a href="mailto:{P2F}?subject={MSG_MID}">P2F Reply</a>
-<!-- END p2freply -->
 <!-- BEGIN reply -->
+<!-- BEGIN p2freply -->
+      <a href="mailto:{P2F}?subject={MSG_MID}">P2F Reply</a> |
+<!-- END p2freply -->
       <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml#post">Reply</a>
 <!-- END reply -->
     </td>
