@@ -9,8 +9,8 @@ function message_set_block($tpl)
   $tpl->set_block("owner", "delete");		/* opt */
   $tpl->set_block("owner", "undelete");		/* opt */
   $tpl->set_block("owner", "statelocked");	/* opt */
-  $tpl->set_block("message", "p2freply");	/* opt */
   $tpl->set_block("message", "reply");		/* opt */
+  $tpl->set_block("reply", "p2freply");		/* opt */
 
   $tpl->set_block("message", "forum_mod");	/* opt */
   $tpl->set_block("forum_mod", "admin");	/* opt */
