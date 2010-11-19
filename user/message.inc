@@ -9,6 +9,7 @@ function message_set_block($tpl)
   $tpl->set_block("owner", "delete");		/* opt */
   $tpl->set_block("owner", "undelete");		/* opt */
   $tpl->set_block("owner", "statelocked");	/* opt */
+  $tpl->set_block("message", "p2freply");	/* opt */
   $tpl->set_block("message", "reply");		/* opt */
 
   $tpl->set_block("message", "forum_mod");	/* opt */
@@ -30,6 +31,7 @@ function _message_unset_block_extras($tpl)
 {
   $tpl->set_block("owner", "");
   $tpl->set_var(array(
+    "p2freply" => "",
     "reply" => "",
     "owner" => "",
     "admin" => "",
@@ -45,6 +47,7 @@ function _message_unset_block_extras($tpl)
 function _message_render_extras($tpl, $msg, $viewer, $owner)
 {
   global $forum, $thread;
+  global $p2f_address;
   /* moderator/locker tools (based on viewer) */
   $moderator = $viewer->admin() || $viewer->capable($forum['fid'], 'Moderate');
   $locker = $viewer->admin() || $viewer->capable($forum['fid'], 'Lock');
@@ -120,6 +123,12 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
       }
     }
   }
+  if ($p2f_address[$forum['shortname']]) {
+    $tpl->set_var('P2F', $p2f_address[$forum['shortname']]);
+  } else {
+    $tpl->set_var('p2freply', "");
+  }
+
   blank_extra($tpl, "owner", $own);
   blank_extra($tpl, "statelocked", $locked);
   blank_extra($tpl, "delete", $delete);
