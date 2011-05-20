@@ -42,6 +42,8 @@ function embed_youtube_video($url)
 {
   if (preg_match("#^http://(\w+\.)*youtube\.com/v/([a-zA-Z0-9_\-]+)#", $url, $regs)) {
     $tag = $regs[2];
+  } else if (preg_match("#^http://(\w+\.)*youtu\.be/([a-zA-Z0-9_\-]+)#", $url, $regs)) {
+    $tag = $regs[2];
   } else if (preg_match("#^http://(\w+\.)*youtube\.com/watch\?v=([a-zA-Z0-9_\-]+)#", $url, $regs)) {
     $tag = $regs[2];
   } else {
