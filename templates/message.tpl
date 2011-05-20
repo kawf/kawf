@@ -45,7 +45,7 @@
 <!-- END owner -->
 <!-- BEGIN reply -->
 <!-- BEGIN p2freply -->
-      <a href="mailto:{P2F}?subject={MSG_MID}: RE: {MSG_SUBJECT}">P2F Reply</a> |
+      <a href="mailto:{P2F}?subject={MSG_MID}: ">P2F Reply</a> |
 <!-- END p2freply -->
       <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml#post">Reply</a>
 <!-- END reply -->
