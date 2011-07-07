@@ -127,6 +127,8 @@ function find_forum($shortname)
 {
   global $user, $forum, $indexes, $tthreads, $tthreads_by_tid;
 
+  if ($shortname == 'autos') $shortname='s4';
+
   $sql = "select * from f_forums where shortname = '" . addslashes($shortname) . "'";
   $result = mysql_query($sql) or sql_error($sql);
 
