@@ -448,7 +448,7 @@ function striptag($message, $allowed_tags)
   while (strlen($n_message)>0) {
     $last = $n_message;
     foreach ($allowed_tags as $tag => $etag) {
-      $n_message = str_ireplace("<$tag></$tag>", "", $n_message);
+      $n_message = preg_replace("#<$tag>\s*</$tag>#i", "", $n_message);
     }
     /* we have converged. stop */
     if ($last == $n_message) break;
