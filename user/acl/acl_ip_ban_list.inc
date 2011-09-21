@@ -1,4 +1,4 @@
-<?
+<?php
 
 class AclIpBanListException extends Exception {}
 class AclIpBanListInvalidList extends Exception {}
