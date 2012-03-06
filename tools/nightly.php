@@ -112,6 +112,12 @@ while ($forum = sql_fetch_array($res1)) {
   sql_query("delete from f_unique where fid = " . $forum['fid'] . " and type = 'Message' and id < $maxmid");
   sql_query("delete from f_unique where fid = " . $forum['fid'] . " and type = 'Thread' and id < $maxtid");
 
+  echo ", cleaning up upostcount";
+  sql_query("delete from f_upostcount where fid <=0 || aid <= 0 || count <=0");
+
+  echo ", cleaning up tracking";
+  sql_query("delete from f_tracking where fid <=0 || tid <= 0 || aid <= 0 || tstamp > NOW()");
+
   $indexes=array();
 
   /* Grab all of the indexes for the forum */
@@ -120,26 +126,25 @@ while ($forum = sql_fetch_array($res1)) {
   while ($index = mysql_fetch_assoc($res2))
     $indexes[] = $index;
 
-  echo ", cleaning up upostcount";
-  sql_query("delete from f_upostcount where fid <=0 || aid <= 0 || count <=0");
-
-  echo ", cleaning up tracking";
-  sql_query("delete from f_tracking where fid <=0 || tid <= 0 || aid <= 0 || tstamp > NOW()");
-
   /* Clear out tracking */
-  $res2 = sql_query("select * from f_tracking where fid = " . $forum['fid'] . " and TO_DAYS(NOW()) - TO_DAYS(tstamp) > 30");
-
+  $res2 = sql_query("select * from f_tracking where fid = " . $forum['fid'] . " and TO_DAYS(NOW()) - TO_DAYS(tstamp) > 365");
+  $rows = sql_num_rows($res2);
+  $i=0;
+  echo " ($rows rows):";
   while ($tracking = mysql_fetch_array($res2)) {
-    echo ".";
+    if (($i % 100)==0) {
+	echo " $i";
+    }
     $index = find_thread_index($tracking['tid']);
     if ($index < 0) {
       echo "Tracking index < 0! (tid = " . $tracking['tid'] . ", aid = " . $tracking['aid'] . ", tstamp = " . $tracking['tstamp'] . ", options = '" . $tracking['options'] . "')\n";
       $delete = 1;
     } else
-      $delete = sql_query1("select tstamp from f_threads$index where tid = " . $tracking['tid'] . " and TO_DAYS(NOW()) - TO_DAYS(tstamp) > 14");
+      $delete = sql_query1("select tstamp from f_threads$index where tid = " . $tracking['tid'] . " and TO_DAYS(NOW()) - TO_DAYS(tstamp) > 365");
 
     if ($delete)
       sql_query("delete from f_tracking where fid = " . $forum['fid'] . " and tid = " . $tracking['tid'] . " and aid = " . $tracking['aid']);
+    $i++;
   }
 
   echo " OK";
