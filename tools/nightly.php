@@ -73,6 +73,10 @@ foreach($iids as $iid) {
     }
 }
 
+echo "Cleaning f_tracking\n";
+/* Fixup any tracking timestamps in the future */
+sql_query("update f_tracking set tstamp=NOW() where NOW() < tstamp");
+
 echo "Cleaning forums:";
 $res1 = sql_query("select * from f_forums,f_indexes where f_forums.fid=f_indexes.fid order by f_forums.fid");
 while ($forum = sql_fetch_array($res1)) {

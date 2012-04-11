@@ -6,6 +6,7 @@ require_once("listthread.inc");
 function get_thread_messages($thread, $vmid = 0)
 {
   global $user, $indexes;
+  global $debug_f_tracking;
 
   /* find my messages and later */
   for ($index = find_msg_index($thread['mid']); isset($indexes[$index]); $index++) {
@@ -17,6 +18,8 @@ function get_thread_messages($thread, $vmid = 0)
     $result = mysql_query($sql) or sql_error($sql);
     while ($message = mysql_fetch_assoc($result)) {
       $message['date'] = gen_date($user, $message['unixtime']);
+      if ($debug_f_tracking)
+	$message['date'] .= " (" . $message['unixtime'] . ")";
       /* FIXME: translate pid -> pmid */
       if (!isset($message['pmid']) && isset($message['pid']))
 	$message['pmid'] = $message['pid'];
@@ -107,6 +110,7 @@ function gen_thread($thread, $collapse = false)
 function gen_threadlinks($thread, $collapse = false)
 {
     global $user, $forum, $tthreads_by_tid, $script_name, $path_info;
+    global $debug_f_tracking;
 
     /* not logged in, dont generate anything */
     if (!$user->valid()) return '';
@@ -118,7 +122,8 @@ function gen_threadlinks($thread, $collapse = false)
 	"&amp;page=" . $script_name . $path_info .
 	"&amp;token=" . $user->token() .
 	"\" class=\"ut\" title=\"Untrack thread\">ut</a>";
-      // $tl .= sprintf(" %s (%d)", gen_date($user, $tthread['unixtime']), $tthread['unixtime']);
+      if ($debug_f_tracking)
+	$tl .= sprintf("<br> %s (%d)", gen_date($user, $tthread['unixtime']), $tthread['unixtime']);
     } else {
       $tl = " <a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] .
 	"&amp;page=" . $script_name . $path_info .
@@ -206,9 +211,10 @@ function track_thread($fid, $tid, $options='', $time=null)
     $tstamp = strftime("%Y%m%d%H%M%S", $time);
     $sql = "replace into f_tracking ( fid, tid, aid, options, tstamp ) values ( " .
       "'$fid', '$tid', '$aid', '$options', '$tstamp' )";
-  } else
+  } else {
     $sql = "replace into f_tracking ( fid, tid, aid, options ) values ( " .
       "'$fid', '$tid', '$aid', '$options' )";
+  }
 
   mysql_query($sql) or sql_error($sql);
 }

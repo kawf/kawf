@@ -367,8 +367,6 @@ function mark_thread_read($fid, $msg, $user)
   if (!$user->valid()) return;
 
   $tid = $msg['tid'];
-  /* TZ: unixtime is seconds since epoch */
-  $unixtime = $msg['unixtime'];
 
   /* Mark the thread as read if need be */
   if (is_msg_bumped($msg)) {
@@ -396,6 +394,14 @@ function is_msg_bumped($msg)
 {
     global $tthreads_by_tid;
     $tthread = $tthreads_by_tid[$msg['tid']];
+/*
+    if ($tthread) {
+      $tid = $msg['tid'];
+      $mtime = strftime("%Y-%m-%d %H:%M:%S", $msg['unixtime']);
+      $ttime = strftime("%Y-%m-%d %H:%M:%S", $tthread['unixtime']);
+      error_log("$tid: mtime $mtime ttime $ttime");
+    }
+*/
     return ($tthread && $msg['unixtime'] > $tthread['unixtime']);
 }
 // vim:sw=2
