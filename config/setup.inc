@@ -50,7 +50,8 @@ $default_page = "/directory.phtml";
 
 /* Workaround Debian bug 571762 */
 /* http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=571762 */
-date_default_timezone_set(@date_default_timezone_get());
+/* ONLY uncomment this if you know what you are doing. */
+//date_default_timezone_set(@date_default_timezone_get());
 
 /* allow user to override default in a separate file (prevents merge problems
    when using source control */
