@@ -6,7 +6,6 @@ require_once("listthread.inc");
 function get_thread_messages($thread, $vmid = 0)
 {
   global $user, $indexes;
-  global $debug_f_tracking;
 
   /* find my messages and later */
   for ($index = find_msg_index($thread['mid']); isset($indexes[$index]); $index++) {
@@ -18,8 +17,6 @@ function get_thread_messages($thread, $vmid = 0)
     $result = mysql_query($sql) or sql_error($sql);
     while ($message = mysql_fetch_assoc($result)) {
       $message['date'] = gen_date($user, $message['unixtime']);
-      if ($debug_f_tracking)
-	$message['date'] .= " (" . $message['unixtime'] . ")";
       /* FIXME: translate pid -> pmid */
       if (!isset($message['pmid']) && isset($message['pid']))
 	$message['pmid'] = $message['pid'];
@@ -123,7 +120,7 @@ function gen_threadlinks($thread, $collapse = false)
 	"&amp;token=" . $user->token() .
 	"\" class=\"ut\" title=\"Untrack thread\">ut</a>";
       if ($debug_f_tracking)
-	$tl .= sprintf("<br> %s (%d)", gen_date($user, $tthread['unixtime']), $tthread['unixtime']);
+	$tl .= sprintf("<br> %s", gen_date($user, $tthread['unixtime']));
     } else {
       $tl = " <a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] .
 	"&amp;page=" . $script_name . $path_info .
