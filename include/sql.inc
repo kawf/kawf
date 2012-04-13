@@ -30,6 +30,8 @@ function sql_open($db = "")
 
   if (!empty($db))
     sql_select_db($db);
+
+  mysql_query('set session time_zone="+0:00"');
 }
 
 function sql_select_db($db)
