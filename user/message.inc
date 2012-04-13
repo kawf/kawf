@@ -333,14 +333,21 @@ function fetch_message($user, $mid, $what = '*')
 
 function gen_date($user, $unixtime = null)
 {
+    global $debug_f_tracking;
+
     /* TZ: tzoff is difference between PHP server and viewer, not SQL server and viewer */
     $tzoff = isset($user->tzoff)?$user->tzoff:0;
 
     if (!isset($unixtime)) $unixtime=time();
+    else if ($unixtime>time())
+      $err=" error";
 
     /* msg['date'] is time local to user... strftime would normally be
        time local to PHP server */
-    return strftime("%Y-%m-%d %H:%M:%S", $unixtime - $tzoff);
+    $ret = strftime("%Y-%m-%d %H:%M:%S", $unixtime - $tzoff);
+    if ($debug_f_tracking)
+      $ret .= sprintf("(%d, %d, off=%d)", time(), $unixtime, $tzoff/60/60).$err;
+    return $ret;
 }
 
 function msg_state_changed($fid, $msg, $newstate)
