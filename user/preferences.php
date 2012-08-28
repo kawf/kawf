@@ -112,7 +112,7 @@ if (empty($user->signature))
   $tpl->set_var("signature", "");
 
 $tpl->set_var("SIGNATURE_COOKED", nl2brPre::out($user->signature));
-$tpl->set_var("SIGNATURE", htmlspecialchars($user->signature));
+$tpl->set_var("SIGNATURE", htmlspecialchars($user->signature, ENT_SUBSTITUTE));
 $tpl->set_var("THREADSPERPAGE", $user->threadsperpage);
 $tpl->set_var("TEXT", $text);
 $tpl->set_var("PAGE", htmlspecialchars($_REQUEST['page'], ENT_QUOTES));
