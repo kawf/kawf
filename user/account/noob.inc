@@ -1,4 +1,4 @@
-<?
+<?php
 function noob($mode, $uid, $posts)
 {
     $noob = log10($posts*100/$uid);
