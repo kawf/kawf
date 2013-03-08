@@ -1,6 +1,18 @@
 <?php
 $video_embedders = array ('redtube', 'vimeo', 'youtube', 'html5');
 
+function explode_query($query) {
+    $queryParts = explode('&', $query);
+   
+    $params = array();
+    foreach ($queryParts as $param) {
+        $item = explode('=', $param);
+        $params[$item[0]] = $item[1];
+    }
+   
+    return $params;
+}
+
 function embed_redtube_video($url)
 {
   if (preg_match("#^http://(\w+\.)*redtube\.com/([0-9]+)#", $url, $regs)) {
@@ -40,15 +52,25 @@ function embed_vimeo_video($url)
 
 function embed_youtube_video($url)
 {
-  if (preg_match("#^http://(\w+\.)*youtube\.com/v/([a-zA-Z0-9_\-]+)#", $url, $regs)) {
-    $tag = $regs[2];
-  } else if (preg_match("#^http://(\w+\.)*youtu\.be/([a-zA-Z0-9_\-]+)#", $url, $regs)) {
-    $tag = $regs[2];
-  } else if (preg_match("#^http://(\w+\.)*youtube\.com/watch\?v=([a-zA-Z0-9_\-]+)#", $url, $regs)) {
-    $tag = $regs[2];
-  } else {
-    return null;
+  $u = parse_url(html_entity_decode($url));
+  if ($u==null) return null;
+
+  if (preg_match("#(\w+\.)*youtube\.com#", $u["host"])) {
+    $q = explode_query($u["query"]);
+    $p = explode("/", $u["path"]);
+    if (array_key_exists('v', $q)) {
+      $tag = $q["v"];	# http://youtube.com/?v=tag
+    } else if (count($p) == 3 && $p[1]=="v") {
+      $tag = $p[2];	# http://youtube.com/v/tag
+    }
+  } else if (preg_match("#(\w+\.)*youtu\.be#", $u["host"])) {
+    $p = explode("/", $u["path"]);
+    if (count($p) == 2) {
+      $tag = $p[1];	# http://youtu.be/tag
+    }
   }
+
+  if ($tag==null) return null;
 
   $out =
     "<object width=\"600\" height=\"360\">\n".
@@ -57,7 +79,7 @@ function embed_youtube_video($url)
 	" type=\"application/x-shockwave-flash\" width=\"600\" height=\"360\"></embed>\n".
     "</object><br>\n";
 
-  return tag_media($out, "YouTube ", $url, $tag, "youtube");
+  return tag_media($out, "YouTube ", "http://youtu.be/$tag", $tag, "youtube");
 }
 
 function embed_html5_video($url)
