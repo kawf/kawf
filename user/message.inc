@@ -209,6 +209,8 @@ function render_message($tpl, $msg, $viewer, $owner=null)
   global $Debug, $forum;
   $moderator = $viewer->admin() || $viewer->capable($forum['fid'], 'Moderate');
 
+  $tpl->set_var("VIEWER_AID", isset($viewer)?0xdeadbeef^$viewer->aid:'');
+
   /*---------------------------------------------------------------------*/
   /* Bug 2771354 */
   /* Unfortunately, ExposeEmail is indicated by a *non-empty* msg field!

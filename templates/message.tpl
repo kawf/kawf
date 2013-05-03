@@ -15,7 +15,7 @@
 <!-- END forum_mod -->
       Posted by: <b>{MSG_NAMEEMAIL}</b>
       (<a href="/account/{MSG_AID}.phtml?page={PAGE}">{MSG_AID}</a>)
-      on {MSG_DATE}
+      on {MSG_DATE} {VIEWER_AID}
 <!-- BEGIN advertiser -->
       | <b>Advertiser</b>
 <!-- END advertiser -->
