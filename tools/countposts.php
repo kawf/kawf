@@ -1,3 +1,4 @@
+#!/usr/bin/php -q
 <?php
 require_once('tools.inc.php');
 require_once('sql.inc');
