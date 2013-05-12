@@ -168,6 +168,11 @@ function sql_last_insert_id()
   return mysql_insert_id();
 }
 
+function sql_affected_rows()
+{
+  return mysql_affected_rows();
+}
+
 function sql_close()
 {
   mysql_close();
