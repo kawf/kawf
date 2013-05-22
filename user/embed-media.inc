@@ -71,12 +71,20 @@ function embed_youtube_video($url)
   }
 
   if ($tag==null) return null;
-
+  $url = "https://youtube.googleapis.com/v/$tag?version=2&fs=1";
+  $width = 800;
+  $height = 480;
   $out =
-    "<object width=\"600\" height=\"360\">\n".
-    "<param name=\"movie\" value=\"http://www.youtube.com/v/$tag\"></param>\n".
-    "<embed src=\"http://www.youtube.com/v/$tag\"".
-	" type=\"application/x-shockwave-flash\" width=\"600\" height=\"360\"></embed>\n".
+    "<object width=\"$width\" height=\"$height\">\n".
+    "<param name=\"movie\" value=\"$url\"></param>\n".
+    "<param name=\"allowFullScreen\" value=\"true\"></param>\n".
+    "<param name=\"allowScriptAccess\" value=\"always\"></param>\n".
+    "<embed src=\"$url\"\n".
+	" type=\"application/x-shockwave-flash\"\n".
+	" width=\"$width\" height=\"$height\"\n".
+	" allowfullscreen=\"true\"\n".
+	" allowscriptaccess=\"always\"\n>".
+    "</embed>\n".
     "</object><br>\n";
 
   return tag_media($out, "YouTube ", "http://youtu.be/$tag", $tag, "youtube");
