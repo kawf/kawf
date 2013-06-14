@@ -23,10 +23,10 @@ if (isset($_REQUEST['refresh']) ) {
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-	<meta http-equiv="refresh" content="0; URL=<? echo $url; ?>">
+	<meta http-equiv="refresh" content="0; URL=<?php echo $url; ?>">
 	<title></title>
 </head>
-<body><p><a href="<? echo $url; ?>">Link</a></p></body>
+<body><p><a href="<?php echo $url; ?>">Link</a></p></body>
 </html>
 <?
 } else {

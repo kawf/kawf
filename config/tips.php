@@ -12,7 +12,7 @@ require_once("util.inc");
 <html>
 <head>
 <title>Forum Tips</title>
-<link rel=StyleSheet href="<? echo css_href() ?>" type="text/css">
+<link rel=StyleSheet href="<?php echo css_href() ?>" type="text/css">
 </head>
 
 <body>
