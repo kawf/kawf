@@ -8,7 +8,7 @@ function page_header($title)
 <html>
 <head>
 <title><?echo $title;?></title>
-<link rel=StyleSheet href="<? echo css_href("admin.css")?>" type="text/css">
+<link rel=StyleSheet href="<?php echo css_href("admin.css") ?>" type="text/css">
 </head>
 
 <body>
@@ -33,7 +33,7 @@ function page_footer($back=true)
         <tr class="footing">
           <th>
 <?php if (isset($user)) { ?>
-	    <a href="logout.phtml?token=<? echo $user->token() ?>">Logout</a>
+	    <a href="logout.phtml?token=<?php echo $user->token() ?>">Logout</a>
 <?php } ?>
 	  </th>
           <th class="right">
