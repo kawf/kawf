@@ -7,7 +7,7 @@ function page_header($title)
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<title><?echo $title;?></title>
+<title><?php echo $title;?></title>
 <link rel=StyleSheet href="<?php echo css_href("admin.css") ?>" type="text/css">
 </head>
 
@@ -17,7 +17,7 @@ function page_header($title)
     <td>
       <table class="inner">
         <tr>
-          <th colspan="2" class="heading"><?echo $title;?></th>
+          <th colspan="2" class="heading"><?php echo $title;?></th>
         </tr>
         <tr>
           <td colspan="2">
@@ -56,7 +56,7 @@ function page_show_message($message)
 {
 ?>
             <table class="message">
-              <tr><td><?echo $message;?></td></tr>
+              <tr><td><?php echo $message;?></td></tr>
             </table>
 <?php
 }

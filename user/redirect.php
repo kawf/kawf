@@ -28,7 +28,7 @@ if (isset($_REQUEST['refresh']) ) {
 </head>
 <body><p><a href="<?php echo $url; ?>">Link</a></p></body>
 </html>
-<?
+<?php
 } else {
     header("Location: $url");
 }
