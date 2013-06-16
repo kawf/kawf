@@ -1,4 +1,4 @@
-<?
+<?php
 $include_path = "..:../include:../config";
 $old_include_path = ini_get("include_path");
 if (!empty($old_include_path))
