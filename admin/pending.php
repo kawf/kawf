@@ -48,7 +48,7 @@ if(isset($requestlist)) {
       $i = ($count % 2);
       echo "<tr class=\"row$i\">\n";
       echo "<td>" . $request['tstamp'] . "</td>\n";
-      echo "<td>" . $request['aid'] . "</td>\n";
+      echo "<td><a href=\"/account/" . $request['aid'] . ".phtml\">" . $request['aid'] . "</a></td>\n";
       echo "<td>" . $request['name'] . "</td>\n";
       echo "<td>" . $request['email'] . "</td>\n";
       echo "<td>" . $request['type'] . "</td>\n";
