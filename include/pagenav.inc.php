@@ -10,6 +10,7 @@ function gen_nav_link($fmt, $page, $curpage)
    return "<a href=\"$url\" title=\"Page $page\">$p</a>";
 }
 
+/* pass maxjump<=0 for no max */
 function gen_pagenav($fmt, $curpage, $numpages, $maxjump=20)
 {
   $pages = "";
@@ -21,7 +22,7 @@ function gen_pagenav($fmt, $curpage, $numpages, $maxjump=20)
   if ($end > $numpages) $end = $numpages;
 
   /* Don't let user go to far at once. It thrashes the sql db */
-  if (isset($maxjump) && $numpages > $end + $maxjump) {
+  if (isset($maxjump) && $maxjump>0 && $numpages > $end + $maxjump) {
     $numpages = floor(($end+$maxjump)/$maxjump)*$maxjump;
     $capped = true;
   }

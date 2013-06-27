@@ -39,7 +39,8 @@ $numpages = ceil($numaccounts / $accountsperpage);
 function print_pages($page, $numpages)
 {
   $fmt = "admin.phtml?page=%d";
-  print "Page: " . gen_pagenav($fmt, $page, $numpages) . "<br>\n";
+  /* no maximum (maxjump=0)! */
+  print "Page: " . gen_pagenav($fmt, $page, $numpages, 0) . "<br>\n";
 }
 
 print_pages($page, $numpages);
