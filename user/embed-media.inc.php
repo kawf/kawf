@@ -60,8 +60,8 @@ function embed_youtube_video($url)
     $p = explode("/", $u["path"]);
     if (array_key_exists('v', $q)) {
       $tag = $q["v"];	# http://youtube.com/?v=tag
-    } else if (count($p) == 3 && $p[1]=="v") {
-      $tag = $p[2];	# http://youtube.com/v/tag
+    } else if (count($p) == 3 && ($p[1]=="v" || $p[1]=="embed")) {
+      $tag = $p[2];	# http://youtube.com/(v|embed)/tag
     }
   } else if (preg_match("#(\w+\.)*youtu\.be#", $u["host"])) {
     $p = explode("/", $u["path"]);

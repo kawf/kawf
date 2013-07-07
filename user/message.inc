@@ -1,7 +1,7 @@
 <?php
 require_once("nl2brPre.inc");
 require_once("textwrap.inc");
-require_once("embed-media.inc");
+require_once("embed-media.inc.php");
 
 function message_set_block($tpl)
 {
