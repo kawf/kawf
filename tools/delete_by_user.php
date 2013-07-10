@@ -30,7 +30,7 @@ foreach($tables as $fid) {
   if ($count<=0) continue;
   echo "$aid has $count posts in $table (fid=$fid)\n";
 
-  $changes = 'Changed to Deleted from Active by delete_by_user.php at ' .
+  $changes = 'Changed to Deleted from Active by ' . get_current_user() . ' using delete_by_user.php at ' .
     date('Y-m-d H:i:s');
 
   sql_execute("replace into f_upostcount (aid, fid, status, count ) values ( '$aid', '$fid', 'Deleted', '$count' )");
