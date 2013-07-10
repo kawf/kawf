@@ -1,6 +1,14 @@
 <?php
+function domain_exists($email, $record = 'MX')
+{
+  list($user, $domain) = split('@', $email);
+  return checkdnsrr($domain, $record);
+}
+
 function is_valid_email($email)
 {
+  if (!domain_exists($email)) return false;
+
   return filter_var($email, FILTER_VALIDATE_EMAIL) ? true : false;
 }
 
