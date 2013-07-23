@@ -7,7 +7,7 @@ include_once($kawf_base . "/include/sql.inc");
 
 // date_default_timezone_set("America/Los_Angeles");
 
-$opts = getopt('u:nlp');
+$opts = getopt('u:nlpr:');
 if(!array_key_exists('u', $opts) or !($aid = (int)$opts['u'])) {
   echo "you must supply -u <aid>\n";
   exit(1);
@@ -31,6 +31,13 @@ if (count($where_flags)) {
 
 sql_open($database);
 
+$changes = 'Changed to Deleted from Active by ' . get_current_user() .
+  ' using delete_by_user.php at ' .  date('Y-m-d H:i:s');
+
+if(array_key_exists('r', $opts)) {
+    $changes .= ". Reason: " . mysql_real_escape_string($opts['r']);
+}
+
 // Find all forum tables.
 $tables = array();
 $result = sql_execute("select fid from f_forums");
@@ -45,9 +52,6 @@ foreach($tables as $fid) {
   $count = sql_query1("select count(*) from $table where aid = $aid");
   if ($count<=0) continue;
   echo "$aid has $count posts in $table (fid=$fid)\n";
-
-  $changes = 'Changed to Deleted from Active by ' . get_current_user() . ' using delete_by_user.php at ' .
-    date('Y-m-d H:i:s');
 
   if ($dry_run) {
       $cmd = "select count(*) from $table WHERE $where";
@@ -69,6 +73,8 @@ foreach($tables as $fid) {
 
   sql_execute_wrapper("replace into f_upostcount (aid, fid, status, count ) values ( '$aid', '$fid', 'Deleted', '$deleted' )");
   sql_execute_wrapper("replace into f_upostcount (aid, fid, status, count ) values ( '$aid', '$fid', 'Active', '$active' )");
+
+  printf("Change log entry: '%s'\n", $changes);
 }
 
 function sql_execute_wrapper($cmd)
@@ -76,8 +82,9 @@ function sql_execute_wrapper($cmd)
     global $dry_run;
 
     if ($dry_run) {
-	printf("dry run '$cmd'\n");
+	printf("dry run '%s'\n", $cmd);
     } else {
+	//printf("real '%s'\n", $cmd);
 	sql_execute($cmd);
     }
 }
