@@ -455,8 +455,15 @@ class AccountUser extends ForumUser {
     if ($this->status != "Active")
       return false;
 
-    if ($this->password == md5($password))
-      return true;
+    if(strlen($this->password) < 60) {
+      // Old password, uses MD5.
+      if($this->password == md5($password))
+        return true;
+    } else {
+      // New password, uses BCrypt.
+      if($this->password == crypt($password, $this->password))
+        return true;
+    }
 
     return false;
   }
@@ -525,12 +532,20 @@ class AccountUser extends ForumUser {
   /* Change the status of the user */
   function password($password)
   {
-    $md5password = md5($password);
+    // Generate a random 22 character salt.
+    $salt_alphabet = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    $salt_alphabet_length = strlen($salt_alphabet);
+    $salt = '';
+    for($i = 0; $i < 22; $i++) {
+      $salt .= $salt_alphabet[mt_rand(0, $salt_alphabet_length - 1)];
+    }
+    // BCrypt the password with salt.
+    $pwhash = crypt($password, '$2a$10$' . $salt);
 
-    if ($this->password != $md5password)
-      $this->update['password'] = $md5password;
+    if ($this->password != $pwhash)
+      $this->update['password'] = $pwhash;
 
-    $this->password = $md5password;
+    $this->password = $pwhash;
 
     return true;
   }
