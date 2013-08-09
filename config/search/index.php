@@ -1,11 +1,11 @@
-<?
+<?php 
 include("config.inc");
 include("util.inc");
 
 if($login_to_read) {
     /* Workaround Debian bug 571762 */
     /* http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=571762 */
-    date_default_timezone_set(@date_default_timezone_get());
+    //date_default_timezone_set(@date_default_timezone_get());
 
     include("forumuser.inc");
 
@@ -29,12 +29,12 @@ if($login_to_read) {
 <meta CONTENT="-1" http-equiv="Expires">
 
 <!--
-<?
+<?php 
 while (list($k,$v) = each($_GET)) {echo "$k = $v\n";}
 ?>
 -->
 
-<TITLE><?=$forumname?> Search</TITLE>
+<TITLE><?php echo $forumname?> Search</TITLE>
 
 
 <style>
@@ -141,10 +141,10 @@ function pad0(n,desiredLen) {
 </HEAD>
 <BODY onkeydown="if (event.keyCode==13) {doSearch();return false;}">
 
-<?
+<?php 
 
 
-mysql_connect($sql_host,$sql_username,$sql_password);
+@mysql_connect($sql_host,$sql_username,$sql_password);
 @mysql_select_db($database) or die( "Unable to select database");
 mysql_query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
 
@@ -183,7 +183,7 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 			<table>
 				<tr>
 					<td>
-						<h4><?=$forumname?> Search</h4>
+						<h4><?php echo $forumname?> Search</h4>
 						<small>v 1.2</small>
 					</td>
 				</tr>
@@ -191,7 +191,7 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 					
 					<td>
 						Search:<br>
-						<input type="text" name="searchTxt" id="searchTxt" class="txtInp" value="<?=str_replace('"','&quot;',$searchTxt)?>">
+						<input type="text" name="searchTxt" id="searchTxt" class="txtInp" value="<?php echo str_replace('"','&quot;',$searchTxt)?>">
 					</td>
 				</tr>
 				
@@ -199,7 +199,7 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 					<td>
 						<fieldset>
 						<legend>Search In</legend>
-						<?
+						<?php 
 						if (!isset($searchTxt)) {
 							$searchSubj=1;
 							$searchMsg=1;
@@ -208,13 +208,13 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 						<table>
 							<tr>
 								<td>
-									<input type="checkbox" name="searchSubj" value="1" <?if ($searchSubj=="1") {?>checked<?}?>> Subject
+									<input type="checkbox" name="searchSubj" value="1" <?php if ($searchSubj=="1") {?>checked<?php }?>> Subject
 								</td>
 								<td>
-									<input type="checkbox" name="searchMsg" value="1" <?if ($searchMsg=="1") {?>checked<?}?>> Message
+									<input type="checkbox" name="searchMsg" value="1" <?php if ($searchMsg=="1") {?>checked<?php }?>> Message
 								</td>
 								<td>
-									<input type="checkbox" name="searchUrl" value="1" <?if ($searchUrl=="1") {?>checked<?}?>> URL
+									<input type="checkbox" name="searchUrl" value="1" <?php if ($searchUrl=="1") {?>checked<?php }?>> URL
 								</td>
 							</tr>
 						</table>
@@ -227,7 +227,7 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 						<fieldset>
 						<legend>Forums</legend>
 										
-						<?
+						<?php 
 						$sql = "select * from f_forums where options like '%Searchable%' order by name";
 						$rs = mysql_query($sql);
 
@@ -244,9 +244,9 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 							}
 							
 							?>
-							<input type="checkbox" name="forumID[]" id="forumID<?=$row['fid']?>" value="<?=$row['fid']?>" <?=$chkd?>>
-							<a href="http://<?=$hostname?>/<?=$row['shortname']?>/"><?=$row['name']?></a><br>
-							<?
+							<input type="checkbox" name="forumID[]" id="forumID<?php echo $row['fid']?>" value="<?php echo $row['fid']?>" <?php echo $chkd?>>
+							<a href="http://<?php echo $hostname?>/<?php echo $row['shortname']?>/"><?php echo $row['name']?></a><br>
+							<?php 
 						}
 						?>
 						</fieldset>
@@ -257,17 +257,17 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 					<td>
 						<fieldset>
 						<legend>Flags</legend>
-							<img src="http://<?=$hostname?>/pics/nt.gif">
-							<?drawFlagSel('flagNT',$flagNT)?>
+							<img src="http://<?php echo $hostname?>/pics/nt.gif">
+							<?php drawFlagSel('flagNT',$flagNT)?>
 							<br>
-							<img src="http://<?=$hostname?>/pics/pic.gif">
-							<?drawFlagSel('flagPIC',$flagPIC)?>
+							<img src="http://<?php echo $hostname?>/pics/pic.gif">
+							<?php drawFlagSel('flagPIC',$flagPIC)?>
 							<br>
-							<img src="http://<?=$hostname?>/pics/video.gif">
-							<?drawFlagSel('flagVID',$flagVID)?>
+							<img src="http://<?php echo $hostname?>/pics/video.gif">
+							<?php drawFlagSel('flagVID',$flagVID)?>
 							<br>
-							<img src="http://<?=$hostname?>/pics/url.gif">
-							<?drawFlagSel('flagURL',$flagURL)?>
+							<img src="http://<?php echo $hostname?>/pics/url.gif">
+							<?php drawFlagSel('flagURL',$flagURL)?>
 							
 						</fieldset>
 					</td>
@@ -281,7 +281,7 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 								<tr>
 									<td>Start:</td>
 									<td>
-										<input type="text" style="width:100px;" class="txtInp" name="startDate" id="startDate" value="<?=$startDate?>">
+										<input type="text" style="width:100px;" class="txtInp" name="startDate" id="startDate" value="<?php echo $startDate?>">
 										
 									</td>
 									<td rowspan=3>
@@ -294,7 +294,7 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 								<tr>
 									<td>End:</td>
 									<td>
-										<input type="text" style="width:100px;" class="txtInp" name="endDate" id="endDate" value="<?=$endDate?>">										
+										<input type="text" style="width:100px;" class="txtInp" name="endDate" id="endDate" value="<?php echo $endDate?>">										
 									</td>
 								</tr>
 								<tr>
@@ -314,19 +314,19 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 								<tr>
 									<td>Poster's AID:</td>
 									<td>
-										<input type="text" style="width:50px;" class="txtInp" name="posterAID" id="posterAID" value="<?=$posterAID?>">
+										<input type="text" style="width:50px;" class="txtInp" name="posterAID" id="posterAID" value="<?php echo $posterAID?>">
 									</td>
 								</tr>
 								<tr>
 									<td>Poster's Name:</td>
 									<td>
-										<input type="text" style="width:100px;" class="txtInp" name="posterName" id="posterName" value="<?=$posterName?>">
+										<input type="text" style="width:100px;" class="txtInp" name="posterName" id="posterName" value="<?php echo $posterName?>">
 									</td>
 								</tr>
 								<tr>
 									<td>Show Messages:</td>
 									<td>
-										<input type="checkbox" name="showMessages" value="1" <?if ($showMessages!="") {?>checked<?}?>>
+										<input type="checkbox" name="showMessages" value="1" <?php if ($showMessages!="") {?>checked<?php }?>>
 									</td>
 								</tr>
 							</table>
@@ -337,7 +337,7 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 				
 				<tr>
 					<td align="center">
-						<input type="button" value="Reset" onclick="document.location='<?=$PHP_SELF?>';">
+						<input type="button" value="Reset" onclick="document.location='<?php echo $PHP_SELF?>';">
 						&nbsp;&nbsp;
 						<input type="button" value="Search &gt;" onclick="doSearch();">
 					</td>
@@ -345,7 +345,7 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 			</table>
 		</td>
 		<td valign="top">
-			<?
+			<?php 
 			
 			
 //------------------SEARCH RESULTS---------------------			
@@ -362,15 +362,15 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 					<table class="searchResults" cellspacing=0 cellpadding=0 width=100%>
 						<tr>
 							<th>#</th>
-							<?if (count($forumID)>1) {?>
+							<?php if (count($forumID)>1) {?>
 								<th>Forum</th>
-							<?}?>
-							<th><?drawSortLink('Subject','subject',$sortBy,$sortDir);?></th>
-							<th><?drawSortLink('Date','date',$sortBy,$sortDir);?></th>
-							<th><?drawSortLink('Posted by','name',$sortBy,$sortDir);?></th>
+							<?php }?>
+							<th><?php drawSortLink('Subject','subject',$sortBy,$sortDir);?></th>
+							<th><?php drawSortLink('Date','date',$sortBy,$sortDir);?></th>
+							<th><?php drawSortLink('Posted by','name',$sortBy,$sortDir);?></th>
 						</tr>
 				
-					<?
+					<?php 
 					$rowNbr=0;
 					if ($startRow=="") $startRow = 0;
 					$rowsPerPage = 25;
@@ -383,43 +383,43 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 						$rowNbr++;
 						?>
 						<tr>
-							<td><?=$rowNbr?></td>
-							<?if (count($forumID)>1) {?>
+							<td><?php echo $rowNbr?></td>
+							<?php if (count($forumID)>1) {?>
 								<td>
-									<?=$row['fName']?>
+									<?php echo $row['fName']?>
 								</td>
-							<?}?>
+							<?php }?>
 							<td>
-								<a href="http://<?=$hostname?>/<?=$row['shortname']?>/msgs/<?=$row['mid']?>.phtml" target="_blank"><?=$row['subject']?></a>
+								<a href="http://<?php echo $hostname?>/<?php echo $row['shortname']?>/msgs/<?php echo $row['mid']?>.phtml" target="_blank"><?php echo $row['subject']?></a>
 								&nbsp;
-								<?if (strpos($row['flags'],'NoText')) {?>
-									<img src="http://<?=$hostname?>/pics/nt.gif">
-								<?}?>
-								<?if (strpos($row['flags'],'Picture')) {?>
-									<img src="http://<?=$hostname?>/pics/pic.gif">
-								<?}?>
-								<?if (strpos($row['flags'],'Video')) {?>
-									<img src="http://<?=$hostname?>/pics/video.gif">
-								<?}?>
-								<?if (strpos($row['flags'],'Link')) {?>
-									<img src="http://<?=$hostname?>/pics/url.gif">
-								<?}
+								<?php if (strpos($row['flags'],'NoText')) {?>
+									<img src="http://<?php echo $hostname?>/pics/nt.gif">
+								<?php }?>
+								<?php if (strpos($row['flags'],'Picture')) {?>
+									<img src="http://<?php echo $hostname?>/pics/pic.gif">
+								<?php }?>
+								<?php if (strpos($row['flags'],'Video')) {?>
+									<img src="http://<?php echo $hostname?>/pics/video.gif">
+								<?php }?>
+								<?php if (strpos($row['flags'],'Link')) {?>
+									<img src="http://<?php echo $hostname?>/pics/url.gif">
+								<?php }
 								if ($showMessages!="" && (!strpos($row['flags'],'NoText') || strpos($row['flags'],'Picture') || strpos($row['flags'],'Video') || strpos($row['flags'],'Link'))) {
 									$msg = str_replace(chr(13),"<br>",$row['message']);
 									//if ($row['url']) 
 									//	$msg .= '<a href="' . $row['url'] . '" target="_blank">' . $row['urltext'] . '</a>';
 									?>
-									<div class="sum"><?=$msg?></div>
-									<?
+									<div class="sum"><?php echo $msg?></div>
+									<?php 
 								}
 								?>
 							</td>
-							<td><?=$row['date']?></td>
+							<td><?php echo $row['date']?></td>
 							<td>
-								<a href="http://<?=$hostname?>/account/<?=$row['aid']?>.phtml"><?=substr($row['name'],0,25)?></a>
+								<a href="http://<?php echo $hostname?>/account/<?php echo $row['aid']?>.phtml"><?php echo substr($row['name'],0,25)?></a>
 							</td>
 						</tr>
-						<?
+						<?php 
 					}
 				
 					?>
@@ -427,7 +427,7 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 					<br><br>
 					
 					<div class="pageBar">
-						<?
+						<?php 
 						$url = $PHP_SELF . '?' . $_SERVER['QUERY_STRING'];					
 						$url = removeUrlParam($url,"startRow");
 											
@@ -443,19 +443,19 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 								$maxRow = mysql_num_rows($rs);
 							if ($startRow == $i-1) {
 								?>
-								<b><?=$i?>-<?=$maxRow?></b>
-								<?
+								<b><?php echo $i?>-<?php echo $maxRow?></b>
+								<?php 
 							} else {
 								?>
-								<a href="<?=$url?>&startRow=<?=$i-1?>"><?=$i?>-<?=$maxRow?></a>
-								<?
+								<a href="<?php echo $url?>&startRow=<?php echo $i-1?>"><?php echo $i?>-<?php echo $maxRow?></a>
+								<?php 
 							}
 							if ($maxRow < mysql_num_rows($rs)) echo " | ";
 							
 						}
 						?>
 					</div>
-					<?
+					<?php 
 					
 				} else {
 					echo "No results.";
@@ -467,7 +467,7 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 </table>
 </form>
 
-<?
+<?php 
 
 function search_results($useIndexedSearch)
 {
@@ -589,12 +589,12 @@ function search_results($useIndexedSearch)
 
 function drawFlagSel($id,$curval) {
 	?>
-	<select name="<?=$id?>" id="<?=$id?>">
-		<option value=""  <?if ($curval=="")  {?>selected<?}?>>--</option>
-		<option value="1" <?if ($curval=="1") {?>selected<?}?>>Yes</option>
-		<option value="0" <?if ($curval=="0") {?>selected<?}?>>No</option>
+	<select name="<?php echo $id?>" id="<?php echo $id?>">
+		<option value=""  <?php if ($curval=="")  {?>selected<?php }?>>--</option>
+		<option value="1" <?php if ($curval=="1") {?>selected<?php }?>>Yes</option>
+		<option value="0" <?php if ($curval=="0") {?>selected<?php }?>>No</option>
 	</select>
-	<?
+	<?php 
 }
 
 function drawSortLink($txt,$dbField,$sortBy,$sortDir) {
@@ -602,12 +602,12 @@ function drawSortLink($txt,$dbField,$sortBy,$sortDir) {
 	$url = removeUrlParam($url,"sortBy");
 	$url = removeUrlParam($url,"sortDir");
 	?>
-	<a href="<?=$url?>&sortBy=<?=$dbField?>&sortDir=<?=($sortBy==$dbField && $sortDir=='asc') ? 'desc' : 'asc'?>"><?=$txt?></a>
-	<?
+	<a href="<?php echo $url?>&sortBy=<?php echo $dbField?>&sortDir=<?php echo ($sortBy==$dbField && $sortDir=='asc') ? 'desc' : 'asc'?>"><?php echo $txt?></a>
+	<?php 
 	if ($sortBy==$dbField && ($sortDir=='asc' || $sortDir=='desc')) {
 		?>
-		<img src="images/Arrow_<?=$sortDir?>.gif">
-		<?
+		<img src="images/Arrow_<?php echo $sortDir?>.gif">
+		<?php 
 	}
 }
 
