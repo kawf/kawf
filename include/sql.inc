@@ -20,8 +20,8 @@ function sql_open($db = "")
     $host = "localhost";
   else
     $host = $sql_host;
-
-  if(!mysql_connect($host, $sql_username, $sql_password)) {
+  /* FIXME! use new mysql interface */
+  if(!@mysql_connect($host, $sql_username, $sql_password)) {
     echo "<pre>Down for maintenance</pre>\n";
     exit;
   }

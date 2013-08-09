@@ -398,8 +398,9 @@ function striptag($message, $allowed_tags)
   /* Make sure people dont try to trick striptag() with &#xx; constructions.
      Should this be recursive? */
   /* Works like html_entity_decode, but ';' is optional. */
-  $message = preg_replace('~&#x([0-9a-f]+);?~ei', 'chr(hexdec("\\1"))', $message);
-  $message = preg_replace('~&#([0-9]+);?~e', 'chr("\\1")', $message);
+  /* FIXME: preg_replace /e flag is deprecated */
+  $message = @preg_replace('~&#x([0-9a-f]+);?~ei', 'chr(hexdec("\\1"))', $message);
+  $message = @preg_replace('~&#([0-9]+);?~e', 'chr("\\1")', $message);
 
   /*
    * Each element in the allowed_tags array is the tag body, without the <>
