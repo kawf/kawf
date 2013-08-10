@@ -398,9 +398,8 @@ function entity_decode($message)
   /* Make sure people dont try to trick striptag() with &#xx; constructions.
      Should this be recursive? */
   /* Works like html_entity_decode, but ';' is optional. */
-  /* FIXME: preg_replace /e flag is deprecated */
-  $message = preg_replace('~&#x([0-9a-f]+);?~ei', 'chr(hexdec("\\1"))', $message);
-  $message = preg_replace('~&#([0-9]+);?~e', 'chr("\\1")', $message);
+  $message = preg_replace_callback('~&#x([0-9a-f]+);?~i', function($matches) {return chr(hexdec($matches[1]));}, $message);
+  $message = preg_replace_callback('~&#([0-9]+);?~', function($matches) {return chr($matches[1]);}, $message);
   return $message;
 }
 
