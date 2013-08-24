@@ -1,8 +1,8 @@
 <?php
 
 $kawf_base = realpath(dirname(__FILE__) . "/../..");
-include_once($kawf_base . "/config/config.inc");
-include_once($kawf_base . "/include/sql.inc");
+require_once($kawf_base . "/config/config.inc");
+require_once($kawf_base . "/include/sql.inc");
 
 class DatabaseMigrationException extends Exception {}
 

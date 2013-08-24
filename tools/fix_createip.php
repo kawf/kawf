@@ -1,8 +1,8 @@
 #!/usr/bin/php -q
 <?php
 $kawf_base = realpath(dirname(__FILE__) . "/..");
-include_once($kawf_base . "/config/config.inc");
-include_once($kawf_base . "/include/sql.inc");
+require_once($kawf_base . "/config/config.inc");
+require_once($kawf_base . "/include/sql.inc");
 
 if(!ini_get('safe_mode'))
     set_time_limit(0);

@@ -9,8 +9,8 @@ if (!empty($old_include_path))
   $include_path .= ":" . $old_include_path;
 ini_set("include_path", $include_path);
 
-include("config.inc");
-include("sql.inc");
+require_once("config.inc");
+require_once("sql.inc");
 
 sql_open($database);
 

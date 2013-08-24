@@ -9,9 +9,9 @@ if (!empty($old_include_path))
   $include_path .= ":" . $old_include_path;
 ini_set("include_path", $include_path);
 
-include("config.inc");
-include("sql.inc");
-include("user/tables.inc");
+require_once("config.inc");
+require_once("sql.inc");
+require_once("user/tables.inc");
 
 if(!ini_get('safe_mode'))
     set_time_limit(0);
