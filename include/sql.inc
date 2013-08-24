@@ -1,9 +1,4 @@
 <?php
-/* Avoid reincluding the code */
-if (defined("__SQL_INC__"))
-  return;
-
-define("__SQL_INC__", "1");
 
 class SqlException extends Exception {}
 class SqlDuplicateKey extends SqlException {}
