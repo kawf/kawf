@@ -119,7 +119,7 @@ function update_visits()
     $aid = $user->aid;
 
   $sql = "insert into f_visits ( aid, ip ) values ( $aid, $ip ) on duplicate key update tstamp=NOW()";
-  mysql_query($sql) or sql_error($sql);
+  sql_execute($sql);
 }
 
 function find_forum($shortname)
@@ -127,7 +127,7 @@ function find_forum($shortname)
   global $user, $forum, $indexes, $tthreads, $tthreads_by_tid, $down_for_maint;
 
   $sql = "select * from f_forums where shortname = '" . addslashes($shortname) . "'";
-  $result = mysql_query($sql) or sql_error($sql);
+  $result = sql_execute($sql);
 
   if (mysql_num_rows($result))
     $forum = mysql_fetch_array($result);
@@ -156,7 +156,7 @@ function build_indexes($fid)
 
   /* Grab all of the indexes for the forum */
   $sql = "select * from f_indexes where fid = $fid and ( minmid != 0 or minmid < maxmid ) order by iid";
-  $result = mysql_query($sql) or sql_error($sql);
+  $result = sql_execute($sql);
 
   /* build indexes shard id cache */
   while ($index = mysql_fetch_assoc($result))
@@ -175,7 +175,7 @@ function build_tthreads($fid)
   /* build tthreads_by_tid thread tracking cache */
   if ($user->valid()) {
     /* TZ: unixtime is seconds since epoch */
-    $result = sql_query("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = $fid and aid = " . $user->aid . " order by tid desc");
+    $result = sql_execute("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = $fid and aid = " . $user->aid . " order by tid desc");
 
     while ($tthread = mysql_fetch_assoc($result)) {
       $tid = $tthread['tid'];
@@ -338,7 +338,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
     if (isset($qual))
       $sql .= " and ( " . implode(" or ", $qual) . " )";
 
-    $result = mysql_query($sql) or sql_error($sql);
+    $result = sql_execute($sql);
   }
 
   if (isset($result) && mysql_num_rows($result)) {
@@ -357,7 +357,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
   $iid = tid_to_iid($tid);
   if (isset($iid)) {
     $sql = "select tid from f_threads$iid where tid = '" . addslashes($tid) . "'";
-    $result = mysql_query($sql) or sql_error($sql);
+    $result = sql_execute($sql);
   }
 
   if (isset($result) && mysql_num_rows($result)) {
