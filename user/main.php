@@ -119,7 +119,7 @@ function update_visits()
     $aid = $user->aid;
 
   $sql = "insert into f_visits ( aid, ip ) values ( $aid, $ip ) on duplicate key update tstamp=NOW()";
-  sql_execute($sql);
+  sql_queryn($sql);
 }
 
 function find_forum($shortname)
@@ -127,11 +127,9 @@ function find_forum($shortname)
   global $user, $forum, $indexes, $tthreads, $tthreads_by_tid, $down_for_maint;
 
   $sql = "select * from f_forums where shortname = '" . addslashes($shortname) . "'";
-  $result = sql_execute($sql);
+  $forum = sql_querya($sql);
 
-  if (mysql_num_rows($result))
-    $forum = mysql_fetch_array($result);
-  else
+  if (!$forum)
     return 0;
 
   /* Short circuit it here */
