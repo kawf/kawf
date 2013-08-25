@@ -113,6 +113,13 @@ function sql_query1c($sql)
   return $out ? $out : null;
 }
 
+// Execute a query and throw away the result.  Useful for updates.
+function sql_queryn($sql)
+{
+  $result = sql_execute($sql);
+  sql_free_result($result);
+}
+
 function sql_free_result($result)
 {
   mysql_free_result($result);
