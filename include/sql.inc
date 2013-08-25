@@ -4,11 +4,10 @@ class PDODuplicateKey extends RuntimeException {}
 
 $DBH = null;
 
-// Connect to the database specified by the globals:
-// $sql_host, $database, $sql_username, $sql_password
-// The database handle is the global $DBH.  The connection will throw an
-// exception on any error in connect or any query.
-function db_connect() {
+// DO NOT USE THIS FUNCTION DIRECTLY
+//
+// Use db_connect() below to connect to the database.
+function _db_connect() {
   global $DBH, $sql_host, $database, $sql_username, $sql_password;
 
   $host = "localhost";
@@ -26,6 +25,17 @@ function db_connect() {
   } catch(PDOException $e) {
      echo "<pre>Down for maintenance</pre>\n";
      exit;
+  }
+}
+
+// Connect to the database specified by the globals:
+// $sql_host, $database, $sql_username, $sql_password
+// The database handle is the global $DBH.  The connection will throw an
+// exception on any error in connect or any query.
+function db_connect() {
+  global $DBH;
+  if(!$DBH) {
+    _db_connect();
   }
 }
 
