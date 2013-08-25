@@ -24,15 +24,9 @@ function sql_open($db = "")
   $sql_open = "$sql_host:$sql_username:$sql_password";
 
   if (!empty($db))
-    sql_select_db($db);
+    mysql_select_db($db);
 
   mysql_query('set session time_zone="+0:00"');
-}
-
-function sql_select_db($db)
-{
-  if (!empty($db))
-    mysql_select_db($db);
 }
 
 /* Useful function to print out a standard error message */
