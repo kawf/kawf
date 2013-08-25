@@ -75,56 +75,42 @@ function sql_execute($sql)
 
 function sql_query1($sql)
 {
-  $result = sql_query($sql);
-  if (!sql_num_rows($result))
-    return null;
-
-  list($var) = sql_fetch_row($result);
-
+  $result = sql_execute($sql);
+  $row = sql_fetch_row($result);
   sql_free_result($result);
 
-  return $var;
+  return $row ? $row[0] : null;
 }
 
 function sql_querya($sql)
 {
-  $result = sql_query($sql);
-  if (!sql_num_rows($result))
-    return null;
-
-  $array = sql_fetch_array($result);
-
+  $result = sql_execute($sql);
+  $row = sql_fetch_array($result);
   sql_free_result($result);
 
-  return $array;
+  return $row ? $row : null;
 }
 
 function sql_queryh($sql)
 {
-  $result = sql_query($sql);
-  if (!sql_num_rows($result))
-    return null;
-
-  $hash = sql_fetch_assoc($result);
-
+  $result = sql_execute($sql);
+  $row = sql_fetch_assoc($result);
   sql_free_result($result);
 
-  return $hash;
+  return $row ? $row : null;
 }
 
 function sql_query1c($sql)
 {
   $out = array();
-  $result = sql_query($sql);
-  if (!sql_num_rows($result))
-    return null;
+  $result = sql_execute($sql);
 
   while ($row = sql_fetch_array($result))
     $out[] = $row[0];
 
   sql_free_result($result);
 
-  return $out;
+  return $out ? $out : null;
 }
 
 function sql_free_result($result)
