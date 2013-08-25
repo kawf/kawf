@@ -44,7 +44,7 @@ function db_connect() {
 // $sth = db_query("SELECT id, name, email FROM users WHERE id = ? and email = ?", array($id, $email));
 // Will throw a PDODuplicateKey exception for an integrity constraint violation error, and PDOException
 // for all other errors.
-function db_query($sql, $args) {
+function db_query($sql, $args=array()) {
   $sth = $DBH->prepare($sql);
   try {
     $sth->execute($args);
@@ -63,7 +63,7 @@ function db_query($sql, $args) {
 
 // Prepare and execute a database query and throw away the result.  Returns the
 // number of rows affected for INSERT/UPDATE/DELETE statements.
-function db_exec($sql, $args) {
+function db_exec($sql, $args=array()) {
   $sth = db_query($sql, $args);
   $affected = $sth->rowCount();
   $sth->closeCursor();
@@ -74,7 +74,7 @@ function db_exec($sql, $args) {
 // The row is fetched using PDO::FETCH_BOTH, so it returns an array indexed by
 // both column name and 0-indexed column number.  If the result set is empty,
 // returns NULL.
-function db_query_first($sql, $args) {
+function db_query_first($sql, $args=array()) {
   $sth = db_query($sql, $args);
   $row = $sth->fetch(PDO::FETCH_BOTH);
   $sth->closeCursor();
