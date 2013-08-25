@@ -45,6 +45,7 @@ function db_connect() {
 // Will throw a PDODuplicateKey exception for an integrity constraint violation error, and PDOException
 // for all other errors.
 function db_query($sql, $args=array()) {
+  global $DBH;
   $sth = $DBH->prepare($sql);
   try {
     $sth->execute($args);
