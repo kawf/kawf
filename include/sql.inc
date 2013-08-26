@@ -82,6 +82,11 @@ function db_query_first($sql, $args=array()) {
   return $row ? $row : NULL;
 }
 
+function db_last_insert_id() {
+  global $DBH;
+  return $DBH->lastInsertId();
+}
+
 function sql_open($db = "")
 {
   global $sql_host, $sql_username, $sql_password;
