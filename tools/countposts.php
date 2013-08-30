@@ -3,26 +3,32 @@
 require_once('tools.inc.php');
 require_once('sql.inc');
 
-sql_open($database);
+db_connect();
 
 $dry_run = false;
 
 function count_state_by_aid($aid) {
     $out = array();
-    $res = sql_query("select iid,fid from f_indexes order by iid");
-    while($row = sql_fetch_assoc($res)) {
+    $sth = db_query("select iid,fid from f_indexes order by iid");
+    while($row = $sth->fetch(PDO::FETCH_ASSOC)) {
 	$iid = $row['iid'];
 	$fid = $row['fid'];
 	foreach (array("Active","Offtopic","Deleted","Moderated") as $state) {
 	    if (!isset($out[$fid])) $out[$fid]=array();
 	    if (!isset($out[$fid][$state])) $out[$fid][$state]=0;
-	    $out[$fid][$state] +=  sql_query1("select count(*) from f_messages$iid where aid='$aid' and state='$state'");
+	    $row2 = db_query_first("select count(*) from f_messages$iid where aid=? and state=?", array($aid, $state));
+	    $out[$fid][$state] += $row2[0];
 	}
     }
+    $sth->closeCursor();
     return $out;
 }
 
-$aids = sql_query1c("select aid from u_users order by aid");
+$sth = db_query("select aid from u_users order by aid");
+$aids = array();
+while($row = $sth->fetch()) $aids[] = $row[0];
+$sth->closeCursor();
+
 printf("%d users\n", count($aids));
 $total = 0;
 foreach ($aids as $aid) {
@@ -31,7 +37,8 @@ foreach ($aids as $aid) {
 	$out = array();
 	$updated = 0;
 	foreach ($f as $status => $count) {
-	    $old = sql_query1("select count from f_upostcount where aid='$aid' and fid='$fid' and status='$status'");
+	    $row = db_query_first("select count from f_upostcount where aid=? and fid=? and status=?", array($aid, $fid, $status));
+	    $old = $row ? $row[0] : NULL;
 
 	    /* everything is good. no count, no record */
 	    if (!isset($old) && $count == 0) continue;
@@ -49,11 +56,14 @@ foreach ($aids as $aid) {
 	       $out[] = "$count $status (insert)";
 	    }
 
-	    if ($count>0)
-		$sql = "replace into f_upostcount ( aid, fid, status, count ) values ( '$aid', '$fid', '$status', '$count')";
-	    else
-		$sql = "delete from f_upostcount where aid = '$aid' and fid = '$fid' and status = '$status'";
-	    if (!$dry_run) sql_query($sql);
+	    if ($count>0) {
+		$sql = "replace into f_upostcount ( aid, fid, status, count ) values ( ?, ?, ?, ?)";
+		$sql_args = array($aid, $fid, $status, $count);
+	    } else {
+		$sql = "delete from f_upostcount where aid = ? and fid = ? and status = ?";
+		$sql_args = array($aid, $fid, $status);
+            }
+	    if (!$dry_run) db_exec($sql, $sql_args);
 
 	    $updated++;
 	}
