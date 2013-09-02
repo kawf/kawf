@@ -20,18 +20,19 @@ require_once("mailfrom.inc");
 $tpl = new Template($template_dir, "comment");
 $tpl->set_file("mail", "mail/offtopic.tpl");
 
-sql_open($database);
+db_connect();
 
 if(!ini_get('safe_mode'))
     set_time_limit(0);
 
-$result = sql_query("select * from f_forums");
-while ($f = sql_fetch_array($result)) {
+$sth = db_query("select * from f_forums");
+while ($f = $sth->fetch()) {
   $forums[$f['fid']] = $f;
 }
+$sth->closeCursor();
 
-$result = sql_query("select * from f_offtopic where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) > 10 * 60");
-while ($msg = sql_fetch_array($result)) {
+$sth = db_query("select * from f_offtopic where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) > 10 * 60");
+while ($msg = $sth->fetch()) {
   $nuser = new User;
   $nuser->find_by_aid((int)$msg['aid']);
 
@@ -50,7 +51,8 @@ while ($msg = sql_fetch_array($result)) {
 
   unset($nuser);
 
-  sql_query("delete from f_offtopic where fid = " . $msg['fid'] . " and mid = " . $msg['mid']);
+  db_exec("delete from f_offtopic where fid = ? and mid = ?", array($msg['fid'], $msg['mid']));
 }
+$sth->closeCursor();
 
 ?>
