@@ -9,7 +9,7 @@ require_once($kawf_base . "/db/include/migration.inc");
 if(!ini_get('safe_mode'))
     set_time_limit(0);
 
-sql_open($database);
+db_connect();
 
 array_shift($argv); // Remove script name from the argument list.
 $command = array_shift($argv);

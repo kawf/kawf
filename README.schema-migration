@@ -7,7 +7,7 @@ that extends the DatabaseMigration class, and overrides the migrate() method to
 do the actual database manipulation.  The migrate() method must return true on
 success and false on failure.  The DatabaseMigration parent will take care of
 updating the schema version in the database.  There's one migration there now
-to serve as an example - it creates the schema_version table with is actually
+to serve as an example - it creates the schema_version table which is actually
 needed for this to work, so it's a real change, not a dummy example.
 
 To use this, db/tools/migrate.php is intended to be run from the command line

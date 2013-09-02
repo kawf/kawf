@@ -2,19 +2,20 @@
 
 class UniqFTracking extends DatabaseMigration {
   public function migrate() {
-    $ret = sql_query("select fid, tid, aid, max(tstamp) as tstamp, count(tstamp) " .
+    $sth = db_query("select fid, tid, aid, max(tstamp) as tstamp, count(tstamp) " .
        "from f_tracking group by fid, aid, tid having count(tstamp) > 1");
-    while ($f = sql_fetch_assoc($ret) ) {
+    while ($f = $sth->fetch() ) {
 	$fid = $f['fid'];
 	$tid = $f['tid'];
 	$aid = $f['aid'];
 	$tstamp = $f['tstamp'];
-	$sql = "update f_tracking set tstamp='$tstamp' where ".
-	    "fid='$fid' and tid='$tid' and aid='$aid'";
-	$this->execute_sql($sql);
+	$sql = "update f_tracking set tstamp=? where fid=? and tid=? and aid=?";
+	db_exec($sql, array($tstamp, $fid, $tid, $aid));
     }
+    $sth->closeCursor();
+
     $sql = "alter ignore table f_tracking drop index `fid` , add unique `fid` ( `fid` , `tid` , `aid` )";
-    $this->execute_sql($sql);
+    db_exec($sql);
   }
 }
 

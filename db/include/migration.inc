@@ -4,8 +4,6 @@ $kawf_base = realpath(dirname(__FILE__) . "/../..");
 require_once($kawf_base . "/config/config.inc");
 require_once($kawf_base . "/include/sql.inc");
 
-class DatabaseMigrationException extends Exception {}
-
 class DatabaseMigration {
   public static function get_migration($filepath) {
     // Given a path to the file containing a database migration, this method
@@ -52,12 +50,10 @@ class DatabaseMigration {
 
   public static function find_current_version() {
     // Find the current schema version in the database.
-    // sql_open() should have been called before this.
-    $result = mysql_query("SELECT version FROM schema_version LIMIT 1");
-    if($result) {
-      $row = mysql_fetch_row($result);
-      $version = $row ? $row[0] : "";
-      mysql_free_result($result);
+    // db_connect() should have been called before this.
+    $row = db_query_first("SELECT version FROM schema_version LIMIT 1");
+    if($row) {
+      $version = $row[0];
     } else {
       // Table probably doesn't exist, so version is unknown.
       $version = "";
@@ -80,25 +76,13 @@ class DatabaseMigration {
 
   public function migrate() {
     // This function should contain code to execute the migration on the
-    // database.  Use $this->execute_sql() to run database queries.
+    // database.  Use db_exec() to run database queries.
     throw new BadMethodCallException("Must be overridden by a subclass.");
-  }
-
-  public function execute_sql($sql) {
-    // Execute the query in $sql and return the resulting resource.
-    // Throw DatabaseMigrationException on failure.
-    $result = mysql_query($sql);
-    if(! $result) {
-      $msg = mysql_errno() . ": " . mysql_error();
-      throw new DatabaseMigrationException($msg);
-    }
-    return $result;
   }
 
   public function update_schema_version($new_version) {
     // Update schema version to $new_version, throw an exception on failure.
-    $qversion = mysql_real_escape_string($new_version);
-    $this->execute_sql("UPDATE schema_version SET version = '$qversion'");
+    db_exec("UPDATE schema_version SET version = ?", array($new_version));
   }
 }
 
