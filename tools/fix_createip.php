@@ -7,16 +7,16 @@ require_once($kawf_base . "/include/sql.inc");
 if(!ini_get('safe_mode'))
     set_time_limit(0);
 
-sql_open($database);
+db_connect();
 
 echo "Fixing createip for accounts which don't have it.\n";
 
-$result = sql_execute("SELECT aid FROM u_users WHERE createip IS NULL ORDER BY aid");
+$sth = db_query("SELECT aid FROM u_users WHERE createip IS NULL ORDER BY aid");
 $users = array();
-while($row = sql_fetch_array($result)) {
+while($row = $sth->fetch()) {
   $users[] = $row[0];
 }
-sql_free_result($result);
+$sth->closeCursor();
 
 if(!$users) {
   echo "All users already have createip set, doing nothing.\n";
@@ -25,32 +25,31 @@ if(!$users) {
 
 echo "Found " . count($users) . " broken users.\n";
 
-$result = sql_execute("SHOW TABLES LIKE 'f_messages%'");
+$sth = db_query("SHOW TABLES LIKE 'f_messages%'");
 $tables = array();
-while($row = sql_fetch_array($result)) {
+while($row = $sth->fetch()) {
   $tables[] = $row[0];
 }
-sql_free_result($result);
+$sth->closeCursor();
 echo "There are " . count($tables) . " message tables.\n";
 
 foreach($users as $aid) {
   echo "Fixing aid $aid...";
   $sub_queries = array();
+  $sub_args = array();
   foreach($tables as $table) {
-    $sub_queries[] = "(SELECT ip, date FROM $table WHERE aid = $aid ORDER BY date LIMIT 1)";
+    $sub_queries[] = "(SELECT ip, date FROM $table WHERE aid = ? ORDER BY date LIMIT 1)";
+    $sub_args[] = $aid;
   }
   $sql = "SELECT ip FROM (" . implode(" UNION ", $sub_queries) . ") m ORDER BY m.date LIMIT 1";
-  $result = sql_execute($sql);
-  $row = sql_fetch_array($result);
-  sql_free_result($result);
+  $row = db_query_first($sql, $sub_args);
   if(!$row) {
     echo " user has no messages, skipping.\n";
     continue;
   }
   list($ip) = $row;
   echo " first message IP is $ip";
-  $qip = sql_escape($ip);
-  sql_execute("UPDATE u_users SET createip = $qip WHERE aid = $aid");
+  db_exec("UPDATE u_users SET createip = ? WHERE aid = ?", array($ip, $aid));
   echo " done.\n";
 }
 
