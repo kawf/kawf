@@ -28,7 +28,7 @@ if (!isset($iid))
 if (!$user->is_valid_token($_REQUEST['token']))
   err_not_found('Invalid token');
 
-$msg = sql_querya("select mid, aid, pid, state, subject, flags from f_messages$iid where mid = '" . addslashes($mid) . "'");
+$msg = db_query_first("select mid, aid, pid, state, subject, flags from f_messages$iid where mid = ?", array($mid));
 
 /* don't do anything if no change */
 if ($msg['state'] == $state)
@@ -84,10 +84,10 @@ if (($state == 'Moderated' && !$user->capable($forum['fid'], 'Moderate')) ||
 
 if ($state == 'OffTopic' && $user->capable($forum['fid'], 'OffTopic'))
   // We'll send the message in 10 minutes
-  sql_query("insert into f_offtopic ( fid, mid, aid ) values ( " . $forum['fid'] . ", " . $msg['mid'] . ", " . $msg['aid'] . " )");
+  db_exec("insert into f_offtopic ( fid, mid, aid ) values ( ?, ?, ? )", array($forum['fid'], $msg['mid'], $msg['aid']));
 else if ($msg['state'] == 'OffTopic' && $state != 'OffTopic')
   // Delete any queued messages
-  sql_query("delete from f_offtopic where fid = " . $forum['fid'] . " and mid = " . $msg['mid']);
+  db_exec("delete from f_offtopic where fid = ? and mid = ?", array($forum['fid'], $msg['mid']));
 
 if (isset($flags)) {
   foreach ($flags as $k => $v)
@@ -97,11 +97,10 @@ if (isset($flags)) {
 } else
   $flagset = "";
 
-sql_query("update f_messages$iid set " .
-	"changes = CONCAT(changes, 'Changed to $state from ', state, ' by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), '\n'), " .
-	"flags = '" . addslashes($flagset) . "', " .
-	"state = '$state' " .
-	"where mid = '" . addslashes($mid) . "'");
+db_exec("update f_messages$iid set " .
+	"changes = CONCAT(changes, 'Changed to ', ?, ' from ', state, ' by ', ?, '/', ?, ' at ', NOW(), '\n'), " .
+	"flags = ?, state = ? where mid = ?",
+        array($state, $user->name, $user->aid, $flagset, $state, $mid));
 
 msg_state_changed($forum['fid'], $msg, $state);
 
