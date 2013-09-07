@@ -13,15 +13,16 @@ function get_thread_messages($thread, $vmid = 0)
     /* FIXME: translate pid -> pmid */
     /* TZ: unixtime is seconds since epoch */
     $sql = "select mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, subject, flags, name, email, views " .
-      "from f_messages$iid where tid = '" . $thread['tid'] . "' order by mid";
-    $result = mysql_query($sql) or sql_error($sql);
-    while ($message = mysql_fetch_assoc($result)) {
+      "from f_messages$iid where tid = ? order by mid";
+    $sth = db_query($sql, array($thread['tid']));
+    while ($message = $sth->fetch()) {
       $message['date'] = gen_date($user, $message['unixtime']);
       /* FIXME: translate pid -> pmid */
       if (!isset($message['pmid']) && isset($message['pid']))
 	$message['pmid'] = $message['pid'];
       $messages[] = $message;
     }
+    $sth->closeCursor();
   }
 
   /* Create a tree of the messages */
@@ -57,12 +58,9 @@ function get_thread($tid)
   $t = "f_threads$iid";
   $tid = addslashes($tid);
   $sql =
-    "select *, UNIX_TIMESTAMP(tstamp) as unixtime from $t where tid = '$tid'";
-  $result = mysql_query($sql) or sql_error($sql);
-  if (!mysql_num_rows($result)) return null;
-
-  $thread = mysql_fetch_assoc($result);
-  if (!isset($thread)) return null;
+    "select *, UNIX_TIMESTAMP(tstamp) as unixtime from $t where tid = ?";
+  $thread = db_query_first($sql, array($tid));
+  if(!$thread) return null;
 
   gen_thread_flags($thread);
   return $thread;
@@ -199,7 +197,7 @@ function track_thread($fid, $tid, $options='', $time=null)
       error_log("track_thread(): fid=$fid tid=$tid aid=$aid");
       log_backtrace(debug_backtrace());
       $sql = "delete from f_tracking where fid = '0' or tid = '0'";
-      mysql_query($sql) or sql_error($sql);
+      db_exec($sql);
       return;
   }
 
@@ -207,13 +205,13 @@ function track_thread($fid, $tid, $options='', $time=null)
   if (is_numeric($time)) {
     $tstamp = strftime("%Y%m%d%H%M%S", $time);
     $sql = "replace into f_tracking ( fid, tid, aid, options, tstamp ) values ( " .
-      "'$fid', '$tid', '$aid', '$options', '$tstamp' )";
+      "?, ?, ?, ?, ? )";
+    db_exec($sql, array($fid, $tid, $aid, $options, $tstamp));
   } else {
     $sql = "replace into f_tracking ( fid, tid, aid, options ) values ( " .
-      "'$fid', '$tid', '$aid', '$options' )";
+      "?, ?, ?, ? )";
+    db_exec($sql, array($fid, $tid, $aid, $options));
   }
-
-  mysql_query($sql) or sql_error($sql);
 }
 
 
@@ -228,10 +226,8 @@ function untrack_thread($fid, $tid)
       log_backtrace(debug_backtrace());
   }
 
-  $sql = "delete from f_tracking where ". "
-    fid = '$fid' and tid = '$tid' and aid = '$aid '";
-
-  mysql_query($sql) or sql_error($sql);
+  $sql = "delete from f_tracking where fid = ? and tid = ? and aid = ?";
+  db_exec($sql, array($fid, $tid, $aid));
 }
 
 function is_thread_etracked($thread)
