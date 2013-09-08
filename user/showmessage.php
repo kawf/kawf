@@ -26,8 +26,8 @@ $tpl->parse("FORUM_HEADER", "forum_header");
 $msg = fetch_message($user, $mid);
 
 $iid = mid_to_iid($mid);
-$sql = "update f_messages$iid  set views = views + 1 where mid = '" . addslashes($mid) . "'";
-mysql_query($sql) or sql_warn($sql);
+$sql = "update f_messages$iid  set views = views + 1 where mid = ?";
+db_exec($sql, array($mid));
 
 if (!empty($msg['flags'])) {
   $flagexp = explode(",", $msg['flags']);
