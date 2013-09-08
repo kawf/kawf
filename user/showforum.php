@@ -97,8 +97,8 @@ if ($curpage == 1) {
   /******************************/
   if ($enable_global_messages) {
     /* PHP has a 32 bit limit even tho the type is a BIGINT, 64 bits */
-    $res = mysql_query("select * from f_global_messages where gid < 32 order by date desc") or sql_error();
-    while ($gmsg = mysql_fetch_assoc($res)) {
+    $sth = db_query("select * from f_global_messages where gid < 32 order by date desc");
+    while ($gmsg = $sth->fetch()) {
       if (strlen($gmsg['url'])>0) {
 	if (!($user->gmsgfilter & (1 << $gmsg['gid'])) && ($user->admin() || $gmsg['state'] == "Active")) {
 	  $tpl->set_var("CLASS", "grow" . ($numshown % 2));
@@ -138,6 +138,7 @@ if ($curpage == 1) {
 	}
       }
     }
+    $sth->closeCursor();
   }
 
   /* reset so threads per page is right */
@@ -148,8 +149,8 @@ if ($curpage == 1) {
   /**********************/
   foreach ($indexes as $index) {
     $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $index['iid'] . " where flags like '%Sticky%'";
-    $result = mysql_query($sql) or sql_error($sql);
-    while ($thread = mysql_fetch_assoc($result)) {
+    $sth = db_query($sql);
+    while ($thread = $sth->fetch()) {
 	gen_thread_flags($thread);
 	$collapse = !is_thread_bumped($thread);
 
@@ -167,6 +168,7 @@ if ($curpage == 1) {
 	$numshown++;
 	if (!$collapse) $tthreadsshown++;
     }
+    $sth->closeCursor();
   }
 
   /* reset so threads per page is right */
@@ -222,8 +224,6 @@ if ($curpage != 1 && ($threadtable < 0 || !isset($indexes[$threadtable]))) {
 }
 
 while ($numshown < $threadsperpage) {
-  unset($result);
-
   while (isset($indexes[$threadtable])) {
     $index = $indexes[$threadtable];
 
@@ -233,11 +233,12 @@ while ($numshown < $threadsperpage) {
     /* Get some more results */
     $sql = "select UNIX_TIMESTAMP($ttable.tstamp) as unixtime," .
 	" $ttable.tid, $ttable.mid, $ttable.flags, $mtable.state from $ttable, $mtable where" .
-	" $ttable.tid >= " . $index['mintid'] . " and" .
-	" $ttable.tid <= " . $index['maxtid'] . " and" .
-	" $ttable.mid >= " . $index['minmid'] . " and" .
-	" $ttable.mid <= " . $index['maxmid'] . " and" .
+	" $ttable.tid >= ? and" .
+	" $ttable.tid <= ? and" .
+	" $ttable.mid >= ? and" .
+	" $ttable.mid <= ? and" .
 	" $ttable.mid = $mtable.mid and ( $mtable.state = 'Active' ";
+    $sql_args = array($index['mintid'], $index['maxtid'], $index['minmid'], $index['maxmid']);
     if ($user->capable($forum['fid'], 'Delete'))
       $sql .= "or $mtable.state = 'Deleted' or $mtable.state = 'Moderated' or $mtable.state = 'OffTopic' "; 
     else {
@@ -248,29 +249,32 @@ while ($numshown < $threadsperpage) {
         $sql .= "or $mtable.state = 'OffTopic' ";
     }
 
-    if ($user->valid())
-      $sql .= "or $mtable.aid = " . $user->aid;
+    if ($user->valid()) {
+      $sql .= "or $mtable.aid = ?";
+      $sql_args[] = $user->aid;
+    }
 
     /* Sort all of the messages by date and descending order */
     $sql .= ") order by $ttable.tid desc";
 
     /* Limit to the maximum number of threads per page */
-    $sql .= " limit $skipthreads," . ($threadsperpage - $numshown);
+    $sql .= " limit " . (int)$skipthreads . "," . (int)($threadsperpage - $numshown);
 
-    $result = mysql_query($sql) or sql_error($sql);
+    $sth = db_query($sql, $sql_args);
+    $thread = $sth->fetch();
 
-    if (mysql_num_rows($result))
+    if ($thread)
       break;
 
+    $sth->closeCursor();
     $threadtable--;
   }
 
   if (!isset($indexes[$threadtable]))
     break;
 
-  $skipthreads += mysql_num_rows($result);
-
-  while ($thread = mysql_fetch_assoc($result)) {
+  do {
+    $skipthreads ++;
     if (isset($threadshown[$thread['tid']]))
       continue;
 
@@ -302,9 +306,8 @@ while ($numshown < $threadsperpage) {
     $tpl->parse("_row", "row", true);
 
     $numshown++;
-  }
-
-  mysql_free_result($result);
+  } while ($thread = $sth->fetch());
+  $sth->closeCursor();
 }
 
 if (!process_tthreads(true /* just count */))
@@ -317,8 +320,10 @@ if (!$numshown)
   $tpl->set_var($table_block, "<font size=\"+1\">No messages in this forum</font><br>");
 
 /*
-$active_users = sql_query1("select count(*) from f_visits where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) <= 15 * 60 and aid != 0");
-$active_guests = sql_query1("select count(*) from f_visits where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) <= 15 * 60 and aid = 0");
+$row = db_query_first("select count(*) from f_visits where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) <= 15 * 60 and aid != 0");
+$active_users = $row ? $row[0] : 0;
+$row = db_query_first("select count(*) from f_visits where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) <= 15 * 60 and aid = 0");
+$active_guests = $row ? $row[0] : 0;
 */
 
 $tpl->set_var(array(
