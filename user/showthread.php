@@ -23,8 +23,8 @@ if (!isset($thread))
 
 /* Mark the thread as read if need be */
 if (is_thread_bumped($thread)) {
-  $sql = "update f_tracking set tstamp = NOW() where tid = $tid and aid = " . $user->aid;
-  mysql_query($sql) || sql_warn($sql);
+  $sql = "update f_tracking set tstamp = NOW() where tid = ? and aid = ?";
+  db_exec($sql, array($tid, $user->aid));
 }
 
 /* look for my message and later */
@@ -34,15 +34,16 @@ for ($index = find_msg_index($thread['mid']); isset($indexes[$index]); $index++)
   $sql = "select " .
     "mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, ip, subject, " .
     "message, url, urltext, video, flags, name, email, views, changes " .
-    "from f_messages$iid where tid = '$tid' order by mid";
-  $result=mysql_query($sql) or sql_error($sql);
-  while ($message = mysql_fetch_assoc($result)) {
+    "from f_messages$iid where tid = ? order by mid";
+  $sth = db_query($sql, array($tid));
+  while ($message = $sth->fetch()) {
     $message['date'] = gen_date($user, $message['unixtime']);
     /* FIXME: translate pid -> pmid */
     if (!isset($message['pmid']) && isset($message['pid']))
 	$message['pmid'] = $message['pid'];
     $messages[] = $message;
   }
+  $sth->closeCursor();
 }
 
 /* Filter out moderated or deleted messages, if necessary */
@@ -75,8 +76,8 @@ function print_message($thread, $msg)
   message_set_block($mtpl);
 
   $iid = mid_to_iid($msg['mid']);
-  $sql = "update f_messages$iid set views = views + 1 where mid = '" . addslashes($msg['mid']) . "'";
-  mysql_query($sql) or sql_warn($sql);
+  $sql = "update f_messages$iid set views = views + 1 where mid = ?";
+  db_exec($sql, array($msg['mid']));
 
   $uuser = new ForumUser($msg['aid']);
 
