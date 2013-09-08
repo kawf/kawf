@@ -158,12 +158,9 @@ if (isset($_POST['postcookie'])) {
   /* find parent for "Re: */
   if (isset($msg['pmid'])) {
     $iid = mid_to_iid($msg['pmid']);
-    if (!isset($iid)) sql_error("no iid for pmid " . $msg['pmid']);
-    $sql = "select * from f_messages$iid where mid = '" . addslashes($msg['pmid']) . "'";
-    $result = mysql_query($sql) or sql_error($sql);
-
-    if (mysql_num_rows($result))
-      $parent = mysql_fetch_assoc($result);
+    if (!isset($iid)) throw new RuntimeException("no iid for pmid " . $msg['pmid']);
+    $sql = "select * from f_messages$iid where mid = ?";
+    $parent = db_query_first($sql, array($msg['pmid']));
   }
 
   if (empty($msg['subject']) && strlen($msg['subject']) == 0) {
@@ -216,15 +213,13 @@ if (isset($_POST['postcookie'])) {
     if (is_numeric($_REQUEST['pmid'])) $pmid = $_REQUEST['pmid'];
     else if (is_numeric($_REQUEST['pid'])) $pmid = $_REQUEST['pid'];
 
-    if (!isset($pmid)) sql_error("invalid pmid");
+    if (!isset($pmid)) throw new RuntimeException("invalid pmid");
 
     /* get requested parent message */
     $iid = mid_to_iid($pmid);
-    if (!isset($iid)) sql_error("no iid for pmid $pmid");
-    $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages$iid where mid = '" . addslashes($pmid) . "'";
-    $result = mysql_query($sql) or sql_error($sql);
-
-    $pmsg = mysql_fetch_assoc($result);
+    if (!isset($iid)) throw new RuntimeException("no iid for pmid $pmid");
+    $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages$iid where mid = ?";
+    $pmsg = db_query_first($sql, array($pmid));
 
     /* grab tid and pmid from parent */
     $msg['tid'] = $pmsg['tid'];
@@ -270,17 +265,18 @@ if (!$accepted || isset($preview)) {
 
   require_once("mailfrom.inc");
 
-  $sql = "select * from f_tracking where fid = " . $forum['fid'] . " and tid = '" . addslashes($msg['tid']) . "' and options = 'SendEmail' and aid != " . $user->aid;
-  $result = mysql_query($sql) or sql_error($sql);
+  $sql = "select * from f_tracking where fid = ? and tid = ? and options = 'SendEmail' and aid != ?";
+  $sth = db_query($sql, array($forum['fid'], $msg['tid'], $user->aid));
+  $track = $sth->fetch();
 
-  if (mysql_num_rows($result) > 0) {
+  if ($track) {
     $iid = mid_to_iid($thread['mid']);
-    if (!isset($iid)) sql_error("no iid for thread mid " . $thread['mid']);
+    if (!isset($iid)) throw new RuntimeException("no iid for thread mid " . $thread['mid']);
       
-    $sql = "select subject from f_messages$iid where mid = " . $thread['mid'];
-    $res2 = mysql_query($sql) or sql_error($sql);
+    $sql = "select subject from f_messages$iid where mid = ?";
+    $row = db_query_first($sql, array($thread['mid']));
 
-    list($t_subject) = mysql_fetch_row($res2);
+    list($t_subject) = $row;
 
     $e_message = substr($msg['message'], 0, 1024);
     if (strlen($msg['message']) > 1024) {
@@ -301,7 +297,7 @@ if (!$accepted || isset($preview)) {
       "PHPVERSION" => phpversion(),
     ));
 
-    while ($track = mysql_fetch_assoc($result)) {
+    do {
       $uuser = new ForumUser($track['aid']);
 
       $tpl->set_var("EMAIL", $uuser->email);
@@ -311,8 +307,9 @@ if (!$accepted || isset($preview)) {
 
       mailfrom("followup-" . $track['aid'] . "@" . $bounce_host,
 	$uuser->email, $e_message);
-    }
+    } while ($track = $sth->fetch());
   }
+  $sth->closeCursor();
 
   /* $_page set by main.php from $_REQUEST */
   if (!isset($_page) || empty($_page))
