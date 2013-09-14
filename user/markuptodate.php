@@ -28,15 +28,15 @@ if ($tid == "all") {
       continue;
 
     /* TZ: unixtime is seconds since epoch */
-    $thread = sql_querya("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$iid where tid = '" . addslashes($tthread['tid']) . "'");
+    $thread = db_query_first("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$iid where tid = ?", array($tthread['tid']));
     if (is_thread_bumped($thread)) {
       /* TZ: tstamp is sql local time */
-      sql_query("update f_tracking set tstamp = $time where fid = " . $forum['fid'] . " and tid = " . $thread['tid'] . " and aid = " . $user->aid);
+      db_exec("update f_tracking set tstamp = ? where fid = ? and tid = ? and aid = ?", array($time, $forum['fid'], $thread['tid'], $user->aid));
     }
   }
 } else if (is_numeric($tid)) {
   /* TZ: tstamp is SQL server local time, NOT PHP server local time */
-  sql_query("update f_tracking set tstamp = $time where fid = " . $forum['fid'] . " and tid = " . addslashes($tid) . " and aid = " . $user->aid);
+  db_exec("update f_tracking set tstamp = ? where fid = ? and tid = ? and aid = ?", array($time, $forum['fid'], $tid, $user->aid));
 }
 
 Header("Location: " . $page);
