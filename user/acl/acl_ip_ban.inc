@@ -54,7 +54,7 @@ class AclIpBan {
     foreach($banstring_list as $banstring) {
       $params[] = '?';
     }
-    $sth = sql_query("SELECT id FROM acl_ban_types " .
+    $sth = db_query("SELECT id FROM acl_ban_types " .
                      "WHERE ban_type IN (" . implode(",", $params) . ")",
                      $banstring_list);
     $ids = array();
