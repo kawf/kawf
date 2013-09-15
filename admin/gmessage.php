@@ -65,8 +65,9 @@ function output_row($tpl, $msg)
     $tpl->set('msg',$msg);
 
     /* hidden by */
-    $hidden = sql_query1("select count(*) from u_users where ".
+    $row = db_query_first("select count(*) from u_users where ".
 	"gmsgfilter & (1<<$g)");
+    $hidden = $row[0];
     $tpl->set('hidden',$hidden);
     if($hidden>0) $tpl->parse('table.row.unhide');
 
@@ -79,15 +80,15 @@ function generate_table($tpl)
     global $debug, $template_dir;
 
     /* sanity check global_message table */
-    $max = sql_query1("select max(gid) from f_global_messages");
+    $row = db_query_first("select max(gid) from f_global_messages");
+    $max = $row[0];
     if ($max>31)
-	mysql_query("delete from f_global_messages where gid>31");
+	db_exec("delete from f_global_messages where gid>31");
 
-    $result = mysql_query("select * from f_global_messages order by gid")
-	or sql_error();
+    $sth = db_query("select * from f_global_messages order by gid");
 
     for ($i=0; $i<32; $i++) {
-	for ($msg = mysql_fetch_assoc($result);
+	for ($msg = $sth->fetch();
 	    (!$msg || $i!=$msg['gid']) && $i<32; $i++) {
 	    $m['gid']=$i;
 	    $m['state']='Empty';
@@ -95,6 +96,7 @@ function generate_table($tpl)
 	}
 	if ($msg) output_row($tpl, $msg);	// output real row
     }
+    $sth->closeCursor();
 
     $tpl->parse('table');
 }
@@ -115,8 +117,7 @@ function generate_edit_form($tpl, $gid)
 {
     global $user;
 
-    $msg = sql_queryh("select * from f_global_messages where gid=$gid")
-	or sql_error();
+    $msg = db_query_first("select * from f_global_messages where gid=?", array($gid));
 
     $tpl->set('token', $user->token());
     $tpl->set('msg', $msg);
@@ -141,6 +142,7 @@ function process_request($tpl, $arg)
 
     if (isset($gid)) {
 	$sqls = array();
+	$sargs = array();
 
 	$name = $user->name;
 
@@ -149,9 +151,10 @@ function process_request($tpl, $arg)
 	    $subject = stripcrap($arg['subject'], $subject_tags);
 	    $url = stripcrapurl($arg['url']);
 	    $sqls[]="update f_global_messages set ".
-		    "subject = '$subject', url = '$url', ".
-		    "name = '$name', date = NOW() ".
-		    "where gid = '$gid'";
+		    "subject = ?, url = ?, ".
+		    "name = ?, date = NOW() ".
+		    "where gid = ?";
+	    $sargs[]=array($subject, $url, $name, $gid);
 	    /* resend edit so we get the form back */
 	    $args = "?gid=$gid&edit";
 	}
@@ -159,24 +162,28 @@ function process_request($tpl, $arg)
 	if (isset($arg['add'])) {
 	    $sqls[]="insert into f_global_messages " .
 		     "(gid, name, date) values " .
-		     "($gid, '$name', NOW())";
+		     "(?, ?, NOW())";
+	    $sargs[]=array($gid, $name);
 	}
 
 	if (isset($arg['take'])) {
 	    $sqls[]="update f_global_messages set ".
-		    "name = '$name', date = NOW() ".
-		    "where gid = '$gid'";
+		    "name = ?, date = NOW() ".
+		    "where gid = ?";
+	    $sargs[]=array($name, $gid);
 	}
 
 	if (isset($arg['touch'])) {
 	    $sqls[]="update f_global_messages set ".
 		    "date = NOW() ".
-		    "where gid = '$gid'";
+		    "where gid = ?";
+	    $sargs[]=array($gid);
 	}
 
 	if (isset($arg['unhide'])) {
 	    $sqls[]="update u_users set ".
 		    "gmsgfilter = gmsgfilter & ~(1<<$gid) where gmsgfilter & (1<<$gid)";
+	    $sargs[]=array();
 	}
 
 	if (count($sqls)) {
@@ -184,9 +191,11 @@ function process_request($tpl, $arg)
 	    if (!$user->is_valid_token($arg['token']))
 		err_not_found("invalid token");
 
-	    foreach ($sqls as $sql) {
-		debug($sql."\n");
-		mysql_query($sql) or sql_error($sql);
+	    for ($i = 0; $i < count($sqls); $i++) {
+		$sql = $sqls[$i];
+		$sarg = $sargs[$i];
+		debug($sql."\narray(".implode(",",$sarg).")\n");
+		db_exec($sql, $sarg);
 	    }
 	}
 
