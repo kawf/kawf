@@ -15,7 +15,8 @@ if (is_valid_integer($_GET['page']))
 else
   $page = 1;
 
-$numvisits = sql_query1("select count(*) from f_visits");
+$row = db_query_first("select count(*) from f_visits");
+$numvisits = $row[0];
 
 echo "$numvisits active user/ip pairs<br>\n";
 
@@ -33,7 +34,7 @@ $skipvisits = ($page - 1) * $visitsperpage;
 
 $sql = "select f_visits.*, u_users.name, u_users.email FROM f_visits LEFT JOIN u_users ON u_users.aid = f_visits.aid order by f_visits.ip limit $skipvisits,$visitsperpage";
 
-$result = sql_query($sql) or sql_error($sql);
+$sth = db_query($sql);
 ?>
 
 <p>
@@ -51,11 +52,12 @@ $result = sql_query($sql) or sql_error($sql);
 <?php
 $requests = Array();
 
-while ($request = sql_fetch_assoc($result)) {
+while ($request = $sth->fetch()) {
   $key = $request['aid'] . $request['ip'];
   $requests[$key] = $request;
   $requestlist[] = &$requests[$key];
 }
+$sth->closeCursor();
 if(isset($requestlist)) {
     foreach ($requestlist as $request) {
       $i = ($count % 2);
