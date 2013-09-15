@@ -29,10 +29,9 @@ if (isset($_POST['submit'])) {
 
       $capabilities = join(",", $capabilities);
 
-      sql_query("update f_moderators set capabilities = '" .
-	addslashes($capabilities) .
-        "' where aid = " . addslashes($aid) .
-	" and fid = " . addslashes($fid));
+      db_exec("update f_moderators set capabilities = ? " .
+              "where aid = ? and fid = ?",
+              array($capabilities, $aid, $fid));
     }
   }
 
@@ -56,10 +55,10 @@ page_header("Modify User ACL $aid");
 
 <?php
 
-$result = sql_query("select * from f_moderators where aid = '" . addslashes($aid) . "'");
+$sth = db_query("select * from f_moderators where aid = ?", array($aid));
 
 $count = 0;
-while ($acl = sql_fetch_assoc($result)) {
+while ($acl = $sth->fetch()) {
   $capabilities = explode(",", $acl['capabilities']);
 
   foreach ($capabilities as $value)
@@ -94,6 +93,7 @@ while ($acl = sql_fetch_assoc($result)) {
 <?php
   $count++;
 }
+$sth->closeCursor();
 ?>
 
  <tr>
