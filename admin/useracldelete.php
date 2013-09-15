@@ -9,7 +9,7 @@ if(is_valid_integer($_GET['aid']) && is_valid_signed_integer($_GET['fid'])) {
     err_not_found("invalid fid or aid");
 }
 
-sql_query("delete from f_moderators where aid = " . addslashes($aid) . " and fid = " . addslashes($fid));
+db_exec("delete from f_moderators where aid = ? and fid = ?", array($aid, $fid));
 
 Header("Location: useracl.phtml?message=" . urlencode("User ACL Deleted"));
 
