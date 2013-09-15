@@ -30,7 +30,7 @@ require_once("timezone.inc");
 require_once("acl_ip_ban.inc");
 require_once("acl_ip_ban_list.inc");
 
-sql_open($database); db_connect();
+db_connect();
 
 $tpl = new Template($template_dir, "comment");
 
@@ -377,6 +377,5 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
 /* FIXME: This kills performance */
 // update_visits();
 
-sql_close();
 // vim: sw=2
 ?>

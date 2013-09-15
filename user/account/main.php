@@ -19,9 +19,8 @@ require_once("sql.inc");
 require_once("util.inc");
 require_once("forumuser.inc");
 
-sql_open($database); db_connect();
+db_connect();
 
 include("index.php");
 
-sql_close();
 ?>
