@@ -14,20 +14,24 @@ else
   $page = 1;
 
 $where = "";
+$args = array();
 if (isset($_GET['email']) && !empty($_GET['email'])) {
   echo "<h2>Searching for email like \"".$_GET['email']."\"</h2><br>\n";
-  $where .= " email like '" . addslashes($_GET['email']) . "'";
+  $where .= " email like ?";
+  $args[] = $_GET['email'];
 }
 if (isset($_GET['name']) && !empty($_GET['name'])) {
   echo "<h2>Searching for name like \"".$_GET['name']."\"</h2><br>\n";
   if (!empty($where))
     $where .= " and";
-  $where .= " name like '" . addslashes($_GET['name']) . "'";
+  $where .= " name like ?";
+  $args[] = $_GET['name'];
 }
 
 $sql = "select count(*) from u_users";
 if (!empty($where)) $sql .= " where $where";
-$numaccounts = sql_query1($sql) or sql_error($sql);
+$row = db_query_first($sql, $args);
+$numaccounts = $row[0];
 
 if (!empty($where))
   echo "$numaccounts matching accounts<br>\n";
@@ -66,12 +70,12 @@ $sql = "select * from u_users";
 if (!empty($where))
   $sql .= " where $where";
 $sql .= " order by aid limit $skipaccounts,$accountsperpage";
-$result = mysql_query($sql) or sql_error($sql);
+$sth = db_query($sql, $args);
 ?>
 <table class="contents">
 <tr><th>aid</th><th>name</th><th>email</th><th>status</th></tr>
 <?php
-while ($acct = mysql_fetch_assoc($result)) {
+while ($acct = $sth->fetch()) {
   $i = ($count % 2);
   echo "<tr class=\"row$i\"\n>";
 ?>
@@ -82,6 +86,7 @@ while ($acct = mysql_fetch_assoc($result)) {
   </tr>
 <?php
 }
+$sth->closeCursor();
 echo "</table>\n";
 
 echo "<br>\n";
