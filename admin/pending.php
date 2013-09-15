@@ -8,7 +8,7 @@ page_header("Pending Requests");
 if (isset($_GET['message']))
   page_show_message($_GET['message']);
 
-$result = sql_query("select u_pending.*, u_users.name, u_users.email from u_pending, u_users where u_users.aid = u_pending.aid order by tstamp");
+$sth = db_query("select u_pending.*, u_users.name, u_users.email from u_pending, u_users where u_users.aid = u_pending.aid order by tstamp");
 ?>
 
 <a href="pendingdelete.phtml?clean=1&token=<?php echo $stoken; ?>">Delete completed or old requests</a>
@@ -33,7 +33,7 @@ $result = sql_query("select u_pending.*, u_users.name, u_users.email from u_pend
 $p = Array();
 $requests = Array();
 
-while ($request = sql_fetch_assoc($result)) {
+while ($request = $sth->fetch()) {
   $key = $request['aid'] . $request['type'];
 
   /* If the entry doesn't exist already or the capabilities are different */
@@ -43,6 +43,7 @@ while ($request = sql_fetch_assoc($result)) {
     $requestlist[] = &$requests[$key];
   }
 }
+$sth->closeCursor();
 if(isset($requestlist)) {
     foreach ($requestlist as $request) {
       $i = ($count % 2);
