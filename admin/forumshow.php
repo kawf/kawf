@@ -7,7 +7,7 @@ if(is_valid_integer($_GET['fid']))
 else
     err_not_found("Invalid fid");
 
-$forum = sql_querya("select * from f_forums,f_indexes where f_forums.fid=f_indexes.fid and f_forums.fid = '" . addslashes($fid) . "'");
+$forum = db_query_first("select * from f_forums,f_indexes where f_forums.fid=f_indexes.fid and f_forums.fid = ?", array($fid));
 
 page_header("Foruminfo for '" . $forum['name'] . "'");
 

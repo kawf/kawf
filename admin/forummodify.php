@@ -29,14 +29,10 @@ if (isset($_POST['submit'])) {
   else
     $options = "";
 
-  sql_query("replace into f_forums " .
+  db_exec("replace into f_forums " .
 		"( fid, name, shortname, options ) " .
-		"values " .
-		"( '" . addslashes($fid) . "', " .
-		" '" . addslashes($name) . "'," .
-		" '" . addslashes($shortname) . "'," .
-		" '" . addslashes($options) . "'" .
-		")");
+		"values ( ?, ?, ?, ?)",
+		array($fid, $name, $shortname, $options));
 
   Header("Location: index.phtml?message=" . urlencode("Forum Modified"));
   exit;
@@ -49,7 +45,7 @@ if (!is_valid_integer($_GET['fid'])) {
   ads_die("", "No forum ID specified (fid)");
 }
 
-$forum = sql_querya("select * from f_forums,f_indexes where f_forums.fid=f_indexes.fid and f_forums.fid = '" . addslashes($_GET['fid']) . "'");
+$forum = db_query_first("select * from f_forums,f_indexes where f_forums.fid=f_indexes.fid and f_forums.fid = ?", array($_GET['fid']));
 $options = explode(",", $forum['options']);
 
 foreach ($options as $value)
