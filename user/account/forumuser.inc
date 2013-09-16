@@ -29,7 +29,7 @@ class ForumUser {
 
     $this->tzoff = 0;
 
-    $user = sql_queryh("select * from u_users where $where");
+    $user = db_query_first("select * from u_users where $where");
     if ($user) {
       foreach ($user as $type => $value) {
         $this->$type = $value;
@@ -206,26 +206,27 @@ class ForumUser {
       return true;
 
     /* Create a new array */
+    $update = array();
+    $args = array();
     foreach ($this->update_f as $key => $value) {
-      if (is_int($value))
-        $update[] = "$key = $value";
-      else
-        $update[] = "$key = '" . addslashes($value) . "'";
+      $update[] = "$key = ?";
+      $args[] = $value;
     }
 
     $set = implode(", ", $update);
+    $args[] = $this->aid;
 
-    sql_query("update u_users set $set where aid = " . $this->aid);
+    db_exec("update u_users set $set where aid = ?", $args);
 
     return true;
   }
 
   function post($fid, $status, $count)
   {
-    sql_query("update f_upostcount set count = count + $count where aid = " . $this->aid . " and fid = " . $fid . " and status = '" . addslashes($status) . "'");
-    if (!mysql_affected_rows()) {
-      _sql_query("insert into f_upostcount ( aid, fid, status, count ) values ( " . $this->aid . ", " . $fid . ", '" . addslashes($status) . "', 0 )");
-      sql_query("update f_upostcount set count = count + $count where aid = " . $this->aid . " and fid = " . $fid . " and status = '" . addslashes($status) . "'");
+    $num = db_exec("update f_upostcount set count = count + ? where aid = ? and fid = ? and status = ?", array($count, $this->aid, $fid, $status));
+    if (!$num) {
+      db_exec("insert into f_upostcount ( aid, fid, status, count ) values ( ?, ?, ?, 0 )", array($this->aid, $fid, $status));
+      db_exec("update f_upostcount set count = count + ? where aid = ? and fid = ? and status = ?", array($count, $this->aid, $fid, $status));
     }
   }
 
@@ -237,8 +238,8 @@ class ForumUser {
     if (isset($this->moderator[$fid]))
       return $this->moderator[$fid];
 
-    $ret = sql_query1("select aid from f_moderators where aid = " . $this->aid .
- " and ( fid = $fid or fid = -1 )");
+    $row = db_query_first("select aid from f_moderators where aid = ? and ( fid = ? or fid = -1 )", array($this->aid, $fid));
+    $ret = $row ? $row[0] : NULL;
     $this->moderator[$fid] = $ret;
 
     return $ret;
@@ -252,8 +253,8 @@ class ForumUser {
     if (isset($this->capable[$fid]))
       return isset($this->capable[$fid][$type]);
 
-    $capabilities = sql_query1("select capabilities from f_moderators where aid 
-= " . $this->aid . " and ( fid = $fid or fid = -1 )");
+    $row = db_query_first("select capabilities from f_moderators where aid = ? and ( fid = ? or fid = -1 )", array($this->aid, $fid));
+    $capabilities = $row ? $row[0] : NULL;
 
     $caps = explode(",", $capabilities);
     foreach ($caps as $flag)
@@ -301,15 +302,16 @@ class AccountUser extends ForumUser {
 
       $sql = "insert into u_pending " .
                 "( tid, cookie, aid, type, data, status, tstamp ) values " .
-                "( $tid, '$cookie', $this->aid, '" . addslashes($type) . "', " .
-                "'" . addslashes($data) . "', 'Sent', NOW() )";
-      $ret = _sql_query($sql);
-    } while (!$ret && mysql_errno() == 1062);
+                "( ?, ?, ?, ?, ?, 'Sent', NOW() )";
+      try {
+        db_exec($sql, array($tid, $cookie, $this->aid, $type, $data));
+      } catch(PDODuplicateKey $e) {
+        continue;
+      }
+      break;
+    } while (TRUE);
 
-    if (!$ret)
-      sql_error();
-
-    return sql_querya("select * from u_pending where tid = $tid");
+    return db_query_first("select * from u_pending where tid = ?", array($tid));
   }
 
   function send_email($pending)
@@ -355,40 +357,27 @@ class AccountUser extends ForumUser {
 
     $cookie = md5("cookie" . $this->email . microtime());
 
-    $qname = sql_escape($this->name);
-    $qshortname = sql_escape($this->shortname);
-    $qemail = sql_escape($this->email);
-    $qpassword = sql_escape($this->password);
-    $qcreateip = sql_escape($this->createip);
-    $qcookie = sql_escape($cookie);
-    $sql = "insert into u_users ( " .
-        " name, shortname, email, password, status, cookie, createdate," .
-        " createip" .
-        ") values ( " .
-        "$qname, $qshortname, $qemail, $qpassword, 'Create', $qcookie, " .
-        "NOW(), $qcreateip " .
-        ")";
-    $result = _sql_query($sql);
-    if (!$result) {
-      if (mysql_errno() != 1062)
-        sql_error($sql);
-
-      $tshortname = sql_query1("select shortname from u_users where shortname = $qshortname");
-      if ($tshortname != null)
+    $sql = "insert into u_users (name,shortname,email,password,status,cookie,createdate,createip) " .
+           "values ( ?, ?, ?, ?, 'Create', ?, NOW(), ? )";
+    try {
+      db_exec($sql, array($this->name, $this->shortname, $this->email, $this->password, $cookie, $this->createip));
+    } catch(PDODuplicateKey $e) {
+      $row = db_query_first("select shortname from u_users where shortname = ?", array($this->shortname));
+      if ($row)
         $this->shortname = "";
 
-      $tname = sql_query1("select name from u_users where name = $qname");
-      if ($tname != null)
+      $row = db_query_first("select name from u_users where name = ?", array($this->name));
+      if ($row)
         $this->name = "";
       
-      $temail = sql_query1("select email from u_users where email = $qemail");
-      if ($temail != null)
+      $row = db_query_first("select email from u_users where email = ?", array($this->email));
+      if ($row)
         $this->email = "";
 
       return false;
     }
 
-    $this->aid = sql_last_insert_id();
+    $this->aid = db_last_insert_id();
 
     $pending = $this->add_pending("NewAccount");
 
@@ -403,11 +392,10 @@ class AccountUser extends ForumUser {
 
     if(!isset($this->cookie) || $this->cookie=='') {
         $this->cookie = md5("cookie" . $this->email . microtime());
-	$sql = "update u_users set cookie = '".$this->cookie."' where aid = " . $this->aid;
-	$result = _sql_query($sql);
-	if (!$result) {
-	  if (mysql_errno() != 1062)
-	    sql_error($sql);
+	$sql = "update u_users set cookie = ? where aid = ?";
+        try {
+          db_exec($sql, array($this->cookie, $this->aid));
+        } catch(PDODuplicateKey $e) {
 	}
     }
     if(is_array($cookie_host)) {
@@ -431,11 +419,10 @@ class AccountUser extends ForumUser {
         /* generate a new random cookie but dont store it client side.
 	   also, DO NOT store a blank cookie in the db */
         $this->cookie = md5("cookie" . $this->email . microtime());
-	$sql = "update u_users set cookie = '". $this->cookie ."' where aid = " . $this->aid;
-	$result = _sql_query($sql);
-	if (!$result) {
-	  if (mysql_errno() != 1062)
-	    sql_error($sql);
+	$sql = "update u_users set cookie = ? where aid = ?";
+        try {
+          db_exec($sql, array($this->cookie, $this->aid));
+        } catch(PDODuplicateKey $e) {
 	}
     }
     if(is_array($cookie_host)) {
@@ -504,8 +491,8 @@ class AccountUser extends ForumUser {
 
   function verify_email($email)
   {
-    $val = sql_query1("select email from u_users where email = '" . addslashes($email) . "'");
-    if ($val)
+    $row = db_query_first("select email from u_users where email = ?", array($email));
+    if ($row)
       return false;
 
     $pending = $this->add_pending("ChangeEmail", $email);
@@ -582,26 +569,25 @@ class AccountUser extends ForumUser {
       return true;
 
     /* Create a new array */
+    $update = array();
+    $args = array();
     foreach ($this->update as $key => $value) {
-      if (is_int($value))
-        $update[] = "$key = $value";
-      else
-        $update[] = "$key = '" . addslashes($value) . "'";
+      $update[] = "$key = ?";
+      $args[] = $value;
     }
 
     $set = implode(", ", $update);
+    $args[] = $this->aid;
 
-    $sql = "update u_users set $set where aid = " . $this->aid;
-    $result = _sql_query($sql);
-    if (!$result) {
-      if (mysql_errno() != 1062)
-        sql_error($sql);
-
+    $sql = "update u_users set $set where aid = ?";
+    try {
+      db_exec($sql, $args);
+    } catch(PDODuplicateKey $e) {
       /* Find which column collided (perhaps multiple) */
       foreach ($unique as $value) {
         if (isset($this->update[$value])) {
-          $val = sql_query1("select $value from u_users where $value = '" . addslashes($this->update[$value]) . "'");
-          if ($val)
+          $row = db_query_first("select $value from u_users where $value = ?", array($this->update[$value]));
+          if ($row)
             $this->$value = null;
         }
       }

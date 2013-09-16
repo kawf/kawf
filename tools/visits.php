@@ -1,27 +1,16 @@
 #!/usr/bin/php -q
 <?php
+$kawf_base = realpath(dirname(__FILE__) . "/..");
+require_once($kawf_base . "/config/setup.inc");
+require_once($kawf_base . "/config/config.inc");
+require_once($kawf_base . "/include/sql.inc");
 
-require_once("../config/setup.inc");
-
-/* First setup the path */
-$include_path = "$srcroot/include:$srcroot/config";
-if (isset($include_append))
-  $include_path .= ":" . $include_append;
-
-$old_include_path = ini_get("include_path");
-if (!empty($old_include_path))
-  $include_path .= ":" . $old_include_path;
-ini_set("include_path", $include_path);
-
-require_once("$config.inc");
-require_once("sql.inc");
-
-sql_open($database);
+db_connect();
 
 if(!ini_get('safe_mode'))
     set_time_limit(0);
 
 /* Delete any entries that haven't been updated in > 30 minutes */
-sql_query("delete from f_visits where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) > 30 * 60");
+db_exec("delete from f_visits where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) > 30 * 60");
 
 ?>

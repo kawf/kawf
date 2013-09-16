@@ -30,8 +30,8 @@ require_once("timezone.inc");
 require_once("acl_ip_ban.inc");
 require_once("acl_ip_ban_list.inc");
 
-sql_open($database);
-mysql_query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+db_connect();
+db_exec("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
 
 $tpl = new Template($template_dir, "comment");
 
@@ -119,20 +119,18 @@ function update_visits()
   if ($user->valid())
     $aid = $user->aid;
 
-  $sql = "insert into f_visits ( aid, ip ) values ( $aid, $ip ) on duplicate key update tstamp=NOW()";
-  mysql_query($sql) or sql_error($sql);
+  $sql = "insert into f_visits ( aid, ip ) values ( ?, ? ) on duplicate key update tstamp=NOW()";
+  db_exec($sql, array($aid, $ip));
 }
 
 function find_forum($shortname)
 {
   global $user, $forum, $indexes, $tthreads, $tthreads_by_tid, $down_for_maint;
 
-  $sql = "select * from f_forums where shortname = '" . addslashes($shortname) . "'";
-  $result = mysql_query($sql) or sql_error($sql);
+  $sql = "select * from f_forums where shortname = ?";
+  $forum = db_query_first($sql, array($shortname));
 
-  if (mysql_num_rows($result))
-    $forum = mysql_fetch_array($result);
-  else
+  if (!$forum)
     return 0;
 
   /* Short circuit it here */
@@ -156,12 +154,13 @@ function build_indexes($fid)
   $indexes = array();
 
   /* Grab all of the indexes for the forum */
-  $sql = "select * from f_indexes where fid = $fid and ( minmid != 0 or minmid < maxmid ) order by iid";
-  $result = mysql_query($sql) or sql_error($sql);
+  $sql = "select * from f_indexes where fid = ? and ( minmid != 0 or minmid < maxmid ) order by iid";
+  $sth = db_query($sql, array($fid));
 
   /* build indexes shard id cache */
-  while ($index = mysql_fetch_assoc($result))
+  while ($index = $sth->fetch())
     $indexes[] = $index;
+  $sth->closeCursor();
   
   return $indexes;
 }
@@ -176,9 +175,10 @@ function build_tthreads($fid)
   /* build tthreads_by_tid thread tracking cache */
   if ($user->valid()) {
     /* TZ: unixtime is seconds since epoch */
-    $result = sql_query("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = $fid and aid = " . $user->aid . " order by tid desc");
+    $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = ? and aid = ? order by tid desc";
+    $sth = db_query($sql, array($fid, $user->aid));
 
-    while ($tthread = mysql_fetch_assoc($result)) {
+    while ($tthread = $sth->fetch()) {
       $tid = $tthread['tid'];
 
       if ($tid<=0) continue;
@@ -217,6 +217,7 @@ function build_tthreads($fid)
       $tthreads_by_tid[$tid] = $tthread;
       $tthreads[] = $tthread;
     }
+    $sth->closeCursor();
   }
   return array($tthreads, $tthreads_by_tid);
 }
@@ -281,7 +282,7 @@ function find_thread_index($tid)
 if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
   if (!isset($scripts[$regs[2]])) {
     if (find_forum($regs[2])) {
-      Header("Location: http://$server_name$script_name$path_info/");
+      Header("Location: http://$_url$script_name$path_info/");
       exit;
     } else
       err_not_found("Unknown script " . $regs[2]);
@@ -329,26 +330,30 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
   $fmt = $regs[3];
   $iid = mid_to_iid($mid);
   if (isset($iid)) {
-    $sql = "select mid from f_messages$iid where mid = '" . addslashes($mid) . "'";
+    $sql = "select mid from f_messages$iid where mid = ?";
+    $args = array($mid);
     if (!$user->capable($forum['fid'], 'Delete')) {
       $qual[] = "state != 'Deleted' ";
-      if ($user->valid())
-        $qual[] = "aid = " . $user->aid;
+      if ($user->valid()) {
+        $qual[] = "aid = ?";
+        $args[] = $user->aid;
+      }
     }
 
     if (isset($qual))
       $sql .= " and ( " . implode(" or ", $qual) . " )";
 
-    $result = mysql_query($sql) or sql_error($sql);
+    $sth = db_query($sql, $args);
   }
 
-  if (isset($result) && mysql_num_rows($result)) {
+  if (isset($sth) && $sth->fetch()) {
     if ($fmt=='phtml')
 	require_once("showmessage.php");
     else
 	require_once("plainmessage.php");
   } else
     err_not_found("Unknown message " . $mid . " in forum " . $forum['shortname']. "\n$sql");
+  if(isset($sth)) $sth->closeCursor();
 } else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/threads\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
@@ -357,14 +362,15 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
   $tid = $regs[2];
   $iid = tid_to_iid($tid);
   if (isset($iid)) {
-    $sql = "select tid from f_threads$iid where tid = '" . addslashes($tid) . "'";
-    $result = mysql_query($sql) or sql_error($sql);
+    $sql = "select tid from f_threads$iid where tid = ?";
+    $sth = db_query($sql, array($tid));
   }
 
-  if (isset($result) && mysql_num_rows($result)) {
+  if (isset($sth) && $sth->fetch()) {
     require_once("showthread.php");
   } else
     err_not_found("Unknown thread " . $tid . " in forum " . $forum['shortname']);
+  if(isset($sth)) $sth->closeCursor();
 } else
   err_not_found("Unknown path");
 
@@ -372,6 +378,5 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
 /* FIXME: This kills performance */
 // update_visits();
 
-sql_close();
 // vim: sw=2
 ?>

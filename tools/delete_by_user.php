@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?php
 $kawf_base = realpath(dirname(__FILE__) . "/..");
-include_once($kawf_base . "/config/config.inc");
-include_once($kawf_base . "/config/setup.inc");
-include_once($kawf_base . "/include/sql.inc");
+require_once($kawf_base . "/config/config.inc");
+require_once($kawf_base . "/config/setup.inc");
+require_once($kawf_base . "/include/sql.inc");
 
 // date_default_timezone_set("America/Los_Angeles");
 
@@ -14,7 +14,8 @@ if(!array_key_exists('u', $opts) or !($aid = (int)$opts['u'])) {
 }
 
 $dry_run=array_key_exists('n', $opts);
-$where = "aid = $aid AND state <> 'Deleted'";
+$where = "aid = ? AND state <> 'Deleted'";
+$where_args = array($aid);
 $where_flags = array();
 
 if (array_key_exists('l', $opts)) {
@@ -29,63 +30,72 @@ if (count($where_flags)) {
     $where .= " AND (" . join(' OR ', $where_flags) . ")";
 }
 
-sql_open($database);
+db_connect();
 
 $changes = 'Changed to Deleted from Active by ' . get_current_user() .
   ' using delete_by_user.php at ' .  date('Y-m-d H:i:s');
 
 if(array_key_exists('r', $opts)) {
-    $changes .= ". Reason: " . mysql_real_escape_string($opts['r']);
+    $changes .= ". Reason: " . $opts['r'];
 }
 
 // Find all forum tables.
 $tables = array();
-$result = sql_execute("select fid from f_forums");
-while($row = sql_fetch_array($result)) {
+$sth = db_query("select fid from f_forums");
+while($row = $sth->fetch()) {
   $tables[] = $row[0];
 }
-sql_free_result($result);
+$sth->closeCursor();
 
 // Iterate over the tables and run the query on each.
 foreach($tables as $fid) {
   $table = "f_messages$fid";
-  $count = sql_query1("select count(*) from $table where aid = $aid");
+  try {
+    $row = db_query_first("select count(*) from $table where aid = ?", array($aid));
+  } catch(PDOException $e) {
+    echo "Failed selecting count from $table, skipping...\n";
+    continue;
+  }
+  $count = $row[0];
   if ($count<=0) continue;
   echo "$aid has $count posts in $table (fid=$fid)\n";
 
   if ($dry_run) {
       $cmd = "select count(*) from $table WHERE $where";
-      printf("'$cmd'\n");
-      $count = sql_query1($cmd);
+      printf("'$cmd', array(" . implode(", ", $where_args) . ")\n");
+      $row = db_query_first($cmd, $where_args);
+      $count = $row[0];
       printf("Matched %d messages\n", $count);
   } else {
-      sql_execute_wrapper(
+      $num_affected = sql_execute_wrapper(
 	"UPDATE $table SET state = 'Deleted', " .
 	"flags = CONCAT_WS(',', IF(flags = '', NULL, flags), 'StateLocked'), " .
-	"changes = CONCAT_WS('\\n', changes, '$changes') " .
-	"WHERE $where"
+	"changes = CONCAT_WS('\\n', changes, ?) " .
+	"WHERE $where", array_merge(array($changes), $where_args)
       );
-      printf("Deleted %d messages\n", sql_affected_rows());
+      printf("Deleted %d messages\n", $num_affected);
   }
 
-  $deleted = sql_query1("select count(*) from $table where aid = $aid AND state = 'Deleted'");
-  $active = sql_query1("select count(*) from $table where aid = $aid AND state = 'Active'");
+  $row = db_query_first("select count(*) from $table where aid = ? AND state = 'Deleted'", array($aid));
+  $deleted = $row[0];
+  $row = db_query_first("select count(*) from $table where aid = ? AND state = 'Active'", array($aid));
+  $active = $row[0];
 
-  sql_execute_wrapper("replace into f_upostcount (aid, fid, status, count ) values ( '$aid', '$fid', 'Deleted', '$deleted' )");
-  sql_execute_wrapper("replace into f_upostcount (aid, fid, status, count ) values ( '$aid', '$fid', 'Active', '$active' )");
+  sql_execute_wrapper("replace into f_upostcount (aid, fid, status, count ) values ( ?, ?, 'Deleted', ? )", array($aid, $fid, $deleted));
+  sql_execute_wrapper("replace into f_upostcount (aid, fid, status, count ) values ( ?, ?, 'Active', ? )", array($aid, $fid, $active));
 
   printf("Change log entry: '%s'\n", $changes);
 }
 
-function sql_execute_wrapper($cmd)
+function sql_execute_wrapper($cmd, $args=array())
 {
     global $dry_run;
 
     if ($dry_run) {
-	printf("dry run '%s'\n", $cmd);
+	printf("dry run '%s'" . ($args ? " array(" . implode(", ", $args) . ")": "") . "\n", $cmd);
     } else {
 	//printf("real '%s'\n", $cmd);
-	sql_execute($cmd);
+	return db_exec($cmd, $args);
     }
 }
 

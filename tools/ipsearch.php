@@ -1,37 +1,47 @@
 #!/usr/bin/php -q
 <?php
-
-include('../config/setup.inc');
-include("../config/$config.inc");
-
-ini_set("include_path", ini_get("include_path") . ":$srcroot/include");
-
-require_once('sql.inc');
+$kawf_base = realpath(dirname(__FILE__) . "/..");
+require_once($kawf_base . "/config/setup.inc");
+require_once($kawf_base . "/config/config.inc");
+require_once($kawf_base . "/include/sql.inc");
 
 if ($_SERVER['argc']<2) {
-    printf("usage: %s ip [ ip .. ]\n", $argv[0]);
+    printf("usage: %s ip [ ip .. ]\n", $_SERVER['argv'][0]);
     exit -1;
 }
 
 $argv = $_SERVER['argv'];
 array_shift($argv);	// pop off argv[0]
-foreach ($argv as $ip)
-    $where[] = "'$ip'";
-$where = " where ip in (" . implode (', ', $where) . ")";
+$where = array();
+$ip_args = array();
+foreach ($argv as $ip) {
+    $where[] = '?';
+    $ip_args[] = $ip;
+}
+$where = "where ip in (" . implode (',', $where) . ")";
 
-sql_open($database);
+db_connect();
 
-$cols = sql_query1c("select iid from f_indexes");
-foreach($cols as $iid)
-  $fids[] = "select aid, ip, name, email from f_messages$iid" . $where;
+$sth = db_query("select iid from f_indexes");
+$iids = array();
+while($row = $sth->fetch()) {
+  $iids[] = $row[0];
+}
+$sth->closeCursor();
 
-$fids = implode(' UNION ', $fids);
+$parts = array();
+$sql_args = array();
+foreach($iids as $iid) {
+  $parts[] = "select aid,ip,name,email from f_messages$iid " . $where;
+  $sql_args = array_merge($sql_args, $ip_args);
+}
 
-$res = sql_query($fids);
-while ($msg = sql_fetch_array($res))
-    printf("%d %s %s %s\n", $msg['aid'], $msg['ip'], $msg['name'],
-	$msg['email']);
+$sql = implode(' UNION ', $parts);
 
-sql_close($database);
+$sth = db_query($sql, $sql_args);
+while ($row = $sth->fetch())
+    printf("%d %s %s %s\n", $row['aid'], $row['ip'], $row['name'],
+	$row['email']);
+$sth->closeCursor();
 
 ?>

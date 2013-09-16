@@ -27,10 +27,8 @@ if (!isset($iid)) {
   exit;
 }
 
-$sql = "select * from f_threads$iid where tid = '" . addslashes($tid) . "'";
-$result = mysql_query($sql) or sql_error($sql);
-
-$thread = mysql_fetch_array($result);
+$sql = "select * from f_threads$iid where tid = ?";
+$thread = db_query_first($sql, array($tid));
 
 $options = explode(",", $thread['flags']);
 foreach ($options as $name => $value) {
@@ -41,12 +39,13 @@ $options[] = 'Locked';
 
 $flags = implode(",", $options);
 
-$sql = "update f_threads$iid set flags = '" . addslashes($flags) . "' where tid = '" . addslashes($tid) . "'";
-mysql_query($sql) or sql_error($sql);
+$sql = "update f_threads$iid set flags = ? where tid = ?";
+db_exec($sql, array($flags, $tid));
 
-sql_query("update f_messages$iid set " .
-        "changes = CONCAT(changes, 'Locked by " . addslashes($user->name) . "/" . $user->aid . " at ', NOW(), '\n') " .
-        "where mid = '" . addslashes($thread['mid']) . "'");
+db_exec("update f_messages$iid set " .
+        "changes = CONCAT(changes, 'Locked by ', ?, '/', ?, ' at ', NOW(), '\n') " .
+        "where mid = ?",
+        array($user->name, $user->aid, $thread['mid']));
 
 header("Location: $page");
 ?>

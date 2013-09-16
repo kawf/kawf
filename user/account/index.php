@@ -61,18 +61,20 @@ if(array_key_exists('noob', $_GET)) {
     else $verbose=0;
 
     if($uuser->createip) {
-        $res1 = sql_query("select * from u_users where createip = '".$uuser->createip."' and aid != '".$uuser->aid."'");
-	if(mysql_num_rows($res1)) {
+        $sth = db_query("select * from u_users where createip = ? and aid != ?", array($uuser->createip, $uuser->aid));
+        $u = $sth->fetch();
+	if($u) {
 	  echo "<h2>Accounts created from ".$uuser->createip."</h2>\n";
 	  print_header();
-	  while ($u = sql_fetch_assoc($res1)) {
+	  do {
 	    $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
 	    $uu = new ForumUser($u['aid'], false);
 	    print_user($uu, get_stats($uu), $bgcolor);
 	    $count++;
-	  }
+	  } while ($u = $sth->fetch());
 	  print_footer();
 	}
+        $sth->closeCursor();
     }
     echo "<h2>IP addresses</h2>\n";
 
@@ -86,28 +88,35 @@ if(array_key_exists('noob', $_GET)) {
     echo "<p>\n";
 
     if($verbose>0) {
-      $res1 = sql_query("select fid,shortname from f_forums order by fid");
-      while ($f = sql_fetch_assoc($res1)) {
+      $sth = db_query("select fid,shortname from f_forums order by fid");
+      while ($f = $sth->fetch()) {
 	$forums[] = $f;
       }
+      $sth->closeCursor();
 
       echo "<table class=\"outer\">\n <tr>\n";
 
       if ($uuser->createip) $ips[]=$uuser->createip;
       foreach ($forums as $forum) {
-	$res2 = sql_query("select DISTINCT ip,name from `f_messages".$forum['fid']."` where `aid` = ".$uuser->aid);
-	if(mysql_num_rows($res2)>0) {
+        try {
+	  $sth = db_query("select DISTINCT ip,name from `f_messages".$forum['fid']."` where `aid` = ?", array($uuser->aid));
+          $msg = $sth->fetch();
+        } catch(PDOException $e) {
+          $msg = NULL;
+        }
+	if($msg) {
 	  echo " <td class=\"outer\"><table class=\"inner\">\n";
 	  echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\" colspan=\"2\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
-	  while ($msg = sql_fetch_assoc($res2)) {
+	  do {
 	    echo "  <tr bgcolor=\"#ECECFF\">";
 	    echo "<td class=\"inner\">".$msg['ip']."</td>";
 	    echo "<td class=\"inner\">".$msg['name']."</td>";
 	    echo "</tr>\n";
 	    $ips[]=$msg['ip'];
-	  }
+	  } while ($msg = $sth->fetch());
 	  echo " </table></td>\n";
 	}
+        if($sth) $sth->closeCursor();
       }
       echo "</tr>\n";
       echo "</table>\n";
@@ -118,11 +127,16 @@ if(array_key_exists('noob', $_GET)) {
 	  echo "<h3>$ip</h3>\n";
 	  echo "<table class=\"outer\">\n <tr>\n";
 	  foreach ($forums as $forum) {
-	    $res2 = sql_query("select DISTINCT aid,name from `f_messages".$forum['fid']."` where `ip` = \"$ip\" ORDER BY aid");
-	    if(mysql_num_rows($res2)>0) {
+            try {
+	      $sth = db_query("select DISTINCT aid,name from `f_messages".$forum['fid']."` where `ip` = ? ORDER BY aid", array($ip));
+              $msg = $sth->fetch();
+            } catch(PDOException $e) {
+              $msg = NULL;
+            }
+	    if($msg) {
 	      echo " <td class=\"outer\"><table class=\"inner\">\n";
 	      echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\" colspan=\"2\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
-	      while ($msg = sql_fetch_assoc($res2)) {
+	      do {
 		echo "  <tr bgcolor=\"#ECECFF\">";
 		if($msg['aid']!=$uuser->aid) {
 		    echo "<td class=\"inner\"><a$v0 href=\"/account/".$msg['aid'].".phtml?$page\">".$msg['aid']."</a></td>";
@@ -131,9 +145,10 @@ if(array_key_exists('noob', $_GET)) {
 		}
 		echo "<td class=\"inner\">".$msg['name']."</td>";
 		echo "</tr>\n";
-	      }
+	      } while ($msg = $sth->fetch());
 	      echo " </table></td>\n";
 	    }
+            if($sth) $sth->closeCursor();
 	  }
 	  echo "</tr>\n";
 	  echo "</table>\n";
@@ -147,19 +162,18 @@ if(array_key_exists('noob', $_GET)) {
 
 function get_stats($uu)
 {
-  $sql = "select * from f_upostcount where aid = $uu->aid\n";
-  $result = mysql_query($sql) or sql_error($sql);
+  $sql = "select * from f_upostcount where aid = ?";
+  $sth = db_query($sql, array($uu->aid));
   $stats['active']=0;
   $stats['deleted']=0;
   $stats['offtopic']=0;
 
-  if(mysql_num_rows($result)) {
-      while($index = mysql_fetch_assoc($result)) {
-	  if($index['status'] == "Active") $stats['active']+=(int)$index['count'];
-	  if($index['status'] == "Deleted") $stats['deleted']+=(int)$index['count'];
-	  if($index['status'] == "OffTopic") $stats['offtopic']+=(int)$index['count'];
-      }
+  while($index = $sth->fetch()) {
+    if($index['status'] == "Active") $stats['active']+=(int)$index['count'];
+    if($index['status'] == "Deleted") $stats['deleted']+=(int)$index['count'];
+    if($index['status'] == "OffTopic") $stats['offtopic']+=(int)$index['count'];
   }
+  $sth->closeCursor();
   return $stats;
 }
 

@@ -25,25 +25,20 @@ if (isset($_POST['submit'])) {
   else
     $options = "";
 
-  sql_query("insert into f_forums " .
+  db_exec("insert into f_forums " .
 		"( name, shortname, options ) " .
-		"values " .
-		"( '" . addslashes($_POST['name']) . "', " .
-		"'" . addslashes($_POST['shortname']) . "', " .
-		"'" . addslashes($options) . "'" .
-		")");
-  $fid = sql_query1("select last_insert_id()");
+		"values ( ?, ?, ? )",
+		array($_POST['name'], $_POST['shortname'], $options));
+  $fid = db_last_insert_id();
 
-  sql_query("insert into f_indexes ( fid, minmid, maxmid, mintid, maxtid, active, moderated, deleted ) values ( $fid, 1, 0, 1, 0, 0, 0, 0 )");
-  $iid = sql_query1("select last_insert_id()");
+  db_exec("insert into f_indexes ( fid, minmid, maxmid, mintid, maxtid, active, moderated, deleted ) values ( ?, 1, 0, 1, 0, 0, 0, 0 )", array($fid));
+  $iid = db_last_insert_id();
 
-  sql_query("insert into f_unique ( fid, type, id ) values ( $fid, 'Message', 0 )"
-);
-  sql_query("insert into f_unique ( fid, type, id ) values ( $fid, 'Thread', 0 )")
-;
+  db_exec("insert into f_unique ( fid, type, id ) values ( ?, 'Message', 0 )", array($fid));
+  db_exec("insert into f_unique ( fid, type, id ) values ( ?, 'Thread', 0 )", array($fid));
 
-  sql_query(sprintf($create_message_table, $iid));
-  sql_query(sprintf($create_thread_table, $iid));
+  db_exec(sprintf($create_message_table, $iid));
+  db_exec(sprintf($create_thread_table, $iid));
 
   Header("Location: index.phtml?message=" . urlencode("Forum Added"));
   exit;

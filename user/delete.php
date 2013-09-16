@@ -50,10 +50,8 @@ if (!isset($iid)) {
   exit;
 }
 
-$sql = "select * from f_messages$iid where mid = '" . addslashes($mid) . "'";
-$result = mysql_query($sql) or sql_error($sql);
-
-$msg = mysql_fetch_assoc($result);
+$sql = "select * from f_messages$iid where mid = ?";
+$msg = db_query_first($sql, array($mid));
 
 if ($msg['aid'] != $user->aid) {
   echo "This message does not belong to you!\n";

@@ -4,45 +4,47 @@
 if(!ini_get('safe_mode'))
     set_time_limit(0);
 
-function sql_error($sql)
-{
-  echo "<pre>$sql</pre>\n";
-  echo "Error #" . mysql_errno() . ": " . mysql_error() . "\n";
-  exit;
-}
-
-function sql_warn($sql)
-{
-  echo "<pre>$sql</pre>\n";
-  echo "Error #" . mysql_errno() . ": " . mysql_error() . "\n";
-}
-
-if (!mysql_connect("localhost", "root", "password"))
-  die("Unable to open local SQL server");
+// Operations that fail will throw an exception.
+$dbh = new PDO(
+  "mysql:host=localhost;dbname=kawf", "root", "password",
+  array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+);
 
 $sql = "select * from f_forums order by fid";
-$result = mysql_query($sql) or sql_error($sql);
+$sth = $dbh->prepare($sql);
+$sth->execute();
 
-while ($f = mysql_fetch_array($result)) {
+$sql2 = "select * from f_indexes where fid = ? order by iid desc limit 1";
+$sth2 = $dbh->prepare($sql);
+
+while ($f = $sth->fetch()) {
   $forum[$f['fid']] = $f;
 
-  $sql = "select * from f_indexes where fid = " . $f['fid'] . " order by iid desc limit 1";
-  $res2 = mysql_query($sql) or sql_error($sql);
+  $sth2->execute(array($f['fid']));
 
-  $index[$f['fid']] = mysql_fetch_array($res2);
+  $index[$f['fid']] = $sth2->fetch();
+  $sth2->closeCursor();
 }
+$sth->closeCursor();
 
 $sql = "select * from f_dupposts where aid = 0";
-$result = mysql_query($sql) or sql_error($sql);
+$sth = $dbh->prepare($sql);
+$sth->execute();
 
-while ($duppost = mysql_fetch_array($result)) {
-  $sql = "select aid from f_messages" . $index[$duppost['fid']]['iid'] . " where mid = " . $duppost['mid'];
-  $res2 = mysql_query($sql) or sql_error($sql);
+$sql3 = "update f_dupposts set aid = ? where cookie = ?";
+$sth3 = $dbh->prepare($sql3);
 
-  list($aid) = mysql_fetch_row($res2);
+while ($duppost = $sth->fetch()) {
+  $sql2 = "select aid from f_messages" . $index[$duppost['fid']]['iid'] . " where mid = ?";
+  $sth2 = $dbh->prepare($sql2);
+  $sth2->execute(array($duppost['mid']));
 
-  $sql = "update f_dupposts set aid = $aid where cookie = '" . $duppost['cookie'] . "'";
-echo $sql . "\n";
-  mysql_query($sql) or sql_error($sql);
+  list($aid) = $sth2->fetch(PDO::FETCH_NUM);
+  $sth2->closeCursor();
+
+  $sth3->execute(array($aid, $duppost['cookie']));
+  $sth3->closeCursor();
 }
+$sth->closeCursor();
+
 ?>

@@ -305,25 +305,18 @@ if (isset($error) || isset($preview)) {
     err_not_found("message $mid has no iid");
     exit;
   }
-  $sql = "update f_messages$iid set " .
-	"name = '" . addslashes($nmsg['name']) . "', " .
-	"email = '" . addslashes($nmsg['email']) . "', " .
-	"flags = '" . $nmsg['flags'] . "', " .
-	"subject = '" . addslashes($nmsg['subject']) . "', " .
-	"message = '" . addslashes($nmsg['message']) . "', " .
-	"url = '" . addslashes($nmsg['url']) . "', " .
-	"urltext = '" . addslashes($nmsg['urltext']) . "', " .
-	"video = '" . addslashes($nmsg['video']) . "', " .
-	"state = '" . $nmsg['state'] . "', " .
-	"changes = CONCAT(changes, 'Edited by " .
-	    addslashes($user->name) . "/" . $user->aid .
-	    " at ', NOW(), ' from $remote_addr\n" .
-	    addslashes($diff) . "\n') " .
-	"where mid = '" . addslashes($mid) . "'";
-  mysql_query($sql) or sql_error($sql);
+  $sql = "update f_messages$iid set name = ?, email = ?, flags = ?, subject = ?, " .
+	"message = ?, url = ?, urltext = ?, video = ?, state = ?, " .
+	"changes = CONCAT(changes, 'Edited by ', ?, '/', ?, ' at ', NOW(), ' from ', ?, '\n', ?, '\n') " .
+	"where mid = ?";
+  db_exec($sql, array(
+    $nmsg['name'], $nmsg['email'], $nmsg['flags'], $nmsg['subject'],
+    $nmsg['message'], $nmsg['url'], $nmsg['urltext'], $nmsg['video'], $nmsg['state'],
+    $user->name, $user->aid, $remote_addr, $diff, $mid
+  ));
 
-  $sql = "replace into f_updates ( fid, mid ) values ( " . $forum['fid'] . ", '" . addslashes($mid) . "' )";
-  mysql_query($sql) or sql_error($sql);
+  $sql = "replace into f_updates ( fid, mid ) values ( ?, ? )";
+  db_exec($sql, array($forum['fid'], $mid));
 
   /* update user post counts and f_indexes */
   if ($state_changed)

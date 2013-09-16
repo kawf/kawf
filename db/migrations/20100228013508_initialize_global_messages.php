@@ -12,11 +12,11 @@ class InitializeGlobalMessages extends DatabaseMigration {
 	date datetime not null default '0000-00-00 00:00:00',
 	state enum('Active','Inactive') not null default 'Inactive',
 	primary key (gid))";
-    $this->execute_sql($sql);
+    db_exec($sql);
 
     $sql="alter table f_global_messages
 	modify state enum('Active','Inactive') not null default 'Inactive'";
-    $this->execute_sql($sql);
+    db_exec($sql);
   }
 }
 

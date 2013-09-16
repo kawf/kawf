@@ -16,7 +16,8 @@ else
   $page = 1;
 
 $sql = "select count(*) from f_moderators, u_users where u_users.aid = f_moderators.aid";
-$numrows = sql_query1($sql) or sql_error($sql);
+$row = db_query_first($sql);
+$numrows = $row[0];
 echo "$numrows total user ACL records<br>\n";
 
 $numpages = ceil($numrows / $rowsperpage);
@@ -33,7 +34,7 @@ $sql = "select f_moderators.*, u_users.name from f_moderators, u_users where u_u
 $skiprows = ($page - 1) * $rowsperpage;
 $sql .= " order by aid limit $skiprows,$rowsperpage";
 
-$result = sql_query($sql) or sql_error($sql);
+$sth = db_query($sql);
 ?>
 
 <a href="useracladd.phtml">Add new user ACL</a>
@@ -53,7 +54,7 @@ $result = sql_query($sql) or sql_error($sql);
 $acllist = Array();
 $useracls = Array();
 
-while ($useracl = sql_fetch_assoc($result)) {
+while ($useracl = $sth->fetch()) {
   $key = $useracl['aid'] . $useracl['capabilities'];
 
   /* If the entry doesn't exist already or the capabilities are different */
@@ -69,6 +70,7 @@ while ($useracl = sql_fetch_assoc($result)) {
   else
     $useracls[$key]['fids'][] = $useracl['fid'];
 }
+$sth->closeCursor();
 
 foreach ($acllist as $useracl) {
   $i = ($count % 2);

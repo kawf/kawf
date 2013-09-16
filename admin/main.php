@@ -19,7 +19,7 @@ require_once("adminuser.inc");
 
 require_once("page.inc.php");
 
-sql_open($database);
+db_connect();
 
 $scripts = array(
   "" => "index.php",

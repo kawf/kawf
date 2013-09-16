@@ -15,13 +15,13 @@ class AclIpBan {
     $ip_id = (int)$ip_id;
     $sql = "SELECT bt.ban_type " .
            "FROM acl_ip_bans ib INNER JOIN acl_ban_types bt " .
-           "ON (ib.ban_type_id = bt.id) WHERE ib.ip_id = $ip_id ORDER BY bt.id";
-    $result = sql_query($sql);
+           "ON (ib.ban_type_id = bt.id) WHERE ib.ip_id = ? ORDER BY bt.id";
+    $sth = db_query($sql, array($ip_id));
     $bans = array();
-    while($row = sql_fetch_array($result)) {
+    while($row = $sth->fetch()) {
       $bans[] = $row[0];
     }
-    sql_free_result($result);
+    $sth->closeCursor();
     return $bans;
   }
 
@@ -30,16 +30,19 @@ class AclIpBan {
       return array();
     }
     $ids = array();
+    $params = array();
     foreach($ban_ids as $ban_id) {
       $ids[] = (int)$ban_id;
+      $params[] = '?';
     }
-    $result = sql_query("SELECT ban_type FROM acl_ban_types WHERE id IN (" .
-                        implode(", ", $ids) . ") ORDER BY id");
+    $sth = db_query("SELECT ban_type FROM acl_ban_types WHERE id IN (" .
+                    implode(",", $params) . ") ORDER BY id",
+                    $ids);
     $bans = array();
-    while($row = sql_fetch_array($result)) {
+    while($row = $sth->fetch()) {
       $bans[] = $row[0];
     }
-    sql_free_result($result);
+    $sth->closeCursor();
     return $bans;
   }
 
@@ -47,26 +50,28 @@ class AclIpBan {
     if(!$banstring_list) {
       return array();
     }
-    $qbans = array();
+    $params = array();
     foreach($banstring_list as $banstring) {
-      $qbans[] = sql_escape($banstring);
+      $params[] = '?';
     }
-    $result = sql_query("SELECT id FROM acl_ban_types " .
-                        "WHERE ban_type IN (" . implode(", ", $qbans) . ")");
+    $sth = db_query("SELECT id FROM acl_ban_types " .
+                     "WHERE ban_type IN (" . implode(",", $params) . ")",
+                     $banstring_list);
     $ids = array();
-    while($row = sql_fetch_array($result)) {
+    while($row = $sth->fetch()) {
       $ids[] = (int)$row[0];
     }
-    sql_free_result($result);
+    $sth->closeCursor();
     return $ids;
   }
 
   public static function find($ip_id) {
     $ip_id = (int)$ip_id;
-    $row = sql_querya("SELECT id, INET_NTOA(ip) AS ipstring, " .
-                      "       INET_NTOA(mask) AS maskstring, note " .
-                      "FROM acl_ips " .
-                      "WHERE id = $ip_id");
+    $row = db_query_first("SELECT id, INET_NTOA(ip) AS ipstring, " .
+                          "       INET_NTOA(mask) AS maskstring, note " .
+                          "FROM acl_ips " .
+                          "WHERE id = ?",
+                          array($ip_id));
     if($row) {
       list($id, $ipstring, $maskstring, $note) = $row;
       $id = (int)$id;
@@ -78,36 +83,36 @@ class AclIpBan {
   }
 
   public static function find_all() {
-    $result = sql_query("SELECT id, INET_NTOA(ip) AS ipstring, " .
-                        "       INET_NTOA(mask) AS maskstring, note " .
-                        "FROM acl_ips");
+    $sth = db_query("SELECT id, INET_NTOA(ip) AS ipstring, " .
+                    "       INET_NTOA(mask) AS maskstring, note " .
+                    "FROM acl_ips");
     $acl_ip_bans = array();
-    while($row = sql_fetch_array($result)) {
+    while($row = $sth->fetch()) {
       list($id, $ipstring, $maskstring, $note) = $row;
       $id = (int)$id;
       $bans = self::find_bans_by_ip_id($id);
       $acl_ip_bans[] = new self($id, $ipstring, $maskstring, $note, $bans);
     }
-    sql_free_result($result);
+    $sth->closeCursor();
     return $acl_ip_bans;
   }
 
   public static function find_matching_bans($otherip) {
     // Return a list of all AclIpBan objects that match $otherip:
     // $bans = AclIpBan::find_matching_bans("1.2.3.4");  // return an array
-    $qotherip = sql_escape($otherip);
-    $result = sql_query("SELECT id, INET_NTOA(ip) AS ipstring, " .
-                        "       INET_NTOA(mask) AS maskstring, note " .
-                        "FROM acl_ips " .
-                        "WHERE ip & mask = INET_ATON($qotherip) & mask");
+    $sth = db_query("SELECT id, INET_NTOA(ip) AS ipstring, " .
+                    "       INET_NTOA(mask) AS maskstring, note " .
+                    "FROM acl_ips " .
+                    "WHERE ip & mask = INET_ATON(?) & mask",
+                    array($otherip));
     $acl_ip_bans = array();
-    while($row = sql_fetch_array($result)) {
+    while($row = $sth->fetch()) {
       list($id, $ipstring, $maskstring, $note) = $row;
       $id = (int)$id;
       $bans = self::find_bans_by_ip_id($id);
       $acl_ip_bans[] = new self($id, $ipstring, $maskstring, $note, $bans);
     }
-    sql_free_result($result);
+    $sth->closeCursor();
     return $acl_ip_bans;
   }
 
@@ -232,30 +237,32 @@ class AclIpBan {
       if(!self::is_ip_valid($this->maskstring)) {
         throw new AclIpBanInvalidMask($this->maskstring);
       }
-      sql_execute("INSERT INTO acl_ips (ip, mask, note) " .
-                  "VALUES (INET_ATON(" . sql_escape($this->ipstring) . "), " .
-                  "INET_ATON(" . sql_escape($this->maskstring) . "), " .
-                  sql_escape($this->note) . ")");
-      $this->id = sql_last_insert_id();
+      db_exec("INSERT INTO acl_ips (ip, mask, note) " .
+              "VALUES (INET_ATON(?), INET_ATON(?), ?)",
+              array($this->ipstring, $this->maskstring, $this->note));
+      $this->id = db_last_insert_id();
 
       $ban_type_ids = self::find_ban_type_ids($this->bans);
       $this->bans = self::find_bans_by_ban_ids($ban_type_ids);
       if($ban_type_ids) {
         $values = array();
+        $insert_sql_args = array();
         foreach($ban_type_ids as $ban_type_id) {
-          $values[] = "(" . $this->id . ", $ban_type_id)";
+          $values[] = "(?, ?)";
+          $insert_sql_args[] = $this->id;
+          $insert_sql_args[] = $ban_type_id;
         }
         $insert_sql = "INSERT INTO acl_ip_bans (ip_id, ban_type_id) " .
-                      "VALUES " . implode(", ", $values);
+                      "VALUES " . implode(",", $values);
       }
       // MyISAM does not support transactions, so lock the table during
       // this change to avoid a race condition.
-      sql_execute("LOCK TABLES acl_ip_bans WRITE");
-      sql_execute("DELETE FROM acl_ip_bans WHERE ip_id = " . $this->id);
+      db_exec("LOCK TABLES acl_ip_bans WRITE");
+      db_exec("DELETE FROM acl_ip_bans WHERE ip_id = ?", array($this->id));
       if($ban_type_ids) {
-        sql_execute($insert_sql);
+        db_exec($insert_sql, $insert_sql_args);
       }
-      sql_execute("UNLOCK TABLES");
+      db_exec("UNLOCK TABLES");
       $this->changed_attributes = array();
 
     } else {
@@ -265,25 +272,30 @@ class AclIpBan {
         return;
       }
       $updates = array();
+      $sql_args = array();
       if(array_key_exists("ipstring", $this->changed_attributes)) {
         if(!self::is_ip_valid($this->ipstring)) {
           throw new AclIpBanInvalidIp($this->ipstring);
         }
-        $updates[] = "ip = INET_ATON(" . sql_escape($this->ipstring) . ")";
+        $updates[] = "ip = INET_ATON(?)";
+        $sql_args[] = $this->ipstring;
       }
       if(array_key_exists("maskstring", $this->changed_attributes)) {
         if(!self::is_ip_valid($this->maskstring)) {
           throw new AclIpBanInvalidMask($this->maskstring);
         }
-        $updates[] = "mask = INET_ATON(" . sql_escape($this->maskstring) . ")";
+        $updates[] = "mask = INET_ATON(?)";
+        $sql_args[] = $this->maskstring;
       }
       if(array_key_exists("note", $this->changed_attributes)) {
-        $updates[] = "note = " . sql_escape($this->note);
+        $updates[] = "note = ?";
+        $sql_args[] = $this->note;
       }
       if($updates) {
         $sql = "UPDATE acl_ips SET " . implode(", ", $updates) .
-               " WHERE id = " . $this->id;
-        sql_execute($sql);
+               " WHERE id = ?";
+        $sql_args[] = $this->id;
+        db_exec($sql, $sql_args);
       }
 
       if(array_key_exists("bans", $this->changed_attributes)) {
@@ -291,20 +303,23 @@ class AclIpBan {
         $this->bans = self::find_bans_by_ban_ids($ban_type_ids);
         if($ban_type_ids) {
           $values = array();
+          $insert_sql_args = array();
           foreach($ban_type_ids as $ban_type_id) {
-            $values[] = "(" . $this->id . ", $ban_type_id)";
+            $values[] = "(?, ?)";
+            $insert_sql_args[] = $this->id;
+            $insert_sql_args[] = $ban_type_id;
           }
           $insert_sql = "INSERT INTO acl_ip_bans (ip_id, ban_type_id) " .
                         "VALUES " . implode(", ", $values);
         }
         // MyISAM does not support transactions, so lock the table during
         // this change to avoid a race condition.
-        sql_execute("LOCK TABLES acl_ip_bans WRITE");
-        sql_execute("DELETE FROM acl_ip_bans WHERE ip_id = " . $this->id);
+        db_exec("LOCK TABLES acl_ip_bans WRITE");
+        db_exec("DELETE FROM acl_ip_bans WHERE ip_id = ?", array($this->id));
         if($ban_type_ids) {
-          sql_execute($insert_sql);
+          db_exec($insert_sql, $insert_sql_args);
         }
-        sql_execute("UNLOCK TABLES");
+        db_exec("UNLOCK TABLES");
       }
       // Save succeeded, this object is clean now.
       $this->changed_attributes = array();
@@ -314,8 +329,8 @@ class AclIpBan {
   public function delete() {
     // Delete this record from the database.
     if(!is_null($this->id)) {
-      sql_execute("DELETE FROM acl_ip_bans WHERE ip_id = " . $this->id);
-      sql_execute("DELETE FROM acl_ips WHERE id = " . $this->id);
+      db_exec("DELETE FROM acl_ip_bans WHERE ip_id = ?", array($this->id));
+      db_exec("DELETE FROM acl_ips WHERE id = ?", array($this->id));
     }
     $this->id = null;
     $this->ipstring = "";

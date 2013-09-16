@@ -328,9 +328,8 @@ function fetch_message($user, $mid, $what = '*')
     $iid = mid_to_iid($mid);
 
     /* TZ: unixtime is seconds since epoch */
-    $sql = "select $what, UNIX_TIMESTAMP(date) as unixtime from f_messages$iid where mid = '" . addslashes($mid) .  "'";
-    $result = mysql_query($sql) or sql_error($sql);
-    $msg = mysql_fetch_assoc($result);
+    $sql = "select $what, UNIX_TIMESTAMP(date) as unixtime from f_messages$iid where mid = ?";
+    $msg = db_query_first($sql, array($mid));
 
     /* FIXME: translate pid -> pmid */
     if (!isset($msg['pmid']) && isset($msg['pid']))
@@ -378,7 +377,7 @@ function msg_state_changed($fid, $msg, $newstate)
   /* For the purposes of these calculations */
   if ($msg['pmid'] == 0) {
     $iid = mid_to_iid($msg['mid']);
-    sql_query("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $newstate = $newstate + 1 where iid = $iid");
+    db_exec("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $newstate = $newstate + 1 where iid = ?", array($iid));
   }
 }
 
@@ -391,9 +390,8 @@ function mark_thread_read($fid, $msg, $user)
   /* Mark the thread as read if need be */
   if (is_msg_bumped($msg)) {
     /* TZ: f_tracking 'tstamp' is SQL server local time */
-    $sql = "update f_tracking set tstamp = NOW() where fid = $fid" .
-      " and tid = " . $tid . " and aid = " . $user->aid;
-    mysql_query($sql) or sql_warn($sql);
+    $sql = "update f_tracking set tstamp = NOW() where fid = ? and tid = ? and aid = ?";
+    db_exec($sql, array($fid, $tid, $user->aid));
   }
 }
 

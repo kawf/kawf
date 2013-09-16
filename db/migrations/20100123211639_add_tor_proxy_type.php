@@ -6,7 +6,7 @@ class AddTorProxyType extends DatabaseMigration {
            "  (id, proxy_type) " .
            "VALUES " .
            "  (1, 'TOR')";
-    $this->execute_sql($sql);
+    db_exec($sql);
   }
 }
 

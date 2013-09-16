@@ -4,10 +4,11 @@ require_once("sql.inc");
 
 function get_notices_html($forum, $aid)
 {
-	if (sql_query1("show tables like 'n_notices".$forum['fid']."';")) {
+	$row = db_query_first('show tables like ?', array('n_notices'.$forum['fid']));
+	if ($row && $row[0]) {
 		$notices_q = "select nid, blurb from n_notices" . $forum['fid'] . " where deleted != 1 order by date;";
 
-		$notices_r = sql_query($notices_q);
+		$notices_r = db_query($notices_q);
 		if ($notices_r) {
 			$notices .= '<style type="text/css">';
 			$notices .= 'a.ignore_notice { opacity:0.30; }'."\n";
@@ -17,13 +18,14 @@ function get_notices_html($forum, $aid)
 			$notices .= '</style>';
 			
 			$notices .= '<div>';
-			while ($notices_a = mysql_fetch_array($notices_r)) {
+			while ($notices_a = $notices_r->fetch()) {
 				
 				$ignoring = FALSE;
 				if ($aid) {
 					$ignoring_q = "select count(*) from n_ignoring where aid = $aid ".
-						"and fid = ".$forum['fid']." and nid= ".$notices_a['nid'].";";
-					$ignoring = sql_query1($ignoring_q);
+						"and fid = ".$forum['fid']." and nid = ?";
+					$row = db_query_first($ignoring_q, array($notices_a['nid']));
+					$ignoring = $row[0];
 				}
 				if ($ignoring) continue;
 				
@@ -40,7 +42,7 @@ function get_notices_html($forum, $aid)
 			}
 			$notices .= '</div>';
 			
-			sql_free_result($notices_r);
+			$notices_r->closeCursor();
 		} else {
 			$notices = "Error fetching FORUM_NOTICES!";
 		}

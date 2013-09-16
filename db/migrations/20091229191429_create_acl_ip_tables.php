@@ -9,7 +9,7 @@ class CreateAclIpTables extends DatabaseMigration {
            "  PRIMARY KEY (id), " .
            "  UNIQUE KEY (ip)" .
            ")";
-    $this->execute_sql($sql);
+    db_exec($sql);
 
     $sql = "CREATE TABLE acl_ban_types (" .
            "  id INT NOT NULL, " .
@@ -17,7 +17,7 @@ class CreateAclIpTables extends DatabaseMigration {
            "  PRIMARY KEY (id), " .
            "  UNIQUE KEY (ban_type)" .
            ")";
-    $this->execute_sql($sql);
+    db_exec($sql);
 
     $sql = "INSERT INTO acl_ban_types " .
            "  (id, ban_type) " .
@@ -26,7 +26,7 @@ class CreateAclIpTables extends DatabaseMigration {
            "  (2, 'posts'), " .
            "  (3, 'login'), " .
            "  (4, 'all')";
-    $this->execute_sql($sql);
+    db_exec($sql);
 
     $sql = "CREATE TABLE acl_ip_bans (" .
            "  id INT NOT NULL AUTO_INCREMENT, " .
@@ -35,7 +35,7 @@ class CreateAclIpTables extends DatabaseMigration {
            "  PRIMARY KEY (id), " .
            "  UNIQUE KEY (ip_id, ban_type_id)" .
            ")";
-    $this->execute_sql($sql);
+    db_exec($sql);
   }
 }
 

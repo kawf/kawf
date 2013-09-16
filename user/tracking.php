@@ -39,12 +39,12 @@ $time = time();
 $tpl->set_var("TIME", $time);
 
 $sql = "select * from f_forums order by fid";
-$result = mysql_query($sql) or sql_error($sql);
+$sth = db_query($sql);
 
 $numshown = 0;
 $first = true;
 
-while ($forum = mysql_fetch_assoc($result)) {
+while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
   $tpl->set_var("FORUM_NAME", $forum['name']);
   $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
@@ -59,7 +59,7 @@ while ($forum = mysql_fetch_assoc($result)) {
   if (count($tthreads_by_tid)) foreach ($tthreads_by_tid as $tthread) {
     $iid = tid_to_iid($tthread['tid']);
     /* tstamp is LOCALTIME of SQL server, unixtime is seconds since epoch */
-    $thread = sql_querya("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$iid where tid = '" . addslashes($tthread['tid']) . "'");
+    $thread = db_query_first("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$iid where tid = ?", array($tthread['tid']));
     if (!$thread)
       continue;
 
@@ -107,6 +107,7 @@ while ($forum = mysql_fetch_assoc($result)) {
     $tpl->parse("_block", $table_block, true);
   }
 }
+$sth->closeCursor();
 
 if (!$numshown)
   $tpl->set_var("_block", "<font size=\"+1\">No updated threads</font><br>");

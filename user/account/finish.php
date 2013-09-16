@@ -33,7 +33,7 @@ if (!isset($_REQUEST['cookie']))
 
 $cookie = $_REQUEST['cookie'];
 
-$pending = sql_querya("select * from u_pending where cookie = '" . addslashes($cookie) . "'");
+$pending = db_query_first("select * from u_pending where cookie = ?", array($cookie));
 if (!$pending) {
   if (isset($cookie) && !empty($cookie)) {
     $error = "unknown";
@@ -46,7 +46,7 @@ if (!$pending) {
   if (!$user->valid()) {
     $error = "invalid_aid";
   } else {
-    sql_query("update u_pending set status = 'Done' where tid = " . $pending['tid']);
+    db_exec("update u_pending set status = 'Done' where tid = ?", array($pending['tid']));
     switch ($pending['type']) {
     case "NewAccount":
       if ($user->status == 'Create') {

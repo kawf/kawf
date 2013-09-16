@@ -33,13 +33,10 @@ if (isset($_POST['submit'])) {
 
   $capabilities = join(",", $capabilities);
 
-  sql_query("insert into f_moderators " .
+  db_exec("insert into f_moderators " .
 		"( aid, fid, capabilities ) " .
-		"values " .
-		"( '" . addslashes($aid) . "'," .
-		" '" . addslashes($fid) . "'," .
-		" '" . addslashes($capabilities) . "'" .
-		")");
+		"values (?, ?, ?)",
+		array($aid, $fid, $capabilities));
 
   Header("Location: useracl.phtml?message=" . urlencode("User ACL Added"));
   exit;

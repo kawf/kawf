@@ -31,22 +31,24 @@ function die_error($message) {
 }
 
 // Connect to the local MySQL server (force TCP by using the IP address.)
-$dbh = mysql_connect("127.0.0.1", $db_user, $db_password);
-if(!$dbh) die_error("Could not connect: " . mysql_error());
+$dbh = new PDO(
+  "mysql:host=127.0.0.1;dbname=$db_database", $db_user, $db_password,
+  array(PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION)
+);
 
 // Pass 1 - flush and copy.  This will get an inconsistent snapshot, but we'll
 // make it consistent in pass 2.
-if(!mysql_query("FLUSH TABLES", $dbh)) die_error("Unable to flush tables: " . mysql_error());
+$dbh->query("FLUSH TABLES")->closeCursor();
 $retval = doit("$rsync_local $db_data_directory/$db_database $backup_directory");
 if($retval != 0) die_error("Pass 1 rsync failed.");
 
 // Pass 2 - flush and sync the data directory under a lock.
-if(!mysql_query("FLUSH TABLES WITH READ LOCK", $dbh)) die_error("Unable to flush and lock tables: " . mysql_error());
+$dbh->query("FLUSH TABLES WITH READ LOCK")->closeCursor();
 $retval = doit("$rsync_local $db_data_directory/$db_database $backup_directory");
 if($retval != 0) die_error("Pass 2 rsync failed.");
 
 // Done, unlock tables.
-if(!mysql_query("UNLOCK TABLES", $dbh)) die_error("Error unlocking tables, but we exit anyway: " . mysql_error());
+$dbh->query("UNLOCK TABLES")->closeCursor();
 
 function doit($cmd)
 {

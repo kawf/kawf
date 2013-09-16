@@ -19,10 +19,9 @@ require_once("sql.inc");
 require_once("util.inc");
 require_once("forumuser.inc");
 
-sql_open($database);
-mysql_query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+db_connect();
+db_exec("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
 
 include("index.php");
 
-sql_close();
 ?>
