@@ -9,10 +9,9 @@ if($login_to_read) {
 
     include("forumuser.inc");
 
-    sql_open($database);
+    db_connect();
     $user = new ForumUser;
     $user->find_by_cookie();
-    sql_close($database);
 
     apache_note('aid',$user->aid);
 }
@@ -144,9 +143,8 @@ function pad0(n,desiredLen) {
 <?php 
 
 
-@mysql_connect($sql_host,$sql_username,$sql_password);
-@mysql_select_db($database) or die( "Unable to select database");
-mysql_query("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
+db_connect();
+db_exec("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
 
 for($i=0;$i < count($_GET['forumID']);$i++) {
 	$forumID[$i]=$_GET['forumID'][$i];
@@ -229,9 +227,9 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 										
 						<?php 
 						$sql = "select * from f_forums where options like '%Searchable%' order by name";
-						$rs = mysql_query($sql);
+						$sth = db_query($sql);
 
-						while ($row = mysql_fetch_assoc($rs)) {
+						while ($row = $sth->fetch()) {
 							$chkd = "";
 							for($i=0;$i < count($forumID);$i++) {
 								if ($forumID[$i] == $row['fid'])
@@ -248,6 +246,7 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 							<a href="http://<?php echo $hostname?>/<?php echo $row['shortname']?>/"><?php echo $row['name']?></a><br>
 							<?php 
 						}
+						$sth->closeCursor();
 						?>
 						</fieldset>
 					</td>
@@ -350,14 +349,29 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 			
 //------------------SEARCH RESULTS---------------------			
 			if ($searchTxt<>'' || $posterAID<>'' || $posterName<>'') {
-				$rs=mysql_query(search_results(1)) or $rs=mysql_query(search_results(0));
+				if ($startRow=="") $startRow = 0;
+				$rowsPerPage = 25;
+
+				// Count the result set.
+				$useIndexedSearch = TRUE;
+				try {
+					$row=db_query_first(search_results($useIndexedSearch, TRUE));
+				} catch(PDOException $e) {
+					$useIndexedSearch = FALSE;
+					$row=db_query_first(search_results($useIndexedSearch, TRUE));
+				}
 
 				echo "<b>Results for '$searchTxt'</b><br><br>";
+				$numSearchResults = 0;
+				$sth=NULL;
+				if($row) {
+					$numSearchResults = $row[0];
+					echo "$numSearchResults matches found.<br>";
+					$sth=db_query(search_results($useIndexedSearch, FALSE, $startRow, $rowsPerPage));
+				}
 
 
-				if ($rs && mysql_num_rows($rs)>0) {
-					echo mysql_num_rows($rs) . " matches found.<br>";
-					
+				if ($sth) {
 					?>
 					<table class="searchResults" cellspacing=0 cellpadding=0 width=100%>
 						<tr>
@@ -371,15 +385,9 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 						</tr>
 				
 					<?php 
-					$rowNbr=0;
-					if ($startRow=="") $startRow = 0;
-					$rowsPerPage = 25;
+					$rowNbr=$startRow;
 					
-					while (($rowNbr < ($startRow)) && ($row = mysql_fetch_assoc($rs))) {
-						$rowNbr++;
-					}
-
-					while (($row = mysql_fetch_assoc($rs)) && ($rowNbr < ($startRow + $rowsPerPage))) {
+					while ($row = $sth->fetch()) {
 						$rowNbr++;
 						?>
 						<tr>
@@ -421,6 +429,7 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 						</tr>
 						<?php 
 					}
+					$sth->closeCursor();
 				
 					?>
 					</table>
@@ -432,15 +441,15 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 						$url = removeUrlParam($url,"startRow");
 											
 					
-						for ($i = 1; $i < mysql_num_rows($rs); $i+=$rowsPerPage) {
+						for ($i = 1; $i < $numSearchResults; $i+=$rowsPerPage) {
 							if ($i >= 10000) {
 								echo 'more than 10,000 rows returned.';
 								break;
 							}
 							
 							$maxRow = $i + $rowsPerPage - 1;
-							if ($maxRow > mysql_num_rows($rs))
-								$maxRow = mysql_num_rows($rs);
+							if ($maxRow > $numSearchResults)
+								$maxRow = $numSearchResults;
 							if ($startRow == $i-1) {
 								?>
 								<b><?php echo $i?>-<?php echo $maxRow?></b>
@@ -450,13 +459,12 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 								<a href="<?php echo $url?>&startRow=<?php echo $i-1?>"><?php echo $i?>-<?php echo $maxRow?></a>
 								<?php 
 							}
-							if ($maxRow < mysql_num_rows($rs)) echo " | ";
+							if ($maxRow < $numSearchResults) echo " | ";
 							
 						}
 						?>
 					</div>
 					<?php 
-					
 				} else {
 					echo "No results.";
 				}
@@ -469,7 +477,7 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 
 <?php 
 
-function search_results($useIndexedSearch)
+function search_results($useIndexedSearch, $count_only=NULL, $offset=NULL, $limit=NULL)
 {
 	global $forumID;
 	global $searchTxt, $searchSubj, $searchMsg, $searchUrl, $showMessages;
@@ -479,14 +487,18 @@ function search_results($useIndexedSearch)
 	global $sortBy, $sortDir;
 
 
-	//$sql1  = " select distinct m.mid,m.pid,m.tid,m.aid,m.state,m.flags,m.name,";
-	$sql1  = " select m.mid,m.pid,m.tid,m.aid,m.state,m.flags,m.name,";
-	$sql1 .= " m.date,m.subject,m.message,m.views, f.name fName, f.shortname ";
+	if ($count_only) {
+	    $select = "select count(1)";
+	} else {
+	    //$select  = "select distinct m.mid,m.pid,m.tid,m.aid,m.state,m.flags,m.name, ";
+	    $select  = "select m.mid,m.pid,m.tid,m.aid,m.state,m.flags,m.name, ";
+	    $select .= " m.date,m.subject,m.message,m.views, f.name fName, f.shortname";
+	}
 	
-	//$sql2  = " where (m.subject like '%" . $searchTxt . "%' ";
-	//$sql2  .= " or m.message like '%" . $searchTxt . "%' )";
+	//$where  = " where (m.subject like '%" . $searchTxt . "%' ";
+	//$where  .= " or m.message like '%" . $searchTxt . "%' )";
 	
-	$sql2 = " where ";
+	$where = " where ";
 	
 	$searchArr = explode(" ",trim($searchTxt));
 	
@@ -501,89 +513,98 @@ function search_results($useIndexedSearch)
 	
 	for ($i=0; $i<count($searchArr); $i++) {
 		if ($i>0)
-			$sql2 .= " and ";
-		$sql2 .= " (";
+			$where .= " and ";
+		$where .= " (";
 
 		if ($useIndexedSearch) {
 			if ($searchSubj == "1" && $searchMsg == "1") {
-				$sql2  .= " match (m.subject,m.message) AGAINST ('" . addslashes($searchArr[$i]) . "')";
+				$where  .= " match (m.subject,m.message) AGAINST ('" . addslashes($searchArr[$i]) . "')";
 			} else if ($searchSubj == "1") {
-				$sql2  .= " match (m.subject) AGAINST ('" .  addslashes($searchArr[$i]) . "')";
+				$where  .= " match (m.subject) AGAINST ('" .  addslashes($searchArr[$i]) . "')";
 			} else if ($searchMsg == "1") {
-				$sql2  .= " match (m.message) AGAINST ('" .  addslashes($searchArr[$i]) . "')";
+				$where  .= " match (m.message) AGAINST ('" .  addslashes($searchArr[$i]) . "')";
 			}				
 		} else {
 			if ($searchSubj == "1" && $searchMsg == "1") {
-				$sql2  .= " m.subject like '%" . addslashes($searchArr[$i]) . "%' ";
-				$sql2  .= " or m.message like '%" . addslashes($searchArr[$i]) . "%' ";
+				$where  .= " m.subject like '%" . addslashes($searchArr[$i]) . "%' ";
+				$where  .= " or m.message like '%" . addslashes($searchArr[$i]) . "%' ";
 			} else if ($searchSubj == "1") {
-				$sql2  .= " m.subject like '%" . addslashes($searchArr[$i]) . "%' ";
+				$where  .= " m.subject like '%" . addslashes($searchArr[$i]) . "%' ";
 			} else if ($searchMsg == "1") {
-				$sql2  .= " m.message like '%" . addslashes($searchArr[$i]) . "%' ";
+				$where  .= " m.message like '%" . addslashes($searchArr[$i]) . "%' ";
 			}
 		}
 
 		if ($searchUrl == "1") {
 			if ($searchSubj == "1" || $searchMsg == "1")
-				$sql2  .= " or ";
-			$sql2  .= " url like '%" . addslashes($searchTxt) . "%' or urltext like '%" . addslashes($searchTxt) . "%' ";
+				$where  .= " or ";
+			$where  .= " url like '%" . addslashes($searchTxt) . "%' or urltext like '%" . addslashes($searchTxt) . "%' ";
 		}
 
-		$sql2 .= ")";
+		$where .= ")";
 	}
 	
-	$sql2 .= " and not (m.state = 'Deleted') ";
+	$where .= " and not (m.state = 'Deleted') ";
 	
 	if ($flagNT == "1")
-		$sql2 .= " and m.flags like '%NoText%' ";
+		$where .= " and m.flags like '%NoText%' ";
 	if ($flagNT == "0")
-		$sql2 .= " and not( m.flags like '%NoText%') ";
+		$where .= " and not( m.flags like '%NoText%') ";
 	
 	if ($flagPIC == "1")
-		$sql2 .= " and m.flags like '%Picture%' ";
+		$where .= " and m.flags like '%Picture%' ";
 	if ($flagPIC == "0")
-		$sql2 .= " and not( m.flags like '%Picture%') ";
+		$where .= " and not( m.flags like '%Picture%') ";
 		
 	if ($flagVID == "1")
-		$sql2 .= " and m.flags like '%Video%' ";
+		$where .= " and m.flags like '%Video%' ";
 	if ($flagVID == "0")
-		$sql2 .= " and not( m.flags like '%Video%') ";
+		$where .= " and not( m.flags like '%Video%') ";
 		
 	if ($flagURL == "1")
-		$sql2 .= " and m.flags like '%Link%' ";
+		$where .= " and m.flags like '%Link%' ";
 	if ($flagURL == "0")
-		$sql2 .= " and not( m.flags like '%Link%') ";
+		$where .= " and not( m.flags like '%Link%') ";
 		
 	if ($startDate != "")
-		$sql2 .= " and m.date >= '" . $startDate . "' ";
+		$where .= " and m.date >= '" . $startDate . "' ";
 	if ($endDate != "")
-		$sql2 .= " and m.date <= '" . $endDate . " 23:59:59' ";
+		$where .= " and m.date <= '" . $endDate . " 23:59:59' ";
 	
 	if ($posterAID != "")
-		$sql2 .= " and m.aid=" . $posterAID;
+		$where .= " and m.aid=" . $posterAID;
 	
 	if ($posterName != "")
-		$sql2 .= " and m.name like '%" . $posterName . "%' ";
+		$where .= " and m.name like '%" . $posterName . "%' ";
 	
-	$sql = "";
+	$a = array();
 	for($i=0;$i < count($forumID);$i++) {
 		if (!is_numeric($forumID[$i]))
 			continue;
 
-		if ($sql!="")
-			$sql .= " UNION ";
-		$sql .= "(" . $sql1 . " from f_forums f, f_messages" . $forumID[$i] . " m ";
-		$sql .= $sql2 . " and f.fid=" . $forumID[$i];
-		$sql .= ")";
+		$a[] = "("
+		. $select . " from f_forums f, f_messages" . $forumID[$i] . " m "
+		. $where . " and f.fid=" . $forumID[$i]
+		. ")";
+	}
+
+	if ($count_only) {	
+	    $sql = 'select (' . implode(' + ', $a) . ') as count';
+	} else {
+	    $sql = implode(' UNION ', $a);
+
+	    if (preg_match("/^[a-zA-Z_]+$/", $sortBy))
+		    $sql .= " order by " . $sortBy . " " . (preg_match("/^(asc|desc)/i", $sortDir) ? $sortDir : "");
+	    else
+		    $sql .= " order by date desc";
 	}
 	
-	if (preg_match("/^[a-zA-Z_]+$/", $sortBy))
-		$sql .= " order by " . $sortBy . " " . (preg_match("/^(asc|desc)/i", $sortDir) ? $sortDir : "");
-	else
-		$sql .= " order by date desc";
-	
-	
-	echo "\n<!-- $sql . -->\n";
+	if($limit) {
+		$sql .= " limit $limit";
+		if($offset) $sql .= " offset $offset";
+	}
+
+	echo "\n<!-- $sql -->\n";
 	return $sql;
 }
 
