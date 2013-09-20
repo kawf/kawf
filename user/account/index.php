@@ -52,8 +52,11 @@ if(array_key_exists('noob', $_GET)) {
   print_user($uuser, $stats);
   print_footer();
 
-  echo "<h2>Signature</h2>";
-  echo "<p>\n" . nl2br($uuser->signature) . "\n</p>\n";
+  if($user->valid()) {
+    // Only show the signature to logged-in users.
+    echo "<h2>Signature</h2>";
+    echo "<p>\n" . nl2br($uuser->signature) . "\n</p>\n";
+  }
 
   if($user->admin()) {
     if ($_GET['page']) $page = "page=".$_GET['page'];
