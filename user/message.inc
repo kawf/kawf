@@ -269,7 +269,7 @@ function render_message($tpl, $msg, $viewer, $owner=null)
     $tpl->set_var("msg", "");
   }
 
-  if (isset($flags['NewStyle']) && !isset($viewer->pref['HideSignatures']) && isset($owner->signature)) {
+  if ($viewer->valid() && isset($flags['NewStyle']) && !isset($viewer->pref['HideSignatures']) && isset($owner->signature)) {
     if (!empty($owner->signature)) {
       $tpl->set_var("MSG_SIGNATURE", nl2brPre::out($owner->signature));
     } else {

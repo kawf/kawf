@@ -4,8 +4,17 @@ require_once("thread.inc");
 require_once("pagenav.inc.php");
 require_once("page-yatt.inc.php");
 
+
 require_once("textwrap.inc");
 require_once("notices.inc");
+
+if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
+  $user->req();
+  if ($user->status != 'Active') {
+    echo "Your account isn't validated\n";
+    exit;
+  }
+}
 
 $tpl->set_file(array(
   "showforum" => "showforum.tpl",
