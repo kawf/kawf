@@ -2,6 +2,14 @@
 require_once("lib/YATT/YATT.class.php");
 require_once("message.inc");
 
+if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
+  $user->req();
+  if ($user->status != 'Active') {
+    echo "Your account isn't validated\n";
+    exit;
+  }
+}
+
 $raw = isset($_REQUEST['raw']);
 
 $msg = fetch_message($user, $mid, 'message,url,urltext,video,tid');
