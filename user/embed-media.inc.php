@@ -1,5 +1,5 @@
 <?php
-$video_embedders = array ('redtube', 'vimeo', 'youtube', 'vine', 'html5');
+$video_embedders = array ('redtube', 'vimeo', 'youtube', 'html5', 'vine');
 
 function explode_query($query) {
     $queryParts = explode('&', $query);
