@@ -1,5 +1,5 @@
 <?php
-$video_embedders = array ('redtube', 'vimeo', 'youtube', 'html5');
+$video_embedders = array ('redtube', 'vimeo', 'youtube', 'vine', 'html5');
 
 function explode_query($query) {
     $queryParts = explode('&', $query);
@@ -90,10 +90,40 @@ function embed_youtube_video($url)
   return tag_media($out, "YouTube ", "http://youtu.be/$tag", $tag, "youtube");
 }
 
+function getVineVideoFromUrl($url)
+{
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+    $res = curl_exec($ch);
+    preg_match('/twitter:player:stream.*content="(.*)"/', $res, $output);
+    return $output[1];
+}
+
+function embed_vine_video($url)
+{
+  $u = parse_url(html_entity_decode($url));
+  if ($u==null) return null;
+
+  if (preg_match("#(\w+\.)*vine\.co#", $u["host"])) {
+    $p = explode("/", $u["path"]);
+    if (count($p) == 3 && $p[1]=="v") {
+      $tag = $p[2];	# http://vine.co/v/tag
+    }
+  } else {
+    return null;
+  }
+
+  $src = getVineVideoFromUrl("http://vine.co/v/$tag");
+  return embed_html5_video($src);
+}
+
 function embed_html5_video($url)
 {
+  $u = parse_url(html_entity_decode($url));
+  if ($u==null) return null;
+
   # only support ogg, mp4, and webm
-  if (!preg_match("/\.(og[gvm]|mp[4v]|webm)$/i", $url))
+  if (!preg_match("/\.(og[gvm]|mp[4v]|webm)$/i", $u["path"]))
     return null;
 
   $out =
