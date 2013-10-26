@@ -25,6 +25,8 @@ if (isset($_POST['submit'])) {
     $options[] = "Searchable";
   if (isset($_POST['logintoread']))
     $options[] = "LoginToRead";
+  if (isset($_POST['externallysearchable']))
+    $options[] = "ExternallySearchable";
 
   if (isset($options))
     $options = implode(",", $options);
@@ -106,6 +108,10 @@ page_header("Modify '" . $forum['name'] . "' fid=".$forum['fid']);
     <tr>
      <td>Require login to read:</td>
      <td valign="top"><input type="checkbox" name="logintoread"<?php if (isset($options['LoginToRead'])) echo " checked"; ?>></td>
+    </tr>
+    <tr>
+     <td>Externally searchable robots meta tag:</td>
+     <td valign="top"><input type="checkbox" name="externallysearchable"<?php if (isset($options['ExternallySearchable'])) echo " checked"; ?>></td>
     </tr>
    </table>
   </td>
