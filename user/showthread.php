@@ -102,7 +102,7 @@ $messagestr = list_thread(print_message, $messages, $tree, reset($tree), $thread
 $tpl->set_var("MESSAGES", $messagestr);
 
 $meta_robots = false;
-if($meta_robots_header) {
+if($robots_meta_tag) {
   $meta_robots = 'noindex';
   if(isset($forum['option']['ExternallySearchable'])) {
     $meta_robots = 'follow,index';

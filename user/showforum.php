@@ -345,7 +345,7 @@ require_once("postform.inc");
 render_postform($tpl, "post", $user);
 
 $meta_robots = false;
-if($meta_robots_header) {
+if($robots_meta_tag) {
   $meta_robots = 'noindex';
   if(isset($forum['option']['ExternallySearchable'])) {
     $meta_robots = 'follow,index';

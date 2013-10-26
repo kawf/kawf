@@ -36,12 +36,12 @@ $css_dir = "$srcroot/config/css";
 $css_href_dir = "/css";
 
 /*
- * Add a meta robots header.  Forums with ExternallySearchable option will get
+ * Add a robots meta tag.  Forums with ExternallySearchable option will get
  * <meta name="robots" content="follow,index" />
  * and forums that are not ExternallySearchable will get
  * <meta name="robots" content="noindex" />
  */
-$meta_robots_header = false;
+$robots_meta_tag = false;
 
 /* set to 1 for debugging */
 $Debug = 0;
