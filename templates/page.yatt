@@ -7,6 +7,9 @@
 %begin [bch]
 <link rel=StyleSheet href="%[browser_css_href]" type="text/css">
 %end [bch]
+%begin [meta_robots]
+<meta name="robots" content="%[robots]" />
+%end [meta_robots]
 </head>
 
 <body>

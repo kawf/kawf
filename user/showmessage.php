@@ -114,5 +114,12 @@ render_postform($tpl, "post", $user, $nmsg);
 
 $tpl->parse("MESSAGE", "message");
 
-print generate_page($msg['subject'], $tpl->parse("CONTENT", "showmessage"));
+$meta_robots = false;
+if($meta_robots_header) {
+  $meta_robots = 'noindex';
+  if(isset($forum['option']['ExternallySearchable'])) {
+    $meta_robots = 'follow,index';
+  }
+}
+print generate_page($msg['subject'], $tpl->parse("CONTENT", "showmessage"), false, $meta_robots);
 ?>

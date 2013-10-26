@@ -101,5 +101,12 @@ $messagestr = list_thread(print_message, $messages, $tree, reset($tree), $thread
 
 $tpl->set_var("MESSAGES", $messagestr);
 
-print generate_page($forum['name'],$tpl->parse("CONTENT", "showthread"));
+$meta_robots = false;
+if($meta_robots_header) {
+  $meta_robots = 'noindex';
+  if(isset($forum['option']['ExternallySearchable'])) {
+    $meta_robots = 'follow,index';
+  }
+}
+print generate_page($forum['name'], $tpl->parse("CONTENT", "showthread"), false, $meta_robots);
 ?>

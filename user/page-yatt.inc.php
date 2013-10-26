@@ -1,7 +1,7 @@
 <?php
 require_once("lib/YATT/YATT.class.php");
 
-function generate_page($title, $contents, $skip_header=false)
+function generate_page($title, $contents, $skip_header=false, $meta_robots=false)
 {
     global $template_dir, $domain;
 
@@ -14,6 +14,10 @@ function generate_page($title, $contents, $skip_header=false)
 	$page->parse('page.bch');
     }
     $page->set('browser_css_href', browser_css_href());
+    if($meta_robots) {
+        $page->set('robots', $meta_robots);
+        $page->parse('page.meta_robots');
+    }
     $page->set('title', $title);
     $page->set('contents', $contents);
     if (!$skip_header)
