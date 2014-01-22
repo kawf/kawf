@@ -40,12 +40,10 @@ function embed_vimeo_video($url)
     return null;
   }
 
-  $out =
-    "<object width=\"640\" height=\"360\">\n".
-    "<param name=\"movie\" value=\"http://vimeo.com/moogaloop.swf?clip_id=$tag\"></param>\n".
-    "<embed src=\"http://vimeo.com/moogaloop.swf?clip_id=$tag\"".
-	" type=\"application/x-shockwave-flash\" width=\"640\" height=\"360\"></embed>\n".
-    "</object><br>\n";
+  $out = "<iframe src=\"http://player.vimeo.com/video/$tag\"\n".
+    "\twidth=\"640\" height=\"360\" frameborder=\"0\"\n".
+    "\twebkitAllowFullScreen mozallowfullscreen allowFullScreen>\n".
+    "</iframe><br>\n";
 
   return tag_media($out, "Vimeo ", $url, $tag, "vimeo");
 }

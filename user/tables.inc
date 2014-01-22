@@ -1,7 +1,7 @@
 <?php
 
 # Update this to the proper migration when changing the schema.
-$SCHEMA_VERSION = "20130920121936";
+$SCHEMA_VERSION = "20131025203732";
 
 # f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
@@ -54,7 +54,7 @@ $create_forums_table = "
     fid int not null auto_increment,
     name varchar(150) not null,
     shortname varchar(20) not null,
-    options set('Read','PostThread','PostReply','PostEdit','OffTopic','Searchable','LoginToRead') not null default 'Read,PostThread,PostReply,PostEdit,Searchable',
+    options set('Read','PostThread','PostReply','PostEdit','OffTopic','Searchable','LoginToRead','ExternallySearchable') not null default 'Read,PostThread,PostReply,PostEdit,Searchable',
     primary key (fid)
   )";
 

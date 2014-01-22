@@ -35,6 +35,14 @@ $css_dir = "$srcroot/config/css";
 /* path to prepend to css href */
 $css_href_dir = "/css";
 
+/*
+ * Add a robots meta tag.  Forums with ExternallySearchable option will get
+ * <meta name="robots" content="follow,index" />
+ * and forums that are not ExternallySearchable will get
+ * <meta name="robots" content="noindex" />
+ */
+$robots_meta_tag = false;
+
 /* set to 1 for debugging */
 $Debug = 0;
 
