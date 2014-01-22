@@ -344,7 +344,14 @@ unset($thread);
 require_once("postform.inc");
 render_postform($tpl, "post", $user);
 
-print generate_page($forum['name'], $tpl->parse("content", "showforum"));
+$meta_robots = false;
+if($robots_meta_tag) {
+  $meta_robots = 'noindex';
+  if(isset($forum['option']['ExternallySearchable'])) {
+    $meta_robots = 'follow,index';
+  }
+}
+print generate_page($forum['name'], $tpl->parse("content", "showforum"), false, $meta_robots);
 
 // vim: sw=2
 ?>
