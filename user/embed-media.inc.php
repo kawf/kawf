@@ -40,7 +40,7 @@ function embed_vimeo_video($url)
     return null;
   }
 
-  $out = "<iframe src=\"http://player.vimeo.com/video/$tag\"\n".
+  $out = "<iframe src=\"https://player.vimeo.com/video/$tag\"\n".
     "\twidth=\"640\" height=\"360\" frameborder=\"0\"\n".
     "\twebkitAllowFullScreen mozallowfullscreen allowFullScreen>\n".
     "</iframe><br>\n";
