@@ -109,7 +109,7 @@ if(array_key_exists('noob', $_GET)) {
         }
 	if($msg) {
 	  echo " <td class=\"outer\"><table class=\"inner\">\n";
-	  echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\" colspan=\"2\">".$forum['fid'].". ".$forum['shortname']."</td></tr>\n";
+	  echo "  <tr bgcolor=\"#D0D0D0\">\n  <td class=\"inner\" colspan=\"2\">".$forum['fid'].". "."<a href=\"/".$forum['shortname']."/\">".$forum['shortname']."</a></td></tr>\n";
 	  do {
 	    echo "  <tr bgcolor=\"#ECECFF\">";
 	    echo "<td class=\"inner\">".$msg['ip']."</td>";
