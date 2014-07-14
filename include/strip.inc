@@ -14,6 +14,10 @@ function demoronize($var)
     chr(0xe2).chr(0x80).chr(0x93) => '-', //EN DASH
     chr(0xe2).chr(0x80).chr(0x94) => '--', //EM DASH
 
+    /* strangers found in the wild */
+    chr(0xe2).chr(0x84).chr(0xa2) => '<sup>TM</sup>',
+    chr(0xc2).chr(0xae) => '&reg;',
+
     /* expand tabs */
     chr(0x09) =>'        ',
 
