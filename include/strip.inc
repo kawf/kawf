@@ -1,36 +1,61 @@
 <?php
 
-function demoronize($string)
+function demoronize($var)
 {
-  $string = preg_replace("/\x09/", "        ", $string);
+  $trans_table = array(
+    /* multibyte to utf8 */
+    chr(0xe2).chr(0x80).chr(0x9a) => '\'', //SINGLE LOW-9 QUOTATION MARK
+    chr(0xe2).chr(0x80).chr(0x9e) => '"', //DOUBLE LOW-9 QUOTATION MARK
+    chr(0xe2).chr(0x80).chr(0xa6) => '...', //HORIZONTAL ELLIPSIS
+    chr(0xe2).chr(0x80).chr(0x98) => '\'', //LEFT SINGLE QUOTATION MARK
+    chr(0xe2).chr(0x80).chr(0x99) => '\'', //RIGHT SINGLE QUOTATION MARK
+    chr(0xe2).chr(0x80).chr(0x9c) => '"', //LEFT DOUBLE QUOTATION MARK
+    chr(0xe2).chr(0x80).chr(0x9d) => '"', //RIGHT DOUBLE QUOTATION MARK
+    chr(0xe2).chr(0x80).chr(0x93) => '-', //EN DASH
+    chr(0xe2).chr(0x80).chr(0x94) => '--', //EM DASH
 
-  /* Remove any and all non-ISO Microsoft extensions */
-  $string = preg_replace("/\x82/", ",", $string);
-  $string = preg_replace("/\x83/", "<em>f</em>", $string);
-  $string = preg_replace("/\x84/", ",,", $string);
-  $string = preg_replace("/\x85/", "...", $string);
+    /* expand tabs */
+    chr(0x09) =>'        ',
 
-  $string = preg_replace("/\x88/", "^", $string);
-  $string = preg_replace("/\x89/", " °/°°", $string);
+    /* fixup a few selected non-ISO Microsoft extensions */
+    chr(0x82) =>',',
+    chr(0x83) =>'<em>f</em>',
+    chr(0x84) =>',,',
+    chr(0x85) =>'...',
 
-  $string = preg_replace("/\x8B/", "<", $string);
-  $string = preg_replace("/\x8C/", "Oe", $string);
+    chr(0x88) =>'^',
+    chr(0x89) =>'&deg;/&deg;&deg;',
 
-  $string = preg_replace("/\x91/", "`", $string);
-  $string = preg_replace("/\x92/", "'", $string);
-  $string = preg_replace("/\x93/", "\"", $string);
-  $string = preg_replace("/\x94/", "\"", $string);
+    chr(0x8B) =>'<',
+    chr(0x8C) =>'Oe',
 
-  $string = preg_replace("/\x95/", "*", $string);
-  $string = preg_replace("/\x96/", "-", $string);
-  $string = preg_replace("/\x97/", "--", $string);
-  $string = preg_replace("/\x98/", "<sup>~</sup>", $string);
-  $string = preg_replace("/\x99/", "<sup>TM</sup>", $string);
+    chr(0x91) =>'`',
+    chr(0x92) =>'\'',
+    chr(0x93) =>'\"',
+    chr(0x94) =>'\"',
 
-  $string = preg_replace("/\x9B/", ">", $string);
-  $string = preg_replace("/\x9C/", "oe", $string);
+    chr(0x95) =>'*',
+    chr(0x96) =>'-',
+    chr(0x97) =>'--',
+    chr(0x98) =>'<sup>~</sup>',
+    chr(0x99) =>'<sup>TM</sup>',
 
-  return $string;
+    chr(0x9B) =>'>',
+    chr(0x9C) =>'oe',
+
+    /* make sure to add to strip below */
+    chr(0xA9) =>'&copy;',
+    chr(0xAE) =>'&reg;',
+
+    chr(0xB0) =>'&deg;',
+    chr(0xB4) =>'\'',
+  );
+
+  foreach ($trans_table as $utf8_code => $replace) {
+      $var = str_replace($utf8_code, $replace, $var);
+  }
+
+  return $var;
 }
 
 /* For text strings */
@@ -289,6 +314,7 @@ function convert_brackets($string)
   $string = preg_replace("/&amp;gt;/", "&gt;", $string);
   $string = preg_replace("/&amp;nbsp;/", "&nbsp;", $string);
   $string = preg_replace("/&amp;copy;/", "&copy;", $string);
+  $string = preg_replace("/&amp;reg;/", "&reg;", $string);
   $string = preg_replace("/&amp;deg;/", "&deg;", $string);
   $string = preg_replace("/&amp;frac12;/", "&frac12;", $string);
   $string = preg_replace("/&amp;frac14;/", "&frac14;", $string);
