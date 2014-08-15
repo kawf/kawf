@@ -2,6 +2,7 @@
 require_once("nl2brPre.inc");
 require_once("textwrap.inc");
 require_once("embed-media.inc.php");
+require_once("Skip32.inc.php");
 
 function message_set_block($tpl)
 {
@@ -206,10 +207,10 @@ function postprocess($msg, $noembed=false)
 /* pre is a hack for stacking used by showthread.php */
 function render_message($tpl, $msg, $viewer, $owner=null)
 {
-  global $Debug, $forum;
+  global $Debug, $forum, $viewer_aid_key;
   $moderator = $viewer->admin() || $viewer->capable($forum['fid'], 'Moderate');
 
-  $tpl->set_var("VIEWER_AID", isset($viewer)?0xdeadbeef^$viewer->aid:'');
+  $tpl->set_var("VIEWER_AID", isset($viewer)?dechex(Skip32::encrypt($viewer_aid_key, $viewer->aid)):'');
 
   /*---------------------------------------------------------------------*/
   /* Bug 2771354 */
