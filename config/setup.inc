@@ -35,6 +35,12 @@ $css_dir = "$srcroot/config/css";
 /* path to prepend to css href */
 $css_href_dir = "/css";
 
+/* where your javascripts sit */
+$js_dir = "$srcroot/config/scripts";
+
+/* path to prepend to javascript href */
+$js_href_dir = "/scripts";
+
 /*
  * Add a robots meta tag.  Forums with ExternallySearchable option will get
  * <meta name="robots" content="follow,index" />

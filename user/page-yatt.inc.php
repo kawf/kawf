@@ -8,6 +8,8 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
     $page = new YATT($template_dir, 'page.yatt');
     $page->set('domain', $domain);
     $page->set('css_href', css_href());
+    $page->set('js_href', js_href());
+    $page->set('js_jquery_href', js_href($filename="jquery-1.11.1.min.js", $cache_buster=false));
     $bch = browser_css_href();
     if ($bch) {
 	$page->set('browser_css_href', $bch);
