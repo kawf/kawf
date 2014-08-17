@@ -87,4 +87,19 @@ function browser_css_href()
     $ua = new phpSniff();
     return css_href("browser-".$ua->property('browser').".css");
 }
+
+function js_href($filename="main.js", $cache_buster=true)
+{
+    global $js_dir, $js_href_dir;
+        
+    if (!file_Exists("$js_dir/$filename"))
+    return null;
+    
+    if ($cache_buster) {
+        $time = filemtime("$js_dir/$filename");
+        return "$js_href_dir/$filename?$time";
+    } else
+        return "$js_href_dir/$filename";
+}
+
 ?>

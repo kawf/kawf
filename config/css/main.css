@@ -211,3 +211,32 @@ table.basic th { background-color: #d0dce0; }
 
 /* IE wants inline for it to pack right */
 .postform { display: inline; }
+
+/****************/
+/* enhancements */
+/****************/
+
+/* View All Images */
+.view-all-images-image img { display: block; margin: 5px; } 
+
+/* Night Mode */
+body.night-mode { background: #1a1a1d !important; color: #888 !important; }
+a.night-mode { color: #999 !important; text-decoration: none !important; }
+a.tt.night-mode { color: #575  !important; }
+a.ut.night-mode { color: #755 !important; }
+.row0.night-mode { background: #1a1a1d !important; }
+.row1.night-mode { background: #242426 !important; }
+.trow0.night-mode { background: #252532 !important; }
+.trow1.night-mode { background: #1d1e28 !important; }
+.grow0.night-mode { background: #301c1c !important; }
+.grow1.night-mode { background: #251616 !important; }
+.username.night-mode { color: #999 !important; }
+.threadinfo.night-mode { color: #777 !important; }
+.messageblock .subject.night-mode { color: #ccc !important; }
+.vmid.night-mode { color: #ddd !important; font-weight: bold !important; }
+.postform tr.night-mode { background: #242426 !important; }
+.postform .text.night-mode { background: #1a1a1d !important; border: 1px solid #131315 !important; margin: 1px !important; color: #ccc  !important; }
+.thread > li > a.night-mode { color: #ccc  !important; }
+.preferences tr.night-mode { color: #242426 !important; }
+td.signaturepreview.night-mode { background-color: #1a1a1d !important; border: 5px solid #242426 !important; }
+textarea.night-mode { background: #1A1A1D !important; border: 1px solid #131315 !important; margin: 1px !important; color: #CCC; }
