@@ -69,21 +69,32 @@ function embed_youtube_video($url)
   }
 
   if ($tag==null) return null;
-  $url = "https://youtube.googleapis.com/v/$tag?version=2&fs=1";
+  $indent = '     ';
   $width = 800;
   $height = 480;
+  /* IFrame */
   $out =
-    "<object width=\"$width\" height=\"$height\">\n".
-    "<param name=\"movie\" value=\"$url\"></param>\n".
-    "<param name=\"allowFullScreen\" value=\"true\"></param>\n".
-    "<param name=\"allowScriptAccess\" value=\"always\"></param>\n".
-    "<embed src=\"$url\"\n".
-	" type=\"application/x-shockwave-flash\"\n".
-	" width=\"$width\" height=\"$height\"\n".
-	" allowfullscreen=\"true\"\n".
-	" allowscriptaccess=\"always\"\n>".
-    "</embed>\n".
-    "</object><br>\n";
+    "$indent<iframe id=\"ytplayer\" type=\"text/html\"\n".
+    "$indent width=\"$width\"  height=\"$height\"\n".
+    "$indent src=\"http://www.youtube.com/embed/$tag?autoplay=1\"\n".
+    "$indent frameborder=\"0\">\n".
+    "$indent</iframe><br>\n";
+  /* AS3 */
+  /*
+    $url = "https://youtube.googleapis.com/v/$tag?version=2&fs=1";
+    $out =
+      "<object width=\"$width\" height=\"$height\">\n".
+      "<param name=\"movie\" value=\"$url\"></param>\n".
+      "<param name=\"allowFullScreen\" value=\"true\"></param>\n".
+      "<param name=\"allowScriptAccess\" value=\"always\"></param>\n".
+      "<embed src=\"$url\"\n".
+	  " type=\"application/x-shockwave-flash\"\n".
+	  " width=\"$width\" height=\"$height\"\n".
+	  " allowfullscreen=\"true\"\n".
+	  " allowscriptaccess=\"always\"\n>".
+      "</embed>\n".
+      "</object><br>\n";
+  */
 
   return tag_media($out, "YouTube ", "http://youtu.be/$tag", $tag, "youtube");
 }
@@ -141,12 +152,13 @@ function embed_html5_video($url)
 
 function tag_media($out, $prefix, $url, $text, $class, $redirect=false)
 {
+  $indent = '    ';
   if ($redirect)
-    $out .= "$prefix<a href=\"/redirect.phtml?refresh&amp;url=".urlencode($url)."\" target=\"_blank\">$text</a>";
+    $out .= "$indent $prefix<a href=\"/redirect.phtml?refresh&amp;url=".urlencode($url)."\" target=\"_blank\">$text</a>";
   else
-    $out .= "$prefix<a href=\"$url\" target=\"_blank\">$text</a>";
+    $out .= "$indent $prefix<a href=\"$url\" target=\"_blank\">$text</a>";
 
-  return "<div class=\"$class\">\n$out<br>\n</div>";
+  return "$indent<div class=\"$class\">\n$out<br>\n$indent</div>";
 }
 
 function embed_video($url)

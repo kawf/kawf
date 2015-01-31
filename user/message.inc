@@ -167,19 +167,20 @@ function preprocess(&$msg, $req)
 function postprocess($msg, $noembed=false)
 {
   $out = '';
+  $indent = '   ';
 
   /* Order: image, video, message, url */
 
   if (!empty($msg['imageurl'])) {
     $url = escapequotes($msg['imageurl']);
     if ($noembed) $out .= "<p>Image: <a href=\"$url\">$url</a></p>\n";
-    else $out .= "<div class=\"media\">\n".embed_image($url)."\n</div>\n";
+    else $out .= "$indent<div class=\"media\">\n".embed_image($url)."\n$indent</div>\n";
   }
 
   if (!empty($msg['video'])) {
     $url = escapequotes($msg['video']);
     if ($noembed) $out .= "<p>Video: <a href=\"$url\">$url</a></p>\n";
-    else $out .= "<div class=\"media\">\n".embed_video($url)."\n</div>\n";
+    else $out .= "$indent<div class=\"media\">\n".embed_video($url)."\n$indent</div>\n";
   }
 
   if (!empty($msg['message'])) {
