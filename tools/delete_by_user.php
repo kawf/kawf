@@ -32,7 +32,7 @@ if (count($where_flags)) {
 
 db_connect();
 
-$changes = 'Changed to Deleted from Active by ' . $trim(shell_exec('whoami')) .
+$changes = 'Changed to Deleted from Active by ' . trim(shell_exec('whoami')) .
   ' using delete_by_user.php at ' .  date('Y-m-d H:i:s');
 
 if(array_key_exists('r', $opts)) {
