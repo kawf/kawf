@@ -77,7 +77,7 @@ function embed_youtube_video($url)
     "$indent<iframe id=\"ytplayer\" type=\"text/html\"\n".
     "$indent width=\"$width\"  height=\"$height\"\n".
     "$indent src=\"https://www.youtube.com/embed/$tag\"\n".
-    "$indent frameborder=\"0\">\n".
+    "$indent frameborder=\"0\" allowfullscreen=\"1\">\n".
     "$indent</iframe><br>\n";
   /* AS3 */
   /*
