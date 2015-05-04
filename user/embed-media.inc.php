@@ -34,7 +34,7 @@ function embed_redtube_video($url)
 
 function embed_vimeo_video($url)
 {
-  if (preg_match("#^http://(\w+\.)*vimeo\.com/([0-9]+)#", $url, $regs)) {
+  if (preg_match("#^https?://(\w+\.)*vimeo\.com/([0-9]+)#", $url, $regs)) {
     $tag = $regs[2];
   } else {
     return null;
