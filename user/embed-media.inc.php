@@ -124,10 +124,7 @@ function embed_vine_video($url)
 
   $src = getVineVideoFromUrl("http://vine.co/v/$tag");
 
-  $out =
-    "<video src=\"$src\" controls=\"controls\">\n" .
-    "Your browser <a href=\"http://en.wikipedia.org/wiki/HTML5_video#Browser_support\">does not support HTML5 and/or this codec</a>.\n" .
-    "</video><br>\n";
+  $out = "<iframe src=\"https://vine.co/v/$tag/embed/simple\" width=\"600\" height=\"600\" frameborder=\"0\"></iframe><script src=\"https://platform.vine.co/static/scripts/embed.js\"></script>";
 
   return tag_media($out, "Vine ", "https://vine.co/v/$tag", $tag, "vine");
 
