@@ -31,7 +31,7 @@ This thread is locked. No replies are allowed.<br>
 <tr class="input">
   <th>Subject:</th>
   <td>
-    <input class="text" type="text" name="subject" value="{SUBJECT}" size="80" maxlength="100">
+    <input class="text" type="text" name="subject" value="{SUBJECT}" size="80" maxlength="100" spellcheck="true">
   </td>
 </tr>
 <tr class="input">
@@ -44,7 +44,7 @@ This thread is locked. No replies are allowed.<br>
 </tr>
 <tr class="input">
   <th>Link Text:</th>
-  <td><input class="text" type="text" name="urltext" value="{URLTEXT}" size=80></td>
+  <td><input class="text" type="text" name="urltext" value="{URLTEXT}" size=80 spellcheck="true"></td>
 </tr>
 <tr class="input">
   <th>Image URL:</th>
