@@ -9,7 +9,8 @@
     </form>
   </td>  
   <td class="right">
-    Powered by <a href="http://kawf.sourceforge.net/">Kawf</a>
+    <!-- Powered by <a href="http://kawf.sourceforge.net/">Kawf</a> -->
+    Powered by <a href="http://github.com/kawf/kawf/">Kawf</a>
   </td>
 </tr>
 </table>
