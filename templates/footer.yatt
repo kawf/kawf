@@ -15,7 +15,8 @@
     Hosting provided by some <a href="/other/msgs/7353155.phtml">squirrels and tins[sic] cans with string.</a>
   </td>
   <td class="right">
-    Powered by <a href="http://kawf.sourceforge.net/">Kawf</a>
+    <!-- Powered by <a href="http://kawf.sourceforge.net/">Kawf</a> -->
+    Powered by <a href="http://github.com/kawf/kawf/">Kawf</a>
   </td>
 </tr>
 </table>
