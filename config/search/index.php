@@ -354,9 +354,15 @@ $startRow=is_numeric($_GET['startRow'])?$_GET['startRow']:0;
 
 				// Count the result set.
 				$useIndexedSearch = TRUE;
+				$retryNoIndex = FALSE;
 				try {
 					$row=db_query_first(search_results($useIndexedSearch, TRUE));
+					if (!$row || $row[0]==0) $retryNoIndex = TRUE;
 				} catch(PDOException $e) {
+					$retryNoIndex = TRUE;
+				}
+
+				if ($retryNoIndex) {
 					$useIndexedSearch = FALSE;
 					$row=db_query_first(search_results($useIndexedSearch, TRUE));
 				}
