@@ -205,6 +205,16 @@ function postprocess($msg, $noembed=false)
   return $out;
 }
 
+function sandbox($viewer, $owner)
+{
+    /* always show own sig */
+    if ($viewer->aid == $owner->aid) return true;
+    /* ditch tony's sig */
+    if ($owner->aid == 342) return false;
+    /* default */
+    return true;
+}
+
 /* pre is a hack for stacking used by showthread.php */
 function render_message($tpl, $msg, $viewer, $owner=null)
 {
@@ -272,7 +282,7 @@ function render_message($tpl, $msg, $viewer, $owner=null)
   }
 
   if ($viewer->valid() && isset($flags['NewStyle']) && !isset($viewer->pref['HideSignatures']) && isset($owner->signature)) {
-    if (!empty($owner->signature)) {
+    if (!empty($owner->signature) && sandbox($viewer, $owner)) {
       $tpl->set_var("MSG_SIGNATURE", nl2brPre::out($owner->signature));
     } else {
       $tpl->set_var("signature", "");
