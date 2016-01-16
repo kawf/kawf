@@ -66,7 +66,7 @@ function postmessage($user, $fid, &$msg, $request)
     if (!$msg['mid'])
       throw new RuntimeException('failed to get mid for ' . $request['postcookie']);
 
-    /* get up old message state */
+    /* get old message state */
     $omsg = db_query_first("select state from $mtable where mid = ?", array($msg['mid']));
 
     /* update with new message */
@@ -82,11 +82,14 @@ function postmessage($user, $fid, &$msg, $request)
 
     /* unwind... do we really need these? */
     /* unwind index for old message */
-    if (!$msg['pmid'])
-      db_exec("update f_indexes set " . $omsg['state'] . " = " . $omsg['state'] . " - 1 where iid = ?", array($iid));
+    if (!is_null($omsg['state'])) {
+	if (!$msg['pmid'])
+	  db_exec("update f_indexes set " . $omsg['state'] . " = " . $omsg['state'] . " - 1 where iid = ?", array($iid));
 
-    /* unwind post count for old message */
-    $user->post($fid, $omsg['state'], -1);
+	/* unwind post count for old message */
+	$user->post($fid, $omsg['state'], -1);
+    }
+
     $track_thread = $untrack_thread = false;
   } else {
     /* New message */
