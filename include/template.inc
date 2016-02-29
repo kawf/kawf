@@ -43,7 +43,7 @@ class Template {
    * root:     template directory.
    * unknowns: how to handle unknown variables.
    */
-  function Template($root = ".", $unknowns = "remove") {
+  function __construct($root = ".", $unknowns = "remove") {
     $this->set_root($root);
     $this->set_unknowns($unknowns);
   }
