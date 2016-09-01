@@ -55,11 +55,14 @@ function demoronize($var)
     chr(0xB4) =>'\'',
   );
 
-  foreach ($trans_table as $utf8_code => $replace) {
-      $var = str_replace($utf8_code, $replace, $var);
+  $out = "";
+  foreach (preg_split("//u", $var) as $mbchar) {
+       if (array_key_exists($mbchar, $trans_table))
+         $out .= $trans_table[$mbchar];
+       else
+         $out .= $mbchar;
   }
-
-  return $var;
+  return $out;
 }
 
 /* For text strings */
