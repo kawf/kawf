@@ -164,6 +164,9 @@ td.messageinfo a:hover { color: #008; }
 /* no image borders */
 .imageurl img { border-style: none; }
 
+/* fit all images into the viewport */
+.message img { max-width: 100%; }
+
 /* embedded url in message */
 .message li.url { list-style: disc outside none; }
 
