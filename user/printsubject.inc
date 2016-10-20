@@ -19,13 +19,17 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
 
   $msg['subject']=softbreaklongwords($msg['subject'],40);
 
+  $nt = "";
+  if (isset($flags['NoText']))
+    $nt = " class=\"nt\"";
+
   if (isset($vmid) && $vmid == $msg['mid'])
     $string .= "<span class=\"vmid\">" . $msg['subject'] . "</span>";
   else {
     if (isset($user->pref['FlatThread']))
-      $string .= "<a href=\"/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\">" . $msg['subject'] . "</a>";
+      $string .= "<a href=\"/" . $forum['shortname'] . "/threads/" . $msg['tid'] . ".phtml#" . $msg['mid'] . "\"" . $nt . ">" . $msg['subject'] . "</a>";
     else
-      $string .= "<a href=\"/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\">" . $msg['subject'] . "</a>";
+      $string .= "<a href=\"/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\"" . $nt . ">" . $msg['subject'] . "</a>";
   }
 
   if ($new)
