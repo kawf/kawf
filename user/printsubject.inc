@@ -19,7 +19,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
   // $msg['subject']=wordwrap($msg['subject'],40,'<wbr>',1);
 
   $nt = "";
-  if (isset($flags['NoText']))
+  if (isset($flags['NewStyle']) && isset($flags['NoText']) && count($flags)==2)
     $nt = " class=\"nt\"";
 
   if (isset($vmid) && $vmid == $msg['mid'])
