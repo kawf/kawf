@@ -1,0 +1,12 @@
+%begin [dir]
+<h2>Forum Directory</h2>
+<table class="basic">
+    <tr><th>Forum</th><th>Posts</th></tr>
+%begin [row]
+    <tr class="row%[r]">
+	<td><a href="/%[row(shortname)]/">%[row(name)]</a></td>
+	<td>%[count]</td>
+    </tr>
+%end [row]
+</table>
+%end [dir]

@@ -1,0 +1,5 @@
+If {FORUM_SHORTNAME}.tpl exists here, it will be used automatically. If not,
+generic.tpl will be used.
+
+TIP:
+If you have several templates that are the same, use symbolic links!

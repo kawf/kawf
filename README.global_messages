@@ -1,0 +1,43 @@
+f_global_messages contains messages that everybody sees in every forum, at the
+top of each forum thread list. There is a FIXED limit of 32 global messages
+(see note below about reusing old global message slots).
+
+Unlike a normal message, global messages are not linked to an account id,
+and they don't contain any text. They are simply clickable urls.
+
+f_global_message columns are
+    gid: integer from 0-31 - MUST BE UNIQUE
+    subject: just like a thread subject
+    url: when you click on the subject, it will send you DIRECTLY here
+    name: just like a message "name" - the user "name" of who posted this.
+    date: will show up next to subject/name
+    state: Inactive global messages are only visible to admins
+
+Normal users can:
+    "rm" (remove aka mark read)
+    "Restore global messages" (un-remove removed messages)
+
+Administrators can:
+    see "inactive" global messages
+    "ug" (undelete global message aka mark active)
+    "dg" (delete global message aka mark inactive)
+    "ed" (edit global message)
+
+You can access the admin page at http://your.site.com/admin/gmessage.phtml
+    From there, you can:
+
+    * Edit global messages (subject/url)
+      Note that the url can be *relative*, e.g.,
+      "http://site.com/other/msgs/1234" can be abbreviated
+      "/other/msgs/1234.phtml". This way, you can make links internal to your
+      forum, especially if several hostnames can be used to access the forum
+      (or both http and https).
+
+    * Take "ownership" of a global message (set name)
+
+    * Update the date of a global message (touch)
+
+    * Change the status (active/inactive) of a global message
+
+    * Reset all users "filter" bit for a global message, so the message is
+      "unhidden" aka un-"remove" or unmark as "read" for EVERY user.

@@ -1,0 +1,27 @@
+The current schema version is stored in the database, in a new table.  Each
+database change goes into a file in db/migrations/ with a name like
+20091226223412_my_cool_new_awesome_change.php .  The timestamp should be
+approximately current time, so that the migrations can be ordered correctly.
+The file is expected to contain one class (MyCoolNewAwesomeChange in this case)
+that extends the DatabaseMigration class, and overrides the migrate() method to
+do the actual database manipulation.  The migrate() method must return true on
+success and false on failure.  The DatabaseMigration parent will take care of
+updating the schema version in the database.  There's one migration there now
+to serve as an example - it creates the schema_version table which is actually
+needed for this to work, so it's a real change, not a dummy example.
+
+To use this, db/tools/migrate.php is intended to be run from the command line
+to manage the schema.  Run it without arguments to see available commands.  Run
+"db/tools/migrate.php showcurrent" to show the current schema version (it
+should say UNKNOWN, since the version table doesn't even exist yet.)
+"showpending" will show pending migrations - there should be only one right
+now, the one that creates the version table.  "runnext" will execute the next
+pending migration, whereas "runpending" will execute *all* pending migrations.
+
+The migrations are only intended to change production databases where the forum
+has been set up previously.  The migrations are *not* intended to be run when
+setting up a clean new database.  Therefore, any changes made in migrations,
+should also be made in initial.php and tables.inc, so that new databases can be
+set up correctly from scratch.  Don't forget to update $SCHEMA_VERSION at the
+top of tables.inc as well, so that newly-created databases have the correct
+schema version.

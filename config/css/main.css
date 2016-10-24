@@ -1,0 +1,249 @@
+/***********/
+/* general */
+/***********/
+body { font-family: verdana, arial, geneva; font-size: smaller}
+
+/* shortcuts */
+.error { color: red; }
+.warning { color: green; }
+.left { text-align: left; }
+.center { text-align: center; }
+.right { text-align: right; }
+.top { vertical-align: top; }
+.bottom { vertical-align: bottom; }
+
+/* misc headers/footers */
+.forumheader, .messageheader { width: 100%; border-collapse: collapse; }
+div.header { padding-top: 0; padding-bottom: 0.4em; }
+div.footer { padding-top: 0.4em; padding-bottom: 0; }
+
+/* little links that do stuff */
+.tools, .smaller { width: 100%; font-size: 85%; }
+.tools { white-space: nowrap; }	/* mini-links */
+div.tools { margin-left: 2px; }  /* hack to match table indent */
+
+/* post/edit informational text */
+.info {
+    text-align: center;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #008;
+}
+
+/* thread layout */
+.threads { width: 100%; }
+.threadlinks { white-space: nowrap; vertical-align: top; }
+.threadlinks a { text-decoration: none; }
+a.ut { color: #d00; }
+a:hover.ut { color: #f00; text-decoration: underline;}
+a.tt { color: #0d0; }
+a:hover.tt { color: #0f0; text-decoration: underline;}
+a.up { color: #00d; }
+a:hover.up { color: #00f; text-decoration: underline;}
+
+/* indent for all ul heirarchies */
+ul {margin-left: 1em; padding-left: 1em;}
+
+/*************************/
+/* showforum/showmessage */
+/*************************/
+
+/* normal */
+.row0 { background: #f8f8f8 }
+.row1 { background: #e8e8e8 }
+
+/* sticky */
+.srow0 { background: #ddffdd }
+.srow1 { background: #cceecc }
+
+/* tracked */
+.trow0 { background: #ddddff }
+.trow1 { background: #ccccee }
+
+/* deleted/moderated (unused) */
+/*
+.drow0 { background: #ddffdd }
+.drow1 { background: #cceecc }
+.mrow0 { background: #ffdddd }
+.mrow1 { background: #eecccc }
+*/
+
+/* global messages */
+.grow0 { background: #ffdddd }
+.grow1 { background: #eecccc }
+
+ul.thread li { list-style: circle outside none; }
+/* bold thread starter */
+/* ul.thread > li > a { font-weight: bold; } */
+ul.thread li a.nt { text-decoration: none; }
+ul.thread li img.nt { display: none; }
+ul.thread li.hidden { list-style: disc outside none; }
+
+/* subject thread listing spacing */
+ul.thread {
+    margin-top: 0.2em;
+    margin-bottom: 0.4em;
+}
+
+/* subject message line in thread listing */
+.vmid { color: red; }
+.username { font-weight: bold; }
+.threadinfo { font-size: smaller; }
+
+/**************/
+/* showthread */
+/**************/
+/* make a little room */
+.showthread { padding-top: 6px; }
+
+/* first row is flush left */
+.showthread > ul { margin-left: 0; padding-left: 0; }
+
+/* get rid of bullets */
+.showthread li { list-style: none outside; }
+
+/* highlight subject */
+.showthread tr.messagesubjectrow td { background: #eeeeee; }
+
+/* right/left padding for subject highlight for it and everything under it */
+.showthread tr td { padding-left: 6px; padding-right: 6px; }
+.showthread .messageblock div { padding-left: 6px; padding-right: 6px; }
+
+/* message subject in showthread - no bold, no link decoration */
+.showthread .messageblock .subject a {
+    text-decoration: none;
+    font-weight: normal;
+    /* for all type of links (visited, etc) */
+    color: #008;
+}
+.showthread .messageblock .subject a:hover {
+    color: #00f; text-decoration: underline;
+}
+
+/* signature in showthread */
+/*
+.showthread .signature {
+    visibility: hidden;
+    overflow: hidden;
+    max-height: 10px;
+}
+*/
+
+/****************/
+/* messageblock */
+/****************/
+.messageblock {
+    margin-left: 2px; /* hack to match table indent */
+    margin-bottom: 1em;
+}
+
+/* divs inside all messageblocks - leave space before/after them */
+.messageblock div { padding-top: 0.4em; padding-bottom: 0.4em; }
+
+/* all message subjects - big, bold, wacky color */
+.messageblock .subject {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: #008;
+}
+
+/* message header/info */
+td.messageinfo {
+    width: 100%;
+    font-size: 85%;
+    color: #666;
+    /* leave space below info section */
+    padding-bottom: 0.4em;
+}
+td.messageinfo a:link { color: #66f; }
+td.messageinfo a:visited { color: #96e; }
+td.messageinfo a:hover { color: #008; }
+
+/* url tag below media */
+.media { font-size: 75%; color: #666; }
+.media a:link { color: #66f; }
+.media a:visited { color: #96e; }
+.media a:hover { color: #008; }
+
+/* no image borders */
+.imageurl img { border-style: none; }
+
+/* fit all images into the viewport */
+.message img { max-width: 100%; }
+
+/* embedded url in message */
+.message li.url { list-style: disc outside none; }
+
+.signature {
+    /* width: 100%; */
+    margin-top: .4em;
+    border-width: 2px 0 0 0;
+    border-style: solid;
+    border-color: #eeeed0;
+}
+
+.changes {
+    background: #ffeeee;
+    font-family: monospace;
+    padding: 5px;
+}
+
+.postform tr { background: #dfdfdf; }
+.postform th { text-align: right; padding: 0.3em; }
+.postform tr.input td { padding: 0; }
+.postform th.top { vertical-align: top; }
+.postform td { padding: 0.5em; }
+
+/***************/
+/* preferences */
+/***************/
+.preferences tr { background: #ccc; }
+.preferences th { text-align: left; }
+.preferences th, .preferences td { padding: 5px; }
+.preferences td.submit { text-align: center; }
+.preferences .prefheader { font-weight: bold; text-align: right; padding: 10px; }
+td.signaturepreview { background-color: white; border: 5px solid #ccc; }
+
+/* misc basic table */
+table.basic { margin-left:auto; margin-right:auto; border-collapse: collapse; width: 100%; }
+table.basic th, table.basic td { border: 1px solid #999; padding: 1px 10px; }
+table.basic th { background-color: #d0dce0; }
+
+/*********/
+/* hacks */
+/*********/
+/* IE doesn't like 100% (referenced to largest input/textara.
+   Have to use fixed size */
+.postform .text { width: 600px; }
+
+/* IE wants inline for it to pack right */
+.postform { display: inline; }
+
+/****************/
+/* enhancements */
+/****************/
+
+/* View All Images */
+.view-all-images-image img { display: block; margin: 5px; } 
+
+/* Night Mode */
+body.night-mode { background: #1a1a1d !important; color: #888 !important; }
+a.night-mode { color: #999 !important; text-decoration: none !important; }
+a.tt.night-mode { color: #575  !important; }
+a.ut.night-mode { color: #755 !important; }
+.row0.night-mode { background: #1a1a1d !important; }
+.row1.night-mode { background: #242426 !important; }
+.trow0.night-mode { background: #252532 !important; }
+.trow1.night-mode { background: #1d1e28 !important; }
+.grow0.night-mode { background: #301c1c !important; }
+.grow1.night-mode { background: #251616 !important; }
+.username.night-mode { color: #999 !important; }
+.threadinfo.night-mode { color: #777 !important; }
+.messageblock .subject.night-mode { color: #ccc !important; }
+.vmid.night-mode { color: #ddd !important; font-weight: bold !important; }
+.postform tr.night-mode { background: #242426 !important; }
+.postform .text.night-mode { background: #1a1a1d !important; border: 1px solid #131315 !important; margin: 1px !important; color: #ccc  !important; }
+.thread > li > a.night-mode { color: #ccc  !important; }
+.preferences tr.night-mode { color: #242426 !important; }
+td.signaturepreview.night-mode { background-color: #1a1a1d !important; border: 5px solid #242426 !important; }
+textarea.night-mode { background: #1A1A1D !important; border: 1px solid #131315 !important; margin: 1px !important; color: #CCC; }
