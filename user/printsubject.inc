@@ -36,7 +36,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
 
   if (isset($flags['NoText'])) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/nt.gif\" alt=\"no text\">";
+      $string .= " <img src=\"/pics/nt.gif\" alt=\"no text\"" . $nt . ">";
     else
       $string .= " (nt)";
   }
