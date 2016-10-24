@@ -1,6 +1,8 @@
 <?php
 require_once("nl2brPre.inc");
+require_once("textwrap.inc");
 require_once("embed-media.inc.php");
+require_once("Skip32.inc.php");
 
 function message_set_block($tpl)
 {
@@ -15,6 +17,7 @@ function message_set_block($tpl)
   $tpl->set_block("forum_mod", "admin");	/* opt */
   $tpl->set_block("message", "moderator");	/* opt */
   $tpl->set_block("message", "advertiser");	/* opt */
+  $tpl->set_block("message", "sponsor");	/* opt */
 
   $tpl->set_block("message", "parent");		/* manual */
 
@@ -36,6 +39,7 @@ function _message_unset_block_extras($tpl)
     "forum_mod" => "",
     "moderator" => "",
     "advertiser" => "",
+    "sponsor" => "",
     "parent" => "",	/* must be handled manually */
     "changes" => "",
   ));
@@ -85,6 +89,10 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
   /* for advertiser tag (based on message owner) */
   if (!$owner->capable($forum['fid'], 'Advertise'))
     $tpl->set_var("advertiser", "");
+
+  /* for sponsor tag (based on message owner) */
+  if (!$owner->capable($forum['fid'], 'Sponsor'))
+    $tpl->set_var("sponsor", "");
 
   /* handle stupid tool links. templating system sucks; we have to
      explicitly unset EVERY block we do not use */
@@ -175,8 +183,11 @@ function postprocess($msg, $noembed=false)
     else $out .= "$indent<div class=\"media\">\n".embed_video($url)."\n$indent</div>\n";
   }
 
-  if (!empty($msg['message']))
+  if (!empty($msg['message'])) {
+    // todo: make sure softbreak avoids pre
+    // $out .= nl2br(softbreaklongwords($msg['message'],78));
     $out .= nl2brPre::out($msg['message'])."\n";
+  }
 
   if (!empty($msg['url']) && validate_url($msg['url'])) {
     $url = escapequotes($msg['url']);
@@ -194,11 +205,23 @@ function postprocess($msg, $noembed=false)
   return $out;
 }
 
+function sandbox($viewer, $owner)
+{
+    /* always show own sig */
+    if ($viewer->aid == $owner->aid) return true;
+    /* ditch tony's sig */
+    if ($owner->aid == 342) return false;
+    /* default */
+    return true;
+}
+
 /* pre is a hack for stacking used by showthread.php */
 function render_message($tpl, $msg, $viewer, $owner=null)
 {
-  global $Debug, $forum;
+  global $Debug, $forum, $viewer_aid_key;
   $moderator = $viewer->admin() || $viewer->capable($forum['fid'], 'Moderate');
+
+  $tpl->set_var("VIEWER_AID", isset($viewer)?dechex(Skip32::encrypt($viewer_aid_key, $viewer->aid)):'');
 
   /*---------------------------------------------------------------------*/
   /* Bug 2771354 */
@@ -259,7 +282,7 @@ function render_message($tpl, $msg, $viewer, $owner=null)
   }
 
   if ($viewer->valid() && isset($flags['NewStyle']) && !isset($viewer->pref['HideSignatures']) && isset($owner->signature)) {
-    if (!empty($owner->signature)) {
+    if (!empty($owner->signature) && sandbox($viewer, $owner)) {
       $tpl->set_var("MSG_SIGNATURE", nl2brPre::out($owner->signature));
     } else {
       $tpl->set_var("signature", "");
@@ -268,6 +291,7 @@ function render_message($tpl, $msg, $viewer, $owner=null)
     $tpl->set_var("signature", "");
   }
 
+  $msg['subject'] = softbreaklongwords($msg['subject'],40);
   $tpl->set_var(array(
     "MSG_SUBJECT" => $msg['subject'],
     "MSG_DATE" => $msg['date'],

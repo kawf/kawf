@@ -121,7 +121,9 @@ if ($_POST['submit'] && !$create_disabled && !$banned_ip) {
 }
 
 if (empty($error) && $_POST['submit'] && !$create_disabled && !$banned_ip) {
-  if (!$user->create()) {
+  if ($create_key && $_POST['key'] != $create_key) {
+    $error .= "Please supply a valid secret key\n";
+  } else if (!$user->create()) {
     if (!$user->email)
       $error .= "The email address '$email' is taken. Perhaps you forgot your password?\n";
     if (!$user->name)

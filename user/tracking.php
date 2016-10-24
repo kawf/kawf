@@ -101,6 +101,7 @@ while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
     $tpl->set_file("forum_header",
 	array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"));
 
+    $tpl->set_var("FORUM_NOTICES", "");
     $tpl->parse("FORUM_HEADER", "forum_header");
 
     $tpl->parse("_block", $table_block, true);

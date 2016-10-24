@@ -3,11 +3,17 @@
   <td class="left">
     <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
     <input type="hidden" name="cmd" value="_s-xclick">
+%begin [user]
+    <input type="hidden" name="custom" value="aid=%[aid]">
+%end [user]
     <input type="hidden" name="hosted_button_id" value="4023927">
     <input type="image" src="/pics/btn_donate_SM.gif" name="submit" alt="PayPal - The safer, easier way to pay online!">
     <img alt="" src="/pics/pixel.gif" width="1" height="1">
     </form>
   </td>  
+  <td class="center">
+    Hosting provided by some <a href="/other/msgs/7353155.phtml">squirrels and tins[sic] cans with string.</a>
+  </td>
   <td class="right">
     <!-- Powered by <a href="http://kawf.sourceforge.net/">Kawf</a> -->
     Powered by <a href="http://github.com/kawf/kawf/">Kawf</a>

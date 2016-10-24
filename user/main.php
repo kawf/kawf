@@ -35,6 +35,7 @@ require_once("acl_ip_ban.inc");
 require_once("acl_ip_ban_list.inc");
 
 db_connect();
+db_exec("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
 
 $tpl = new Template($template_dir, "comment");
 

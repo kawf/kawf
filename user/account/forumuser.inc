@@ -250,6 +250,9 @@ class ForumUser {
     if (!$this->valid())
       return false;
 
+    if ($this->admin())
+      return true;
+
     if (isset($this->capable[$fid]))
       return isset($this->capable[$fid][$type]);
 

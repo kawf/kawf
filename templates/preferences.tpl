@@ -17,6 +17,7 @@
   <tr>
     <td colspan="2">
       <a href="/acctedit.phtml">Edit Password, Email Address or Screen Name</a>
+    | <a href="http://boty.wayot.org/notices/?page={PAGE}">Manage Notices</a>
     | <a href="/gmessage.phtml?gid=-1&amp;hide=0&amp;page={PAGE}&amp;token={USER_TOKEN}">Restore global messages</a>
     </td>
   </tr>

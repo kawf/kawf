@@ -16,8 +16,16 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
     $debug .= "imgpreview = $imgpreview\n";
     $debug .= "_REQUEST:\n";
     foreach ($_REQUEST as $k => $v) {
-      if (!is_numeric($k) && is_scalar($v))
-	$debug.=" $k => $v\n";
+      if (!is_numeric($k)) {
+	if(is_scalar($v))
+	  $debug.=" $k => $v\n";
+        else {
+	  trigger_error("$k's v is not a scalar");
+	  if (is_array($v)) foreach ($v as $kk => $vv)
+	    trigger_error("$kk => $vv");
+	  $_REQUEST[$k]="I like cock";
+	}
+      }
     }
 
     if ($Debug) {

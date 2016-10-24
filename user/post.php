@@ -53,6 +53,8 @@ $errors = array(
   "subject_too_long",
 );
 
+$tpl->set_var("FORUM_NOTICES", "");
+
 $tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
