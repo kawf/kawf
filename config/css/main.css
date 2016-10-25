@@ -77,7 +77,7 @@ ul.thread li { list-style: circle outside none; }
 /* ul.thread > li > a { font-weight: bold; } */
 ul.thread li a { text-decoration: none; }
 ul.thread li a:hover { text-decoration: underline; }
-ul.thread li img.nt { display: none; }
+/* ul.thread li img.nt { display: none; } */
 ul.thread li.hidden { list-style: disc outside none; }
 
 /* subject thread listing spacing */
