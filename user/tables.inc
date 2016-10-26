@@ -117,7 +117,7 @@ $create_moderators_table = "
   create table if not exists f_moderators (
     aid int not null,
     fid int not null,
-    capabilities set('Lock','Moderate','Delete','OffTopic','Advertise') not null,
+    capabilities set('Lock','Moderate','Delete','OffTopic','Advertise','Sponsor') not null,
     unique key (aid, fid)
   )";
 

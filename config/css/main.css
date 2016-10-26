@@ -1,7 +1,15 @@
+@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+
 /***********/
 /* general */
 /***********/
-body { font-family: verdana, arial, geneva; font-size: smaller}
+html, body {
+    font: normal normal normal 0.965em / 1.35 "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 400;
+    background: #fff;
+    color: #242424;
+}
+
 
 /* shortcuts */
 .error { color: red; }
@@ -16,11 +24,15 @@ body { font-family: verdana, arial, geneva; font-size: smaller}
 .forumheader, .messageheader { width: 100%; border-collapse: collapse; }
 div.header { padding-top: 0; padding-bottom: 0.4em; }
 div.footer { padding-top: 0.4em; padding-bottom: 0; }
+.footer a:link {text-decoration: none;}
+.footer a:hover {text-decoration: underline;}
 
 /* little links that do stuff */
 .tools, .smaller { width: 100%; font-size: 85%; }
-.tools { white-space: nowrap; }	/* mini-links */
+.tools { white-space: nowrap; } /* mini-links */
 div.tools { margin-left: 2px; }  /* hack to match table indent */
+.tools a:link {text-decoration: none;}
+.tools a:hover {text-decoration: underline;}
 
 /* post/edit informational text */
 .info {
@@ -33,7 +45,8 @@ div.tools { margin-left: 2px; }  /* hack to match table indent */
 /* thread layout */
 .threads { width: 100%; }
 .threadlinks { white-space: nowrap; vertical-align: top; }
-.threadlinks a { text-decoration: none; }
+.threadlinks a:link { text-decoration: none; }
+.threadlinks a:hover { text-decoration: underline; }
 a.ut { color: #d00; }
 a:hover.ut { color: #f00; text-decoration: underline;}
 a.tt { color: #0d0; }
@@ -156,15 +169,15 @@ td.messageinfo {
     /* leave space below info section */
     padding-bottom: 0.4em;
 }
-td.messageinfo a:link { color: #66f; }
+td.messageinfo a:link { color: #66f; text-decoration: none; }
 td.messageinfo a:visited { color: #96e; }
-td.messageinfo a:hover { color: #008; }
+td.messageinfo a:hover { color: #008; text-decoration: underline;}
 
 /* url tag below media */
 .media { font-size: 75%; color: #666; }
-.media a:link { color: #66f; }
+.media a:link { color: #66f; text-decoration: none;}
 .media a:visited { color: #96e; }
-.media a:hover { color: #008; }
+.media a:hover { color: #008; text-decoration: underline;}
 
 /* no image borders */
 .imageurl img { border-style: none; }
@@ -194,6 +207,8 @@ td.messageinfo a:hover { color: #008; }
 .postform tr.input td { padding: 0; }
 .postform th.top { vertical-align: top; }
 .postform td { padding: 0.5em; }
+.postform a:link {text-decoration: none;}
+.postform a:hover {text-decoration: underline;}
 
 /***************/
 /* preferences */

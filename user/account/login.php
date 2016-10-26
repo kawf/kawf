@@ -63,5 +63,5 @@ if (isset($message) && !empty($message))
 else
   $tpl->set_var("message", "");
 
-print generate_page('Login',$tpl->parse("content", "login"));
+print generate_page('Login',$tpl->parse("content", "login"), true /* skip header */);
 ?>

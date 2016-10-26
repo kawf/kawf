@@ -6,6 +6,9 @@ require_once("thread.inc");
 require_once("message.inc");
 require_once("page-yatt.inc.php");
 
+require_once("textwrap.inc");
+require_once("notices.inc");
+
 $tpl->set_file(array(
   "showthread" => "showthread.tpl",
   "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
@@ -14,6 +17,7 @@ $tpl->set_file(array(
 $tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
+$tpl->set_var("FORUM_NOTICES", get_notices_html($forum, $user->aid));
 $tpl->parse("FORUM_HEADER", "forum_header");
 
 /* $tid set by main.php for showthread.php */
@@ -86,8 +90,9 @@ function print_message($thread, $msg)
   render_message($mtpl, $msg, $user, $uuser);
 
   /* in threaded mode, subject is a link. override MSG_SUBJECT set above. */
+  $subject = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\">" . softbreaklongwords($msg['subject'],40) . "</a>";
   $mtpl->set_var("MSG_SUBJECT",
-    "<a href=\"../msgs/" . $msg['mid'] . ".phtml\" name=\"" . $msg['mid'] . "\">" . $msg['subject'] . "</a>");
+    "<a href=\"../msgs/" . $msg['mid'] . ".phtml\" name=\"" . $msg['mid'] . "\">" . $subject . "</a>");
 
   $mtpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
   $mtpl->set_var("PAGE", $tpl->get_var('PAGE'));

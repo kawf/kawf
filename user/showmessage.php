@@ -5,9 +5,12 @@ require_once("listthread.inc");
 require_once("thread.inc");
 require_once("filter.inc");
 require_once("strip.inc");
+require_once("textwrap.inc");	// for softbreaklongwords
 require_once("message.inc");
 require_once("postform.inc");
 require_once("page-yatt.inc.php");
+
+require_once("notices.inc");
 
 if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
   $user->req();
@@ -28,6 +31,7 @@ message_set_block($tpl);
 $tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 
+$tpl->set_var("FORUM_NOTICES", get_notices_html($forum, $user->aid));
 $tpl->parse("FORUM_HEADER", "forum_header");
 
 /* Grab the actual message */
@@ -68,7 +72,7 @@ $tpl->set_var("DOMAIN", $_domain);
 if (isset($pmsg)) {
   $tpl->set_var(array(
     "PMSG_MID" => $pmsg['mid'],
-    "PMSG_SUBJECT" => $pmsg['subject'],
+    "PMSG_SUBJECT" => softbreaklongwords($pmsg['subject'],40),
     "PMSG_NAME" => $pmsg['name'],
     "PMSG_DATE" => $pmsg['date'],
   ));

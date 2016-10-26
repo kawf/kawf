@@ -15,13 +15,16 @@
 <!-- END forum_mod -->
       Posted by: <b>{MSG_NAMEEMAIL}</b>
       (<a href="/account/{MSG_AID}.phtml?page={PAGE}">{MSG_AID}</a>)
-      on {MSG_DATE}
+      on {MSG_DATE} {VIEWER_AID}
 <!-- BEGIN advertiser -->
       | <b>Advertiser</b>
 <!-- END advertiser -->
 <!-- BEGIN moderator -->
       | <b>Moderator</b>
 <!-- END moderator -->
+<!-- BEGIN sponsor -->
+      | <b><a href="http://kawf.sourceforge.net/">Circle of Trust</a></b>
+<!-- END sponsor -->
       <br>
 <!-- BEGIN parent -->
       In Reply to: <a href="{PMSG_MID}.phtml">{PMSG_SUBJECT}</a> posted by <b>{PMSG_NAME}</b> on {PMSG_DATE}<br>
