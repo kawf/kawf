@@ -112,7 +112,7 @@ ul.thread li a { text-decoration: none; }
 ul.thread li a:hover { text-decoration: underline; }
 
 /* subject message line in thread listing */
-ul.thread li em { font-weight: 700; font-style: none; } /* unread subject */
+ul.thread li em { font-weight: 700; font-style: normal; } /* unread subject */
 ul.thread li .vmid { color: #de2900; } /* currently viewed thread */
 ul.thread li .username { font-weight: bold;}
 ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
