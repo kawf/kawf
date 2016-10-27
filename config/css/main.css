@@ -37,15 +37,6 @@ a:active {
   text-decoration: underline;
 }
 
-/* Unread posts in a tracked thread */
-span.unread {
-  text-decoration: none;
-  font-weight: 700;
-  font-style: italic;
-}
-a:hover.unread {
-  text-decoration: underline;
-}
 
 /* shortcuts */
 .error { color: #de2900; }
@@ -122,6 +113,12 @@ ul.thread {
     margin-top: 0.2em;
     margin-bottom: 0.4em;
 }
+
+ul.thread li a { text-decoration: none; }
+ul.thread li a:hover { text-decoration: underline; }
+
+/* Unread Subject */
+ul.thread li span.unread { font-weight: 700; font-style: italic; } */
 
 /* subject message line in thread listing */
 .vmid { color: #de2900; }
