@@ -104,9 +104,9 @@ ul.thread {
 }
 
 /* subject message line in thread listing */
-.vmid { color: red; }
-.username { font-weight: bold; }
-.threadinfo { font-size: smaller; }
+.vmid { color: #de2900; }
+.username { font-weight: bold;}
+.threadinfo { font-size: smaller; color: #6e6e6e;}
 
 /**************/
 /* showthread */
@@ -156,8 +156,8 @@ ul.thread {
 }
 
 .messageblock {
-    margin-left: 2px; /* hack to match table indent */
-    margin-bottom: 1em;
+  margin-left: 2px; /* hack to match table indent */
+  margin-bottom: 1em;
 }
 
 /* divs inside all messageblocks - leave space before/after them */
@@ -165,17 +165,19 @@ ul.thread {
 
 /* all message subjects - big, bold, wacky color */
 .messageblock .subject {
-    font-family: 'Slabo 27px', serif;
-    font-size: 2.2em;
-    padding-top: 20px;
+  font-family: 'Slabo 27px', serif;
+  font-size: 2.2em;
+  line-height: 0.95em;
+  padding-top: 20px;
+  padding-bottom: 15px;
 }
 
 /* message header/info */
 td.messageinfo {
-    width: 100%;
-    font-size: 85%;
-    padding-bottom: 30px;
-    color: #6e6e6e;
+  width: 100%;
+  font-size: 85%;
+  padding-bottom: 30px;
+  color: #6e6e6e;
 }
 td.messageinfo a:link { color: #66f; text-decoration: none; }
 td.messageinfo a:visited { color: #96e; }
