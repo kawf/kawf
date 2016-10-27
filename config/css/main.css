@@ -116,7 +116,8 @@ ul.thread {
 
 ul.thread li a { text-decoration: none; }
 ul.thread li a:hover { text-decoration: underline; }
-/* unread subject */
+
+/* Unread Subject */
 ul.thread li span.unread { font-weight: 700; font-style: italic; } */
 
 /* subject message line in thread listing */
