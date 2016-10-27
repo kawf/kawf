@@ -28,7 +28,7 @@ div.footer { padding-top: 0.4em; padding-bottom: 0; }
 .footer a:hover {text-decoration: underline;}
 
 /* little links that do stuff */
-.tools, .smaller { width: 100%; font-size: 85%; }
+.tools, .smaller { width: 100%; font-size: 85%; padding-bottom: 30px; color: #6e6e6e;}
 .tools { white-space: nowrap; } /* mini-links */
 div.tools { margin-left: 2px; }  /* hack to match table indent */
 .tools a:link {text-decoration: none;}
@@ -150,6 +150,11 @@ ul.thread {
 /****************/
 /* messageblock */
 /****************/
+.message {
+  font-size: 1.15em;
+  font-weight: 300;
+}
+
 .messageblock {
     margin-left: 2px; /* hack to match table indent */
     margin-bottom: 1em;
@@ -160,18 +165,17 @@ ul.thread {
 
 /* all message subjects - big, bold, wacky color */
 .messageblock .subject {
-    font-size: 1.4em;
-    font-weight: bold;
-    color: #008;
+    font-family: 'Slabo 27px', serif;
+    font-size: 2.2em;
+    padding-top: 20px;
 }
 
 /* message header/info */
 td.messageinfo {
     width: 100%;
     font-size: 85%;
-    color: #666;
-    /* leave space below info section */
-    padding-bottom: 0.4em;
+    padding-bottom: 30px;
+    color: #6e6e6e;
 }
 td.messageinfo a:link { color: #66f; text-decoration: none; }
 td.messageinfo a:visited { color: #96e; }
