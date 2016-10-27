@@ -38,7 +38,7 @@ a:active {
 }
 
 /* Unread posts in a tracked thread */
-a:link.unread {
+span.unread {
   text-decoration: none;
   font-weight: 700;
   font-style: italic;
