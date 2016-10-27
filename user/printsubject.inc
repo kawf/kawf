@@ -11,11 +11,6 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
       $flags[$flag] = true;
   }
 
-  $new = is_msg_bumped($msg);
-
-  if ($new)
-    $string .= "<i><b>";
-
   // $msg['subject']=wordwrap($msg['subject'],40,'<wbr>',1);
 
   $nt = "";
@@ -31,8 +26,8 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
       $string .= "<a href=\"/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\"" . $nt . ">" . $msg['subject'] . "</a>";
   }
 
-  if ($new)
-    $string .= "</b></i>";
+  if(is_msg_bumped($msg))
+    $string = '<span class="unread">'.$string.'</span>';
 
   if (isset($flags['NoText'])) {
     if (!isset($user->pref['SimpleHTML']))
