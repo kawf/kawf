@@ -1,7 +1,6 @@
 /* Font Family Imports */
-@import url('https://fonts.googleapis.com/css?family=Roboto|Slabo+27px');
+@import url('https://fonts.googleapis.com/css?family=Roboto');
 
-/*   Slabo 27px: 400 (Regular)   */
 /*   Roboto: 100 (Thin)          */
 /*   Roboto: 300 (Light)         */
 /*   Roboto: 400 (Regular)       */
@@ -17,11 +16,6 @@ html, body {
   background: #fff;
   color: #242424;
 }
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Slabo 27px', serif;
-}
-
 
 /* Links */
 a:link {
@@ -150,7 +144,7 @@ ul.thread li span.unread { font-weight: 700; font-style: italic; } */
 /* messageblock */
 /****************/
 .message {
-  font-size: 1.15em;
+  font-size: 1.05em;
   font-weight: 300;
 }
 
@@ -164,8 +158,7 @@ ul.thread li span.unread { font-weight: 700; font-style: italic; } */
 
 /* all message subjects - big, bold, wacky color */
 .messageblock .subject {
-  font-family: 'Slabo 27px', serif;
-  font-size: 1.8em;
+  font-size: 1.4em;
   line-height: 0.95em;
   padding-top: 20px;
   padding-bottom: 15px;
