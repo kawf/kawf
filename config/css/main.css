@@ -165,7 +165,7 @@ ul.thread li span.unread { font-weight: 700; font-style: italic; } */
 /* all message subjects - big, bold, wacky color */
 .messageblock .subject {
   font-family: 'Slabo 27px', serif;
-  font-size: 2.2em;
+  font-size: 1.8em;
   line-height: 0.95em;
   padding-top: 20px;
   padding-bottom: 15px;
@@ -175,7 +175,7 @@ ul.thread li span.unread { font-weight: 700; font-style: italic; } */
 td.messageinfo {
   width: 100%;
   font-size: 85%;
-  padding-bottom: 30px;
+  padding-bottom: 10px;
   color: #6e6e6e;
 }
 
