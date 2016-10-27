@@ -27,7 +27,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
   }
 
   if(is_msg_bumped($msg))
-    $string = '<span class="unread">'.$string.'</span>';
+    $string = '<em>'.$string.'</em>';
 
   if (isset($flags['NoText'])) {
     if (!isset($user->pref['SimpleHTML']))
