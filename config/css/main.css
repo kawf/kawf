@@ -86,11 +86,15 @@ ul {margin-left: 1em; padding-left: 1em;}
 .grow1 { background: #eecccc }
 
 ul.thread li { list-style: circle outside none; }
-/* bold thread starter */
+/* thread starter */
 /* ul.thread > li > a { font-weight: bold; } */
 ul.thread li a { text-decoration: none; }
 ul.thread li a:hover { text-decoration: underline; }
+/* unread subject */
+ul.thread li span.unread { font-weight: bold; font-style: oblique } */
+/* no topic subject */
 /* ul.thread li img.nt { display: none; } */
+/* collapsed thread */
 ul.thread li.hidden { list-style: disc outside none; }
 
 /* subject thread listing spacing */
