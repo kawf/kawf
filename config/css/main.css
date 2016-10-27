@@ -111,13 +111,11 @@ ul.thread {
 ul.thread li a { text-decoration: none; }
 ul.thread li a:hover { text-decoration: underline; }
 
-/* Unread Subject */
-ul.thread li span.unread { font-weight: 700; font-style: none; } */
-
 /* subject message line in thread listing */
-.vmid { color: #de2900; }
-.username { font-weight: bold;}
-.threadinfo { font-size: smaller; color: #6e6e6e;}
+ul.thread li em { font-weight: 700; font-style: none; } /* unread subject */
+ul.thread li .vmid { color: #de2900; } /* currently viewed thread */
+ul.thread li .username { font-weight: bold;}
+ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 
 /**************/
 /* showthread */
