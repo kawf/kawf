@@ -1,18 +1,43 @@
-@import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro');
+/* Font Family Imports */
+@import url('https://fonts.googleapis.com/css?family=Roboto|Slabo+27px');
 
-/***********/
-/* general */
-/***********/
+/*   Slabo 27px: 400 (Regular)   */
+/*   Roboto: 100 (Thin)          */
+/*   Roboto: 300 (Light)         */
+/*   Roboto: 400 (Regular)       */
+/*   Roboto: 500 (Medium)        */
+/*   Roboto: 700 (Bold)          */
+/*   Roboto: 900 (Black)         */
+
+/* General */
 html, body {
-    font: normal normal normal 0.965em / 1.35 "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-weight: 400;
-    background: #fff;
-    color: #242424;
+  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 1.0em;
+  font-weight: 400;
+  background: #fff;
+  color: #242424;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Slabo 27px', serif;
+}
+
+/* Links */
+a:link {
+  text-decoration: none;
+}
+a:visited {
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+a:active {
+  text-decoration: underline;
+}
 
 /* shortcuts */
-.error { color: red; }
+.error { color: #de2900; }
 .warning { color: green; }
 .left { text-align: left; }
 .center { text-align: center; }
@@ -24,35 +49,28 @@ html, body {
 .forumheader, .messageheader { width: 100%; border-collapse: collapse; }
 div.header { padding-top: 0; padding-bottom: 0.4em; }
 div.footer { padding-top: 0.4em; padding-bottom: 0; }
-.footer a:link {text-decoration: none;}
-.footer a:hover {text-decoration: underline;}
 
 /* little links that do stuff */
 .tools, .smaller { width: 100%; font-size: 85%; }
 .tools { white-space: nowrap; } /* mini-links */
 div.tools { margin-left: 2px; }  /* hack to match table indent */
-.tools a:link {text-decoration: none;}
-.tools a:hover {text-decoration: underline;}
 
 /* post/edit informational text */
 .info {
     text-align: center;
     font-size: 1.4em;
     font-weight: bold;
-    color: #008;
 }
 
 /* thread layout */
 .threads { width: 100%; }
 .threadlinks { white-space: nowrap; vertical-align: top; }
-.threadlinks a:link { text-decoration: none; }
-.threadlinks a:hover { text-decoration: underline; }
-a.ut { color: #d00; }
-a:hover.ut { color: #f00; text-decoration: underline;}
+a.ut { color: #de2900; }
+a:hover.ut { color: #de2900; text-decoration: underline;}
 a.tt { color: #0d0; }
 a:hover.tt { color: #0f0; text-decoration: underline;}
-a.up { color: #00d; }
-a:hover.up { color: #00f; text-decoration: underline;}
+a.up { color: #004575; }
+a:hover.up { color: #004575; text-decoration: underline;}
 
 /* indent for all ul heirarchies */
 ul {margin-left: 1em; padding-left: 1em;}
@@ -86,11 +104,6 @@ ul {margin-left: 1em; padding-left: 1em;}
 .grow1 { background: #eecccc }
 
 ul.thread li { list-style: circle outside none; }
-/* bold thread starter */
-/* ul.thread > li > a { font-weight: bold; } */
-ul.thread li a { text-decoration: none; }
-ul.thread li a:hover { text-decoration: underline; }
-/* ul.thread li img.nt { display: none; } */
 ul.thread li.hidden { list-style: disc outside none; }
 
 /* subject thread listing spacing */
@@ -100,7 +113,7 @@ ul.thread {
 }
 
 /* subject message line in thread listing */
-.vmid { color: red; }
+.vmid { color: #de2900; }
 .username { font-weight: bold; }
 .threadinfo { font-size: smaller; }
 
@@ -123,25 +136,7 @@ ul.thread {
 .showthread tr td { padding-left: 6px; padding-right: 6px; }
 .showthread .messageblock div { padding-left: 6px; padding-right: 6px; }
 
-/* message subject in showthread - no bold, no link decoration */
-.showthread .messageblock .subject a {
-    text-decoration: none;
-    font-weight: normal;
-    /* for all type of links (visited, etc) */
-    color: #008;
-}
-.showthread .messageblock .subject a:hover {
-    color: #00f; text-decoration: underline;
-}
 
-/* signature in showthread */
-/*
-.showthread .signature {
-    visibility: hidden;
-    overflow: hidden;
-    max-height: 10px;
-}
-*/
 
 /****************/
 /* messageblock */
@@ -156,28 +151,20 @@ ul.thread {
 
 /* all message subjects - big, bold, wacky color */
 .messageblock .subject {
-    font-size: 1.4em;
-    font-weight: bold;
-    color: #008;
+    font-family: 'Slabo 27px', serif;
+    font-size: 2.2em;
 }
 
 /* message header/info */
 td.messageinfo {
     width: 100%;
     font-size: 85%;
-    color: #666;
     /* leave space below info section */
     padding-bottom: 0.4em;
 }
-td.messageinfo a:link { color: #66f; text-decoration: none; }
-td.messageinfo a:visited { color: #96e; }
-td.messageinfo a:hover { color: #008; text-decoration: underline;}
 
 /* url tag below media */
 .media { font-size: 75%; color: #666; }
-.media a:link { color: #66f; text-decoration: none;}
-.media a:visited { color: #96e; }
-.media a:hover { color: #008; text-decoration: underline;}
 
 /* no image borders */
 .imageurl img { border-style: none; }
@@ -189,17 +176,16 @@ td.messageinfo a:hover { color: #008; text-decoration: underline;}
 .message li.url { list-style: disc outside none; }
 
 .signature {
-    /* width: 100%; */
-    margin-top: .4em;
-    border-width: 2px 0 0 0;
-    border-style: solid;
-    border-color: #eeeed0;
+  margin-top: .4em;
+  border-width: 2px 0 0 0;
+  border-style: solid;
+  border-color: #eeeed0;
 }
 
 .changes {
-    background: #ffeeee;
-    font-family: monospace;
-    padding: 5px;
+  background: #ffeeee;
+  font-family: monospace;
+  padding: 5px;
 }
 
 .postform tr { background: #dfdfdf; }
@@ -207,8 +193,6 @@ td.messageinfo a:hover { color: #008; text-decoration: underline;}
 .postform tr.input td { padding: 0; }
 .postform th.top { vertical-align: top; }
 .postform td { padding: 0.5em; }
-.postform a:link {text-decoration: none;}
-.postform a:hover {text-decoration: underline;}
 
 /***************/
 /* preferences */
