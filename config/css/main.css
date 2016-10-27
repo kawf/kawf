@@ -242,6 +242,8 @@ a.tt.night-mode { color: #575  !important; }
 a.ut.night-mode { color: #755 !important; }
 .row0.night-mode { background: #1a1a1d !important; }
 .row1.night-mode { background: #242426 !important; }
+.srow0.night-mode { background: #253325 !important; }
+.srow1.night-mode { background: #282f28 !important; }
 .trow0.night-mode { background: #252532 !important; }
 .trow1.night-mode { background: #1d1e28 !important; }
 .grow0.night-mode { background: #301c1c !important; }
