@@ -228,7 +228,7 @@ table.basic th { background-color: #d0dce0; }
 /* Night Mode */
 body.night-mode { background: #1a1a1d !important; color: #888 !important; }
 /* .thread > li > a.night-mode { color: #ccd  !important; } */
-a.night-mode { color: #99a !important; text-decoration: none !important; }
+a.night-mode { color: #999 !important; text-decoration: none !important; }
 em.night-mode a.night-mode { color: #aac !important; font-style: italic !important; }
 a:hover.night-mode { text-decoration: underline !important;}
 a.ut.night-mode { color: #755 !important; }
