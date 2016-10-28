@@ -164,7 +164,7 @@ td.messageinfo {
 }
 
 /* url tag below media */
-.media { font-size: 75%; color: #666; }
+.media { font-size: 75%; color: #999; }
 
 /* no image borders */
 .imageurl img { border-style: none; }
