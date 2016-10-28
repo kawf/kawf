@@ -3,7 +3,7 @@
 
 /*   Roboto: 100 (Thin)          */
 /*   Roboto: 300 (Light)         */
-/*   Roboto: 400 (Regular)       */
+/*   Roboto: 400 (Regular/normal)*/
 /*   Roboto: 500 (Medium)        */
 /*   Roboto: 700 (Bold)          */
 /*   Roboto: 900 (Black)         */
@@ -12,7 +12,7 @@
 body, html {
   font-family: Roboto, Verdana, Arial, Geneva, sans-serif;
   font-size: 0.96em;
-  font-weight: medium;
+  font-weight: normal; /* 400 */
   background: #fff;
   color: #242424;
 }
@@ -46,7 +46,7 @@ div.tools { margin-left: 2px; }  /* hack to match table indent */
 .info {
     text-align: center;
     font-size: 1.4em;
-    font-weight: bold;
+    font-weight: bold; /* 700 */
 }
 
 /* thread layout */
@@ -103,7 +103,7 @@ ul.thread li a { text-decoration: none; }
 ul.thread li a:hover { text-decoration: underline; }
 
 /* subject message line in thread listing */
-ul.thread li em { font-weight: 700; font-style: normal; } /* unread subject */
+ul.thread li em { font-weight: bold; font-style: normal; } /* unread subject */
 ul.thread li .vmid { color: #de2900; } /* currently viewed thread */
 ul.thread li .username { font-weight: 700;}
 ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
@@ -204,7 +204,7 @@ td.messageinfo {
 .preferences th { text-align: left; }
 .preferences th, .preferences td { padding: 5px; }
 .preferences td.submit { text-align: center; }
-.preferences .prefheader { font-weight: 700; text-align: right; padding: 10px; }
+.preferences .prefheader { font-weight: bold; text-align: right; padding: 10px; }
 td.signaturepreview { background-color: white; border: 5px solid #ccc; }
 
 /* misc basic table */
@@ -278,7 +278,7 @@ a:hover.up.night-mode { text-decoration: underline !important;}
 .username.night-mode { color: #999 !important; }
 .threadinfo.night-mode { color: #777 !important; }
 .messageblock .subject.night-mode { color: #ccc !important; }
-.vmid.night-mode { color: #d99 !important; font-weight: 700 !important; }
+.vmid.night-mode { color: #d99 !important; font-weight: bold !important; }
 .postform tr.night-mode { background: #242426 !important; }
 .postform .text.night-mode { background: #1a1a1d !important; border: 1px solid #131315 !important; margin: 1px !important; color: #ccc  !important; }
 .preferences tr.night-mode { color: #242426 !important; }
