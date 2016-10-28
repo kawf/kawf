@@ -124,7 +124,7 @@ function embed_vine_video($url)
 
   $src = getVineVideoFromUrl("http://vine.co/v/$tag");
 
-  $out = "<iframe src=\"https://vine.co/v/$tag/embed/simple\" width=\"600\" height=\"600\" frameborder=\"0\"></iframe>\n<script src=\"https://platform.vine.co/static/scripts/embed.js\"></script><br>\n";
+  $out = "<iframe src=\"https://vine.co/v/$tag/embed/simple\" width=\"600\" height=\"600\" frameborder=\"0\"></iframe>\n<script src=\"https://platform.vine.co/static/scripts/embed.js\" type=\"text/javascript\"></script><br>\n";
 
   return tag_media($out, "Vine ", "https://vine.co/v/$tag", $tag, "vine");
 
