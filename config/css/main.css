@@ -12,25 +12,17 @@
 body, html {
   font-family: Roboto, Verdana, Arial, Geneva, sans-serif;
   font-size: 0.96em;
+  /* note that font-weight: bold will barely stand out in some browsers vs weight 400 */
   font-weight: 400;
   background: #fff;
   color: #242424;
 }
 
 /* Links */
-a:link {
-  text-decoration: none;
-}
-a:visited {
-  text-decoration: none;
-}
-a:hover {
-  text-decoration: underline;
-}
-a:active {
-  text-decoration: underline;
-}
-
+a:link { text-decoration: none; }
+a:visited { text-decoration: none; }
+a:hover { text-decoration: underline; }
+a:active { text-decoration: underline; }
 
 /* shortcuts */
 .error { color: #de2900; }
@@ -112,9 +104,9 @@ ul.thread li a { text-decoration: none; }
 ul.thread li a:hover { text-decoration: underline; }
 
 /* subject message line in thread listing */
-ul.thread li em { font-weight: 700; font-style: normal; } /* unread subject */
+ul.thread li em { font-weight: 800; font-style: normal; } /* unread subject */
 ul.thread li .vmid { color: #de2900; } /* currently viewed thread */
-ul.thread li .username { font-weight: bold;}
+ul.thread li .username { font-weight: 800;}
 ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 
 /**************/
@@ -208,7 +200,7 @@ td.messageinfo {
 .preferences th { text-align: left; }
 .preferences th, .preferences td { padding: 5px; }
 .preferences td.submit { text-align: center; }
-.preferences .prefheader { font-weight: bold; text-align: right; padding: 10px; }
+.preferences .prefheader { font-weight: 800; text-align: right; padding: 10px; }
 td.signaturepreview { background-color: white; border: 5px solid #ccc; }
 
 /* misc basic table */
@@ -235,9 +227,16 @@ table.basic th { background-color: #d0dce0; }
 
 /* Night Mode */
 body.night-mode { background: #1a1a1d !important; color: #888 !important; }
-a.night-mode { color: #999 !important; text-decoration: none !important; }
-a.tt.night-mode { color: #575  !important; }
+/* .thread > li > a.night-mode { color: #ccd  !important; } */
+a.night-mode { color: #99a !important; text-decoration: none !important; }
+em.night-mode a.night-mode { color: #aac !important; font-style: italic !important; }
+a:hover.night-mode { text-decoration: underline !important;}
 a.ut.night-mode { color: #755 !important; }
+a:hover.ut.night-mode { text-decoration: underline !important;}
+a.tt.night-mode { color: #575  !important; }
+a:hover.tt.night-mode { text-decoration: underline !important;}
+a.up.night-mode { color: #755 !important; }
+a:hover.up.night-mode { text-decoration: underline !important;}
 .row0.night-mode { background: #1a1a1d !important; }
 .row1.night-mode { background: #242426 !important; }
 .srow0.night-mode { background: #253325 !important; }
@@ -249,11 +248,9 @@ a.ut.night-mode { color: #755 !important; }
 .username.night-mode { color: #999 !important; }
 .threadinfo.night-mode { color: #777 !important; }
 .messageblock .subject.night-mode { color: #ccc !important; }
-em.night-mode { font-style: oblique !important; }
-.vmid.night-mode { color: #ddd !important; font-weight: bold !important; }
+.vmid.night-mode { color: #d99 !important; font-weight: 800 !important; }
 .postform tr.night-mode { background: #242426 !important; }
 .postform .text.night-mode { background: #1a1a1d !important; border: 1px solid #131315 !important; margin: 1px !important; color: #ccc  !important; }
-.thread > li > a.night-mode { color: #ccc  !important; }
 .preferences tr.night-mode { color: #242426 !important; }
 td.signaturepreview.night-mode { background-color: #1a1a1d !important; border: 5px solid #242426 !important; }
 textarea.night-mode { background: #1A1A1D !important; border: 1px solid #131315 !important; margin: 1px !important; color: #CCC; }
