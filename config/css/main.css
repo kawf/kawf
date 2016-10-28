@@ -132,10 +132,12 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 /****************/
 /* messageblock */
 /****************/
+/*
 .message {
-  /* font-size: 1.05em; */
+  font-size: 1.05em;
   font-weight: 300;
 }
+*/
 
 .messageblock {
   margin-left: 2px; /* hack to match table indent */
