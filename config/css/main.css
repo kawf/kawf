@@ -230,8 +230,9 @@ table.basic th { background-color: #d0dce0; }
    background: transparent;
    width: 248px;
    padding: 0px;
-   font-size: 1em;
    line-height: 1;
+/* simulate font-weight, which doesn't work in select */
+   text-shadow: 0px 0px 1px #666;
    border: 0;
    border-radius: 0;
    height: 20px;
@@ -252,6 +253,8 @@ table.basic th { background-color: #d0dce0; }
 /* Night Mode */
 body.night-mode { background: #1a1a1d !important; color: #888 !important; }
 .navigate.night-mode { background: url(/pics/down_arrow_select-night.png) no-repeat right #1a1a1d !important; color: #888 !important; }
+/* simulate font-weight, which doesn't work in select */
+.navigate.night-mode select { text-shadow: 0px 0px 1px #555 !important; }
 select.night-mode { background: transparent #1a1a1d !important; color: #888 !important; }
 /* .thread > li > a.night-mode { color: #ccd  !important; } */
 a.night-mode { color: #999 !important; text-decoration: none !important; }
