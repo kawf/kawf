@@ -175,6 +175,9 @@ td.messageinfo {
 /* embedded url in message */
 .message li.url { list-style: disc outside none; }
 
+/* restore underline inside message */
+.message a { text-decoration: underline !important; }
+
 .signature {
   margin-top: .4em;
   border-width: 2px 0 0 0;
@@ -260,6 +263,7 @@ a.tt.night-mode { color: #575  !important; }
 a:hover.tt.night-mode { text-decoration: underline !important;}
 a.up.night-mode { color: #755 !important; }
 a:hover.up.night-mode { text-decoration: underline !important;}
+.message a.night-mode { text-decoration: underline !important;}
 .row0.night-mode { background: #1a1a1d !important; }
 .row1.night-mode { background: #242426 !important; }
 .srow0.night-mode { background: #253325 !important; }
