@@ -7,8 +7,8 @@
 %begin [bch]
 <link rel=StyleSheet href="%[browser_css_href]" type="text/css">
 %end [bch]
-<script src="%[js_jquery_href]"></script>
-<script src="%[js_href]"></script>
+<script src="%[js_jquery_href]" type="text/javascript"></script>
+<script src="%[js_href]" type="text/javascript"></script>
 %begin [meta_robots]
 <meta name="robots" content="%[robots]" />
 %end [meta_robots]
