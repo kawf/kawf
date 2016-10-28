@@ -223,11 +223,33 @@ table.basic th { background-color: #d0dce0; }
 /* enhancements */
 /****************/
 
+.navigate select {
+   background: transparent;
+   width: 248px;
+   padding: 0px;
+   font-size: 1em;
+   line-height: 1;
+   border: 0;
+   border-radius: 0;
+   height: 20px;
+   -webkit-appearance: none;
+}
+
+.navigate {
+   width: 220px;
+   height: 20px;
+   overflow: hidden;
+   background: url(/pics/down_arrow_select.png) no-repeat right #fff;
+   border: 1px solid #ccc;
+}
+
 /* View All Images */
 .view-all-images-image img { display: block; margin: 5px; } 
 
 /* Night Mode */
 body.night-mode { background: #1a1a1d !important; color: #888 !important; }
+.navigate.night-mode { background: url(/pics/down_arrow_select-night.png) no-repeat right #1a1a1d !important; color: #888 !important; }
+select.night-mode { background: transparent #1a1a1d !important; color: #888 !important; }
 /* .thread > li > a.night-mode { color: #ccd  !important; } */
 a.night-mode { color: #999 !important; text-decoration: none !important; }
 em.night-mode a.night-mode { color: #aac !important; font-style: italic !important; }
