@@ -38,7 +38,7 @@ div.header { padding-top: 0; padding-bottom: 0.4em; }
 div.footer { padding-top: 0.4em; padding-bottom: 0; }
 
 /* little links that do stuff */
-.tools, .smaller { width: 100%; font-size: 85%; padding-bottom: 30px; color: #6e6e6e;}
+.tools, .smaller { width: 100%; font-size: 85%; padding-bottom: 5px; color: #6e6e6e;}
 .tools { white-space: nowrap; } /* mini-links */
 div.tools { margin-left: 2px; }  /* hack to match table indent */
 
@@ -150,6 +150,7 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 /* all message subjects - big, bold, wacky color */
 .messageblock .subject {
   font-size: 1.4em;
+  font-weight: bold;
   line-height: 0.95em;
   padding-top: 0px;
   padding-bottom: 5px;
