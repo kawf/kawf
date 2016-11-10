@@ -82,7 +82,11 @@ $vmid = $msg['mid'];
 list($messages, $tree, $path) = get_thread_messages($thread, $vmid);
 
 $threadmsg = "<ul class=\"thread\">\n";
-$threadmsg .= list_thread(print_subject, $messages, $tree, reset($tree), $thread, $path);
+if(isset($messages)) {
+    $threadmsg .= list_thread(print_subject, $messages, $tree, reset($tree), $thread, $path);
+} else {
+    $threadmsg .= "Missing. Message does not belong to a thread.";
+}
 $threadmsg .= "</ul>\n";
 
 $threadlinks = gen_threadlinks($thread);
