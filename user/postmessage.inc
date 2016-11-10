@@ -147,7 +147,7 @@ function postmessage($user, $fid, &$msg, $request)
       db_exec($sql, array($msg['tid'], $msg['mid']));
 
       /* TZ: f_threadsXX 'tstamp' is SQL server local time */
-      $sql = "insert into $ttable ( tid, mid, tstamp ) values ( ?, ?, NOW() )";
+      $sql = "insert into $ttable ( tid, mid, tstamp, flags ) values ( ?, ?, NOW(), ? )";
       db_exec($sql, array($msg['tid'], $msg['mid']));
 
       $sql = "update f_indexes set maxtid = ? where iid = ? and maxtid < ?";
