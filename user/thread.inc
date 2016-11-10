@@ -25,6 +25,12 @@ function get_thread_messages($thread, $vmid = 0)
     $sth->closeCursor();
   }
 
+  if (!isset($message)) {
+    /* fatal error - messag doesn't belong to a thread! */
+    /* FIXME: there is no way to navigate to this message */
+    return null;
+  }
+
   /* Create a tree of the messages */
   reset($messages);
   while (list($key, $msg) = each($messages)) {
