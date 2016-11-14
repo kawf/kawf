@@ -76,8 +76,10 @@ function print_message($thread, $msg)
   message_set_block($mtpl);
 
   $iid = mid_to_iid($msg['mid']);
-  $sql = "update f_messages$iid set views = views + 1 where mid = ?";
-  db_exec($sql, array($msg['mid']));
+  if (isset($iid)) {
+      $sql = "update f_messages$iid set views = views + 1 where mid = ?";
+      db_exec($sql, array($msg['mid']));
+  }
 
   $uuser = new ForumUser($msg['aid']);
 
