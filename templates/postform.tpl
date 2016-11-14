@@ -40,11 +40,11 @@ This thread is locked. No replies are allowed.<br>
 </tr>
 <tr class="input">
   <th>Link URL:</th>
-  <td><input class="text" type="text" name="url" value="{URLLINK}" size="80"></td>
+  <td><input class="text" type="text" name="url" value="{URLLINK}" size="80" maxlength="250"></td>
 </tr>
 <tr class="input">
   <th>Link Text:</th>
-  <td><input class="text" type="text" name="urltext" value="{URLTEXT}" size=80 spellcheck="true"></td>
+  <td><input class="text" type="text" name="urltext" value="{URLTEXT}" size=80 maxlength="250" spellcheck="true"></td>
 </tr>
 <tr class="input">
   <th>Image URL:</th>
@@ -52,7 +52,7 @@ This thread is locked. No replies are allowed.<br>
 </tr>
 <tr class="input">
   <th>Video URL:</th>
-  <td><input class="text" type="text" name="video" value="{VIDEO}" size="80"></td>
+  <td><input class="text" type="text" name="video" value="{VIDEO}" size="80" maxlength="250"></td>
 </tr>
 <tr>
   <th class="top">Post Message:</th>
