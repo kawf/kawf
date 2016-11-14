@@ -32,10 +32,10 @@ $create_message_table = "
 $create_thread_table = "
   create table if not exists f_threads%d (
     tid int not null auto_increment,
-    mid int not null,
-    replies int not null,
+    mid int not null default 0,
+    replies int not null default 0,
     flags set('Locked','Sticky') not null,
-    tstamp datetime not null,
+    tstamp datetime not null default CURRENT_TIMESTAMP,
     primary key (tid)
   )";
 
