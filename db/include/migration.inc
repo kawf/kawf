@@ -21,7 +21,9 @@ class DatabaseMigration {
     //   // $m is now an instance of UpdateUserTable
     include($filepath);
     $name = preg_replace('/^\d+_/', "", basename($filepath, ".php"));
-    $class_name = preg_replace('/(?:^|_)(.)/e', "strtoupper('$1')", $name);
+    $class_name = preg_replace_callback('/(?:^|_)(.)/',
+	function ($matches) { return strtoupper($matches[1]); },
+	$name);
     return new $class_name();
   }
 
