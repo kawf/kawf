@@ -50,7 +50,7 @@ if ($stick) {
     $what = 'Unstuck';
 }
 
-$flags = implode(",", $options);
+$flags = implode(",", array_filter($options));
 
 $sql = "update f_threads$iid  set flags = ? where tid = ?";
 db_exec($sql, array($flags, $tid));
