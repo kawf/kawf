@@ -1,0 +1,23 @@
+<?php
+
+require '<%= node[:kawf][:deploy_dir] %>/vendor/autoload.php';
+
+/* MySQL account info */
+$sql_username = "<%= node[:kawf][:sql_username] %>";
+$sql_password = "<%= node[:kawf][:sql_password] %>";
+$sql_host = "<%= node[:kawf][:sql_host] %>";
+$database = "<%= node[:kawf][:database] %>";
+
+$bounce_host = "<%= node[:kawf][:bounce_host] %>";
+
+/* note that $cookie_host can also be an array to guarantee cookies are stored
+ * for several domains at once: */
+/* $cookie_host = array(".kawf.org",".kawf.net"); */
+
+$cookie_host = "<%= node[:kawf][:cookie_host] %>";
+
+/* allow user to override default in a separate file (prevents merge problems
+   when using source control */
+if (is_file(dirname(__FILE__) . "/config-local.inc") )
+    include_once dirname(__FILE__) . "/config-local.inc";
+?>

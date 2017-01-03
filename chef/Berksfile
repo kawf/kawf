@@ -1,0 +1,7 @@
+source "https://supermarket.chef.io"
+
+cookbook 'apt', '~> 5.0.0'
+cookbook 'apache2', '~> 3.2.2'
+cookbook 'git', '~> 5.0.1'
+
+metadata
