@@ -95,6 +95,58 @@ class nl2brPre {
 	$string = preg_replace("/\n/", "\\n", $string);
 	return preg_replace("/\r/", "\\r", $string);
     }
+
+    public static function test($xhtml = true)
+    {
+	if ($xhtml) $br = "<br />";
+	else $br = "<br>";
+
+	$a= array (
+	    array("a", "a"),
+	    array("a\nb", "a$br\nb"),
+	    array("a\nb\n", "a$br\nb$br\n"),
+	    array("\na\nb", "$br\na$br\nb"),
+
+	    array("<pre></pre>", "<pre></pre>"),
+	    array("<pre>\n</pre>", "<pre>\n</pre>"),
+	    array("<pre>a</pre>", "<pre>a</pre>"),
+	    array("<pre>a</pre>\n", "<pre>a</pre>$br\n"),
+	    array("\n<pre>a</pre>\n", "$br\n<pre>a</pre>$br\n"),
+	    array("<pre>a\n</pre>", "<pre>a\n</pre>"),
+	    array("<pre>\na</pre>", "<pre>\na</pre>"),
+	    array("<pre>b\n</pre>c\n", "<pre>b\n</pre>c$br\n"),
+	    array("a\n<pre>b\n</pre>", "a$br\n<pre>b\n</pre>"),
+	    array("a\n<pre>b\n</pre>c\n", "a$br\n<pre>b\n</pre>c$br\n"),
+	    array("a<pre><pre>b</pre>c</pre>d", "a<pre>&lt;pre&gt;b&lt;/pre&gt;c</pre>d"),
+
+	    array("<pre>a", "<pre>a</pre>"),
+	    array("<pre><pre>a", "<pre>&lt;pre&gt;a</pre>"),
+	    array("<pre><pre>a</pre>", "<pre>&lt;pre&gt;a&lt;/pre&gt;</pre>"),
+	    array("<pre><pre>a</pre></pre>", "<pre>&lt;pre&gt;a&lt;/pre&gt;</pre>"),
+	    array("<pre></pre>a</pre>", "<pre></pre>a</pre>"),
+	    array("<pre><</pre>", "<pre>&lt;</pre>"),
+	    array("<pre>></pre>", "<pre>&gt;</pre>"),
+	    array("<pre>a<b</pre>", "<pre>a&lt;b</pre>"),
+	);
+
+	$p = $i = 0; 	
+	foreach ($a as $t) {
+	    $out = nl2brPre::out($t[0], $xhtml);
+	    if ($out != $t[1]) {
+		echo "-----------------------------\n";
+		nl2brPre::out(true);
+		echo "$i fail '" . nl2brPre::cook($t[0]) . "'\n";
+		echo "$i  exp '" . nl2brPre::cook($t[1]) . "'\n";
+		echo "$i  got '" . nl2brPre::cook($out) . "'\n";
+		echo "-----------------------------\n";
+		exit();
+	    } else {
+		$p++;
+	    }
+	    $i++;
+	}
+	echo "$p out of $i tests passed\n";
+    }
 }
 
 ?>

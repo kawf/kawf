@@ -91,7 +91,7 @@ class phpSniff extends phpSniff_core
         '1.0'   =>  'NS2UP,IE3UP'
         );
 
-    function phpSniff($UA='',$run = true)
+    function __construct($UA='',$run = true)
     {   // populate the HTTP_USER_AGENT string
         if(empty($UA)) $UA = getenv('HTTP_USER_AGENT');
         $this->_insert('ua',$UA);
