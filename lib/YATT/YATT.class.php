@@ -2,7 +2,7 @@
 /*
  * Simple text template class. Does not handle caching.
  *
- * Version 1.1 
+ * Version 1.1
  *
  */
 
@@ -181,7 +181,7 @@ class YATT {
     }
 
     # Create a new YATT instance.
-    function YATT($template_path = null, $filename = null) {
+    function __construct($template_path = null, $filename = null) {
         $this->errors = array();
         $this->obj = array('ROOT', '', '');
 	$this->template_path = $template_path;

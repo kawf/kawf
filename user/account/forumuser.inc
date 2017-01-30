@@ -16,12 +16,12 @@ class ForumUser {
 
   var $shortname, $password, $cookie, $gmsgfilter;
 
-  function ForumUser($aid = null, $req = true)
+  function __construct($aid = null, $req = true)
   {
     if (isset($aid)) $this->find_by_aid((int)$aid, $req);
     else $this->find_by_cookie();
   }
- 
+
   /* You shouldn't call this directly */
   function find($where, $req = true)
   {
