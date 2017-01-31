@@ -141,7 +141,7 @@ $create_users_table = "
     createdate datetime not null default CURRENT_TIMESTAMP,
     createip varchar(15),
     cookie varchar(50) not null,
-    timezone varchar(5) not null,
+    timezone varchar(20) not null,
     style enum('Classic','Simple','UBB') not null default 'Classic',
     preferences set('ShowOffTopic','ShowModerated','Collapsed','SecretEmail','FlatThread','SimpleHTML','AutoTrack','HideSignatures','AutoUpdateTracking','OldestFirst','SortbyActive','CollapseOffTopic') not null,
     signature text not null,
