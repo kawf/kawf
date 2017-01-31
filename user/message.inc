@@ -417,7 +417,7 @@ function can_upload_images() {
     return !(empty($imgur_client_id) || empty($imgur_client_secret));
 }
 
-function get_uploaded_image_url($filename) {
+function get_uploaded_image_urls($filename) {
     global $imgur_client_id;
 
     if (!can_upload_images())
@@ -437,10 +437,12 @@ function get_uploaded_image_url($filename) {
 
     if ($result != "") {
       $j = json_decode($result, true);
-      if ($j["data"] && $j["data"]["link"])
-        return $j["data"]["link"];
-      else
+      if ($j["data"] && $j["data"]["link"]) {
+        $iu = preg_replace("/^http:/", "https:", $j["data"]["link"]);
+        return array($iu, "https://imgur.com/delete/" . $j["data"]["deletehash"]);
+      } else {
         error_log("error from imgur: " . var_export($j, true));
+      }
     } else
       error_log("null response from imgur");
 
