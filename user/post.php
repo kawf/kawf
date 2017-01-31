@@ -37,6 +37,7 @@ $tpl->set_block("error", "video");
 $tpl->set_block("error", "subject_req");
 $tpl->set_block("error", "subject_change");
 $tpl->set_block("error", "subject_too_long");
+$tpl->set_block("error", "image_upload_failed");
 $tpl->set_block("post", "preview");
 $tpl->set_block("post", "duplicate");
 $tpl->set_block("post", "form");
@@ -49,6 +50,7 @@ $errors = array(
   "image",
   "video",
   "subject_req",
+  "image_upload_failed",
   "subject_change",
   "subject_too_long",
 );
@@ -174,11 +176,22 @@ if (isset($_POST['postcookie'])) {
     $msg['subject'] = substr($msg['subject'], 0, 100);
   }
 
-  /* first time around, there is an imageurl set, and the user
-   did not preview, force the action to "preview" */
-  if ((!empty($msg['imageurl']) || !empty($msg['video']))
-    && !isset($imgpreview)) {
-    $preview = 1;
+  /* if uploading an image, proxy it to the image host and replace our image url */
+  if (!isset($error) && can_upload_images() && isset($_FILES["imagefile"]) &&
+  $_FILES["imagefile"]["size"] > 0) {
+    $newimageurl = get_uploaded_image_url($_FILES["imagefile"]["tmp_name"]);
+
+    if ($newimageurl) {
+      $msg["imageurl"] = $newimageurl;
+    } else {
+      $error["image_upload_failed"] = true;
+    }
+  } else {
+    /* first time around, there is an imageurl set, and the user
+     did not preview, force the action to "preview" */
+    if ((!empty($msg['imageurl']) || !empty($msg['video'])) && !isset($imgpreview)) {
+      $preview = 1;
+    }
   }
 
   if ((isset($error) || isset($preview))) {

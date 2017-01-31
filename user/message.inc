@@ -410,5 +410,42 @@ function is_msg_bumped($msg)
 */
     return ($tthread && $msg['unixtime'] > $tthread['unixtime']);
 }
+
+function can_upload_images() {
+    global $imgur_client_id, $imgur_client_secret;
+
+    return !(empty($imgur_client_id) || empty($imgur_client_secret));
+}
+
+function get_uploaded_image_url($filename) {
+    global $imgur_client_id;
+
+    if (!can_upload_images())
+      return null;
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://api.imgur.com/3/image");
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+      "Authorization: Client-ID " . $imgur_client_id,
+    ));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+      "image" => file_get_contents($filename),
+    ));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $result = curl_exec($ch);
+
+    if ($result != "") {
+      $j = json_decode($result, true);
+      if ($j["data"] && $j["data"]["link"])
+        return $j["data"]["link"];
+      else
+        error_log("error from imgur: " . var_export($j, true));
+    } else
+      error_log("null response from imgur");
+
+    return null;
+}
+
 // vim:sw=2
 ?>
