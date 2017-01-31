@@ -46,6 +46,9 @@ what kinds of video are supported.</i></p>
 <!-- BEGIN subject_too_long -->
 <p>Subject line too long! Truncated to 100 characters</p>
 <!-- END subject_too_long -->
+<!-- BEGIN image_upload_failed -->
+<p>Image upload failed, try reducing file size</p>
+<!-- END image_upload_failed -->
 </div>
 <!-- END error -->
 <!-- BEGIN preview -->

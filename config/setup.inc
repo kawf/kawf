@@ -67,6 +67,10 @@ $default_page = "/directory.phtml";
 /* ONLY uncomment this if you know what you are doing. */
 //date_default_timezone_set(@date_default_timezone_get());
 
+/* imgur client id and secret, to allow image uploading */
+$imgur_client_id = "";
+$imgur_client_secret = "";
+
 /* allow user to override default in a separate file (prevents merge problems
    when using source control */
 if (is_file(dirname(__FILE__) . "/setup-local.inc") )
