@@ -19,7 +19,7 @@ function getMimeType( $filename ) {
 }
 
 /* emulate RewriteRule  ^/(pics/.*|css/.*|scripts/.*|robots.txt|favicon.ico|apple-touch-icon.png)$ /$1 */
-if (preg_match('@^/(pics/.*|robots.txt|favicon.ico|apple-touch-icon.png)$@',
+if (preg_match('@^/(\.well-known\/.*|pics/.*|robots\.txt|favicon\.ico|apple-touch-icon\.png)$@',
     $path, $matches)) {
     header('Content-Type: '. getMimeType($matches[1]));
     require $matches[1];
