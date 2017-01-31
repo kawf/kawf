@@ -19,7 +19,7 @@ This thread is locked. No replies are allowed.<br>
 </p>
 <!-- END noacct -->
 <!-- BEGIN acct -->
-<form class="postform" action="/{FORUM_SHORTNAME}/{ACTION}.phtml" method="post">
+<form class="postform" action="/{FORUM_SHORTNAME}/{ACTION}.phtml" method="post" enctype="multipart/form-data">
 <table>
 <tr>
   <th>Logged in as:</th>
@@ -50,6 +50,12 @@ This thread is locked. No replies are allowed.<br>
   <th>Image URL:</th>
   <td><input class="text" type="text" name="imageurl" value="{IMAGEURL}" size="80"></td>
 </tr>
+<!-- BEGIN imageupload -->
+<tr class="input">
+  <th>Image Upload:</th>
+  <td><input class="text" type="file" name="imagefile"></td>
+</tr>
+<!-- END imageupload -->
 <tr class="input">
   <th>Video URL:</th>
   <td><input class="text" type="text" name="video" value="{VIDEO}" size="80" maxlength="250"></td>
