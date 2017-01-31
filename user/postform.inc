@@ -171,6 +171,7 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
 	"EMAILFOLLOWUP" => $email_followup?" checked":"",
 	"TRACKTHREAD" => $track_thread?" checked":"",
 	"ACTION" => $action,
+	"MAXIMAGEFILEBYTES" => max_image_upload_bytes(),
 	"noacct" => "",
 	"disabled" => "",
       ));
