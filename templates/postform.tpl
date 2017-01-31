@@ -53,7 +53,7 @@ This thread is locked. No replies are allowed.<br>
 <!-- BEGIN imageupload -->
 <tr class="input">
   <th>Image Upload:</th>
-  <td><input class="text" type="file" name="imagefile" onchange="if (this.files && this.files[0] && this.files[0].size > (1024 * 1024 * 8)) { alert('Image upload cannot exceed 8mb'); this.value = ''; }"></td>
+  <td><input class="text" type="file" name="imagefile" onchange="if (this.files && this.files[0] && this.files[0].size > ({MAXIMAGEFILEBYTES})) { alert('Image upload cannot exceed ' + (parseInt(({MAXIMAGEFILEBYTES} / 1024 / 1024) * 100) / 100) + 'Mb'); this.value = ''; }"></td>
 </tr>
 <!-- END imageupload -->
 <tr class="input">

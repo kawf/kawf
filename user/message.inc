@@ -417,6 +417,41 @@ function can_upload_images() {
     return !(empty($imgur_client_id) || empty($imgur_client_secret));
 }
 
+function ini_val_to_bytes($val) {
+	$val = strtolower(trim($val));
+
+	if (preg_match("/^(\d+)([kmg])$/", $val, $m)) {
+		$val = intval($m[1]);
+		switch ($m[2]) {
+		case "k":
+			$val *= 1024;
+			break;
+		case "m";
+			$val *= 1024 * 1024;
+			break;
+		case "g";
+			$val *= 1024 * 1024;
+			break;
+		}
+	}
+
+	return intval($val);
+}
+
+function max_image_upload_bytes() {
+	$pms = ini_val_to_bytes(ini_get("post_max_size"));
+	$ums = ini_val_to_bytes(ini_get("upload_max_filesize"));
+
+	/* imgur's upload limit is 10mb */
+	$mb = min((10 * 1024 * 1024), $pms, $ums);
+
+	/* leave some overhead for other post data */
+	if ($mb > 10240)
+		$mb -= 10240;
+
+	return $mb;
+}
+
 function get_uploaded_image_url($filename) {
     global $imgur_client_id;
 
