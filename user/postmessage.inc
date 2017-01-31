@@ -117,13 +117,19 @@ function postmessage($user, $fid, &$msg, $request)
     /* FIXME: translate pid -> pmid */
     $sql = "insert into $mtable " .
 	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, video, state, views, changes ) "
-            . "values ( ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, 0, '' );";
+            . "values ( ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, 0, ? );";
+
+    if ($msg["imagedeleteurl"]) {
+      $msg["changes"] = "image delete url for " . $msg["imageurl"] . " = " . $msg["imagedeleteurl"];
+    } else {
+      $msg["changes"] = "";
+    }
 
     db_exec($sql, array(
       $msg['mid'], $user->aid, $msg['pmid'] ? $msg['pmid'] : 0, $msg['tid'] ? $msg['tid'] : 0, $msg['name'],
       $msg['email'], $msg['ip'], $msg['flags'], $msg['subject'],
       $msg['message'], $msg['url'], $msg['urltext'], $msg['video'],
-      $msg['state']
+      $msg['state'], $msg['changes']
     ));
 
     if (!$msg['pmid']) {

@@ -179,10 +179,11 @@ if (isset($_POST['postcookie'])) {
   /* if uploading an image, proxy it to the image host and replace our image url */
   if (!isset($error) && can_upload_images() && isset($_FILES["imagefile"]) &&
   $_FILES["imagefile"]["size"] > 0) {
-    $newimageurl = get_uploaded_image_url($_FILES["imagefile"]["tmp_name"]);
+    $newimageurls = get_uploaded_image_urls($_FILES["imagefile"]["tmp_name"]);
 
-    if ($newimageurl) {
-      $msg["imageurl"] = $newimageurl;
+    if ($newimageurls) {
+      $msg["imageurl"] = $newimageurls[0];
+      $msg["imagedeleteurl"] = $newimageurls[1];
     } else {
       $error["image_upload_failed"] = true;
     }
