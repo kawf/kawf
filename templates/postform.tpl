@@ -48,7 +48,7 @@ This thread is locked. No replies are allowed.<br>
 </tr>
 <tr class="input">
   <th>Image URL:</th>
-  <td><input class="text" type="text" name="imageurl" value="{IMAGEURL}" size="80"></td>
+  <td><input class="text" type="text" name="imageurl" value="{IMAGEURL}" size="80" maxlength="250"></td>
 </tr>
 <!-- BEGIN imageupload -->
 <tr class="input">
