@@ -446,8 +446,11 @@ function max_image_upload_bytes() {
 	$mb = min((10 * 1024 * 1024), $pms, $ums);
 
 	/* leave some overhead for other post data */
+	/* FIXME: this doesn't look right */
+	/*
 	if ($mb > 10240)
 		$mb -= 10240;
+	*/
 
 	return $mb;
 }
