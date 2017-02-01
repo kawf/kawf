@@ -32,7 +32,6 @@ if(array_key_exists('noob', $_GET)) {
 <head>
 <title><?php echo "$domain"?>: Account Information for <?php echo "$uuser->name" ?></title>
 <link rel=StyleSheet href="<?php echo css_href("account.css") ?>" type="text/css">
-</style>
 </head>
 
 <body bgcolor="#ffffff">
@@ -44,8 +43,6 @@ if(array_key_exists('noob', $_GET)) {
 <?php echo $uuser->name. ", ". $uuser->aid ."\n"; ?>
 <?php echo "'$script_name' '$path_info' '$regs[1]'\n" ?>
 -->
-
-<body>
 
 <?php
   print_header();
@@ -81,13 +78,13 @@ if(array_key_exists('noob', $_GET)) {
     }
     echo "<h2>IP addresses</h2>\n";
 
-    if($verbose>1) $v2="class=selected";
-    else if($verbose>0) $v1="class=selected";
-    else $v0="class=selected";
+    if($verbose>1) $v2=" class=selected";
+    else if($verbose>0) $v1=" class=selected";
+    else $v0=" class=selected";
 
     echo " <a$v0 href=\"/account/". $uuser->aid .".phtml?$page\">none</a> | ";
-    echo " <a$v1 href=\"/account/". $uuser->aid .".phtml?$page&verbose=1\">basic</a> | ";
-    echo " <a$v2 href=\"/account/". $uuser->aid .".phtml?$page&verbose=2\">extended</a>\n";
+    echo " <a$v1 href=\"/account/". $uuser->aid .".phtml?$page&amp;verbose=1\">basic</a> | ";
+    echo " <a$v2 href=\"/account/". $uuser->aid .".phtml?$page&amp;verbose=2\">extended</a>\n";
     echo "<p>\n";
 
     if($verbose>0) {
@@ -214,9 +211,9 @@ function print_user($uu, $stats, $bgcolor="#F7F7F7")
     if($user->admin()) {
       $token="token=".$user->token();
       if ($uu->status=="Active")
-	  echo " (<a href=\"/admin/suspend.phtml?$token&aid=" . $uu->aid . "\">suspend</a>)";
+	  echo " (<a href=\"/admin/suspend.phtml?$token&amp;aid=" . $uu->aid . "\">suspend</a>)";
       else if ($uu->status=="Suspended")
-	  echo " (<a href=\"/admin/suspend.phtml?$token&undo=1&aid=" . $uu->aid . "\">activate</a>)";
+	  echo " (<a href=\"/admin/suspend.phtml?$token&amp;undo=1&amp;aid=" . $uu->aid . "\">activate</a>)";
     }
     echo "</td>\n";
 
