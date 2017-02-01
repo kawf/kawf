@@ -2,40 +2,57 @@
 
 class PDODuplicateKey extends RuntimeException {}
 
+class SQLAuth {
+    public function __construct($host, $db, $user, $pass) {
+	$this->hostname=$host;
+	$this->database=$db;
+	$this->username=$user;
+	$this->password=$pass;
+    }
+}
+
 $DBH = null;
 
 // DO NOT USE THIS FUNCTION DIRECTLY
 //
 // Use db_connect() below to connect to the database.
-function _db_connect() {
-  global $DBH, $sql_host, $database, $sql_username, $sql_password;
-
-  $host = "localhost";
-  if(isset($sql_host)) {
-    $host = $sql_host;
-  }
-
+function _db_connect($sql_auth) {
+  global $DBH;
   try {
+    $host = $sql_auth->hostname;
+    $db = $sql_auth->database;
+    $user = $sql_auth->username;
+    $pass = $sql_auth->password;
     // This is MySQL specific.  The correct way to deal with timezones would
     // be to run everything in UTC and do any adjustments in the code.
-    $DBH = new PDO("mysql:host=$host;dbname=$database", $sql_username, $sql_password, array(
+    $DBH = new PDO("mysql:host=$host;dbname=$db", $user, $pass, array(
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::MYSQL_ATTR_INIT_COMMAND => "set session time_zone='+0:00'"
     ));
   } catch(PDOException $e) {
+     // echo "<!-- $e -->\n";
      echo "<pre>Down for maintenance</pre>\n";
      exit;
   }
 }
 
-// Connect to the database specified by the globals:
+// Connect to the database specified by $sql_auth or the globals:
 // $sql_host, $database, $sql_username, $sql_password
 // The database handle is the global $DBH.  The connection will throw an
 // exception on any error in connect or any query.
-function db_connect() {
+function db_connect($sql_auth=null) {
   global $DBH;
+
+  if (!isset($sql_auth)) {
+    global $sql_host, $database, $sql_username, $sql_password;
+    $sql_auth = new SQLAuth('localhost', $database, $sql_username, $sql_password);
+    if(isset($sql_host)) {
+      $sql_auth->hostname = $sql_host;
+    }
+  }
+
   if(!$DBH) {
-    _db_connect();
+    _db_connect($sql_auth);
   }
 }
 
