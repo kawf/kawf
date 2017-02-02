@@ -78,8 +78,7 @@ Quick setup guide:
 
 * now, go to your newly created test forum using "http://site/test/"!
 
-* run config/nightly.php often, or add it to a cronjob (cd config; php
-  nightly.php)
+* run tools/nightly.php often, or add it to a cronjob
 
 ADVANCED TOPICS
 ---------------
