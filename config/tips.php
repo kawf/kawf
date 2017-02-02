@@ -1,13 +1,3 @@
-<?php
-$include_path = "..:../include:../config";
-$old_include_path = ini_get("include_path");
-if (!empty($old_include_path))
-  $include_path .= ":" . $old_include_path;
-ini_set("include_path", $include_path);
-
-require_once("setup.inc");
-require_once("util.inc");
-?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
