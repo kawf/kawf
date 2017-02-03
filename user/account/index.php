@@ -27,9 +27,10 @@ if(array_key_exists('noob', $_GET)) {
 }
 
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE HTML>
+<html lang="en">
 <head>
+<meta charset="utf-8"/>
 <title><?php echo "$domain"?>: Account Information for <?php echo "$uuser->name" ?></title>
 <link rel=StyleSheet href="<?php echo css_href("account.css") ?>" type="text/css">
 </head>

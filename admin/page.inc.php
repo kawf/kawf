@@ -5,8 +5,9 @@ function page_header($title)
 {
 ?>
 <!DOCTYPE HTML>
-<html>
+<html lang="en">
 <head>
+<meta charset="utf-8"/>
 <title><?php echo $title;?></title>
 <link rel=StyleSheet href="<?php echo css_href("admin.css") ?>" type="text/css">
 </head>

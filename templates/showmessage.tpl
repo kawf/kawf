@@ -19,7 +19,7 @@
 
 <div class="showmessage">
 {MESSAGE}
-<a name="thread"><b>Thread:</b></a><br>
+<a id="thread"><b>Thread:</b></a><br>
 <table class="threads">
 <tr class="{CLASS}">
 <td>
@@ -30,7 +30,7 @@
 </td>
 </tr>
 </table>
-<a name="post"><img src="/pics/followup.gif" alt="post follow up"></a>
+<a id="post"><img src="/pics/followup.gif" alt="post follow up"></a>
 {FORM}
 </div>
 
