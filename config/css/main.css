@@ -256,7 +256,7 @@ html.night-mode, body.night-mode { background: #1a1a1d !important; color: #888 !
 .navigate.night-mode { background: url(/pics/down_arrow_select-night.png) no-repeat right #1a1a1d !important; color: #888 !important; }
 /* simulate font-weight, which doesn't work in select */
 .navigate.night-mode select { text-shadow: 0px 0px 1px #555 !important; }
-select.night-mode { background: transparent #1a1a1d !important; color: #888 !important; }
+select.night-mode { background: #1a1a1d !important; color: #888 !important; }
 /* .thread > li > a.night-mode { color: #ccd  !important; } */
 a.night-mode { color: #999 !important; text-decoration: none !important; }
 em.night-mode a.night-mode { color: #aac !important; font-style: italic !important; }
