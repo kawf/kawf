@@ -57,6 +57,6 @@
 </tr>
 </table>
 <div class="forumpost">
-<a name="post"><img src="/pics/post.gif" alt="post message"></a>
+<a id="post"><img src="/pics/post.gif" alt="post message"></a>
 {FORM}
 </div>

@@ -1,6 +1,7 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE HTML>
+<html lang="en">
 <head>
+<meta charset="utf-8"/>
 <title>Forum Tips</title>
 <link rel=StyleSheet href="<?php echo css_href() ?>" type="text/css">
 </head>
@@ -9,7 +10,7 @@
 <h1>Posting Tips</h1>
 <p>To automatically track threads that you create or post to, make sure to check the "Default to track threads you create or followup to" checkbox in your <a href="/preferences.phtml?page=/tips/">preferences</a>.</p>
 
-<h2><a name="7">Inserting images, video and links</a></h2>
+<h2>Inserting images, video and links</h2>
 <h3>Images</h3>
 <p>There are two ways to add a picture to a Forum posting.  The first is to use
 the box in the posting dialogue labeled "<b>Image URL</b>".  If you put the URL
@@ -46,8 +47,8 @@ you can enter a YouTube or Vimeo link:</p>
 &lt;video src="http://www.the_location_of_your_video.com/your_video_name.WebM" controls="controls"&gt;&lt;/video&gt;
 </pre>
 
-<p><font color="red">Note that <em>only</em> Theora (ogg container), h.264 (mp4
-container), and vp8 (WebM container) are supported by HTML5!</font> To make
+<p><span style="color: red">Note that <em>only</em> Theora (ogg container), h.264 (mp4
+container), and vp8 (WebM container) are supported by HTML5!</span> To make
 matters worse, most browsers do not support all of them, and there is no format
 that all browsers support.
 Please read
@@ -72,7 +73,7 @@ away from here:</p>
 </pre>
 
 
-<h2><a name="7">Formatting messages using bold, italics, etc.</a></h2>
+<h2>Formatting messages using bold, italics, etc.</h2>
 <p>You can modify your text with various HTML tags.  Make sure you use both a starting tag and a close tag.</p>
 
 <p>
@@ -81,9 +82,9 @@ away from here:</p>
 &lt;u&gt;<u>Underline</u>&lt;/u&gt;<br>
 &lt;em&gt;<u>Emphasis</u>&lt;/em&gt;<br>
 &lt;strong&gt;<u>Strong</u>&lt;/strong&gt;<br>
-&lt;font color="red"&gt;<font color="red">Colored Text</font>&lt;/font&gt;<br>
-&lt;big&gt;<big>Larger Text</big>&lt;/big&gt;<br>
-&lt;small&gt;<small>Smaller Text</small>&lt;/small&gt;<br>
+&lt;font color="red"&gt;<span style="color: red;">Colored Text</span>&lt;/font&gt;<br>
+&lt;big&gt;<span style="font-size: larger;">Larger Text</span>&lt;/big&gt;<br>
+&lt;small&gt;<span style="font-size: smaller;">Smaller Text</span>&lt;/small&gt;<br>
 &lt;sup&gt;<sup>Superscript</sup>&lt;/sup&gt;<br>
 &lt;sub&gt;<sub>Subscript</sub>&lt;/sub&gt;
 </p>

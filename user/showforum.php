@@ -325,7 +325,7 @@ if (!$tthreadsshown)
   $tpl->set_var("update_all", "");
 
 if (!$numshown)
-  $tpl->set_var($table_block, "<font size=\"+1\">No messages in this forum</font><br>");
+  $tpl->set_var($table_block, "<span style=\"font-size: larger;\">No messages in this forum</span><br>");
 
 /*
 $row = db_query_first("select count(*) from f_visits where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) <= 15 * 60 and aid != 0");
