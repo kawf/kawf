@@ -49,7 +49,10 @@ function read_file($file, $type=null)
     }
 
     header("Content-Type: $type");
-    readfile($file);
+    if ($type == 'text/x-php')
+	require($file);
+    else
+	readfile($file);
 }
 
 /* emulate RewriteRule  ^/(pics/.*|css/.*|scripts/.*|robots.txt|favicon.ico|apple-touch-icon.png)$ /$1 */
