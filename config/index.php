@@ -21,17 +21,19 @@ function getMimeType( $filename ) {
     return false;
 }
 
-function require_file($file, $type=null)
+function read_file($file, $type=null)
 {
     if (is_dir($file)) {
 	if (is_readable("$file/index.php")) {
+	    /* parse as php */
 	    require("$file/index.php");
 	    return;
 	}
 
 	if (is_readable("$file/index.html")) {
+	    /* output directly */
 	    header("Content-Type: text/html");
-	    require("$file/index.html");
+	    readfile("$file/index.html");
 	    return;
 	}
 
@@ -40,30 +42,30 @@ function require_file($file, $type=null)
 
     if (!is_readable($file)) return err_not_found();
 
-    if ($type=null) {
+    if ($type==null) {
 	$type=getMimeType($file);
 	if (!$type)
 	    return err_not_found("\"$file\": Unknown type");
     }
 
     header("Content-Type: $type");
-    require($file);
+    readfile($file);
 }
 
 /* emulate RewriteRule  ^/(pics/.*|css/.*|scripts/.*|robots.txt|favicon.ico|apple-touch-icon.png)$ /$1 */
 if (preg_match('@^/(\.well-known/.*|pics/.*|robots\.txt|favicon\.ico|apple-touch-icon\.png)$@',
     $path, $matches)) {
-    require_file($matches[1]);
+    read_file($matches[1]);
     return;
 }
 
 if (preg_match('@^/(css/.*)$@', $path, $matches)) {
-    require_file($matches[1], 'text/css');
+    read_file($matches[1], 'text/css');
     return;
 }
 
 if (preg_match('@^/(scripts/.*)$@', $path, $matches)) {
-    require_file($matches[1], 'application/javascript');
+    read_file($matches[1], 'application/javascript');
     return;
 }
 
