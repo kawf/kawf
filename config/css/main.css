@@ -33,6 +33,7 @@ a:active { text-decoration: underline; }
 .bottom { vertical-align: bottom; }
 
 /* misc headers/footers */
+.forumbanner { width: 50%; text-align: left; }
 .forumheader, .messageheader { width: 100%; border-collapse: collapse; }
 div.header { padding-top: 0; padding-bottom: 0.4em; }
 div.footer { padding-top: 0.4em; padding-bottom: 0; }
