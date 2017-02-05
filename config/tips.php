@@ -82,7 +82,7 @@ away from here:</p>
 &lt;u&gt;<u>Underline</u>&lt;/u&gt;<br>
 &lt;em&gt;<u>Emphasis</u>&lt;/em&gt;<br>
 &lt;strong&gt;<u>Strong</u>&lt;/strong&gt;<br>
-&lt;font color="red"&gt;<span style="color: red;">Colored Text</span>&lt;/font&gt;<br>
+&lt;span style="color: red;"&gt;<span style="color: red;">Colored Text</span>&lt;/span&gt;<br>
 &lt;big&gt;<span style="font-size: larger;">Larger Text</span>&lt;/big&gt;<br>
 &lt;small&gt;<span style="font-size: smaller;">Smaller Text</span>&lt;/small&gt;<br>
 &lt;sup&gt;<sup>Superscript</sup>&lt;/sup&gt;<br>
