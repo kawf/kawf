@@ -75,7 +75,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
 
   if (isset($thread['flag']['Sticky']) && !$msg['pmid']) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " (<font color=\"green\"><b>Sticky</b></font>)";
+      $string .= " (<span class=\"green\"><b>Sticky</b></span>)";
     else
       $string .= " (sticky)";
   }
@@ -91,7 +91,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
     $string .= " (OffTopic)";
 
   if ($msg['state'] == 'Deleted')
-    $string .= " (<font color=\"red\"><b>Deleted</b></font>)";
+    $string .= " (<span class=\"red\"><b>Deleted</b></span>)";
   else if ($msg['state'] != "Active" && $msg['state'] != "OffTopic")
     $string .= " (" . $msg['state'] . ")";
 

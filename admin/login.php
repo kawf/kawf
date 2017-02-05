@@ -24,7 +24,7 @@ if (isset($_POST['submit'])) {
 
 page_header("Forum Admin Authentication");
 if (isset($message))
-  echo "<font color=#ff0000>$message</font><br>\n";
+  echo "<span class=\"red\">$message</span><br>\n";
 ?>
   <form method="post" action="login.phtml?url=<?php echo $url;?>">
   <table>
