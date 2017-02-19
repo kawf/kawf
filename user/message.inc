@@ -323,6 +323,12 @@ function fetch_message($user, $mid, $what = '*')
     if (!isset($msg['pmid']) && isset($msg['pid']))
       $msg['pmid'] = $msg['pid'];
 
+    /* Workaround for issue $38 - db may still contain non-utf8 */
+    $msg['subject'] = utf8ize($msg['subject']);
+    $msg['name'] = utf8ize($msg['name']);
+    if (isset($msg['msg']))
+	$msg['msg'] = utf8ize($msg['msg']);
+
     /* msg['date'] is time local to user... strftime would normally be
        time local to PHP server */
     $msg['date'] = gen_date($user, $msg['unixtime']);

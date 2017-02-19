@@ -3,7 +3,7 @@
 function demoronize($var)
 {
   $trans_table = array(
-    /* multibyte to utf8 */
+    /* multibyte to ASCII */
     chr(0xe2).chr(0x80).chr(0x9a) => '\'', //SINGLE LOW-9 QUOTATION MARK
     chr(0xe2).chr(0x80).chr(0x9e) => '"', //DOUBLE LOW-9 QUOTATION MARK
     chr(0xe2).chr(0x80).chr(0xa6) => '...', //HORIZONTAL ELLIPSIS
@@ -18,9 +18,6 @@ function demoronize($var)
     chr(0xe2).chr(0x84).chr(0xa2) => '<sup>TM</sup>',
     chr(0xc2).chr(0xae) => '&reg;',
 
-    /* expand tabs */
-    chr(0x09) =>'        ',
-
     /* fixup a few selected non-ISO Microsoft extensions */
     chr(0x82) =>',',
     chr(0x83) =>'<em>f</em>',
@@ -31,7 +28,7 @@ function demoronize($var)
     chr(0x89) =>'&deg;/&deg;&deg;',
 
     chr(0x8B) =>'<',
-    chr(0x8C) =>'Oe',
+    //chr(0x8C) =>'Oe',
 
     chr(0x91) =>'`',
     chr(0x92) =>'\'',
@@ -45,7 +42,7 @@ function demoronize($var)
     chr(0x99) =>'<sup>TM</sup>',
 
     chr(0x9B) =>'>',
-    chr(0x9C) =>'oe',
+    //chr(0x9C) =>'oe',
 
     /* make sure to add to strip below */
     chr(0xA9) =>'&copy;',
@@ -53,6 +50,9 @@ function demoronize($var)
 
     chr(0xB0) =>'&deg;',
     chr(0xB4) =>'\'',
+
+    /* expand tabs */
+    chr(0x09) =>'        ',
   );
 
   $out = "";
@@ -65,6 +65,17 @@ function demoronize($var)
   return $out;
 }
 
+function utf8ize($string)
+{
+  /* Workaround for issue #38 - default mysql collation is latin1_swedish,
+     which means single byte characters, some of which are not utf8. */
+  if (is_valid_utf8($string))
+      return $string;
+
+  /* contains non-UTF8 - try to convert it */
+  return mb_convert_encoding($string, 'UTF-8', 'ASCII,ISO-8859-1,8bit');
+}
+
 /* For text strings */
 function stripcrap($string, $tags=null)
 {
@@ -73,8 +84,8 @@ function stripcrap($string, $tags=null)
   if(!isset($tags))
     $tags = $no_tags;
 
-  // $string = preg_replace("/&/", "&amp;", $string);
   $string = demoronize($string);
+  $string = utf8ize($string);
   $string = striptag($string, $tags);
   $string = trim($string);
 
