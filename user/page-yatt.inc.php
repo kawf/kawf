@@ -26,17 +26,7 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
       $page->parse('page.header');
     $page->parse('page');
 
-    $ret = trim($page->output());
-
-    /* Workaround for issue #38 - default mysql collation is latin1_swedish,
-       which means single byte characters, some of which are not utf8. */
-    /* Fortunately, all kawf pages go through this interface now, so we
-       we have an opportunity to fix it here */
-    if (is_valid_utf8($ret))
-	return $ret;
-
-    /* contains non-UTF8 - try to convert it */
-    return mb_convert_encoding($ret, 'UTF-8', 'ASCII,ISO-8859-1,8bit');
+    return trim($page->output());
 }
 // vim: sw=2
 ?>
