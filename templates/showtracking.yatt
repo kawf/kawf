@@ -13,11 +13,11 @@
   | <a href="/search/?forum=%[forum(shortname)]&amp;page=%[page]" target="_blank">Search Forums</a>
   | <a href="/%[forum(shortname)]"><b>Back to %[forum(name)]</b></a>
   </td>
-%begin [update_all]
   <td class="right">
+%begin [update_all]
     <a href="/%[forum(shortname)]/markuptodate.phtml?tid=all&amp;page=%[page]&amp;token=%[user_token]&amp;time=%[time]">Update all</a>
-  </td>
 %end [update_all]
+  </td>
 </tr>
 <tr>
   <td class="left">
