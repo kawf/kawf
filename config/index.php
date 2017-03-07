@@ -21,6 +21,24 @@ function getMimeType( $filename ) {
     return false;
 }
 
+function readfile_header($file)
+{
+    /* not needed */
+    //header('Content-Description: File Transfer');
+    //header('Content-Disposition: attachment; filename="'.basename($file).'"');
+
+    /* TODO: compare against $_SERVER['HTTP_IF_NONE_MATCH'] */
+    //$etag = md5_file($file);
+    //header('Etag: '.$etag);
+
+    /* TODO: compare against $_SERVER['HTTP_IF_MODIFIED_SINCE'] */
+    //$mtime = filemtime($file);
+    //header('Last-Modified: '.gmdate('D, d M Y H:i:s', $mtime).' GMT');
+
+    header('Content-Length: ' . filesize($file));
+    readfile($file);
+}
+
 function read_file($file, $type=null)
 {
     if (is_dir($file)) {
@@ -31,9 +49,10 @@ function read_file($file, $type=null)
 	}
 
 	if (is_readable("$file/index.html")) {
+	    $file = "$file/index.html";
 	    /* output directly */
 	    header("Content-Type: text/html");
-	    readfile("$file/index.html");
+	    readfile_header($file);
 	    return;
 	}
 
@@ -49,10 +68,11 @@ function read_file($file, $type=null)
     }
 
     header("Content-Type: $type");
-    if ($type == 'text/x-php')
+    if ($type == 'text/x-php') {
 	require($file);
-    else
-	readfile($file);
+    } else {
+	readfile_header($file);
+    }
 }
 
 /* emulate RewriteRule  ^/(pics/.*|css/.*|scripts/.*|robots.txt|favicon.ico|apple-touch-icon.png)$ /$1 */
