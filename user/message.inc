@@ -326,8 +326,11 @@ function fetch_message($user, $mid, $what = '*')
     /* Workaround for issue $38 - db may still contain non-utf8 */
     $msg['subject'] = utf8ize($msg['subject']);
     $msg['name'] = utf8ize($msg['name']);
-    if (isset($msg['message']))
+    if (isset($msg['message'])) {
+	/* FIXME: auto update db if remoronize detected an error? */
+	$msg['message'] = remoronize($msg['message']);
 	$msg['message'] = utf8ize($msg['message']);
+    }
 
     /* msg['date'] is time local to user... strftime would normally be
        time local to PHP server */
