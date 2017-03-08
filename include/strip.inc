@@ -71,14 +71,14 @@ function demoronize($var)
 
     chr(0x91) =>'`',
     chr(0x92) =>'\'',
-    chr(0x93) =>'"',	// warning, double encoding possible
-    chr(0x94) =>'"',	// warning, double encoding possible
+    //chr(0x93) =>'"',	// warning, double encoding possible
+    //chr(0x94) =>'"',	// warning, double encoding possible
 
     chr(0x95) =>'*',
     chr(0x96) =>'-',
     chr(0x97) =>'&mdash;',
-    chr(0x98) =>'<sup>~</sup>',
-    chr(0x99) =>'<sup>TM</sup>',
+    //chr(0x98) =>'<sup>~</sup>', // warning, double encoding possible
+    //chr(0x99) =>'<sup>TM</sup>', // warning, double encoding possible
 
     chr(0x9b) =>'>',
     //chr(0x9c) =>'oe',	// warning, double encoding possible
