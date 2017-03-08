@@ -30,7 +30,7 @@ if(array_key_exists('noob', $_GET)) {
 <!DOCTYPE HTML>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
 <title><?php echo "$domain"?>: Account Information for <?php echo "$uuser->name" ?></title>
 <link rel=StyleSheet href="<?php echo css_href("account.css") ?>" type="text/css">
 </head>
