@@ -81,6 +81,12 @@ function css_href($filename="main.css")
     return "$css_href_dir/$filename?$time";
 }
 
+function skin_css_href()
+{
+    global $default_skin;
+    return css_href("$default_skin.css");
+}
+
 function browser_css_href()
 {
     require_once("phpSniff.class.php");
