@@ -46,6 +46,8 @@ div.footer { padding-top: 0.4em; padding-bottom: 0; }
 /* little links that do stuff */
 .tools, .smaller { width: 100%; font-size: 85%; padding-bottom: 5px; color: #6e6e6e;}
 .tools { white-space: nowrap; } /* mini-links */
+.toolsleft { text-align: left; }
+.toolsright { text-align: right; }
 div.tools { margin-left: 2px; }  /* hack to match table indent */
 
 /* post/edit informational text */
