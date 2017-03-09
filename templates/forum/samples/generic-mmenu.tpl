@@ -1,4 +1,4 @@
-<td width="50%" align="left">
+<td class="forumbanner">
   <a href="/{FORUM_SHORTNAME}/"><img style="border: 0;" alt="{FORUM_NAME}" src="/pics/forum/generic.gif"></a>
 
   <form action="/redirect.phtml">
