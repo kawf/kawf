@@ -6,12 +6,12 @@
 
 <table class="tools">
 <tr>
-  <td align="left">
+  <td class="toolsleft">
     <a href="/{FORUM_SHORTNAME}/threads/{MSG_TID}.phtml#{MSG_MID}">All messages</a>
   | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
   | <a href="../"><b>Return to {FORUM_NAME}</b></a>
   </td>
-  <td align="right">
+  <td class="toolsright">
     <a href="/preferences.phtml?page={PAGE}">Preferences</a>
   </td>
 </tr>
@@ -36,7 +36,7 @@
 
 <table class="tools">
 <tr>
-  <td align="left">
+  <td class="toolsleft">
     <a href="/{FORUM_SHORTNAME}/threads/{MSG_TID}.phtml#{MSG_MID}">All messages</a>
   | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
   | <a href="../"><b>Return to {FORUM_NAME}</b></a>
