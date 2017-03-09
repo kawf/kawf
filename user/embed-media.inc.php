@@ -69,6 +69,17 @@ function embed_youtube_video($url)
   }
 
   if ($tag==null) return null;
+
+  /* turn off "related" videos */
+  $tag .= "?rel=0";
+
+  /* Allow user to specify start time */
+  if (array_key_exists('t', $q)) {
+    $tag .= "&start=".$q['t'];
+  } else if (array_key_exists('start', $q)) {
+    $tag .= "&start=".$q['start'];
+  }
+
   $indent = '     ';
   $width = 800;
   $height = 480;
