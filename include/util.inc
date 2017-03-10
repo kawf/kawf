@@ -15,12 +15,30 @@ $path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
 
 $query_string=$_SERVER['QUERY_STRING'];
 
+function url_origin( $s, $use_forwarded_host = false )
+{
+    $ssl      = ( ! empty( $s['HTTPS'] ) && $s['HTTPS'] == 'on' );
+    $sp       = strtolower( $s['SERVER_PROTOCOL'] );
+    $protocol = substr( $sp, 0, strpos( $sp, '/' ) ) . ( ( $ssl ) ? 's' : '' );
+    $port     = $s['SERVER_PORT'];
+    $port     = ( ( ! $ssl && $port=='80' ) || ( $ssl && $port=='443' ) ) ? '' : ':'.$port;
+    $host     = ( $use_forwarded_host && isset( $s['HTTP_X_FORWARDED_HOST'] ) ) ? $s['HTTP_X_FORWARDED_HOST'] : ( isset( $s['HTTP_HOST'] ) ? $s['HTTP_HOST'] : null );
+    $host     = isset( $host ) ? $host : $s['SERVER_NAME'] . $port;
+    return $protocol . '://' . $host;
+}
+
+function full_url( $s, $use_forwarded_host = false )
+{
+    return url_origin( $s, $use_forwarded_host ) . $s['REQUEST_URI'];
+}
+
 function dump_env()
 {
     global $server_name, $server_port, $remote_addr;
     global $http_host, $script_name, $path_info, $query_string;
 
-    $ret="server_name = '$server_name'\n";
+    $ret="url = '".full_url($_SERVER)."'\n";
+    $ret.="server_name = '$server_name'\n";
     $ret.="server_port = '$server_port'\n";
     $ret.="remote_addr = '$remote_addr'\n";
     $ret.="http_host = '$http_host'\n";

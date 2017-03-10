@@ -10,21 +10,13 @@ function get_thread_messages($thread, $vmid = 0)
   /* find my messages and later */
   for ($index = find_msg_index($thread['mid']); isset($indexes[$index]); $index++) {
     $iid = $indexes[$index]['iid'];
-    /* FIXME: translate pid -> pmid */
     /* TZ: unixtime is seconds since epoch */
     $sql = "select mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, subject, flags, name, email, views " .
       "from f_messages$iid where tid = ? order by mid";
     $sth = db_query($sql, array($thread['tid']));
     while ($msg = $sth->fetch()) {
-      $msg['date'] = gen_date($user, $msg['unixtime']);
-      /* FIXME: translate pid -> pmid */
-      if (!isset($msg['pmid']) && isset($msg['pid']))
-	$msg['pmid'] = $msg['pid'];
-
-      /* Workaround for issue $38 - db may still contain non-utf8 */
-      $msg['subject'] = utf8ize($msg['subject']);
-      $msg['name'] = utf8ize($msg['name']);
-
+      /* modifies message */
+      process_message($user, $msg);
       $messages[] = $msg;
     }
     $sth->closeCursor();
