@@ -358,7 +358,7 @@ function process_message($user, &$msg, $fixit=0)
 	if (sizeof($keys)>0) {
 	    $sql = "update f_messages$iid set ".join(',', $keys).
 		" where mid=$mid";
-	    error_log(full_url($_SERVER)." $mid.phtml f_messages$iid has bad chars");
+	    //error_log(full_url($_SERVER)." $mid.phtml f_messages$iid has bad chars");
 	    //error_log($sql);
 	    //error_log(join(', ',$vals));
 	    if ($fixit) db_exec($sql, $vals);
