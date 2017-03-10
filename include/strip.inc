@@ -1,13 +1,11 @@
 <?php
 
-function trans($var, $table)
+function debug_hexdump($str)
 {
-  $out = "";
-  foreach (preg_split("//u", $var) as $mbchar) {
-       if (array_key_exists($mbchar, $table))
-         $out .= $table[$mbchar];
-       else
-         $out .= $mbchar;
+  $out = '';
+  foreach (preg_split("//u", $str) as $mbchar) {
+    if (strlen($mbchar)>0)
+      $out .= $mbchar.'['.bin2hex($mbchar).']';
   }
   return $out;
 }
@@ -23,19 +21,33 @@ function repl($var, $table)
 /* try to recover badly demoronized string - used in fetch_message()*/
 function remoronize($var)
 {
-  /* undo incorrect double encoding */
+  /* undo incorrect demoronizing */
   $trans_table= array(
     chr(0xe2).chr(0x80).'\'' => '\'',	// low-9, left or right single, don't know which
-    //chr(0xe2).chr(0x80).'"' => chr(0xe2).chr(0x80).chr(0x9a),	// probably got double encoded from mdash
-    chr(0xe2).chr(0x80).'"' => '&mdash;',	// 0x93 and 0x94 got double demoronized below to '"'
+    //chr(0xe2).chr(0x80).'"' => chr(0xe2).chr(0x80).chr(0x9a),	// probably got demoronized from mdash
+    chr(0xe2).chr(0x80).'"' => '&mdash;',	// 0x93 and 0x94 got demoronized below to '"'
     chr(0xe2).chr(0x80).'...' => chr(0xe2).chr(0x80).chr(0xa6),
     chr(0xe2).chr(0x80).'-' => chr(0xe2).chr(0x80).chr(0x93),
     chr(0xe2).chr(0x80).'--' => chr(0xe2).chr(0x80).chr(0x94),
     chr(0xe2).chr(0x80).'oe' => chr(0xe2).chr(0x80).chr(0x9c), // left double
     chr(0xe2).chr(0x80).'<sup>TM</sup>' => chr(0xe2).chr(0x80).chr(0x99), // right single
+    //chr(0xef).chr(0xbf).chr(0xbd).'\'' => chr(0xc6).chr(0x92), // florin (f with hook)
+    //chr(0xc6).'\'' => chr(0xc6).chr(0x92),	// florin (f with hook)
   );
 
   return repl($var, $trans_table);
+}
+
+function trans($var, $table)
+{
+  $out = '';
+  foreach (preg_split("//u", $var) as $mbchar) {
+    if (strlen($mbchar)>0 && array_key_exists($mbchar, $table))
+      $out .= $table[$mbchar];
+    else
+      $out .= $mbchar;
+  }
+  return $out;
 }
 
 /* only used when storing a string */
@@ -48,10 +60,10 @@ function demoronize($var)
     chr(0xe2).chr(0x80).chr(0xa6) => '...', //HORIZONTAL ELLIPSIS
     chr(0xe2).chr(0x80).chr(0x98) => '\'', //LEFT SINGLE QUOTATION MARK
     chr(0xe2).chr(0x80).chr(0x99) => '\'', //RIGHT SINGLE QUOTATION MARK
-    chr(0xe2).chr(0x80).chr(0x9c) => '"', //LEFT DOUBLE QUOTATION MARK - warning, double encoding possible
+    chr(0xe2).chr(0x80).chr(0x9c) => '"', //LEFT DOUBLE QUOTATION MARK - warning, incorrect demoronizing possible
     chr(0xe2).chr(0x80).chr(0x9d) => '"', //RIGHT DOUBLE QUOTATION MARK
-    chr(0xe2).chr(0x80).chr(0x93) => '-', //EN DASH - warning, double encoding possible
-    chr(0xe2).chr(0x80).chr(0x94) => '&mdash;', //EM DASH - warning, double encoding possible
+    chr(0xe2).chr(0x80).chr(0x93) => '-', //EN DASH - warning, incorrect demoronizing possible
+    chr(0xe2).chr(0x80).chr(0x94) => '&mdash;', //EM DASH - warning, incorrect demoronizing possible
 
     /* strangers found in the wild */
     chr(0xe2).chr(0x84).chr(0xa2) => '<sup>TM</sup>',
@@ -69,19 +81,19 @@ function demoronize($var)
     chr(0x8B) =>'<',
     //chr(0x8C) =>'Oe',
 
-    chr(0x91) =>'`',
-    chr(0x92) =>'\'',
-    //chr(0x93) =>'"',	// warning, double encoding possible
-    //chr(0x94) =>'"',	// warning, double encoding possible
+    //chr(0x91) =>'`',  // warning, might alter mb chars with this in it
+    //chr(0x92) =>'\'',	// warning, might alter mb chars with this in it
+    //chr(0x93) =>'"',	// warning, might alter mb chars with this in it
+    //chr(0x94) =>'"',	// warning, might alter mb chars with this in it
 
     chr(0x95) =>'*',
     chr(0x96) =>'-',
     chr(0x97) =>'&mdash;',
-    //chr(0x98) =>'<sup>~</sup>', // warning, double encoding possible
-    //chr(0x99) =>'<sup>TM</sup>', // warning, double encoding possible
+    //chr(0x98) =>'<sup>~</sup>', // warning, might alter mb chars with this in it
+    //chr(0x99) =>'<sup>TM</sup>', // warning, might alter mb chars with this in it
 
     chr(0x9b) =>'>',
-    //chr(0x9c) =>'oe',	// warning, double encoding possible
+    //chr(0x9c) =>'oe',	// warning, might alter mb chars with this in it
 
     /* make sure to add to strip below */
     chr(0xa9) =>'&copy;',

@@ -310,6 +310,65 @@ function image_url_hack_extract($msg)
     return $msg;
 }
 
+/* MODIFIES MESSAGE */
+/* Called by
+   showthread.php - thread summary
+   message.inc:process_message() - message display
+   thread.inc:get_thread_message() - "All messages" thread display
+ */
+function process_message($user, &$msg, $fixit=0)
+{
+    /* make a copy for comparison later */
+    $omsg=$msg;
+
+    /* FIXME: translate pid -> pmid */
+    if (!isset($msg['pmid']) && isset($msg['pid']))
+        $msg['pmid'] = $msg['pid'];
+
+    /* msg['date'] is time local to user... strftime would normally be
+       time local to PHP server */
+    $msg['date'] = gen_date($user, $msg['unixtime']);
+
+    /* Workaround for issue $38 - db may still contain non-utf8 */
+    $msg['subject'] = remoronize($msg['subject']);
+    $msg['subject'] = utf8ize($msg['subject']);
+    $msg['name'] = utf8ize($msg['name']);
+    if (isset($msg['message'])) {
+	$msg['message'] = remoronize($msg['message']);
+	$msg['message'] = utf8ize($msg['message']);
+	//$msg['message'] = debug_hexdump($msg['message']);
+    }
+
+    /* auto update db if remoronize made a change */
+    if (isset($msg['mid'])) {
+	$iid = mid_to_iid($msg['mid']);
+	$mid = $msg['mid'];
+
+	$vals = array();
+	$keys = array();
+
+	$items = array('subject','name','message');
+	foreach ($items as $k) {
+	    if (isset($msg[$k]) && $msg[$k]!=$omsg[$k]) {
+		$vals[] = $msg[$k];
+		$keys[] = "$k = ?";
+	    }
+	}
+
+	if (sizeof($keys)>0) {
+	    $sql = "update f_messages$iid set ".join(',', $keys).
+		" where mid=$mid";
+	    error_log(full_url($_SERVER)." has bad chars");
+	    //error_log($sql);
+	    //error_log(join(', ',$vals));
+	    if ($fixit) db_exec($sql, $vals);
+	}
+    }
+
+    /* return things that changed */
+    return $keys;
+}
+
 function fetch_message($user, $mid, $what = '*')
 {
     /* Grab the actual message */
@@ -319,22 +378,8 @@ function fetch_message($user, $mid, $what = '*')
     $sql = "select $what, UNIX_TIMESTAMP(date) as unixtime from f_messages$iid where mid = ?";
     $msg = db_query_first($sql, array($mid));
 
-    /* FIXME: translate pid -> pmid */
-    if (!isset($msg['pmid']) && isset($msg['pid']))
-      $msg['pmid'] = $msg['pid'];
-
-    /* Workaround for issue $38 - db may still contain non-utf8 */
-    $msg['subject'] = utf8ize($msg['subject']);
-    $msg['name'] = utf8ize($msg['name']);
-    if (isset($msg['message'])) {
-	/* FIXME: auto update db if remoronize detected an error? */
-	$msg['message'] = remoronize($msg['message']);
-	$msg['message'] = utf8ize($msg['message']);
-    }
-
-    /* msg['date'] is time local to user... strftime would normally be
-       time local to PHP server */
-    $msg['date'] = gen_date($user, $msg['unixtime']);
+    /* modifies message */
+    process_message($user, $msg);
 
     /* IMAGEURL HACK - extract from message */
     return image_url_hack_extract($msg);
