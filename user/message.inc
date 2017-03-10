@@ -316,7 +316,7 @@ function image_url_hack_extract($msg)
    message.inc:process_message() - message display
    thread.inc:get_thread_message() - "All messages" thread display
  */
-function process_message($user, &$msg, $fixit=0)
+function process_message($user, &$msg)
 {
     /* make a copy for comparison later */
     $omsg=$msg;
@@ -356,18 +356,23 @@ function process_message($user, &$msg, $fixit=0)
 	}
 
 	if (count($keys)>0) {
+	    global $utf8_autofix_log, $utf8_autofix_message, $utf8_autofix_account;
 	    $sql = "update f_messages$iid set ".join(',', $keys).
 		" where mid=$mid";
-	    //error_log(full_url($_SERVER)." $mid.phtml f_messages$iid has bad chars");
-	    //error_log($sql);
-	    //error_log(join(', ',$vals));
-	    if ($fixit) db_exec($sql, $vals);
+	    if ($utf8_autofix_log) {
+		error_log(full_url($_SERVER).
+		    " $mid.phtml f_messages$iid has bad chars");
+		error_log($sql);
+		//error_log(join(', ',$vals));
+	    }
+	    if ($utf8_autofix_message) db_exec($sql, $vals);
 
 	    if (in_array('name = ?', $keys) && isset($msg['aid'])) {
 		$user = new AccountUser($msg['aid']);
 		if (isset($user) && $user->name!=utf8ize($user->name)) {
-		    //error_log("Fixing aid ".$user->aid." name '" .$user->name."'");
-		    if ($fixit) $user->name(utf8ize($user->name));
+		    if ($utf8_autofix_log)
+			error_log("Bad aid ".$user->aid." name '" .$user->name."'");
+		    if ($utf8_autofix_account) $user->name(utf8ize($user->name));
 		}
 	    }
 	}
