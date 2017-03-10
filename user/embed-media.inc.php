@@ -53,8 +53,8 @@ function embed_youtube_video($url)
   $u = parse_url(html_entity_decode($url));
   if ($u==null) return null;
 
+  $q = explode_query($u["query"]);
   if (preg_match("#(\w+\.)*youtube\.com#", $u["host"])) {
-    $q = explode_query($u["query"]);
     $p = explode("/", $u["path"]);
     if (array_key_exists('v', $q)) {
       $tag = $q["v"];	# http://youtube.com/?v=tag
@@ -74,10 +74,12 @@ function embed_youtube_video($url)
   $tag .= "?rel=0";
 
   /* Allow user to specify start time */
-  if (array_key_exists('t', $q)) {
-    $tag .= "&start=".$q['t'];
-  } else if (array_key_exists('start', $q)) {
-    $tag .= "&start=".$q['start'];
+  if (count($q)) {
+    if (array_key_exists('t', $q)) {
+      $tag .= "&start=".$q['t'];
+    } else if (array_key_exists('start', $q)) {
+      $tag .= "&start=".$q['start'];
+    }
   }
 
   $indent = '     ';
