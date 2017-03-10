@@ -350,8 +350,8 @@ function process_message($user, &$msg, $fixit=0)
 	$items = array('subject','name','message');
 	foreach ($items as $k) {
 	    if (isset($msg[$k]) && $msg[$k]!=$omsg[$k]) {
-		$vals[] = $msg[$k];
 		$keys[] = "$k = ?";
+		$vals[] = $msg[$k];
 	    }
 	}
 
@@ -362,6 +362,14 @@ function process_message($user, &$msg, $fixit=0)
 	    //error_log($sql);
 	    //error_log(join(', ',$vals));
 	    if ($fixit) db_exec($sql, $vals);
+
+	    if (in_array('name = ?', $keys) && isset($msg['aid'])) {
+		$user = new AccountUser($msg['aid']);
+		if (isset($user) && $user->name!=utf8ize($user->name)) {
+		    //error_log("Fixing aid ".$user->aid." name '" .$user->name."'");
+		    if ($fixit) $user->name(utf8ize($user->name));
+		}
+	    }
 	}
     }
 
