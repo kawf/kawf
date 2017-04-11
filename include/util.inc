@@ -126,4 +126,45 @@ function js_href($filename="main.js", $cache_buster=true)
         return "$js_href_dir/$filename";
 }
 
+function time_ago($date)
+{
+	$ts = strtotime($date);
+	$ago = time() - $ts;
+
+	$years = floor($ago / 60 / 60 / 24 / 365);
+	$ago -= ($years * 60 * 60 * 24 * 365);
+
+	$months = floor($ago / 60 / 60 / 24 / 30.4);
+	$ago -= ($months * 60 * 60 * 24 * 30.4);
+
+	$weeks = floor($ago / 60 / 60 / 24 / 7);
+	$ago -= ($days * 60 * 60 * 24 / 7);
+
+	$days = floor($ago / 60 / 60 / 24);
+	$ago -= ($days * 60 * 60 * 24);
+
+	$hours = floor($ago / 60 / 60);
+	$ago -= ($hours * 60 * 60);
+
+	$mins = floor($ago / 60);
+	$ago -= ($mins * 60);
+
+	if ($years)
+		return $years . " year" . ($years == 1 ? "" : "s") . " ago";
+	if ($months)
+		return $months . " month" . ($months == 1 ? "" : "s") . " ago";
+	if ($weeks)
+		return $weeks . " week" . ($weeks == 1 ? "" : "s") . " ago";
+	if ($days)
+		return $days . " day" . ($days == 1 ? "" : "s") . " ago";
+	if ($hours)
+		return $hours . " hour" . ($hours == 1 ? "" : "s") . " ago";
+	if ($mins)
+		return $mins . " minute" . ($mins == 1 ? "" : "s") . " ago";
+	if ($ago <= 1)
+		return "just now";
+
+	return $ago . " second" . ($ago == 1 ? "" : "s") . " ago";
+}
+
 ?>

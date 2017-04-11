@@ -143,7 +143,7 @@ $create_users_table = "
     cookie varchar(50) not null,
     timezone varchar(20) not null,
     style enum('Classic','Simple','UBB') not null default 'Classic',
-    preferences set('ShowOffTopic','ShowModerated','Collapsed','SecretEmail','FlatThread','SimpleHTML','AutoTrack','HideSignatures','AutoUpdateTracking','OldestFirst','SortbyActive','CollapseOffTopic') not null,
+    preferences set('ShowOffTopic','ShowModerated','Collapsed','SecretEmail','FlatThread','SimpleHTML','AutoTrack','HideSignatures','AutoUpdateTracking','OldestFirst','SortbyActive','CollapseOffTopic','RelativeTimestamps') not null,
     signature text not null,
     threadsperpage int not null,
     posts int not null,
