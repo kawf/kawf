@@ -65,7 +65,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
   $string .= "<span class=\"threadinfo\">";
 
   if (isset($user->pref['RelativeTimestamps']))
-    $string .= "<i title=\"" . $msg['date'] . "\">" . time_ago($msg['date'], $user->tzoff) . "</i>";
+    $string .= "<i title=\"" . $msg['date'] . "\">" . time_ago($msg['unixtime']) . "</i>";
   else
     $string .= "<i>" . $msg['date'] . "</i>";
 
