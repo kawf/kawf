@@ -126,10 +126,10 @@ function js_href($filename="main.js", $cache_buster=true)
         return "$js_href_dir/$filename";
 }
 
-function time_ago($date)
+function time_ago($date, $tzoff = 0)
 {
 	$ts = strtotime($date);
-	$ago = time() - $ts;
+	$ago = time() - $tzoff - $ts;
 
 	$years = floor($ago / 60 / 60 / 24 / 365);
 	$ago -= ($years * 60 * 60 * 24 * 365);
