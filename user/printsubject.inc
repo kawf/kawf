@@ -63,7 +63,11 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;";
   $string .= "<span class=\"username\">" . $msg['name'] . "</span>&nbsp;&nbsp;";
   $string .= "<span class=\"threadinfo\">";
-  $string .= "<i>" . $msg['date'] . "</i>";
+
+  if (isset($user->pref['RelativeTimestamps']))
+    $string .= "<i title=\"" . $msg['date'] . "\">" . time_ago($msg['date']) . "</i>";
+  else
+    $string .= "<i>" . $msg['date'] . "</i>";
 
   if ($replies > 0)
     $string .= " ($replies " . ($replies == 1 ? "reply" : "replies") . ($collapse?" hidden":"") . ")";
