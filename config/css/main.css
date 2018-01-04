@@ -123,7 +123,7 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 .showthread li { list-style: none outside; }
 
 /* highlight subject */
-.showthread tr.messagesubjectrow td { background: #eeeeee; }
+.showthread .subject td { background: #eeeeee; }
 
 /* right/left padding for subject highlight for it and everything under it */
 .showthread tr td { padding-left: 6px; padding-right: 6px; }
@@ -159,10 +159,12 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 }
 
 /* message header/info */
-td.messageinfo {
+.messageinfodata {
   width: 100%;
   font-size: 85%;
   padding-bottom: 10px;
+}
+.messageinfo {
   color: #6e6e6e;
 }
 
