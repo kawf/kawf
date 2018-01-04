@@ -239,6 +239,8 @@ function render_message($tpl, $msg, $viewer, $owner=null)
   }
 
   /* Show CURRENT email information of user */
+  $ghash = md5(strtolower(trim($owner->email)));
+  $tpl->set_var("MSG_NAMEHASH", $ghash);
   if ($moderator || ($viewer->valid() && $expose_email)) {
     /* Lame spamification */
     $name = $msg['name'];
