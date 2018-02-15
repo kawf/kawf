@@ -224,10 +224,10 @@ table.basic th { background-color: #d0dce0; }
    Have to use fixed size */
 /*.postform .text { width: 600px; }*/
 /* Screw IE. Just use suggested hack */
-.postform textarea {
-    width: 100%;
-    min-width: 100%;
-    max-width: 100%;
+.postform .text {
+    width: 99.8%;
+    min-width: 99.8%;
+    max-width: 99.8%;
     resize: none;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
