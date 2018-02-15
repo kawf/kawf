@@ -36,19 +36,19 @@ This thread is locked. No replies are allowed.<br>
 </tr>
 <tr class="input">
   <th class="top">Message:</th>
-  <td><textarea class="text" wrap="soft" name="message" rows="10" cols="68">{MESSAGE}</textarea></td>
+  <td><textarea class="text" wrap="soft" name="message" rows="10" cols="80">{MESSAGE}</textarea></td>
 </tr>
 <tr class="input">
   <th>Link URL:</th>
-  <td><input class="text" type="text" name="url" value="{URLLINK}" size="68" maxlength="250"></td>
+  <td><input class="text" type="text" name="url" value="{URLLINK}" size="80" maxlength="250"></td>
 </tr>
 <tr class="input">
   <th>Link Text:</th>
-  <td><input class="text" type="text" name="urltext" value="{URLTEXT}" size=68 maxlength="250" spellcheck="true"></td>
+  <td><input class="text" type="text" name="urltext" value="{URLTEXT}" size="80" maxlength="250" spellcheck="true"></td>
 </tr>
 <tr class="input">
   <th>Image URL:</th>
-  <td><input class="text" type="text" name="imageurl" value="{IMAGEURL}" size="68" maxlength="250"></td>
+  <td><input class="text" type="text" name="imageurl" value="{IMAGEURL}" size="80" maxlength="250"></td>
 </tr>
 <!-- BEGIN imageupload -->
 <tr class="input">
@@ -58,7 +58,7 @@ This thread is locked. No replies are allowed.<br>
 <!-- END imageupload -->
 <tr class="input">
   <th>Video URL:</th>
-  <td><input class="text" type="text" name="video" value="{VIDEO}" size="68" maxlength="250"></td>
+  <td><input class="text" type="text" name="video" value="{VIDEO}" size="80" maxlength="250"></td>
 </tr>
 <tr>
   <th class="top">Post Message:</th>
