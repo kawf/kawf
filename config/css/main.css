@@ -234,6 +234,10 @@ table.basic th { background-color: #d0dce0; }
     box-sizing: border-box;
 }
 
+/* hack to workaround mobile chrome calculating the textarea height wrong, then
+   later growing it and overlapping the content below the textarea */
+.postform textarea { min-height: 400px; }
+
 /* IE wants inline for it to pack right */
 .postform { display: inline; }
 
