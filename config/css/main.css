@@ -222,7 +222,8 @@ table.basic th { background-color: #d0dce0; }
 /*********/
 /* IE doesn't like 100% (referenced to largest input/textara.
    Have to use fixed size */
-.postform .text { width: 600px; }
+/* FIXME: do something about viewport for mobile */
+.postform .text { width: 550px; }
 
 /* IE wants inline for it to pack right */
 .postform { display: inline; }
