@@ -31,7 +31,7 @@ This thread is locked. No replies are allowed.<br>
 <tr class="input">
   <th>Subject:</th>
   <td>
-    <input class="text" type="text" name="subject" value="{SUBJECT}" size="80" maxlength="100" spellcheck="true">
+    <input class="text" type="text" name="subject" value="{SUBJECT}" size="55" maxlength="100" spellcheck="true">
   </td>
 </tr>
 <tr class="input">
@@ -40,15 +40,15 @@ This thread is locked. No replies are allowed.<br>
 </tr>
 <tr class="input">
   <th>Link URL:</th>
-  <td><input class="text" type="text" name="url" value="{URLLINK}" size="80" maxlength="250"></td>
+  <td><input class="text" type="text" name="url" value="{URLLINK}" size="55" maxlength="250"></td>
 </tr>
 <tr class="input">
   <th>Link Text:</th>
-  <td><input class="text" type="text" name="urltext" value="{URLTEXT}" size=80 maxlength="250" spellcheck="true"></td>
+  <td><input class="text" type="text" name="urltext" value="{URLTEXT}" size=55 maxlength="250" spellcheck="true"></td>
 </tr>
 <tr class="input">
   <th>Image URL:</th>
-  <td><input class="text" type="text" name="imageurl" value="{IMAGEURL}" size="80" maxlength="250"></td>
+  <td><input class="text" type="text" name="imageurl" value="{IMAGEURL}" size="55" maxlength="250"></td>
 </tr>
 <!-- BEGIN imageupload -->
 <tr class="input">
@@ -58,7 +58,7 @@ This thread is locked. No replies are allowed.<br>
 <!-- END imageupload -->
 <tr class="input">
   <th>Video URL:</th>
-  <td><input class="text" type="text" name="video" value="{VIDEO}" size="80" maxlength="250"></td>
+  <td><input class="text" type="text" name="video" value="{VIDEO}" size="55" maxlength="250"></td>
 </tr>
 <tr>
   <th class="top">Post Message:</th>
