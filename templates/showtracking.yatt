@@ -9,8 +9,8 @@
 <table class="tools">
 <tr>
   <td class="left">
-    <a href="/tips/?page=%[page]" target="_blank">Forum Tips</a>
-  | <a href="/search/?forum=%[forum(shortname)]&amp;page=%[page]" target="_blank">Search Forums</a>
+    <a href="/tips/?page=%[page]" target="_blank">Tips</a>
+  | <a href="/search/?forum=%[forum(shortname)]&amp;page=%[page]" target="_blank">Search</a>
   | <a href="/%[forum(shortname)]"><b>Back to %[forum(name)]</b></a>
   </td>
   <td class="right">
