@@ -37,38 +37,45 @@ a:active { text-decoration: underline; }
 
 /* limit banner width to 100% for small screens */
 @media (max-width: 640px) {
-    .forumbanner img { max-width: 100%; height: auto; }
+  .forumbanner img { max-width: 100%; height: auto; }
 }
 
-.forumheader, .messageheader { width: 100%; border-collapse: collapse; }
+.forumheader, .messageheader { width: 100%; border-collapse: collapse; border-spacing: 0; padding-left: 0;}
 div.header { padding-top: 0; padding-bottom: 0.4em; }
 div.footer { padding-top: 0.4em; padding-bottom: 0; }
 
 /* little links that do stuff */
 @media (max-width: 400px) {
   .tools, .smaller { font-size: 50%; }
+  .messageinfodata { font-size: 50%; }
+  img.gravatar { width: 8px; height: auto; }
+  .postform { font-size: 70%; }
 }
 
 @media (min-width: 401px) and (max-width: 640px) {
   .tools, .smaller { font-size: 55%; }
+  .messageinfodata { font-size: 55%; }
+  img.gravatar { width: 16px; height: auto; }
+  .postform { font-size: 80%; }
 }
 
 @media (min-width: 641px) {
-  .tools, .smaller { font-size: 85%; }
+  .tools, .smaller { font-size: 80%; }
+  .messageinfodata { font-size: 80%; }
 }
 
-.tools, .smaller { width: 100%; padding-bottom: 5px; color: #6e6e6e;}
+.tools, .smaller { width: 100%; color: #6e6e6e;}
 
-.tools { white-space: nowrap; } /* mini-links */
+.tools { white-space: nowrap; } /* mini-links, shared by a lot of things */
 .toolsleft { text-align: left; }
 .toolsright { text-align: right; }
 div.tools { margin-left: 2px; }  /* hack to match table indent */
 
 /* post/edit informational text */
 .info {
-    text-align: center;
-    font-size: 1.4em;
-    font-weight: bold; /* 700 */
+  text-align: center;
+  font-size: 1.4em;
+  font-weight: bold; /* 700 */
 }
 
 /* thread layout */
@@ -94,7 +101,6 @@ ul.thread { margin-left: 1.4em; }
 /*************************/
 /* showforum/showmessage */
 /*************************/
-
 /* normal */
 .row0 { background: #f8f8f8 }
 .row1 { background: #e8e8e8 }
@@ -124,8 +130,8 @@ ul.thread li.hidden { list-style: disc outside none; }
 
 /* subject thread listing spacing */
 ul.thread {
-    margin-top: 0.2em;
-    margin-bottom: 0.4em;
+  margin-top: 0.2em;
+  margin-bottom: 0.4em;
 }
 
 ul.thread li a:hover { text-decoration: underline; }
@@ -135,6 +141,7 @@ ul.thread li em { font-weight: bold; font-style: normal; } /* unread subject */
 ul.thread li .vmid { color: #de2900; } /* currently viewed thread */
 ul.thread li .username { font-weight: 700;}
 ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
+
 
 /**************/
 /* showthread */
@@ -156,42 +163,36 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 .showthread .messageblock div { padding-left: 6px; padding-right: 6px; }
 
 
-
 /****************/
 /* messageblock */
 /****************/
-/*
-.message {
-  font-size: 1.05em;
-  font-weight: 300;
-}
-*/
-
 .messageblock {
   margin-left: 2px; /* hack to match table indent */
   margin-bottom: 1em;
 }
 
-/* divs inside all messageblocks - leave space before/after them */
-.messageblock div { padding-top: 0.4em; padding-bottom: 0.4em; }
+/* trs inside all messageblocks - leave space before/after them */
+.messageblock tr { padding-top: 0.4em; padding-bottom: 0.4em; }
 
 /* all message subjects - big, bold, wacky color */
 .messageblock .subject {
-  font-size: 1.4em;
+  font-size: 1.2em;
   font-weight: bold;
   line-height: 0.95em;
-  padding-top: 0px;
-  padding-bottom: 5px;
+  padding-left: 0px;
+  padding-top: 5px;
+  padding-bottom: 0px;
 }
 
 /* message header/info */
+.messageinforow {
+  color: #6e6e6e;
+  vertical-align: bottom;
+}
+
 .messageinfodata {
   width: 100%;
-  font-size: 85%;
-  padding-bottom: 10px;
-}
-.messageinfo {
-  color: #6e6e6e;
+  padding-left: 0px; /* everyone is flush left */
 }
 
 /* url tag below media */
@@ -243,6 +244,7 @@ table.basic { margin-left:auto; margin-right:auto; border-collapse: collapse; wi
 table.basic th, table.basic td { border: 1px solid #999; padding: 1px 10px; }
 table.basic th { background-color: #d0dce0; }
 
+
 /*********/
 /* hacks */
 /*********/
@@ -251,18 +253,13 @@ table.basic th { background-color: #d0dce0; }
 /*.postform .text { width: 600px; }*/
 /* Screw IE. Just use suggested hack */
 .postform .text {
-    width: 99.8%;
-    min-width: 99.8%;
-    max-width: 99.8%;
-    resize: none;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-}
-
-/* shrink fonts for very small windows */
-@media (max-width: 400px) {
-   .postform th,tr { font-size:80%; }
+  width: 99.8%;
+  min-width: 99.8%;
+  max-width: 99.8%;
+  resize: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 /* hack to workaround mobile chrome calculating the textarea height wrong, then
@@ -272,10 +269,10 @@ table.basic th { background-color: #d0dce0; }
 /* IE wants inline for it to pack right */
 .postform { display: inline; }
 
+
 /****************/
 /* enhancements */
 /****************/
-
 .navigate select {
    background: transparent;
    width: 248px;
