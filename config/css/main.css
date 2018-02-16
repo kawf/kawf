@@ -40,7 +40,13 @@ a:active { text-decoration: underline; }
   .forumbanner img { max-width: 100%; height: auto; }
 }
 
-.forumheader, .messageheader { width: 100%; border-collapse: collapse; border-spacing: 0; padding-left: 0;}
+.forumheader, .messageheader {
+    width: 100%;
+    border-spacing: 0;
+    padding-left: 0;
+    padding-bottom: 1em;
+}
+
 div.header { padding-top: 0; padding-bottom: 0.4em; }
 div.footer { padding-top: 0.4em; padding-bottom: 0; }
 
@@ -181,10 +187,10 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
   line-height: 0.95em;
   padding-left: 0px;
   padding-top: 5px;
-  padding-bottom: 0px;
 }
 
 /* message header/info */
+
 .messageinforow {
   color: #6e6e6e;
   vertical-align: bottom;
