@@ -39,7 +39,20 @@ div.header { padding-top: 0; padding-bottom: 0.4em; }
 div.footer { padding-top: 0.4em; padding-bottom: 0; }
 
 /* little links that do stuff */
-.tools, .smaller { width: 100%; font-size: 85%; padding-bottom: 5px; color: #6e6e6e;}
+@media (max-width: 400px) {
+  .tools, .smaller { font-size: 50%; }
+}
+
+@media (min-width: 401px) and (max-width: 640px) {
+  .tools, .smaller { font-size: 55%; }
+}
+
+@media (min-width: 641px) {
+  .tools, .smaller { font-size: 85%; }
+}
+
+.tools, .smaller { width: 100%; padding-bottom: 5px; color: #6e6e6e;}
+
 .tools { white-space: nowrap; } /* mini-links */
 .toolsleft { text-align: left; }
 .toolsright { text-align: right; }
@@ -63,7 +76,12 @@ a.up { color: #004575; }
 a:hover.up { color: #004575; text-decoration: underline;}
 
 /* indent for all ul heirarchies */
-ul {margin-left: 1em; padding-left: 1em;}
+@media (max-width: 640px) {
+ul {margin-left: 0.3em; padding-left: 0.3em;}
+}
+@media (min-width: 641px) {
+ul {margin-left: 0.75em; padding-left: 0.75em;}
+}
 
 /*************************/
 /* showforum/showmessage */
@@ -234,9 +252,13 @@ table.basic th { background-color: #d0dce0; }
     box-sizing: border-box;
 }
 
+@media (max-width: 400px) {
+   .postform th,tr { font-size:80%; }
+}
+
 /* hack to workaround mobile chrome calculating the textarea height wrong, then
    later growing it and overlapping the content below the textarea */
-.postform textarea { min-height: 400px; }
+/* .postform textarea { min-height: 400px; } */
 
 /* IE wants inline for it to pack right */
 .postform { display: inline; }
