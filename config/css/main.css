@@ -52,16 +52,16 @@ div.footer { padding-top: 0.4em; padding-bottom: 0; }
 
 /* little links that do stuff */
 @media (max-width: 400px) {
-  .tools, .smaller { font-size: 50%; }
-  .messageinfodata { font-size: 50%; }
-  img.gravatar { width: 8px; height: auto; }
+  .tools, .smaller { font-size: 40%; }
+  .messageinfodata { font-size: 40%; }
+  img.gravatar { height: 2em; width: auto; }
   .postform { font-size: 70%; }
 }
 
 @media (min-width: 401px) and (max-width: 640px) {
-  .tools, .smaller { font-size: 55%; }
-  .messageinfodata { font-size: 55%; }
-  img.gravatar { width: 16px; height: auto; }
+  .tools, .smaller { font-size: 45%; }
+  .messageinfodata { font-size: 45%; }
+  img.gravatar { height: 2em; width: auto; }
   .postform { font-size: 80%; }
 }
 
