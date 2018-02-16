@@ -34,9 +34,12 @@ a:active { text-decoration: underline; }
 /* misc headers/footers */
 .forumbanner { width: 50%; text-align: left; }
 .forumbanner img { border: 0; }
+
+/* limit banner width to 100% for small screens */
 @media (max-width: 640px) {
     .forumbanner img { max-width: 100%; height: auto; }
 }
+
 .forumheader, .messageheader { width: 100%; border-collapse: collapse; }
 div.header { padding-top: 0; padding-bottom: 0.4em; }
 div.footer { padding-top: 0.4em; padding-bottom: 0; }
@@ -78,13 +81,15 @@ a:hover.tt { color: #0f0; text-decoration: underline;}
 a.up { color: #004575; }
 a:hover.up { color: #004575; text-decoration: underline;}
 
-/* indent for all ul heirarchies */
-@media (max-width: 640px) {
-ul {margin-left: 0.3em; padding-left: 0.3em;}
-}
-@media (min-width: 641px) {
-ul {margin-left: 0.75em; padding-left: 0.75em;}
-}
+/* do all indenting via margin, not padding */
+ul,li { padding-left: 0em; }
+
+/* always indent first one */
+ul.thread { margin-left: 1.4em; }
+
+/* indent for ul heirarchies below first */
+@media (max-width: 400px) { ul { margin-left: 0.6em; } }
+@media (min-width: 401px) { ul { margin-left: 1.2em; } }
 
 /*************************/
 /* showforum/showmessage */
@@ -255,6 +260,7 @@ table.basic th { background-color: #d0dce0; }
     box-sizing: border-box;
 }
 
+/* shrink fonts for very small windows */
 @media (max-width: 400px) {
    .postform th,tr { font-size:80%; }
 }
