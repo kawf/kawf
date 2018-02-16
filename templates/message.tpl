@@ -1,10 +1,11 @@
 <div class="messageblock">
 {MSG_DEBUG}
 <table class="messageheader">
+  <tr class="messagesubjectrow">
+    <td class="subject" colspan=2>{MSG_SUBJECT}</td>
+  </tr>
   <tr class="messageinforow">
     <td class="messageinfodata">
-      <div class="subject">{MSG_SUBJECT}</div>
-      <div class="messageinfo">
 <!-- BEGIN forum_mod -->
       Source: {MSG_IP} {MSG_EMAIL}
 <!-- BEGIN admin -->
@@ -25,11 +26,10 @@
 <!-- BEGIN parent -->
       In Reply to: <a href="{PMSG_MID}.phtml">{PMSG_SUBJECT}</a> posted by <b>{PMSG_NAME}</b> on {PMSG_DATE}<br>
 <!-- END parent -->
-      </div> <!-- messageinfo -->
     </td>
     <td class="tools">
       <div class="toolsright">
-      <img src="https://www.gravatar.com/avatar/{MSG_NAMEHASH}.jpg?s=40&d=blank" alt="gravatar"><br>
+      <img class="gravatar" src="https://www.gravatar.com/avatar/{MSG_NAMEHASH}.jpg?s=32&d=blank" alt="gravatar"><br>
 <!-- BEGIN owner -->
       <a href="/{FORUM_SHORTNAME}/edit.phtml?mid={MSG_MID}&amp;page={PAGE}">Edit</a> |
 <!-- BEGIN delete -->
