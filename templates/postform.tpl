@@ -28,54 +28,58 @@ This thread is locked. No replies are allowed.<br>
   | <a href="/tips/?page={PAGE}"><b>Posting Tips</b></a>
   </td>
 </tr>
-<tr class="input">
+<tr>
   <th>Subject:</th>
-  <td>
+  <td class="input">
     <input class="text" type="text" name="subject" value="{SUBJECT}" size="68" maxlength="100" spellcheck="true">
   </td>
 </tr>
-<tr class="input">
+<tr>
   <th class="top">Message:</th>
-  <td><textarea class="text" wrap="soft" name="message" rows="10" cols="80">{MESSAGE}</textarea></td>
+  <td class="input"><textarea class="text" wrap="soft" name="message" rows="10" cols="80">{MESSAGE}</textarea></td>
 </tr>
-<tr class="input">
+<tr>
   <th>Link URL:</th>
-  <td><input class="text" type="text" name="url" value="{URLLINK}" size="80" maxlength="250"></td>
+  <td class="input"><input class="text" type="text" name="url" value="{URLLINK}" size="80" maxlength="250"></td>
 </tr>
-<tr class="input">
+<tr>
   <th>Link Text:</th>
-  <td><input class="text" type="text" name="urltext" value="{URLTEXT}" size="80" maxlength="250" spellcheck="true"></td>
+  <td class="input"><input class="text" type="text" name="urltext" value="{URLTEXT}" size="80" maxlength="250" spellcheck="true"></td>
 </tr>
-<tr class="input">
+<tr>
   <th>Image URL:</th>
-  <td><input class="text" type="text" name="imageurl" value="{IMAGEURL}" size="80" maxlength="250"></td>
+  <td class="input"><input class="text" type="text" name="imageurl" value="{IMAGEURL}" size="80" maxlength="250"></td>
 </tr>
 <!-- BEGIN imageupload -->
-<tr class="input">
+<tr>
   <th>Image Upload:</th>
-  <td><input class="text" type="file" name="imagefile" onchange="if (this.files && this.files[0] && this.files[0].size > ({MAXIMAGEFILEBYTES})) { alert('Image upload cannot exceed ' + (parseInt(({MAXIMAGEFILEBYTES} / 1024 / 1024) * 100) / 100) + 'Mb'); this.value = ''; }"></td>
+  <td class="button">
+  <input class="text" type="file" name="imagefile" onchange="if (this.files && this.files[0] && this.files[0].size > ({MAXIMAGEFILEBYTES})) { alert('Image upload cannot exceed ' + (parseInt(({MAXIMAGEFILEBYTES} / 1024 / 1024) * 100) / 100) + 'Mb'); this.value = ''; }">
+  </td>
 </tr>
 <!-- END imageupload -->
-<tr class="input">
+<tr>
   <th>Video URL:</th>
-  <td><input class="text" type="text" name="video" value="{VIDEO}" size="80" maxlength="250"></td>
+  <td class="input"><input class="text" type="text" name="video" value="{VIDEO}" size="80" maxlength="250"></td>
 </tr>
 <tr>
   <th class="top">Post Message:</th>
-  <td>
+  <td class="button">
   <input type="submit" name="preview" value="Preview Message">
   <input type="submit" name="post" value="{SUBMITTEXT}"><br>
   <!-- <input type="reset" value="Reset Message"><br> -->
+  <div class="checkbox">
   <!-- BEGIN offtopic -->
   <input type="checkbox" name="OffTopic"{OFFTOPIC}>
-    Mark as offtopic?<br>
+  <label for="checkbox">Mark as offtopic?</label><br>
   <!-- END offtopic -->
   <input type="checkbox" name="ExposeEmail"{EXPOSEEMAIL}>
-    Show email address in post?<br>
+  <label for="checkbox">Show email address in post?</label><br>
   <input type="checkbox" name="EmailFollowup"{EMAILFOLLOWUP}>
-    Send email on followup replies?<br>
+  <label for="checkbox">Send email on followup replies?</label><br>
   <input type="checkbox" name="TrackThread"{TRACKTHREAD}>
-    Track thread?
+  <label for="checkbox">Track thread?</label>
+  </div>
   </td>
 </tr>
 <tr>

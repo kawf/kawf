@@ -38,37 +38,37 @@ a:active { text-decoration: underline; }
 .forumbanner img { border: 0; max-width: 100%; height: auto; }
 
 .forumheader, .messageheader {
-    width: 100%;
-    border-spacing: 0;
-    padding-left: 0;
-    padding-bottom: 1em;
+  width: 100%;
+  border-spacing: 0;
+  padding-left: 0;
+  padding-bottom: 1em;
 }
 
 div.header { padding-top: 0; padding-bottom: 0.4em; }
 div.footer { padding-top: 0.4em; padding-bottom: 0; }
 
-/* little links that do stuff */
+.messageblock .subject { font-size: 110%; }
+input, select, textarea, .checkbox { font-size: 80%; }
+
+/* Resize depending on display width */
 @media (max-width: 400px) {
-  .tools, .smaller { font-size: 40%; }
-  .messageinfodata { font-size: 40%; }
+  html { font-size: 0.6em !important; }
   img.gravatar { height: 2em; width: auto; }
-  .postform { font-size: 70%; }
+  .tools, .smaller, .messageinfodata { font-size: 60%; }
+  .checkbox input, .checkbox label { margin: 1px 0px 0px 0px; }
 }
 
 @media (min-width: 401px) and (max-width: 640px) {
-  .tools, .smaller { font-size: 45%; }
-  .messageinfodata { font-size: 45%; }
+  html { font-size: 0.7em !important; }
   img.gravatar { height: 2em; width: auto; }
-  .postform { font-size: 80%; }
+  .tools, .smaller, .messageinfodata { font-size: 70%; }
 }
 
 @media (min-width: 641px) {
-  .tools, .smaller { font-size: 80%; }
-  .messageinfodata { font-size: 80%; }
+  .tools, .smaller, .messageinfodata { font-size: smaller; }
 }
 
-.tools, .smaller { width: 100%; color: #6e6e6e;}
-
+.tools, .smaller, .messageinfodata { width: 100%; color: #6e6e6e; }
 .tools { white-space: nowrap; } /* mini-links, shared by a lot of things */
 .toolsleft { text-align: left; }
 .toolsright { text-align: right; }
@@ -179,11 +179,11 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 
 /* all message subjects - big, bold, wacky color */
 .messageblock .subject {
-  font-size: 1.2em;
   font-weight: bold;
-  line-height: 0.95em;
   padding-left: 0px;
-  padding-top: 5px;
+  padding-right: 0px;
+  padding-top: 4px;
+  padding-bottom: 0px;
 }
 
 /* message header/info */
@@ -229,9 +229,10 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 
 .postform tr { background: #dfdfdf; }
 .postform th { text-align: right; padding: 0.3em; }
-.postform tr.input td { padding: 0; }
 .postform th.top { vertical-align: top; }
 .postform td { padding: 0.5em; }
+.postform td.input { padding: 0; }
+.postform td.button { padding: 1px 0px; }
 
 /***************/
 /* preferences */
@@ -272,6 +273,13 @@ table.basic th { background-color: #d0dce0; }
 
 /* IE wants inline for it to pack right */
 .postform { display: inline; }
+
+/* hack to get checkbox to center with label */
+.checkbox input,
+.checkbox label {
+  display: inline-block;
+  vertical-align: middle;
+}
 
 
 /****************/
