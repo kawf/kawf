@@ -31,12 +31,12 @@ This thread is locked. No replies are allowed.<br>
 <tr>
   <th>Subject:</th>
   <td class="input">
-    <input class="text" type="text" name="subject" value="{SUBJECT}" size="68" maxlength="100" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="true">
+    <input class="text" type="text" name="subject" value="{SUBJECT}" size="68" maxlength="100" spellcheck="true">
   </td>
 </tr>
 <tr>
   <th class="top">Message:</th>
-  <td class="input"><textarea class="text" wrap="soft" name="message" rows="10" cols="80" autocomplete="off" autocorrect="off" autocapitalize="off">{MESSAGE}</textarea></td>
+  <td class="input"><textarea class="text" wrap="soft" name="message" rows="10" cols="80">{MESSAGE}</textarea></td>
 </tr>
 <tr>
   <th>Link URL:</th>
@@ -44,7 +44,7 @@ This thread is locked. No replies are allowed.<br>
 </tr>
 <tr>
   <th>Link Text:</th>
-  <td class="input"><input class="text" type="text" name="urltext" value="{URLTEXT}" size="80" maxlength="250" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="true"></td>
+  <td class="input"><input class="text" type="text" name="urltext" value="{URLTEXT}" size="80" maxlength="250" spellcheck="true"></td>
 </tr>
 <tr>
   <th>Image URL:</th>
