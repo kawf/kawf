@@ -50,22 +50,28 @@ div.footer { padding-top: 0.4em; padding-bottom: 0; }
 .messageblock .subject { font-size: 110%; }
 input, select, .checkbox { font-size: 80%; }
 
+/* always indent first one the same amount */
+ul.thread { margin-left: 1.4em; }
+
 /* Resize depending on display width */
 @media (max-width: 400px) {
-  html { font-size: 0.8em !important; }
+  body { font-size: 0.7em; }
   img.gravatar { height: 2em; width: auto; }
   .tools, .smaller, .messageinfodata { font-size: 60%; }
+  ul { margin-left: 0.7em; }
   .checkbox input, .checkbox label { margin: 1px 0px 0px 0px; }
 }
 
 @media (min-width: 401px) and (max-width: 640px) {
-  html { font-size: 0.9em !important; }
+  body { font-size: 0.8em; }
   img.gravatar { height: 2em; width: auto; }
   .tools, .smaller, .messageinfodata { font-size: 70%; }
+  ul { margin-left: 1.0em; }
 }
 
 @media (min-width: 641px) {
   .tools, .smaller, .messageinfodata { font-size: smaller; }
+  ul { margin-left: 1.3em; }
 }
 
 .tools, .smaller, .messageinfodata { width: 100%; color: #6e6e6e; }
@@ -93,13 +99,6 @@ a:hover.up { color: #004575; text-decoration: underline;}
 
 /* do all indenting via margin, not padding */
 ul,li { padding-left: 0em; }
-
-/* always indent first one */
-ul.thread { margin-left: 1.4em; }
-
-/* indent for ul heirarchies below first */
-@media (max-width: 400px) { ul { margin-left: 0.9em; } }
-@media (min-width: 401px) { ul { margin-left: 1.2em; } }
 
 /*************************/
 /* showforum/showmessage */
