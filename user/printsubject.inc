@@ -31,34 +31,34 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
 
   if (isset($flags['NoText'])) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/nt.gif\" alt=\"no text\"" . $nt . ">";
+      $string .= " <img class=\"flag\" src=\"/pics/nt.gif\" alt=\"no text\"" . $nt . ">";
     else
       $string .= " (nt)";
   }
 
   if (isset($flags['Picture'])) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/pic.gif\" alt=\"contains picture\">";
+      $string .= " <img class=\"flag\" src=\"/pics/pic.gif\" alt=\"contains picture\">";
     else
       $string .= " (pic)";
   }
 
   if (isset($flags['Video'])) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/video.gif\" alt=\"contains video\">";
+      $string .= " <img class=\"flag\" src=\"/pics/video.gif\" alt=\"contains video\">";
     else
       $string .= " (vid)";
   }
 
   if (isset($flags['Link'])) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/url.gif\" alt=\"contains url\">";
+      $string .= " <img class=\"flag\" src=\"/pics/url.gif\" alt=\"contains url\">";
     else
       $string .= " (link)";
   }
 
   if ($msg['state'] == 'OffTopic' && !isset($user->pref['SimpleHTML']))
-    $string .= " <img src=\"/pics/ot.gif\" alt=\"off topic\">";
+    $string .= " <img class=\"flag\" src=\"/pics/ot.gif\" alt=\"off topic\">";
 
   $string .= "&nbsp;&nbsp;-&nbsp;&nbsp;";
   $string .= "<span class=\"username\">" . $msg['name'] . "</span>&nbsp;&nbsp;";
@@ -86,7 +86,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
 
   if (isset($thread['flag']['Locked']) && !$msg['pmid']) {
     if (!isset($user->pref['SimpleHTML']))
-      $string .= " <img src=\"/pics/lock.gif\" alt=\"locked\">";
+      $string .= " <img class=\"flag\" src=\"/pics/lock.gif\" alt=\"locked\">";
     else
       $string .= " (locked)";
   }
