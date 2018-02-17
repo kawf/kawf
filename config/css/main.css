@@ -33,12 +33,9 @@ a:active { text-decoration: underline; }
 
 /* misc headers/footers */
 .forumbanner { width: 50%; text-align: left; }
-.forumbanner img { border: 0; }
 
-/* limit banner width to 100% for small screens */
-@media (max-width: 640px) {
-  .forumbanner img { max-width: 100%; height: auto; }
-}
+/* limit banner width to 100% */
+.forumbanner img { border: 0; max-width: 100%; height: auto; }
 
 .forumheader, .messageheader {
     width: 100%;
@@ -209,6 +206,7 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 
 /* fit all images into the viewport */
 .message img { max-width: 100%; }
+.signature img { max-width: 100%; }
 
 /* embedded url in message */
 .message li.url { list-style: disc outside none; }
