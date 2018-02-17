@@ -1,6 +1,6 @@
 <!-- BEGIN normal -->
 <!-- BEGIN hr -->
-<hr width="100%" size="1">
+<hr>
 <!-- END hr -->
 <table class="forumheader">
 <tr>

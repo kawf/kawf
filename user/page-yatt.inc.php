@@ -4,6 +4,7 @@ require_once("lib/YATT/YATT.class.php");
 function generate_page($title, $contents, $skip_header=false, $meta_robots=false)
 {
     global $template_dir, $domain, $Debug;
+    global $user;
 
     $page = new YATT($template_dir, 'page.yatt');
     $page->set('domain', $domain);
@@ -23,6 +24,15 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
     }
     $page->set('title', $title);
     $page->set('contents', $contents);
+
+    /* needed for kawf donation -> aid/name correlation */
+    if ($user->valid()) {
+	$page->set('aid', $user->aid);
+	$page->set('name', $user->name);
+	$page->set('return', "https://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
+	$page->parse('page.user');
+    }
+
     if ($Debug) {
 	$page->set('debug_contents', "<pre>\n" . get_debug_log() . "</pre>\n");
 	$page->parse('page.debug_log');

@@ -1,12 +1,17 @@
 <table class="smaller">
 <tr>
   <td class="left">
-    <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-    <input type="hidden" name="cmd" value="_s-xclick">
-    <input type="hidden" name="hosted_button_id" value="4023927">
-    <input type="image" src="/pics/btn_donate_SM.gif" name="submit" alt="PayPal - The safer, easier way to pay online!">
-    <img alt="" src="/pics/pixel.gif" width="1" height="1">
+    <form action="https://www.paypal.com/donate" method="post" target="_top">
+    <input type="hidden" name="item_name" value="%[name]" />
+    <input type="hidden" name="item_number" value="%[aid]" />
+    <input type="hidden" name="return" value="%[return]" />
+    <input type="hidden" name="hosted_button_id" value="FFD8L7RNYQ5B2" />
+    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+    <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
     </form>
+  </td>  
+  <td class="center">
+    Hosting provided by some <a href="/other/msgs/7353155.phtml">squirrels and tins[sic] cans with string.</a>
   </td>
   <td class="right">
     <!-- Powered by <a href="http://kawf.sourceforge.net/">Kawf</a> -->

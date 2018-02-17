@@ -1,5 +1,6 @@
 <?php
 require_once("message.inc");
+require_once("textwrap.inc");
 
 function print_subject($thread, $msg, $replies = -1, $collapse = false)
 {
@@ -11,6 +12,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
       $flags[$flag] = true;
   }
 
+  // $msg['subject']=softbreaklongwords($msg['subject'],40);
   // $msg['subject']=wordwrap($msg['subject'],40,'<wbr>',1);
 
   $nt = "";

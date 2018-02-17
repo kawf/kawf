@@ -4,6 +4,10 @@ require_once("thread.inc");
 require_once("pagenav.inc.php");
 require_once("page-yatt.inc.php");
 
+
+require_once("textwrap.inc");
+require_once("notices.inc");
+
 if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
   $user->req();
   if ($user->status != 'Active') {
@@ -39,6 +43,8 @@ $_page = $tpl->get_var("PAGE");
 unset($tpl->varkeys["PAGE"]);
 unset($tpl->varvals["PAGE"]);
 $tpl->set_var("PAGE", $_page);
+
+$tpl->set_var("FORUM_NOTICES", get_notices_html($forum, $user->aid));
 
 $tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);

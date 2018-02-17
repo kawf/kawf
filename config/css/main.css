@@ -47,6 +47,15 @@ a:active { text-decoration: underline; }
 div.header { padding-top: 0; padding-bottom: 0.4em; }
 div.footer { padding-top: 0.4em; padding-bottom: 0; }
 
+/* divider for wayot */
+hr {
+    border-width: 0px; height: 0.5px;
+    color: #888; background-color: #888;
+}
+
+/* forum notices addon */
+.forumnotices { width: 99%; vertical-align: top; text-align: right; }
+
 .messageblock .subject { font-size: 110%; }
 input, select, .checkbox { font-size: 80%; }
 textarea { font-size: 100%; }	/* monospace is diff size? wtf? */

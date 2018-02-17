@@ -28,6 +28,8 @@ if (isset($_POST['submit'])) {
     $capabilities[] = "OffTopic";
   if (isset($_POST['Advertise']))
     $capabilities[] = "Advertise";
+  if (isset($_POST['Sponsor']))
+    $capabilities[] = "Sponsor";
 
   $capabilities = join(",", $capabilities);
 
@@ -61,6 +63,7 @@ page_header("Add User ACL");
     <input type="checkbox" name="Delete">Delete Messages<br>
     <input type="checkbox" name="OffTopic">Mark Message Off-Topic<br>
     <input type="checkbox" name="Advertise">Can Advertise<br>
+    <input type="checkbox" name="Sponsor">Is a Sponsor<br>
   </td>
  </tr>
  <tr>

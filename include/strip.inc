@@ -272,6 +272,8 @@ $standard_tags = array(
   "sub" => array(array(), "/sub"),
   "sup" => array(array(), "/sup"),
   "center" => array(array(), "/center"),
+  "embed" => array(array(), "/embed"),
+  "object" => array(array(), "/object"),
 );
 
 $no_tags = array(

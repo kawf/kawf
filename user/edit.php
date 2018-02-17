@@ -60,6 +60,8 @@ if ($Debug) {
   $tpl->set_var("DEBUG", "");
 }
 
+$tpl->set_var("FORUM_NOTICES", "");
+
 $tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
 

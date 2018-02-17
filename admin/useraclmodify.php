@@ -26,6 +26,8 @@ if (isset($_POST['submit'])) {
 	$capabilities[] = "OffTopic";
       if (isset($opts[$i]['Advertise']))
 	$capabilities[] = "Advertise";
+      if (isset($opts[$i]['Sponsor']))
+	$capabilities[] = "Sponsor";
 
       $capabilities = join(",", $capabilities);
 
@@ -87,6 +89,7 @@ while ($acl = $sth->fetch()) {
     <input type="checkbox" name="opts[<?php echo $count; ?>][Delete]"<?php if (isset($capabilities['Delete'])) echo " checked"; ?>> Delete Messages<br>
     <input type="checkbox" name="opts[<?php echo $count; ?>][OffTopic]"<?php if (isset($capabilities['OffTopic'])) echo " checked"; ?>> Mark Threads Off-Topic<br>
     <input type="checkbox" name="opts[<?php echo $count; ?>][Advertise]"<?php if (isset($capabilities['Advertise'])) echo " checked"; ?>> Can Advertise<br>
+    <input type="checkbox" name="opts[<?php echo $count; ?>][Sponsor]"<?php if (isset($capabilities['Sponsor'])) echo " checked"; ?>> Is a Sponsor<br>
   </td>
  </tr>
 
