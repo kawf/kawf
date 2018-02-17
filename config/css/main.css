@@ -52,14 +52,14 @@ input, select, textarea, .checkbox { font-size: 80%; }
 
 /* Resize depending on display width */
 @media (max-width: 400px) {
-  html { font-size: 0.6em !important; }
+  html { font-size: 0.8em !important; }
   img.gravatar { height: 2em; width: auto; }
   .tools, .smaller, .messageinfodata { font-size: 60%; }
   .checkbox input, .checkbox label { margin: 1px 0px 0px 0px; }
 }
 
 @media (min-width: 401px) and (max-width: 640px) {
-  html { font-size: 0.7em !important; }
+  html { font-size: 0.9em !important; }
   img.gravatar { height: 2em; width: auto; }
   .tools, .smaller, .messageinfodata { font-size: 70%; }
 }
@@ -98,7 +98,7 @@ ul,li { padding-left: 0em; }
 ul.thread { margin-left: 1.4em; }
 
 /* indent for ul heirarchies below first */
-@media (max-width: 400px) { ul { margin-left: 0.6em; } }
+@media (max-width: 400px) { ul { margin-left: 0.9em; } }
 @media (min-width: 401px) { ul { margin-left: 1.2em; } }
 
 /*************************/
