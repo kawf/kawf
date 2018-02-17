@@ -22,7 +22,7 @@ This thread is locked. No replies are allowed.<br>
 <form class="postform" action="/{FORUM_SHORTNAME}/{ACTION}.phtml" method="post" enctype="multipart/form-data">
 <table>
 <tr>
-  <th>Logged in as:</th>
+  <th>User:</th>
   <td>
     <b>{USER_NAME}</b>&nbsp;&nbsp;&nbsp;<a href="/preferences.phtml?page={PAGE}">Preferences</a>
   | <a href="/tips/?page={PAGE}"><b>Posting Tips</b></a>
