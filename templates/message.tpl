@@ -68,4 +68,4 @@
 {MSG_CHANGES}
   </div>
 <!-- END changes -->
-</div>
+</div> <!-- messageblock -->
