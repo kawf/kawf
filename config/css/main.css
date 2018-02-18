@@ -49,6 +49,7 @@ div.footer { padding-top: 0.4em; padding-bottom: 0; }
 
 .messageblock .subject { font-size: 110%; }
 input, select, .checkbox { font-size: 80%; }
+textarea { font-size: 100%; }	/* monospace is diff size? wtf? */
 
 /* always indent first one the same amount */
 ul.thread { margin-left: 1.4em; }
