@@ -36,7 +36,8 @@ $create_thread_table = "
     replies int not null default 0,
     flags set('Locked','Sticky') not null,
     tstamp datetime not null default CURRENT_TIMESTAMP,
-    primary key (tid)
+    primary key (tid),
+    index (pid)
   )";
 
 # Unused
