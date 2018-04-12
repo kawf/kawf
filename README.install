@@ -10,8 +10,8 @@ Quick setup guide:
 
 * Edit config/setup.inc or create config/setup-local.inc to override setup.inc
   - set $domain to the domain where your forums are
-  - you may way to create setup-local.inc to avoid merge problems if you using
-    source control on a live tree.
+  - you may want to create setup-local.inc to avoid merge problems if you are
+    using source control on a live tree.
 
 * Add a sql user in your sql db (e.g. "kawf" or "forums")
   - add a password for that user (in mysql, make sure to use the PASSWORD
