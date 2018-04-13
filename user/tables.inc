@@ -15,7 +15,7 @@ $create_message_table = "
     flags set('NewStyle','NoText','Link','Picture','Video','StateLocked') not null,
     name varchar(50) not null,
     email varchar(50) not null,
-    date datetime not null default '0000-00-00 00:00:00',
+    date datetime not null default CURRENT_TIMESTAMP,
     ip varchar(15) not null default '0.0.0.0',
     subject text not null,
     message text not null,
@@ -61,7 +61,7 @@ $create_forums_table = "
 $create_index_table = "
   create table if not exists f_indexes (
     iid int not null auto_increment,
-    fid int not null, 
+    fid int not null,
     minmid int not null,
     maxmid int not null,
     mintid int not null,
@@ -160,7 +160,7 @@ $create_global_messages_table = "
     subject text not null,
     url varchar(200) not null,
     name varchar(50) not null,
-    date datetime not null default '0000-00-00 00:00:00',
+    date datetime not null default CURRENT_TIMESTAMP,
     state enum('Active','Inactive') not null default 'Inactive',
     primary key (gid)
   )";
