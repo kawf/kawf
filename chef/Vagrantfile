@@ -9,7 +9,7 @@ VAGRANTFILE_dev_VERSION = "2"
 Vagrant.require_version ">= 1.5.0"
 
 @chef_ver = 12.8
-@vm_box = "bento/ubuntu-14.04"
+@vm_box = "bento/ubuntu-16.04"
 
 @custom_json = JSON.parse(File.read('./custom.json'))
 
@@ -28,11 +28,11 @@ Vagrant.configure(VAGRANTFILE_dev_VERSION) do |config|
     dev.vm.hostname = "kawf"
     dev.omnibus.chef_version = @chef_ver
     dev.vm.box = @vm_box
-    dev.vm.network :private_network, ip: "192.168.1.111"
+    dev.vm.network :private_network, ip: "10.111.111.111"
     dev.berkshelf.enabled = true
     dev.vm.provision :chef_solo do |chef|
       chef.json = @custom_json
-      chef.run_list = ["recipe[apt::default]","recipe[apache2::default]","recipe[kawf::install]"]
+      chef.run_list = ["recipe[apt::default]","recipe[kawf::install]"]
     end
   end
 
