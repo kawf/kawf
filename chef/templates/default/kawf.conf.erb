@@ -1,13 +1,12 @@
 <VirtualHost *:80>
-  ServerName <%= @params[:server_name] %>
-  <% if @params[:server_aliases] && !@params[:server_aliases].empty? -%>
-  ServerAlias <% @params[:server_aliases].each do |a| %><%= "#{a}" %> <% end %>
+  <% if node[:kawf][:server_aliases] && !node[:kawf][:server_aliases].empty? -%>
+  ServerAlias <% node[:kawf][:server_aliases].each do |a| %><%= "#{a}" %> <% end %>
   <% end -%>
-  DocumentRoot <%= @params[:docroot] %>
+  DocumentRoot <%= node[:kawf][:docroot] %>
 
-  <Directory <%= @params[:docroot] %>>
-    Options <%= [@params[:directory_options] || "FollowSymLinks" ].flatten.join " " %>
-    AllowOverride <%= [@params[:allow_override] || "None" ].flatten.join " " %>
+  <Directory <%= node[:kawf][:docroot] %>/>
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All
     Require all granted
   </Directory>
 
@@ -17,9 +16,13 @@
       RewriteEngine On
       RewriteRule ^/.*        /index.php [L]
   </IfModule>
+
   <IfModule mod_php5.c>
       php_flag magic_quotes_gpc Off
+      php_value post_max_size 8M
+      php_value upload_max_filesize 8M
   </IfModule>
+
   AddDefaultCharset ISO-8859-1
 
 </VirtualHost>

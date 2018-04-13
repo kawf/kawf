@@ -1,6 +1,6 @@
 # kawf
 
-This cookbook contains recipes specific to installing PHP on Apache for Kawf running on Ubuntu 14.04 LTS (trusty).
+This cookbook contains recipes specific to installing PHP on Apache for Kawf running on Ubuntu 16.04.
 
 
 ## Instructions
@@ -9,7 +9,7 @@ Install virtualbox on your computer.  CWD to ./kawf/chef and verify you see the 
 run vagrant up
 
 It will:
-* Download Ubuntu 14.04 LTS image
+* Download Ubuntu 16.04 LTS bento image
 * apt-get update using community cookbook
 * install Apache2 using community cookbook and create kawf web app
 * install git client
@@ -19,8 +19,6 @@ It will:
 * git clone from kawf repo
 * create kawf config/setup inc templates
 * fix PHP time for UTC
-* install composer for PHP
-* load AWS PHP SDK using composer
 * create MySQL user, database and grants
 * optionally, install AWS CLI and configure an AWS credentials profile on the system (for S3)
 * optionally, restore the current wayot backup from S3 to MySQL
@@ -28,7 +26,7 @@ It will:
 
 ## Testing Locally with Vagrant
 Kawf needs the domain setup correctly.  The current code will create the following local kawf server in Vagrant:
-192.168.1.111   local.wayot.org
+10.111.111.111   local.wayot.org
 
 You will need to create a host file entry on your development environment to access the local version of kawf using http://local.wayot.org/ .  The other options is to change the IP and domain and server values in the attributes file.
 
