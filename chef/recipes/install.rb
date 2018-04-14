@@ -5,6 +5,14 @@
 # All rights reserved - Do Not Redistribute
 #
 ##
+Chef::Log.info("install security updates")
+execute "ubuntu_security_updates" do
+  command 'apt-get -s dist-upgrade | grep "^Inst" | grep -i securi | awk -F " " {\'print $2\'} | xargs apt-get install'
+  user 'root'
+  group 'root'
+  action :run
+end
+
 include_recipe 'git'
 
 Chef::Log.info("install git client for deploys")
@@ -17,6 +25,9 @@ package 'apache2' do
   action :install
 end
 
+service 'apache2' do
+  action :stop
+end
 
 Chef::Log.info("install required packages")
 package ['unzip', 'curl'] do
@@ -120,6 +131,10 @@ service 'mysql' do
   action [:start, :enable]
 end
 
+service 'apache2' do
+  action [:enable, :start]
+end
+
 if (node['kawf']['vagrant'] == true) && (!Dir.exists? (node['kawf']['database_dir']))
   # configure local database
   execute 'create_kawf_user' do
@@ -156,6 +171,7 @@ if (node['kawf']['vagrant'] == true) && (!Dir.exists? (node['kawf']['database_di
 
 end
 
-service 'apache2' do
-  action :reload
+reboot 'security_updates_reboot' do
+  action :reboot_now
+  reason 'Need to reboot after security updates.'
 end
