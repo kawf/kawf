@@ -89,7 +89,7 @@ if ($out['numshown']>0) {
     $count++;
   }
 } else {
-  $yatt->set('messages', "<font size=\"+1\">No tracked messages in this forum</font><br>");
+  $yatt->set('messages', "<span style=\"font-size: larger;\">No tracked messages in this forum</span><br>");
   $yatt->parse($block.".row");
 }
 

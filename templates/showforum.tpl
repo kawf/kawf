@@ -7,8 +7,8 @@
 <table class="tools">
 <tr>
   <td class="left">
-    <a href="/tips/?page={PAGE}" target="_blank">Forum Tips</a>
-  | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search Forums</a>
+    <a href="/tips/?page={PAGE}" target="_blank">Tips</a>
+  | <a href="/search/?forum={FORUM_SHORTNAME}&amp;page={PAGE}" target="_blank">Search</a>
   | <a href="#post"><b>Post New Thread</b></a>
   | <a href="#" id="view-all-images">View All Images</a>
   | <a href="#" id="night-mode">Night Mode: <span id="night-mode-status">Off</span></a>
@@ -57,6 +57,6 @@
 </tr>
 </table>
 <div class="forumpost">
-<a name="post"><img src="/pics/post.gif" alt="post message"></a>
+<a id="post"><img src="/pics/post.gif" alt="post message"></a>
 {FORM}
 </div>

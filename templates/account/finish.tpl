@@ -1,7 +1,7 @@
 <h1>Accounts - Finish</h1><p>
 
 <!-- BEGIN error -->
-<font color="red">
+<span class="error">
 
 <!-- BEGIN unknown -->
 Unknown cookie '{COOKIE}', please recheck the URL or cookie<p>
@@ -19,7 +19,7 @@ Unable to activate account. This isn't supposed to happen<p>
 The email '{EMAIL}' is already being used by another account<p>
 <!-- END dup_email -->
 
-</font><p>
+</span><p>
 <!-- END error -->
 
 <!-- BEGIN success -->

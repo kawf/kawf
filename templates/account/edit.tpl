@@ -1,7 +1,7 @@
 <h1>Account - Edit</h1><p>
 
 <!-- BEGIN error -->
-<font color="red">{ERROR}</font><p>
+<span class="error">{ERROR}</span><p>
 <!-- END error -->
 
 <!-- BEGIN name -->

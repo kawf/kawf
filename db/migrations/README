@@ -1,0 +1,1 @@
+Make sure to bump user/tables.inc SCHEMA_VERSION when adding migrations!

@@ -239,6 +239,8 @@ function render_message($tpl, $msg, $viewer, $owner=null)
   }
 
   /* Show CURRENT email information of user */
+  $ghash = md5(strtolower(trim($owner->email)));
+  $tpl->set_var("MSG_NAMEHASH", $ghash);
   if ($moderator || ($viewer->valid() && $expose_email)) {
     /* Lame spamification */
     $name = $msg['name'];
@@ -310,6 +312,78 @@ function image_url_hack_extract($msg)
     return $msg;
 }
 
+/* MODIFIES MESSAGE */
+/* Called by
+   showthread.php - thread summary
+   message.inc:process_message() - message display
+   thread.inc:get_thread_message() - "All messages" thread display
+ */
+function process_message($user, &$msg)
+{
+    /* make a copy for comparison later */
+    $omsg=$msg;
+
+    /* FIXME: translate pid -> pmid */
+    if (!isset($msg['pmid']) && isset($msg['pid']))
+        $msg['pmid'] = $msg['pid'];
+
+    /* msg['date'] is time local to user... strftime would normally be
+       time local to PHP server */
+    $msg['date'] = gen_date($user, $msg['unixtime']);
+
+    /* Workaround for issue $38 - db may still contain non-utf8 */
+    $msg['subject'] = remoronize($msg['subject']);
+    $msg['subject'] = utf8ize($msg['subject']);
+    $msg['name'] = utf8ize($msg['name']);
+    if (isset($msg['message'])) {
+	$msg['message'] = remoronize($msg['message']);
+	$msg['message'] = utf8ize($msg['message']);
+	//$msg['message'] = debug_hexdump($msg['message']);
+    }
+
+    /* auto update db if remoronize made a change */
+    if (isset($msg['mid'])) {
+	$iid = mid_to_iid($msg['mid']);
+	$mid = $msg['mid'];
+
+	$vals = array();
+	$keys = array();
+
+	$items = array('subject','name','message');
+	foreach ($items as $k) {
+	    if (isset($msg[$k]) && $msg[$k]!=$omsg[$k]) {
+		$keys[] = "$k = ?";
+		$vals[] = $msg[$k];
+	    }
+	}
+
+	if (count($keys)>0) {
+	    global $utf8_autofix_log, $utf8_autofix_message, $utf8_autofix_account;
+	    $sql = "update f_messages$iid set ".join(',', $keys).
+		" where mid=$mid";
+	    if ($utf8_autofix_log) {
+		error_log(full_url($_SERVER).
+		    " $mid.phtml f_messages$iid has bad chars");
+		error_log($sql);
+		//error_log(join(', ',$vals));
+	    }
+	    if ($utf8_autofix_message) db_exec($sql, $vals);
+
+	    if (in_array('name = ?', $keys) && isset($msg['aid'])) {
+		$user = new AccountUser($msg['aid']);
+		if (isset($user) && $user->name!=utf8ize($user->name)) {
+		    if ($utf8_autofix_log)
+			error_log("Bad aid ".$user->aid." name '" .$user->name."'");
+		    if ($utf8_autofix_account) $user->name(utf8ize($user->name));
+		}
+	    }
+	}
+    }
+
+    /* return things that changed */
+    return $keys;
+}
+
 function fetch_message($user, $mid, $what = '*')
 {
     /* Grab the actual message */
@@ -319,13 +393,8 @@ function fetch_message($user, $mid, $what = '*')
     $sql = "select $what, UNIX_TIMESTAMP(date) as unixtime from f_messages$iid where mid = ?";
     $msg = db_query_first($sql, array($mid));
 
-    /* FIXME: translate pid -> pmid */
-    if (!isset($msg['pmid']) && isset($msg['pid']))
-      $msg['pmid'] = $msg['pid'];
-
-    /* msg['date'] is time local to user... strftime would normally be
-       time local to PHP server */
-    $msg['date'] = gen_date($user, $msg['unixtime']);
+    /* modifies message */
+    process_message($user, $msg);
 
     /* IMAGEURL HACK - extract from message */
     return image_url_hack_extract($msg);
@@ -410,5 +479,79 @@ function is_msg_bumped($msg)
 */
     return ($tthread && $msg['unixtime'] > $tthread['unixtime']);
 }
+
+function can_upload_images() {
+    global $imgur_client_id, $imgur_client_secret;
+
+    return !(empty($imgur_client_id) || empty($imgur_client_secret));
+}
+
+function ini_val_to_bytes($val) {
+	$val = strtolower(trim($val));
+
+	if (preg_match("/^(\d+)([kmg])$/", $val, $m)) {
+		$val = intval($m[1]);
+		switch ($m[2]) {
+		case "k":
+			$val *= 1024;
+			break;
+		case "m";
+			$val *= 1024 * 1024;
+			break;
+		case "g";
+			$val *= 1024 * 1024;
+			break;
+		}
+	}
+
+	return intval($val);
+}
+
+function max_image_upload_bytes() {
+	$pms = ini_val_to_bytes(ini_get("post_max_size"));
+	$ums = ini_val_to_bytes(ini_get("upload_max_filesize"));
+
+	/* imgur's upload limit is 10mb */
+	$mb = min((10 * 1024 * 1024), $pms, $ums);
+
+	/* leave 10k overhead for other post data */
+	if ($mb > 10240)
+		$mb -= 10240;
+
+	return $mb;
+}
+
+function get_uploaded_image_urls($filename) {
+    global $imgur_client_id;
+
+    if (!can_upload_images())
+      return null;
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, "https://api.imgur.com/3/image");
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+      "Authorization: Client-ID " . $imgur_client_id,
+    ));
+    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+      "image" => file_get_contents($filename),
+    ));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    $result = curl_exec($ch);
+
+    if ($result != "") {
+      $j = json_decode($result, true);
+      if ($j["data"] && $j["data"]["link"]) {
+        $iu = preg_replace("/^http:/", "https:", $j["data"]["link"]);
+        return array($iu, "https://imgur.com/delete/" . $j["data"]["deletehash"]);
+      } else {
+        error_log("error from imgur: " . var_export($j, true));
+      }
+    } else
+      error_log("null response from imgur");
+
+    return null;
+}
+
 // vim:sw=2
 ?>

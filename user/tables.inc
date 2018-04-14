@@ -1,7 +1,8 @@
 <?php
 
 # Update this to the proper migration when changing the schema.
-$SCHEMA_VERSION = "20131025203732";
+# TODO: automatically derive this from db/migrations contents.
+$SCHEMA_VERSION = "20180405135119";
 
 # f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
@@ -36,7 +37,8 @@ $create_thread_table = "
     replies int not null default 0,
     flags set('Locked','Sticky') not null,
     tstamp datetime not null default CURRENT_TIMESTAMP,
-    primary key (tid)
+    primary key (tid),
+    index (pid)
   )";
 
 # Unused
@@ -138,16 +140,16 @@ $create_users_table = "
     email varchar(100) not null,
     password varchar(100) not null,
     status enum('Create','Active','Suspended') not null default 'Create',
-    createdate datetime not null,
+    createdate datetime not null default CURRENT_TIMESTAMP,
     createip varchar(15),
     cookie varchar(50) not null,
-    timezone varchar(5) not null,
+    timezone varchar(20) not null,
     style enum('Classic','Simple','UBB') not null default 'Classic',
-    preferences set('ShowOffTopic','ShowModerated','Collapsed','SecretEmail','FlatThread','SimpleHTML','AutoTrack','HideSignatures','AutoUpdateTracking','OldestFirst','SortbyActive','CollapseOffTopic') not null,
+    preferences set('ShowOffTopic','ShowModerated','Collapsed','SecretEmail','FlatThread','SimpleHTML','AutoTrack','HideSignatures','AutoUpdateTracking','OldestFirst','SortbyActive','CollapseOffTopic','RelativeTimestamps') not null default '',
     signature text not null,
     threadsperpage int not null,
     posts int not null,
-    gmsgfilter bigint not null,
+    gmsgfilter bigint not null default '0',
     primary key (aid),
     unique (shortname),
     unique (email),

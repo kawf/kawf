@@ -9,7 +9,7 @@ class InitializeGlobalMessages extends DatabaseMigration {
 	subject text not null,
 	url varchar(200) not null,
 	name varchar(50) not null,
-	date datetime not null default '0000-00-00 00:00:00',
+	date datetime not null default CURRENT_TIMESTAMP,
 	state enum('Active','Inactive') not null default 'Inactive',
 	primary key (gid))";
     db_exec($sql);

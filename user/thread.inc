@@ -10,23 +10,20 @@ function get_thread_messages($thread, $vmid = 0)
   /* find my messages and later */
   for ($index = find_msg_index($thread['mid']); isset($indexes[$index]); $index++) {
     $iid = $indexes[$index]['iid'];
-    /* FIXME: translate pid -> pmid */
     /* TZ: unixtime is seconds since epoch */
     $sql = "select mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, subject, flags, name, email, views " .
       "from f_messages$iid where tid = ? order by mid";
     $sth = db_query($sql, array($thread['tid']));
-    while ($message = $sth->fetch()) {
-      $message['date'] = gen_date($user, $message['unixtime']);
-      /* FIXME: translate pid -> pmid */
-      if (!isset($message['pmid']) && isset($message['pid']))
-	$message['pmid'] = $message['pid'];
-      $messages[] = $message;
+    while ($msg = $sth->fetch()) {
+      /* modifies message */
+      process_message($user, $msg);
+      $messages[] = $msg;
     }
     $sth->closeCursor();
   }
 
-  if (!isset($message)) {
-    /* fatal error - messag doesn't belong to a thread! */
+  if (!isset($msg)) {
+    /* fatal error - message doesn't belong to a thread! */
     /* FIXME: there is no way to navigate to this message */
     return null;
   }

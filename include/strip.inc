@@ -1,25 +1,73 @@
 <?php
 
+function debug_hexdump($str)
+{
+  $out = '';
+  foreach (preg_split("//u", $str) as $mbchar) {
+    if (strlen($mbchar)>0)
+      $out .= $mbchar.'['.bin2hex($mbchar).']';
+  }
+  return $out;
+}
+
+function repl($var, $table)
+{
+  foreach ($table as $k => $v) {
+    $var = str_replace($k, $v, $var);
+  }
+  return $var;
+}
+
+/* try to recover badly demoronized string - used in fetch_message()*/
+function remoronize($var)
+{
+  /* undo incorrect demoronizing */
+  $trans_table= array(
+    chr(0xe2).chr(0x80).'\'' => '\'',	// low-9, left or right single, don't know which
+    //chr(0xe2).chr(0x80).'"' => chr(0xe2).chr(0x80).chr(0x9a),	// probably got demoronized from mdash
+    chr(0xe2).chr(0x80).'"' => '&mdash;',	// 0x93 and 0x94 got demoronized below to '"'
+    chr(0xe2).chr(0x80).'...' => chr(0xe2).chr(0x80).chr(0xa6),
+    chr(0xe2).chr(0x80).'-' => chr(0xe2).chr(0x80).chr(0x93),
+    chr(0xe2).chr(0x80).'--' => chr(0xe2).chr(0x80).chr(0x94),
+    chr(0xe2).chr(0x80).'oe' => chr(0xe2).chr(0x80).chr(0x9c), // left double
+    chr(0xe2).chr(0x80).'<sup>TM</sup>' => chr(0xe2).chr(0x80).chr(0x99), // right single
+    //chr(0xef).chr(0xbf).chr(0xbd).'\'' => chr(0xc6).chr(0x92), // florin (f with hook)
+    //chr(0xc6).'\'' => chr(0xc6).chr(0x92),	// florin (f with hook)
+  );
+
+  return repl($var, $trans_table);
+}
+
+function trans($var, $table)
+{
+  $out = '';
+  foreach (preg_split("//u", $var) as $mbchar) {
+    if (strlen($mbchar)>0 && array_key_exists($mbchar, $table))
+      $out .= $table[$mbchar];
+    else
+      $out .= $mbchar;
+  }
+  return $out;
+}
+
+/* only used when storing a string */
 function demoronize($var)
 {
   $trans_table = array(
-    /* multibyte to utf8 */
+    /* multibyte to ASCII */
     chr(0xe2).chr(0x80).chr(0x9a) => '\'', //SINGLE LOW-9 QUOTATION MARK
     chr(0xe2).chr(0x80).chr(0x9e) => '"', //DOUBLE LOW-9 QUOTATION MARK
     chr(0xe2).chr(0x80).chr(0xa6) => '...', //HORIZONTAL ELLIPSIS
     chr(0xe2).chr(0x80).chr(0x98) => '\'', //LEFT SINGLE QUOTATION MARK
     chr(0xe2).chr(0x80).chr(0x99) => '\'', //RIGHT SINGLE QUOTATION MARK
-    chr(0xe2).chr(0x80).chr(0x9c) => '"', //LEFT DOUBLE QUOTATION MARK
+    chr(0xe2).chr(0x80).chr(0x9c) => '"', //LEFT DOUBLE QUOTATION MARK - warning, incorrect demoronizing possible
     chr(0xe2).chr(0x80).chr(0x9d) => '"', //RIGHT DOUBLE QUOTATION MARK
-    chr(0xe2).chr(0x80).chr(0x93) => '-', //EN DASH
-    chr(0xe2).chr(0x80).chr(0x94) => '--', //EM DASH
+    chr(0xe2).chr(0x80).chr(0x93) => '-', //EN DASH - warning, incorrect demoronizing possible
+    chr(0xe2).chr(0x80).chr(0x94) => '&mdash;', //EM DASH - warning, incorrect demoronizing possible
 
     /* strangers found in the wild */
     chr(0xe2).chr(0x84).chr(0xa2) => '<sup>TM</sup>',
     chr(0xc2).chr(0xae) => '&reg;',
-
-    /* expand tabs */
-    chr(0x09) =>'        ',
 
     /* fixup a few selected non-ISO Microsoft extensions */
     chr(0x82) =>',',
@@ -28,41 +76,49 @@ function demoronize($var)
     chr(0x85) =>'...',
 
     chr(0x88) =>'^',
-    chr(0x89) =>'&deg;/&deg;&deg;',
+    //chr(0x89) =>'&deg;/&deg;&deg;',	// o/oo
 
     chr(0x8B) =>'<',
-    chr(0x8C) =>'Oe',
+    //chr(0x8C) =>'Oe',
 
-    chr(0x91) =>'`',
-    chr(0x92) =>'\'',
-    chr(0x93) =>'\"',
-    chr(0x94) =>'\"',
+    //chr(0x91) =>'`',  // warning, might alter mb chars with this in it
+    //chr(0x92) =>'\'',	// warning, might alter mb chars with this in it
+    //chr(0x93) =>'"',	// warning, might alter mb chars with this in it
+    //chr(0x94) =>'"',	// warning, might alter mb chars with this in it
 
     chr(0x95) =>'*',
     chr(0x96) =>'-',
-    chr(0x97) =>'--',
-    chr(0x98) =>'<sup>~</sup>',
-    chr(0x99) =>'<sup>TM</sup>',
+    chr(0x97) =>'&mdash;',
+    //chr(0x98) =>'<sup>~</sup>', // warning, might alter mb chars with this in it
+    //chr(0x99) =>'<sup>TM</sup>', // warning, might alter mb chars with this in it
 
-    chr(0x9B) =>'>',
-    chr(0x9C) =>'oe',
+    chr(0x9b) =>'>',
+    //chr(0x9c) =>'oe',	// warning, might alter mb chars with this in it
 
     /* make sure to add to strip below */
-    chr(0xA9) =>'&copy;',
-    chr(0xAE) =>'&reg;',
+    chr(0xa9) =>'&copy;',
+    chr(0xae) =>'&reg;',
 
-    chr(0xB0) =>'&deg;',
-    chr(0xB4) =>'\'',
+    chr(0xb0) =>'&deg;',
+    chr(0xb4) =>'\'',
+
+    /* expand tabs */
+    chr(0x09) =>'        ',
   );
 
-  $out = "";
-  foreach (preg_split("//u", $var) as $mbchar) {
-       if (array_key_exists($mbchar, $trans_table))
-         $out .= $trans_table[$mbchar];
-       else
-         $out .= $mbchar;
-  }
-  return $out;
+  return trans($var, $trans_table);
+}
+
+/* try to recover badly demoronized string - used in fetch_message()*/
+function utf8ize($string)
+{
+  /* Workaround for issue #38 - default mysql collation is latin1_swedish,
+     which means single byte characters, some of which are not utf8. */
+  if (is_valid_utf8($string))
+     return $string;
+
+  /* contains non-UTF8 - try to convert it */
+  return mb_convert_encoding($string, 'UTF-8', 'Windows-1252,Windows-1251,ISO-8859-1,ASCII,8bit');
 }
 
 /* For text strings */
@@ -73,8 +129,8 @@ function stripcrap($string, $tags=null)
   if(!isset($tags))
     $tags = $no_tags;
 
-  // $string = preg_replace("/&/", "&amp;", $string);
   $string = demoronize($string);
+  $string = utf8ize($string);
   $string = striptag($string, $tags);
   $string = trim($string);
 
@@ -202,7 +258,8 @@ $standard_tags = array(
   "a" => array(array("href=", true, validate_url, "target=", false, validate_target), "/a"),
   "img" => array(array("src=", true, validate_url, "border=", false, validate_number, "alt=", false, validate_null)),
   "video" => array(array("src=", true, validate_url, "controls=", false, validate_controls), "/video"),
-  "font" => array(array("color=", true, validate_null), "/font"),
+  "font" => array(array("color=", true, validate_null), "/font"),	// deprecated
+  "span" => array(array("style=", true, validate_null), "/span"),
   "b" => array(array(), "/b"),
   "strong" => array(array(), "/strong"),
   "i" => array(array(), "/i"),

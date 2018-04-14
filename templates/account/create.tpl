@@ -2,7 +2,7 @@
 
 
 <!-- BEGIN error -->
-<font color="#ff0000">{ERROR}</font><p>
+<span class="error">{ERROR}</span><p>
 <!-- END error -->
 
 <!-- BEGIN form -->

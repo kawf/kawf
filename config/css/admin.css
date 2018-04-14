@@ -1,4 +1,4 @@
-body { font-family: verdana, arial, geneva; font-size: smaller; }
+html { font-family: verdana, arial, geneva; font-size: smaller; }
 td { font-family: verdana, arial, geneva; }
 
 .smaller { font-size: 85%; }	/* mini-links */

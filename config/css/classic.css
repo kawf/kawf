@@ -1,0 +1,6 @@
+html {
+  font-family: Verdana, Arial, Geneva, sans-serif;
+  font-size: smaller;
+}
+a:link { text-decoration: underline; }
+a:visited { text-decoration: underline; }

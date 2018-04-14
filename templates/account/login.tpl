@@ -6,7 +6,7 @@
   <h2>Login</h2><p>
 
 <!-- BEGIN message -->
-<font color="#ff0000">{MESSAGE}</font><p>
+<span class="error">{MESSAGE}</span><p>
 <!-- END message -->
 
   Email: <input type="text" name="email" value="{EMAIL}" size="80" maxlength="80"><br>

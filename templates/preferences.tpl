@@ -48,6 +48,7 @@
 <input type="checkbox" name="HideSignatures"{HIDESIGNATURES}> Hide signatures when viewing messages?<br>
 <input type="checkbox" name="AutoUpdateTracking"{AUTOUPDATETRACKING}> Automatically mark tracked threads as read when reading followups? (Not fully implemented yet)<br>
 <input type="checkbox" name="OldestFirst"{OLDESTFIRST}> Show oldest replies first?<br>
+<input type="checkbox" name="RelativeTimestamps"{RELATIVETIMESTAMPS}> Show relative timestamps?<br>
 
 Timezone
 <select name="timezone">

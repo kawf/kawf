@@ -51,6 +51,7 @@ if (isset($_POST['submit'])) {
   option_changed('HideSignatures', "hiding of signatures");
   option_changed('AutoUpdateTracking', "automatic updating of tracked threads");
   option_changed('OldestFirst', "show replies oldest first");
+  option_changed('RelativeTimestamps', "show relative timestamps");
 
 /*
   if ($_REQUEST['signature'] != $user->signature)
@@ -96,6 +97,7 @@ do_option('AutoTrack');
 do_option('HideSignatures');
 do_option('AutoUpdateTracking');
 do_option('OldestFirst');
+do_option('RelativeTimestamps');
 
 if (!empty($success))
   $text = $success . "<br>\n";

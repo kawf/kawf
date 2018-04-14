@@ -1,30 +1,43 @@
-<?php
-$include_path = "..:../include:../config";
-$old_include_path = ini_get("include_path");
-if (!empty($old_include_path))
-  $include_path .= ":" . $old_include_path;
-ini_set("include_path", $include_path);
-
-require_once("setup.inc");
-require_once("util.inc");
-?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
+<!DOCTYPE HTML>
+<html lang="en">
 <head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
 <title>Forum Tips</title>
 <link rel=StyleSheet href="<?php echo css_href() ?>" type="text/css">
+<link rel=StyleSheet href="<?php echo skin_css_href() ?>" type="text/css">
 </head>
 
 <body>
 <h1>Posting Tips</h1>
 <p>To automatically track threads that you create or post to, make sure to check the "Default to track threads you create or followup to" checkbox in your <a href="/preferences.phtml?page=/tips/">preferences</a>.</p>
 
-<h2><a name="7">Inserting images, video and links</a></h2>
+<h2>Inserting images, video and links</h2>
 <h3>Images</h3>
-<p>There are two ways to add a picture to a Forum posting.  The first is to use
-the box in the posting dialogue labeled "<b>Image URL</b>".  If you put the URL
-to a picture in this box then it will appear within your post. The second way
-is to use the appropriate HTML within the body of the message itself.  This can
+<p>There are theee ways to add a picture to a Forum posting:</p>
+
+<h4>Direct URL</h4>
+<p>Use the box in the posting dialogue labeled "<b>Image URL</b>". If you put
+the URL to a picture in this box then it will appear within your post.</p>
+
+<h4>Image hosting on imgur</h4>
+<p>Use the "Browse.." button in the posting dialogue labeled "<b>Image
+Upload</b>".  You will be prompted to select a file on your local computer to
+upload. It will be posted to imgur.com, and a link will automatically be
+inserted into the <b>Image URL</b>.
+
+<p>You are responsible for making sure the image is the appropriate size. There
+are also size limitations on both this site and imgur.</p>
+
+<p>During preview, you can append imgur's
+<a href="https://api.imgur.com/models/image">"thumbnail suffix"</a> to the
+resulting image url after upload to get a different size, e.g. "l" for 640 and
+"h" for 1024.</p>
+
+<p>Note that imgur is a public image hosting service: <b>your image will be
+visible to everyone on the internet, not just on this forum.</b></p>
+
+<h4>Manually embed &lt;img&gt; tags in your post</h4>
+<p>Embed the appropriate HTML within the body of the message itself.  This can
 be useful for posting multiple pictures in the same post.  Here is the sample
 code:</p>
 <pre>
@@ -56,8 +69,8 @@ you can enter a YouTube or Vimeo link:</p>
 &lt;video src="http://www.the_location_of_your_video.com/your_video_name.WebM" controls="controls"&gt;&lt;/video&gt;
 </pre>
 
-<p><font color="red">Note that <em>only</em> Theora (ogg container), h.264 (mp4
-container), and vp8 (WebM container) are supported by HTML5!</font> To make
+<p><span style="color: red">Note that <em>only</em> Theora (ogg container), h.264 (mp4
+container), and vp8 (WebM container) are supported by HTML5!</span> To make
 matters worse, most browsers do not support all of them, and there is no format
 that all browsers support.
 Please read
@@ -82,7 +95,7 @@ away from here:</p>
 </pre>
 
 
-<h2><a name="7">Formatting messages using bold, italics, etc.</a></h2>
+<h2>Formatting messages using bold, italics, etc.</h2>
 <p>You can modify your text with various HTML tags.  Make sure you use both a starting tag and a close tag.</p>
 
 <p>
@@ -91,9 +104,9 @@ away from here:</p>
 &lt;u&gt;<u>Underline</u>&lt;/u&gt;<br>
 &lt;em&gt;<u>Emphasis</u>&lt;/em&gt;<br>
 &lt;strong&gt;<u>Strong</u>&lt;/strong&gt;<br>
-&lt;font color="red"&gt;<font color="red">Colored Text</font>&lt;/font&gt;<br>
-&lt;big&gt;<big>Larger Text</big>&lt;/big&gt;<br>
-&lt;small&gt;<small>Smaller Text</small>&lt;/small&gt;<br>
+&lt;span style="color: red;"&gt;<span style="color: red;">Colored Text</span>&lt;/span&gt;<br>
+&lt;big&gt;<span style="font-size: larger;">Larger Text</span>&lt;/big&gt;<br>
+&lt;small&gt;<span style="font-size: smaller;">Smaller Text</span>&lt;/small&gt;<br>
 &lt;sup&gt;<sup>Superscript</sup>&lt;/sup&gt;<br>
 &lt;sub&gt;<sub>Subscript</sub>&lt;/sub&gt;
 </p>

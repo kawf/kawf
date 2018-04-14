@@ -32,18 +32,6 @@ $tpl->set_block("disabled", "nonewthreads");
 $tpl->set_block("disabled", "noreplies");
 $tpl->set_block("post", "locked");
 $tpl->set_block("post", "error");
-$tpl->set_block("error", "image");
-$tpl->set_block("error", "video");
-$tpl->set_block("error", "subject_req");
-$tpl->set_block("error", "subject_change");
-$tpl->set_block("error", "subject_too_long");
-$tpl->set_block("post", "preview");
-$tpl->set_block("post", "duplicate");
-$tpl->set_block("post", "form");
-$tpl->set_block("post", "accept");
-$tpl->set_block("accept", "refresh_page");
-
-message_set_block($tpl);
 
 $errors = array(
   "image",
@@ -51,7 +39,23 @@ $errors = array(
   "subject_req",
   "subject_change",
   "subject_too_long",
+  "url_too_long",
+  "urltext_too_long",
+  "imageurl_too_long",
+  "image_upload_failed",
+  "video_too_long",
 );
+
+foreach ($errors as $e)
+  $tpl->set_block("error", $e);
+
+$tpl->set_block("post", "preview");
+$tpl->set_block("post", "duplicate");
+$tpl->set_block("post", "form");
+$tpl->set_block("post", "accept");
+$tpl->set_block("accept", "refresh_page");
+
+message_set_block($tpl);
 
 $tpl->set_var("FORUM_NAME", $forum['name']);
 $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
@@ -174,11 +178,34 @@ if (isset($_POST['postcookie'])) {
     $msg['subject'] = substr($msg['subject'], 0, 100);
   }
 
-  /* first time around, there is an imageurl set, and the user
-   did not preview, force the action to "preview" */
-  if ((!empty($msg['imageurl']) || !empty($msg['video']))
-    && !isset($imgpreview)) {
-    $preview = 1;
+  // Issue #28 - make sure we don't overflow url, urltext, imageurl, or video
+  $max_item_len = 250;
+  $items = array('url', 'urltext', 'imageurl', 'video');
+
+  foreach ($items as $item) {
+    if (strlen($msg[$item]) > $max_item_len) {
+      $error[$item . '_too_long'] = true;
+      $msg[$item] = substr($msg[$item], 0, $max_item_len);
+    }
+  }
+
+  /* if uploading an image, proxy it to the image host and replace our image url */
+  if (!isset($error) && can_upload_images() && isset($_FILES["imagefile"]) &&
+  $_FILES["imagefile"]["size"] > 0) {
+    $newimageurls = get_uploaded_image_urls($_FILES["imagefile"]["tmp_name"]);
+
+    if ($newimageurls) {
+      $msg["imageurl"] = $newimageurls[0];
+      $msg["imagedeleteurl"] = $newimageurls[1];
+    } else {
+      $error["image_upload_failed"] = true;
+    }
+  } else {
+    /* first time around, there is an imageurl set, and the user
+     did not preview, force the action to "preview" */
+    if ((!empty($msg['imageurl']) || !empty($msg['video'])) && !isset($imgpreview)) {
+      $preview = 1;
+    }
   }
 
   if ((isset($error) || isset($preview))) {

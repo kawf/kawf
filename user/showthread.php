@@ -36,12 +36,10 @@ for ($index = find_msg_index($thread['mid']); isset($indexes[$index]); $index++)
     "message, url, urltext, video, flags, name, email, views, changes " .
     "from f_messages$iid where tid = ? order by mid";
   $sth = db_query($sql, array($tid));
-  while ($message = $sth->fetch()) {
-    $message['date'] = gen_date($user, $message['unixtime']);
-    /* FIXME: translate pid -> pmid */
-    if (!isset($message['pmid']) && isset($message['pid']))
-	$message['pmid'] = $message['pid'];
-    $messages[] = $message;
+  while ($msg = $sth->fetch()) {
+    /* modifies message */
+    process_message($user, $msg);
+    $messages[] = $msg;
   }
   $sth->closeCursor();
 }

@@ -46,6 +46,21 @@ what kinds of video are supported.</i></p>
 <!-- BEGIN subject_too_long -->
 <p>Subject line too long! Truncated to 100 characters</p>
 <!-- END subject_too_long -->
+<!-- BEGIN urltext_too_long -->
+<p>URL text too long! Truncated</p>
+<!-- END urltext_too_long -->
+<!-- BEGIN url_too_long -->
+<p>URL too long! Truncated</p>
+<!-- END url_too_long -->
+<!-- BEGIN imageurl_too_long -->
+<p>Image URL too long! Truncated</p>
+<!-- END imageurl_too_long -->
+<!-- BEGIN image_upload_failed -->
+<p>Image upload failed, try reducing file size</p>
+<!-- END image_upload_failed -->
+<!-- BEGIN video_too_long -->
+<p>Video URL too long! Truncated</p>
+<!-- END video_too_long -->
 </div>
 <!-- END error -->
 <!-- BEGIN preview -->

@@ -85,7 +85,11 @@ $threadmsg = "<ul class=\"thread\">\n";
 if(isset($messages)) {
     $threadmsg .= list_thread(print_subject, $messages, $tree, reset($tree), $thread, $path);
 } else {
-    $threadmsg .= "Missing. Message does not belong to a thread.";
+    /* FIXME: Issue #24 */
+    //$threadmsg .= "Thread missing, creating new thread";
+    //$ttable = "f_threads" . $iid;
+    //$sql = "insert into $ttable ( tid, mid, tstamp, flags ) values ( ?, ?, ?, '' )";
+    //db_exec($sql, array($msg['tid'], $vmid, $msg['date']));
 }
 $threadmsg .= "</ul>\n";
 

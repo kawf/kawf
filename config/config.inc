@@ -13,6 +13,10 @@ $bounce_host = "bounce.kawf.org";
 
 $cookie_host = ".kawf.org";
 
+/* imgur client id and secret, to allow image uploading */
+$imgur_client_id = "";
+$imgur_client_secret = "";
+
 /* allow user to override default in a separate file (prevents merge problems
    when using source control */
 if (is_file(dirname(__FILE__) . "/config-local.inc") )
