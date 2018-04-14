@@ -22,6 +22,12 @@ else
   default[:kawf][:group]                            = 'ubuntu'
   default[:kawf][:sql_host]                         = 'some_database_endpoint'
 end
+# git repo settings
+# repository 'git://github.com/kawf/kawf.git'
+# revision 'master'
+default[:kawf][:repository]                         = 'git://github.com/rfackett/kawf.git'
+default[:kawf][:revision]                           = 'vagrant_chef'
+# kawf settings
 default[:kawf][:deploy_dir]                         = '/var/www/html'
 default[:kawf][:apache_user]                        = 'www-data'
 default[:kawf][:apache_group]                       = 'www-data'

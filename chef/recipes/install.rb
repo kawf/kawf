@@ -64,8 +64,8 @@ package ['php', 'libapache2-mod-php', 'php-mysql'] do
 end
 
 git '/var/www/html' do
-  repository 'git://github.com/kawf/kawf.git'
-  revision 'master'
+  repository node['kawf']['repository']
+  revision node['kawf']['revision']
   user node['kawf']['apache_user']
   group node['kawf']['apache_group']
 end
