@@ -104,17 +104,6 @@ template '/etc/apache2/apache2.conf' do
   mode 0644
 end
 
-template '/etc/apache2/sites-available/kawf.conf' do
-  source 'kawf.conf.erb'
-  owner 'root'
-  group 'root'
-  mode 0644
-end
-
-link '/etc/apache2/sites-enabled/kawf.conf' do
-  to '/etc/apache2/sites-available/kawf.conf'
-end
-
 link '/etc/apache2/sites-enabled/000-default.conf' do
   action :delete
   only_if 'test -L /etc/apache2/sites-enabled/000-default.conf'
