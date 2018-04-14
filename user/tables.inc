@@ -2,7 +2,7 @@
 
 # Update this to the proper migration when changing the schema.
 # TODO: automatically derive this from db/migrations contents.
-$SCHEMA_VERSION = "20180405135119";
+$SCHEMA_VERSION = "20180414161247";
 
 # f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
@@ -143,7 +143,7 @@ $create_users_table = "
     createdate datetime not null default CURRENT_TIMESTAMP,
     createip varchar(15),
     cookie varchar(50) not null,
-    timezone varchar(20) not null,
+    timezone varchar(20) not null default '',
     style enum('Classic','Simple','UBB') not null default 'Classic',
     preferences set('ShowOffTopic','ShowModerated','Collapsed','SecretEmail','FlatThread','SimpleHTML','AutoTrack','HideSignatures','AutoUpdateTracking','OldestFirst','SortbyActive','CollapseOffTopic','RelativeTimestamps') not null default '',
     signature text not null,
