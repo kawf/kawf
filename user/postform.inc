@@ -47,24 +47,28 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
     $tpl->set_block("enabled", "noacct");
 
     $tpl->set_block("acct", "offtopic");
+    $tpl->set_block("acct", "imageupload");
 
     if (isset($thread) && !isset($forum['option']['PostReply']) && !$user->capable($forum['fid'], 'Delete')) {
       $tpl->set_var(array(
 	"enabled" => "",
 	"locked" => "",
 	"nonewthreads" => "",
+	"imageupload" => "",
       ));
     } else if (!isset($thread) && !isset($forum['option']['PostThread']) && !$user->capable($forum['fid'], 'Delete')) {
       $tpl->set_var(array(
 	"enabled" => "",
 	"locked" => "",
 	"noreplies" => "",
+	"imageupload" => "",
       ));
     } else if (isset($thread) && isset($thread['flag']['Locked']) && !$user->capable($forum['fid'], 'Lock')) {
       $tpl->set_var(array(
 	"enabled" => "",
 	"nonewthreads" => "",
 	"noreplies" => "",
+	"imageupload" => "",
       ));
     } else if (isset($user->aid)) {
 
@@ -120,6 +124,9 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
       $tpl->set_var("USER_NAME", $user->name);
       $tpl->set_var("USER_EMAIL", $user->email);
 
+      if (!can_upload_images() || isset($msg["mid"]))
+	$tpl->set_var("imageupload", "");
+
       /***************/
       /* check boxes */
       /***************/
@@ -164,6 +171,7 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
 	"EMAILFOLLOWUP" => $email_followup?" checked":"",
 	"TRACKTHREAD" => $track_thread?" checked":"",
 	"ACTION" => $action,
+	"MAXIMAGEFILEBYTES" => max_image_upload_bytes(),
 	"noacct" => "",
 	"disabled" => "",
       ));

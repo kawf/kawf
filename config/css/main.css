@@ -1,4 +1,3 @@
-/* Font Family Imports */
 @import url(https://fonts.googleapis.com/css?family=Roboto:900,900italic,700,700italic,500,500italic,400,400italic,300,300italic,100,100italic);
 
 /*   Roboto: 100 (Thin)          */
@@ -9,23 +8,23 @@
 /*   Roboto: 900 (Black)         */
 
 /* General */
-body, html {
-  font-family: Roboto, Verdana, Arial, Geneva, sans-serif;
-  font-size: 0.96em;
+html {
   font-weight: normal; /* 400 */
   background: #fff;
   color: #242424;
 }
 
 /* Links */
-a:link { text-decoration: none; }
-a:visited { text-decoration: none; }
 a:hover { text-decoration: underline; }
 a:active { text-decoration: underline; }
 
 /* shortcuts */
 .error { color: #de2900; }
 .warning { color: green; }
+.red { color: red; }
+.green { color: green; }
+.yellow { color: yellow; }
+.blue { color: blue; }
 .left { text-align: left; }
 .center { text-align: center; }
 .right { text-align: right; }
@@ -33,20 +32,62 @@ a:active { text-decoration: underline; }
 .bottom { vertical-align: bottom; }
 
 /* misc headers/footers */
-.forumheader, .messageheader { width: 100%; border-collapse: collapse; }
+.forumbanner { width: 50%; text-align: left; }
+
+/* limit banner width to 100% */
+.forumbanner img { border: 0; max-width: 100%; height: auto; }
+
+.forumheader, .messageheader {
+  width: 100%;
+  border-spacing: 0;
+  padding-left: 0;
+  padding-bottom: 1em;
+}
+
 div.header { padding-top: 0; padding-bottom: 0.4em; }
 div.footer { padding-top: 0.4em; padding-bottom: 0; }
 
-/* little links that do stuff */
-.tools, .smaller { width: 100%; font-size: 85%; padding-bottom: 5px; color: #6e6e6e;}
-.tools { white-space: nowrap; } /* mini-links */
+.messageblock .subject { font-size: 110%; }
+input, select, .checkbox { font-size: 80%; }
+textarea { font-size: 100%; }	/* monospace is diff size? wtf? */
+
+/* always indent first one the same amount */
+ul.thread { margin-left: 1.4em; }
+
+/* Resize depending on display width */
+@media (max-width: 400px) {
+  body { font-size: 0.7em; }
+  img.gravatar { height: 2em; width: auto; }
+  .tools, .smaller, .messageinfodata { font-size: 60%; }
+  ul { margin-left: 0.7em; }
+  img.flag { width: 1.5em; height: auto; }
+  .checkbox input, .checkbox label { margin: 1px 0px 0px 0px; }
+}
+
+@media (min-width: 401px) and (max-width: 640px) {
+  body { font-size: 0.8em; }
+  img.gravatar { height: 2em; width: auto; }
+  .tools, .smaller, .messageinfodata { font-size: 70%; }
+  img.flag { width: 1.5em; height: auto; }
+  ul { margin-left: 1.0em; }
+}
+
+@media (min-width: 641px) {
+  .tools, .smaller, .messageinfodata { font-size: smaller; }
+  ul { margin-left: 1.3em; }
+}
+
+.tools, .smaller, .messageinfodata { width: 100%; color: #6e6e6e; }
+.tools { white-space: nowrap; } /* mini-links, shared by a lot of things */
+.toolsleft { text-align: left; }
+.toolsright { text-align: right; }
 div.tools { margin-left: 2px; }  /* hack to match table indent */
 
 /* post/edit informational text */
 .info {
-    text-align: center;
-    font-size: 1.4em;
-    font-weight: bold; /* 700 */
+  text-align: center;
+  font-size: 1.4em;
+  font-weight: bold; /* 700 */
 }
 
 /* thread layout */
@@ -59,13 +100,12 @@ a:hover.tt { color: #0f0; text-decoration: underline;}
 a.up { color: #004575; }
 a:hover.up { color: #004575; text-decoration: underline;}
 
-/* indent for all ul heirarchies */
-ul {margin-left: 1em; padding-left: 1em;}
+/* do all indenting via margin, not padding */
+ul,li { padding-left: 0em; }
 
 /*************************/
 /* showforum/showmessage */
 /*************************/
-
 /* normal */
 .row0 { background: #f8f8f8 }
 .row1 { background: #e8e8e8 }
@@ -95,11 +135,10 @@ ul.thread li.hidden { list-style: disc outside none; }
 
 /* subject thread listing spacing */
 ul.thread {
-    margin-top: 0.2em;
-    margin-bottom: 0.4em;
+  margin-top: 0.2em;
+  margin-bottom: 0.4em;
 }
 
-ul.thread li a { text-decoration: none; }
 ul.thread li a:hover { text-decoration: underline; }
 
 /* subject message line in thread listing */
@@ -107,6 +146,7 @@ ul.thread li em { font-weight: bold; font-style: normal; } /* unread subject */
 ul.thread li .vmid { color: #de2900; } /* currently viewed thread */
 ul.thread li .username { font-weight: 700;}
 ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
+
 
 /**************/
 /* showthread */
@@ -121,47 +161,43 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 .showthread li { list-style: none outside; }
 
 /* highlight subject */
-.showthread tr.messagesubjectrow td { background: #eeeeee; }
+.showthread .subject td { background: #eeeeee; }
 
 /* right/left padding for subject highlight for it and everything under it */
 .showthread tr td { padding-left: 6px; padding-right: 6px; }
 .showthread .messageblock div { padding-left: 6px; padding-right: 6px; }
 
 
-
 /****************/
 /* messageblock */
 /****************/
-/*
-.message {
-  font-size: 1.05em;
-  font-weight: 300;
-}
-*/
-
 .messageblock {
   margin-left: 2px; /* hack to match table indent */
   margin-bottom: 1em;
 }
 
-/* divs inside all messageblocks - leave space before/after them */
-.messageblock div { padding-top: 0.4em; padding-bottom: 0.4em; }
+/* trs inside all messageblocks - leave space before/after them */
+.messageblock tr { padding-top: 0.4em; padding-bottom: 0.4em; }
 
 /* all message subjects - big, bold, wacky color */
 .messageblock .subject {
-  font-size: 1.4em;
   font-weight: bold;
-  line-height: 0.95em;
-  padding-top: 0px;
-  padding-bottom: 5px;
+  padding-left: 0px;
+  padding-right: 0px;
+  padding-top: 4px;
+  padding-bottom: 0px;
 }
 
 /* message header/info */
-td.messageinfo {
-  width: 100%;
-  font-size: 85%;
-  padding-bottom: 10px;
+
+.messageinforow {
   color: #6e6e6e;
+  vertical-align: bottom;
+}
+
+.messageinfodata {
+  width: 100%;
+  padding-left: 0px; /* everyone is flush left */
 }
 
 /* url tag below media */
@@ -172,6 +208,7 @@ td.messageinfo {
 
 /* fit all images into the viewport */
 .message img { max-width: 100%; }
+.signature img { max-width: 100%; }
 
 /* embedded url in message */
 .message li.url { list-style: disc outside none; }
@@ -180,7 +217,8 @@ td.messageinfo {
 .message a { text-decoration: underline !important; }
 
 .signature {
-  margin-top: .4em;
+  margin-top: .5em;
+  padding-top: .5em;
   border-width: 2px 0 0 0;
   border-style: solid;
   border-color: #eeeed0;
@@ -194,9 +232,10 @@ td.messageinfo {
 
 .postform tr { background: #dfdfdf; }
 .postform th { text-align: right; padding: 0.3em; }
-.postform tr.input td { padding: 0; }
 .postform th.top { vertical-align: top; }
 .postform td { padding: 0.5em; }
+.postform td.input { padding: 0; }
+.postform td.button { padding: 1px 0px; }
 
 /***************/
 /* preferences */
@@ -213,20 +252,42 @@ table.basic { margin-left:auto; margin-right:auto; border-collapse: collapse; wi
 table.basic th, table.basic td { border: 1px solid #999; padding: 1px 10px; }
 table.basic th { background-color: #d0dce0; }
 
+
 /*********/
 /* hacks */
 /*********/
 /* IE doesn't like 100% (referenced to largest input/textara.
    Have to use fixed size */
-.postform .text { width: 600px; }
+/*.postform .text { width: 600px; }*/
+/* Screw IE. Just use suggested hack */
+.postform .text {
+  width: 99.8%;
+  min-width: 99.8%;
+  max-width: 99.8%;
+  resize: none;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+/* hack to workaround mobile chrome calculating the textarea height wrong, then
+   later growing it and overlapping the content below the textarea */
+/* .postform textarea { min-height: 400px; } */
 
 /* IE wants inline for it to pack right */
 .postform { display: inline; }
 
+/* hack to get checkbox to center with label */
+.checkbox input,
+.checkbox label {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+
 /****************/
 /* enhancements */
 /****************/
-
 .navigate select {
    background: transparent;
    width: 248px;
@@ -256,7 +317,7 @@ html.night-mode, body.night-mode { background: #1a1a1d !important; color: #888 !
 .navigate.night-mode { background: url(/pics/down_arrow_select-night.png) no-repeat right #1a1a1d !important; color: #888 !important; }
 /* simulate font-weight, which doesn't work in select */
 .navigate.night-mode select { text-shadow: 0px 0px 1px #555 !important; }
-select.night-mode { background: transparent #1a1a1d !important; color: #888 !important; }
+select.night-mode { background: #1a1a1d !important; color: #888 !important; }
 /* .thread > li > a.night-mode { color: #ccd  !important; } */
 a.night-mode { color: #999 !important; text-decoration: none !important; }
 em.night-mode a.night-mode { color: #aac !important; font-style: italic !important; }

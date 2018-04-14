@@ -5,7 +5,7 @@ function gen_nav_link($fmt, $page, $curpage)
    $url = sprintf($fmt, $page);
 
    $p = ($page == $curpage)?
-     "<font size=\"+1\"><b>$page</b></font>":$page;
+     "<span style=\"font-size: larger;\"><b>$page</b></span>":$page;
 
    return "<a href=\"$url\" title=\"Page $page\">$p</a>";
 }

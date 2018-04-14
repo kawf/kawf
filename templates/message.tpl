@@ -2,10 +2,10 @@
 {MSG_DEBUG}
 <table class="messageheader">
   <tr class="messagesubjectrow">
-    <td class="subject" colspan="2">{MSG_SUBJECT}</td>
+    <td class="subject" colspan=2>{MSG_SUBJECT}</td>
   </tr>
   <tr class="messageinforow">
-    <td class="messageinfo">
+    <td class="messageinfodata">
 <!-- BEGIN forum_mod -->
       Source: {MSG_IP} {MSG_EMAIL}
 <!-- BEGIN admin -->
@@ -28,6 +28,8 @@
 <!-- END parent -->
     </td>
     <td class="tools">
+      <div class="toolsright">
+      <img class="gravatar" src="https://www.gravatar.com/avatar/{MSG_NAMEHASH}.jpg?s=32&d=blank" alt="gravatar"><br>
 <!-- BEGIN owner -->
       <a href="/{FORUM_SHORTNAME}/edit.phtml?mid={MSG_MID}&amp;page={PAGE}">Edit</a> |
 <!-- BEGIN delete -->
@@ -46,6 +48,7 @@
 <!-- END p2freply -->
       <a href="/{FORUM_SHORTNAME}/msgs/{MSG_MID}.phtml#post">Reply</a>
 <!-- END reply -->
+      </div> <!-- class="toolsright" -->
     </td>
   </tr>
 </table>
@@ -65,4 +68,4 @@
 {MSG_CHANGES}
   </div>
 <!-- END changes -->
-</div>
+</div> <!-- messageblock -->

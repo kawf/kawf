@@ -53,19 +53,20 @@ function postmessage($user, $fid, &$msg, $request)
     /* No exception, everything is ok, post */
     $newmessage = true;
   } catch(PDODuplicateKey $e) {
-    /* fail, its a DUP! */
-    $newmessage = false;
-  }
-
-  if(!$newmessage) {
-    /* fail, its a DUP! */
-    /* get current mid */
+    /* Cookie already exists in f_dupposts. Message might be a dup */
+    /* Get mid for this cookie, if any */
     $row = db_query_first("select mid from f_dupposts where cookie = ?", array($request['postcookie']));
     $msg['mid'] = $row ? $row[0] : NULL;
 
+    /* Issue #25 - if there is no mid for this cookie, the message wasn't posted yet,
+     * so this message isn't a dup - it truly is new. Pretend nothing bad happened */
     if (!$msg['mid'])
-      throw new RuntimeException('failed to get mid for ' . $request['postcookie']);
+	$newmessage = true;
+    else
+	$newmessage = false;
+  }
 
+  if(!$newmessage) {
     /* get old message state */
     $omsg = db_query_first("select state from $mtable where mid = ?", array($msg['mid']));
 
@@ -117,13 +118,19 @@ function postmessage($user, $fid, &$msg, $request)
     /* FIXME: translate pid -> pmid */
     $sql = "insert into $mtable " .
 	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, video, state, views, changes ) "
-            . "values ( ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, 0, '' );";
+            . "values ( ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, 0, ? );";
+
+    if ($msg["imagedeleteurl"]) {
+      $msg["changes"] = "image delete url for " . $msg["imageurl"] . " = " . $msg["imagedeleteurl"];
+    } else {
+      $msg["changes"] = "";
+    }
 
     db_exec($sql, array(
       $msg['mid'], $user->aid, $msg['pmid'] ? $msg['pmid'] : 0, $msg['tid'] ? $msg['tid'] : 0, $msg['name'],
       $msg['email'], $msg['ip'], $msg['flags'], $msg['subject'],
       $msg['message'], $msg['url'], $msg['urltext'], $msg['video'],
-      $msg['state']
+      $msg['state'], $msg['changes']
     ));
 
     if (!$msg['pmid']) {

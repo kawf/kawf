@@ -109,7 +109,7 @@ while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
 $sth->closeCursor();
 
 if (!$numshown)
-  $tpl->set_var("_block", "<font size=\"+1\">No updated threads</font><br>");
+  $tpl->set_var("_block", "<span style=\"font-size: larger;\">No updated threads</span><br>");
 
 $tpl->set_var("token", $user->token());
 

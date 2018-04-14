@@ -16,12 +16,12 @@ class ForumUser {
 
   var $shortname, $password, $cookie, $gmsgfilter;
 
-  function ForumUser($aid = null, $req = true)
+  function __construct($aid = null, $req = true)
   {
     if (isset($aid)) $this->find_by_aid((int)$aid, $req);
     else $this->find_by_cookie();
   }
- 
+
   /* You shouldn't call this directly */
   function find($where, $req = true)
   {
@@ -41,9 +41,10 @@ class ForumUser {
           $this->pref[$flag] = true;
       }
 
-      if(strlen($this->timezone) && strlen($this->timezone)<6
-	&& class_exists('DateTimeZone')) {
-	$this->timezone = $tz_to_name[$this->timezone];
+      if(strlen($this->timezone) && class_exists('DateTimeZone')) {
+	/* convert 5 chars into full tz */
+        if (strlen($this->timezone)<6)
+	    $this->timezone = $tz_to_name[$this->timezone];
 
 	$zoneUser= new DateTimeZone($this->timezone);
 	$zoneLocal= new DateTimeZone(date_default_timezone_get());
@@ -249,6 +250,9 @@ class ForumUser {
   {
     if (!$this->valid())
       return false;
+
+    if ($this->admin())
+      return true;
 
     if (isset($this->capable[$fid]))
       return isset($this->capable[$fid][$type]);
@@ -467,6 +471,8 @@ class AccountUser extends ForumUser {
   /* Change the users name */
   function name($name)
   {
+    $name = utf8ize($name);
+
     /* The shortname is a simple way to make sure people don't use names */
     /*  that are too similar */
     /* FIXME: We should handle letters with accents, etc as well - */

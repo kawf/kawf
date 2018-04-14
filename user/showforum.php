@@ -120,15 +120,15 @@ if ($curpage == 1) {
 	      "<span class=\"username\">" . $gmsg['name'] . "</span>&nbsp;&nbsp;" .
 	      "<span class=\"threadinfo\"><i>" . $gmsg['date'] . "</i></span>";
 
-	  // $messages .= " - <font color=\"blue\"><a href=\"/gmessage.phtml?$gid&amp;hide=1&amp;$gpage&amp;$gtoken\" class=\"up\" title=\"hide\"><b>Hide</a> Global Message</b></a>";
+	  // $messages .= " - <span class=\"blue\"><a href=\"/gmessage.phtml?$gid&amp;hide=1&amp;$gpage&amp;$gtoken\" class=\"up\" title=\"hide\"><b>Hide</a> Global Message</b></a></span>";
 
 	  if ($user->admin()) {
 	      if ($gmsg['state']=='Active') {
 		  $state='state=Inactive'; $state_title = "Delete";$state_txt = "da";
-		  $messages .= " (<font color=\"green\"><b>Active</b></font>)";
+		  $messages .= " (<span class=\"green\"><b>Active</b></span>)";
 	      } elseif ($gmsg['state']=='Inactive'){
 		  $state='state=Active'; $state_title = "Undelete";$state_txt = "ug";
-		  $messages .= " (<font color=\"red\"><b>Deleted</b></font>)";
+		  $messages .= " (<span class=\"red\"><b>Deleted</b></span>)";
 	      }
 	      $messages .= " <a href=\"/gmessage.phtml?$gid&amp;$state&amp;$gpage&amp;$gtoken\" title=\"$state_title\">$state_txt</a>";
 	      $messages .= " <a href=\"/admin/gmessage.phtml?$gid&amp;edit\" title=\"Edit message\" target=\"_blank\">edit</a>";
@@ -325,7 +325,7 @@ if (!$tthreadsshown)
   $tpl->set_var("update_all", "");
 
 if (!$numshown)
-  $tpl->set_var($table_block, "<font size=\"+1\">No messages in this forum</font><br>");
+  $tpl->set_var($table_block, "<span style=\"font-size: larger;\">No messages in this forum</span><br>");
 
 /*
 $row = db_query_first("select count(*) from f_visits where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) <= 15 * 60 and aid != 0");

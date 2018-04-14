@@ -1,4 +1,7 @@
 <?php
+require_once('setup.inc');
+require_once("$srcroot/include/util.inc");
+
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
 function getMimeType( $filename ) {
@@ -18,35 +21,83 @@ function getMimeType( $filename ) {
     return false;
 }
 
+function readfile_header($file)
+{
+    /* not needed */
+    //header('Content-Description: File Transfer');
+    //header('Content-Disposition: attachment; filename="'.basename($file).'"');
+
+    /* TODO: compare against $_SERVER['HTTP_IF_NONE_MATCH'] */
+    //$etag = md5_file($file);
+    //header('Etag: '.$etag);
+
+    /* TODO: compare against $_SERVER['HTTP_IF_MODIFIED_SINCE'] */
+    //$mtime = filemtime($file);
+    //header('Last-Modified: '.gmdate('D, d M Y H:i:s', $mtime).' GMT');
+
+    header('Content-Length: ' . filesize($file));
+    readfile($file);
+}
+
+function read_file($file, $type=null)
+{
+    if (is_dir($file)) {
+	if (is_readable("$file/index.php")) {
+	    /* parse as php */
+	    require("$file/index.php");
+	    return;
+	}
+
+	if (is_readable("$file/index.html")) {
+	    $file = "$file/index.html";
+	    /* output directly */
+	    header("Content-Type: text/html");
+	    readfile_header($file);
+	    return;
+	}
+
+	return err_not_found();
+    }
+
+    if (!is_readable($file)) return err_not_found();
+
+    if ($type==null) {
+	$type=getMimeType($file);
+	if (!$type)
+	    return err_not_found("\"$file\": Unknown type");
+    }
+
+    header("Content-Type: $type");
+    if ($type == 'text/x-php') {
+	require($file);
+    } else {
+	readfile_header($file);
+    }
+}
+
 /* emulate RewriteRule  ^/(pics/.*|css/.*|scripts/.*|robots.txt|favicon.ico|apple-touch-icon.png)$ /$1 */
-if (preg_match('@^/(pics/.*|robots.txt|favicon.ico|apple-touch-icon.png)$@',
+if (preg_match('@^/(\.well-known/.*|pics/.*|robots\.txt|favicon\.ico|apple-touch-icon\.png)$@',
     $path, $matches)) {
-    header('Content-Type: '. getMimeType($matches[1]));
-    require $matches[1];
+    read_file($matches[1]);
     return;
 }
 
 if (preg_match('@^/(css/.*)$@', $path, $matches)) {
-    $file = $matches[1];
-    header('Content-Type: text/css');
-    require $file;
+    read_file($matches[1], 'text/css');
     return;
 }
 
 if (preg_match('@^/(scripts/.*)$@', $path, $matches)) {
-    $file = $matches[1];
-    header('Content-Type: application/javascript');
-    require $file;
+    read_file($matches[1], 'application/javascript');
     return;
 }
 
 /* emulate RewriteRule ^/(account|admin|tips)/.*$ /$1.php [L] */
 if (preg_match('@^/(account|admin|tips)/.*$@', $path, $matches)) {
-    require $matches[1] . '.php';
+    require($matches[1] . '.php');
     return;
 }
 
 /* fallthrough to main.php */
-include('setup.inc');
 include("$srcroot/user/main.php");
 ?>
