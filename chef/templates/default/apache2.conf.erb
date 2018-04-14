@@ -171,12 +171,39 @@ Include ports.conf
 	Require all granted
 </Directory>
 
-#<Directory /srv/>
-#	Options Indexes FollowSymLinks
-#	AllowOverride None
-#	Require all granted
-#</Directory>
+<Directory /var/www/html/>
+	Options Indexes FollowSymLinks
+	AllowOverride None
+	Require all granted
+</Directory>
 
+<Directory <%= node[:kawf][:docroot] %>/>
+	Options Indexes FollowSymLinks MultiViews
+	AllowOverride All
+	Require all granted
+</Directory>
+
+<VirtualHost *:80>
+  <% if node[:kawf][:server_aliases] && !node[:kawf][:server_aliases].empty? -%>
+  ServerAlias <% node[:kawf][:server_aliases].each do |a| %><%= "#{a}" %> <% end %>
+  <% end -%>
+  DocumentRoot <%= node[:kawf][:docroot] %>
+  FileETag none
+
+  <IfModule mod_rewrite.c>
+      RewriteEngine On
+      RewriteRule ^/.*        /index.php [L]
+  </IfModule>
+
+  <IfModule mod_php7.c>
+      php_flag magic_quotes_gpc Off
+      php_value post_max_size 8M
+      php_value upload_max_filesize 8M
+  </IfModule>
+
+  AddDefaultCharset ISO-8859-1
+
+</VirtualHost>
 
 
 
