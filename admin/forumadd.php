@@ -31,7 +31,7 @@ if (isset($_POST['submit'])) {
 		array($_POST['name'], $_POST['shortname'], $options));
   $fid = db_last_insert_id();
 
-  db_exec("insert into f_indexes ( fid, minmid, maxmid, mintid, maxtid, active, moderated, deleted ) values ( ?, 1, 0, 1, 0, 0, 0, 0 )", array($fid));
+  db_exec("insert into f_indexes ( fid, minmid, maxmid, mintid, maxtid, active, moderated, deleted, offtopic) values ( ?, 1, 0, 1, 0, 0, 0, 0, 0 )", array($fid));
   $iid = db_last_insert_id();
 
   db_exec("insert into f_unique ( fid, type, id ) values ( ?, 'Message', 0 )", array($fid));
