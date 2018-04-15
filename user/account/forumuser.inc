@@ -361,8 +361,8 @@ class AccountUser extends ForumUser {
 
     $cookie = md5("cookie" . $this->email . microtime());
 
-    $sql = "insert into u_users (name,shortname,email,password,status,cookie,createdate,createip) " .
-           "values ( ?, ?, ?, ?, 'Create', ?, NOW(), ? )";
+    $sql = "insert into u_users (name,shortname,email,password,status,cookie,createdate,createip,signature) " .
+           "values ( ?, ?, ?, ?, 'Create', ?, NOW(), ?, '' )";
     try {
       db_exec($sql, array($this->name, $this->shortname, $this->email, $this->password, $cookie, $this->createip));
     } catch(PDODuplicateKey $e) {
