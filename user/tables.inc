@@ -63,7 +63,7 @@ $create_forums_table = "
 $create_index_table = "
   create table if not exists f_indexes (
     iid int not null auto_increment,
-    fid int not null, 
+    fid int not null,
     minmid int not null,
     maxmid int not null,
     mintid int not null,
