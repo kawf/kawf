@@ -83,7 +83,7 @@ list($messages, $tree, $path) = get_thread_messages($thread, $vmid);
 
 $threadmsg = "<ul class=\"thread\">\n";
 if(isset($messages)) {
-    $threadmsg .= list_thread(print_subject, $messages, $tree, reset($tree), $thread, $path);
+    $threadmsg .= list_thread('print_subject', $messages, $tree, reset($tree), $thread, $path);
 } else {
     /* FIXME: Issue #24 */
     //$threadmsg .= "Thread missing, creating new thread";
