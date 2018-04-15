@@ -2,7 +2,7 @@
 
 # Update this to the proper migration when changing the schema.
 # TODO: automatically derive this from db/migrations contents.
-$SCHEMA_VERSION = "20180414161247";
+$SCHEMA_VERSION = "20180415000056";
 
 # f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
@@ -17,7 +17,7 @@ $create_message_table = "
     name varchar(50) not null,
     email varchar(50) not null,
     date datetime not null default CURRENT_TIMESTAMP,
-    ip varchar(15) not null default '0.0.0.0',
+    ip varchar(47) not null default '0.0.0.0',
     subject text not null,
     message text not null,
     url varchar(250) not null,
@@ -141,14 +141,14 @@ $create_users_table = "
     password varchar(100) not null,
     status enum('Create','Active','Suspended') not null default 'Create',
     createdate datetime not null default CURRENT_TIMESTAMP,
-    createip varchar(15),
+    createip varchar(47),
     cookie varchar(50) not null,
     timezone varchar(20) not null default '',
     style enum('Classic','Simple','UBB') not null default 'Classic',
     preferences set('ShowOffTopic','ShowModerated','Collapsed','SecretEmail','FlatThread','SimpleHTML','AutoTrack','HideSignatures','AutoUpdateTracking','OldestFirst','SortbyActive','CollapseOffTopic','RelativeTimestamps') not null default '',
     signature text not null,
-    threadsperpage int not null,
-    posts int not null,
+    threadsperpage int not null default '0',
+    posts int not null default '0',
     gmsgfilter bigint not null default '0',
     primary key (aid),
     unique (shortname),
