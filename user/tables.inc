@@ -83,7 +83,7 @@ $create_dupposts_table = "
     mid int not null,
     aid int not null,
     ip varchar(47) not null,
-    tstamp datetime not null,
+    tstamp datetime not null default CURRENT_TIMESTAMP,
     primary key (cookie),
     key (aid),
     key (ip)
