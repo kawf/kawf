@@ -47,7 +47,7 @@ function postmessage($user, $fid, &$msg, $request)
   /* Add it into the database */
   /* Check to make sure this isn't a duplicate */
   /* TZ: 'tstamp' is SQL server localtime */
-  $sql = "insert into f_dupposts ( cookie, fid, aid, ip, tstamp ) values (?, ?, ?, ?, NOW() )";
+  $sql = "insert into f_dupposts ( cookie, fid, aid, ip, tstamp, mid ) values (?, ?, ?, ?, NOW(), 0 )";
   try {
     db_exec($sql, array($request['postcookie'], $fid, $user->aid, $msg['ip']));
     /* No exception, everything is ok, post */
