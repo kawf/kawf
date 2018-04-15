@@ -255,11 +255,11 @@ $subject_tags = array(
 );
 
 $standard_tags = array(
-  "a" => array(array("href=", true, validate_url, "target=", false, validate_target), "/a"),
-  "img" => array(array("src=", true, validate_url, "border=", false, validate_number, "alt=", false, validate_null)),
-  "video" => array(array("src=", true, validate_url, "controls=", false, validate_controls), "/video"),
-  "font" => array(array("color=", true, validate_null), "/font"),	// deprecated
-  "span" => array(array("style=", true, validate_null), "/span"),
+  "a" => array(array("href=", true, 'validate_url', "target=", false, 'validate_target'), "/a"),
+  "img" => array(array("src=", true, 'validate_url', "border=", false, 'validate_number', "alt=", false, 'validate_null')),
+  "video" => array(array("src=", true, 'validate_url', "controls=", false, 'validate_controls'), "/video"),
+  "font" => array(array("color=", true, 'validate_null'), "/font"),	// deprecated
+  "span" => array(array("style=", true, 'validate_null'), "/span"),
   "b" => array(array(), "/b"),
   "strong" => array(array(), "/strong"),
   "i" => array(array(), "/i"),
