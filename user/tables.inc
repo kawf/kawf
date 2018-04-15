@@ -2,7 +2,7 @@
 
 # Update this to the proper migration when changing the schema.
 # TODO: automatically derive this from db/migrations contents.
-$SCHEMA_VERSION = "20180415000056";
+$SCHEMA_VERSION = "20180415011839";
 
 # f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
@@ -44,7 +44,7 @@ $create_thread_table = "
 # Unused
 $create_visits_table = "
   create table if not exists f_visits (
-    ip varchar(20) not null,
+    ip varchar(47) not null,
     aid int not null,
     tstamp timestamp,
     primary key (ip, aid)
@@ -63,7 +63,7 @@ $create_forums_table = "
 $create_index_table = "
   create table if not exists f_indexes (
     iid int not null auto_increment,
-    fid int not null, 
+    fid int not null,
     minmid int not null,
     maxmid int not null,
     mintid int not null,
@@ -82,7 +82,7 @@ $create_dupposts_table = "
     cookie varchar(40) not null,
     mid int not null,
     aid int not null,
-    ip varchar(20) not null,
+    ip varchar(47) not null,
     tstamp datetime not null,
     primary key (cookie),
     key (aid),
