@@ -94,7 +94,7 @@ function gen_thread($thread, $collapse = false)
     if ($count>1) $hidden = " class=\"hidden\"";
     $messagestr = "<li$hidden>".print_subject($thread, reset($messages), $count - 1, true)."</li>";
   } else
-    $messagestr = list_thread(print_subject, $messages, $tree, reset($tree), $thread);
+    $messagestr = list_thread('print_subject', $messages, $tree, reset($tree), $thread);
 
   if (empty($messagestr))
     return null;
