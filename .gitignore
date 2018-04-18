@@ -2,3 +2,4 @@ favicon.ico
 **/.git
 **/.vagrant
 **/custom.json
+**/Berksfile.lock
