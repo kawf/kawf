@@ -64,7 +64,7 @@ Chef uses templates to (ERB) to create files with dynamic values.  In the case o
 
 ## Supported Platforms
 
-* Ubuntu 14.04
+* Ubuntu 16.04
 
 
 ## License

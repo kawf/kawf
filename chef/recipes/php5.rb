@@ -96,7 +96,7 @@ template "#{node['kawf']['home']}/git_wrapper.sh" do
   source 'git_wrapper.sh.erb'
   owner node['kawf']['user']
   group node['kawf']['group']
-  mode 0644
+  mode 0755
 end
 
 git '/var/www/html' do

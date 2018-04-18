@@ -13,7 +13,7 @@ if (node['kawf']['vagrant'] == true) && (!Dir.exists? (node['kawf']['database_di
 
   Chef::Log.info("Get kawf database backup from S3")
   execute "pull_kawf_from_s3" do
-    command "AWS_CONFIG_FILE=/#{node['kawf']['home']}/.aws/config aws s3 cp #{node['kawf']['s3_backup']} #{node['kawf']['database_dir']} --recursive"
+    command "AWS_CONFIG_FILE=/#{node['kawf']['home']}/.aws/config aws s3 cp #{node['wayot']['s3_backup']} #{node['kawf']['database_dir']} --recursive"
     user 'root'
     action :run
   end
