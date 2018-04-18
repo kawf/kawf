@@ -12,7 +12,7 @@ GRAPH
     seven_zip (>= 0.0.0)
   git (9.0.0)
     build-essential (>= 5.0.0)
-  kawf (0.23.0)
+  kawf (0.29.0)
     apt (>= 0.0.0)
     git (>= 0.0.0)
   mingw (2.0.2)

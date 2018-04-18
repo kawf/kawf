@@ -7,7 +7,7 @@
 # All rights reserved - Do Not Redistribute
 #
 ##
-# Check to see if we are building in Vagrant, or Ubuntu
+# Check to see if we are building in Vagrant, or not
 if Dir.exists? "/vagrant"
   default[:kawf][:vagrant]                          = true
   default[:kawf][:home]                             = '/home/vagrant'
@@ -25,9 +25,14 @@ end
 # git repo settings
 # repository 'git://github.com/kawf/kawf.git'
 # revision 'master'
-default[:kawf][:repository]                         = 'git://github.com/rfackett/kawf.git'
-default[:kawf][:revision]                           = 'vagrant_chef'
+# git@bitbucket.org:kawf/wayot.git
+# master
+default[:kawf][:repository]                         = 'git@bitbucket.org:kawf/wayot.git'
+default[:kawf][:revision]                           = 'master'
+default[:kawf][:deploy_key]                         = 'wayot'
 # kawf settings
+default[:kawf][:restore]                            = true
+default[:kawf][:search]                             = false
 default[:kawf][:deploy_dir]                         = '/var/www/html'
 default[:kawf][:apache_user]                        = 'www-data'
 default[:kawf][:apache_group]                       = 'www-data'
@@ -45,8 +50,7 @@ default[:kawf][:db_user]                            = 'mysql'
 default[:kawf][:db_group]                           = 'mysql'
 default[:kawf][:database]                           = 'kawf'
 default[:kawf][:database_dir]                       = '/var/lib/mysql/kawf'
-default[:kawf][:s3_access]                          = ''
-default[:kawf][:s3_secret]                          = ''
-default[:kawf][:s3_region]                          = ''
-default[:kawf][:s3_location]                        = ''
-default[:kawf][:s3_backup]                          = ''
+default[:kawf][:s3_access]                          = 'AKIAJMWSSZXBUCDAAWTA'
+default[:kawf][:s3_secret]                          = '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'
+default[:kawf][:s3_region]                          = 'us-east-1'
+default[:kawf][:s3_backup]                          = 's3://kawf/database/'

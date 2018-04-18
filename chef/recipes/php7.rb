@@ -1,21 +1,14 @@
 #
 # Cookbook Name:: kawf
-# Recipe:: install
+# Recipe:: php7
 #
 # All rights reserved - Do Not Redistribute
 #
 ##
-Chef::Log.info("install security updates")
-execute "ubuntu_security_updates" do
-  command 'apt-get -s dist-upgrade | grep "^Inst" | grep -i securi | awk -F " " {\'print $2\'} | xargs apt-get install'
-  user 'root'
-  group 'root'
-  action :run
-end
 
 include_recipe 'git'
 
-Chef::Log.info("install git client for deploys")
+Chef::Log.info("install git client for kawf clone")
 git_client 'default' do
   action :install
 end
@@ -27,11 +20,6 @@ end
 
 service 'apache2' do
   action :stop
-end
-
-Chef::Log.info("install required packages")
-package ['unzip', 'curl'] do
-  action :install
 end
 
 directory '/var' do
@@ -49,6 +37,8 @@ directory '/var/www' do
 end
 
 directory '/var/www/html' do
+  owner node['kawf']['apache_user']
+  group node['kawf']['apache_group']
   recursive true
   action :delete
 end
@@ -70,13 +60,22 @@ else
   end
 end
 
-package ['php', 'libapache2-mod-php', 'php-mysql'] do
+Chef::Log.info("install required packages")
+package ['unzip', 'curl', 'php', 'libapache2-mod-php', 'php-mysql'] do
   action :install
+end
+
+template "#{node['kawf']['home']}/git_wrapper.sh" do
+  source 'git_wrapper.sh.erb'
+  owner node['kawf']['user']
+  group node['kawf']['group']
+  mode 0644
 end
 
 git '/var/www/html' do
   repository node['kawf']['repository']
   revision node['kawf']['revision']
+  ssh_wrapper "#{node['kawf']['home']}/git_wrapper.sh"
   user node['kawf']['apache_user']
   group node['kawf']['apache_group']
 end
@@ -93,6 +92,24 @@ template "#{node['kawf']['deploy_dir']}/config/setup.inc" do
   owner node['kawf']['apache_user']
   group node['kawf']['apache_group']
   mode 0644
+end
+
+if node['kawf']['search'] == true
+  cookbook_file "#{node['kawf']['home']}/search.tar.gz" do
+    source 'search.tar.gz'
+    user node['kawf']['user']
+    group node['kawf']['group']
+    mode 0755
+    action :create
+  end
+
+  execute 'extract_search_to_kawf' do
+    cwd node['kawf']['home']
+    command "tar -xvzf search.tar.gz -C #{node['kawf']['deploy_dir']}/config"
+    user node['kawf']['apache_user']
+    group node['kawf']['apache_group']
+    action :run
+  end
 end
 
 # [Date]
@@ -132,7 +149,7 @@ service 'mysql' do
 end
 
 service 'apache2' do
-  action [:enable, :start]
+  action [:start, :enable]
 end
 
 if (node['kawf']['vagrant'] == true) && (!Dir.exists? (node['kawf']['database_dir']))
@@ -161,17 +178,13 @@ if (node['kawf']['vagrant'] == true) && (!Dir.exists? (node['kawf']['database_di
     action :run
   end
 
-  execute 'php_tools_initial' do
-    cwd node['kawf']['home']
-    command "#{node['kawf']['deploy_dir']}/tools/initial.php"
-    user node['kawf']['apache_user']
-    group node['kawf']['apache_group']
-    action :run
+  if node['kawf']['restore'] == false
+    execute 'php_tools_initial' do
+      cwd node['kawf']['home']
+      command "#{node['kawf']['deploy_dir']}/tools/initial.php"
+      user node['kawf']['apache_user']
+      group node['kawf']['apache_group']
+      action :run
+    end
   end
-
-end
-
-reboot 'security_updates_reboot' do
-  action :reboot_now
-  reason 'Need to reboot after security updates.'
 end
