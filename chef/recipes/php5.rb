@@ -84,6 +84,14 @@ package ['unzip', 'curl', 'php5.6', 'libapache2-mod-php5.6', 'php5.6-mysql'] do
   action :install
 end
 
+file "#{node['kawf']['home']}/.ssh/#{node['kawf']['deploy_key']}" do
+  content node['wayot']['deploy_key']
+  sensitive true
+  owner node['kawf']['user']
+  group node['kawf']['group']
+  mode 0600
+end
+
 template "#{node['kawf']['home']}/git_wrapper.sh" do
   source 'git_wrapper.sh.erb'
   owner node['kawf']['user']
