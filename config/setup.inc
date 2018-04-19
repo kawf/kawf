@@ -63,7 +63,7 @@ $enable_global_messages = true;
 $default_page = "/directory.phtml";
 
 /* modern or classic */
-$default_skin = "classic";
+$default_skin = "modern";
 
 /* Workaround Debian bug 571762 */
 /* http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=571762 */
