@@ -1,3 +1,2 @@
 #!/bin/sh
-exec /usr/bin/ssh -o UserKnownHostsFile=/dev/null
-StrictHostKeyChecking=no -i <%= node[:kawf][:home] %>/.ssh/<%= node[:kawf][:deploy_key] %> "$@"
+exec /usr/bin/ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -i <%= node[:kawf][:home] %>/.ssh/<%= node[:kawf][:deploy_key] %> "$@"

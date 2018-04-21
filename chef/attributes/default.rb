@@ -20,32 +20,28 @@ else
   default[:kawf][:home]                             = '/home/ubuntu'
   default[:kawf][:user]                             = 'ubuntu'
   default[:kawf][:group]                            = 'ubuntu'
-  default[:kawf][:sql_host]                         = 'some_database_endpoint'
+  default[:kawf][:sql_host]                         = 'TBD'
 end
 # git repo settings
-# repository 'git://github.com/kawf/kawf.git'
-# revision 'master'
-# git@bitbucket.org:kawf/wayot.git
-# master
-default[:kawf][:repository]                         = 'git@bitbucket.org:kawf/wayot.git'
+default[:kawf][:repository]                         = 'git://github.com/kawf/kawf.git'
 default[:kawf][:revision]                           = 'master'
-default[:kawf][:deploy_key]                         = 'wayot'
+default[:kawf][:deploy_key]                         = 'TBD'
 # kawf settings
-default[:kawf][:restore]                            = true
+default[:kawf][:restore]                            = false
 default[:kawf][:search]                             = false
 default[:kawf][:deploy_dir]                         = '/var/www/html'
 default[:kawf][:apache_user]                        = 'www-data'
 default[:kawf][:apache_group]                       = 'www-data'
-default[:kawf][:contact]                            = 'info@wayot.org'
-default[:kawf][:alias]                              = 'local'
-default[:kawf][:domain]                             = 'wayot.org'
+default[:kawf][:contact]                            = 'info@TBD.TBD'
+default[:kawf][:alias]                              = 'TBD'
+default[:kawf][:domain]                             = 'TBD.TBD'
 default[:kawf][:docroot]                            = '/var/www/html/config'
 default[:kawf][:server_aliases]                     = ["#{node[:kawf][:alias]}.#{node[:kawf][:domain]}"]
 default[:kawf][:server_name]                        = "#{node[:kawf][:alias]}.#{node[:kawf][:domain]}"
-default[:kawf][:bounce_host]                        = 'bounce.kawf.org'
+default[:kawf][:bounce_host]                        = 'bounce.wayot.org'
 default[:kawf][:cookie_host]                        = ".#{node[:kawf][:domain]}"
 default[:kawf][:sql_username]                       = 'www-data'
-default[:kawf][:sql_password]                       = 'changeMe'
+default[:kawf][:sql_password]                       = 'TBD'
 default[:kawf][:db_user]                            = 'mysql'
 default[:kawf][:db_group]                           = 'mysql'
 default[:kawf][:database]                           = 'kawf'

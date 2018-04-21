@@ -3,3 +3,7 @@ favicon.ico
 **/.vagrant
 **/custom.json
 **/Berksfile.lock
+**/berks-cookbooks
+**/wayot.sql.gz
+**/wayot.sql
+**/packer.json

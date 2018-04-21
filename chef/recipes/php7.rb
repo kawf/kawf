@@ -22,23 +22,14 @@ service 'apache2' do
   action :stop
 end
 
-directory '/var' do
-  owner node['kawf']['apache_user']
-  group node['kawf']['apache_group']
-  mode 0755
-  action :create
-end
-
 directory '/var/www' do
-  owner node['kawf']['apache_user']
-  group node['kawf']['apache_group']
+  owner node['kawf']['user']
+  group node['kawf']['group']
   mode 0755
   action :create
 end
 
 directory '/var/www/html' do
-  owner node['kawf']['apache_user']
-  group node['kawf']['apache_group']
   recursive true
   action :delete
 end
@@ -70,7 +61,7 @@ file "#{node['kawf']['home']}/.ssh/#{node['kawf']['deploy_key']}" do
   sensitive true
   owner node['kawf']['user']
   group node['kawf']['group']
-  mode 0600
+  mode 0400
 end
 
 template "#{node['kawf']['home']}/git_wrapper.sh" do
@@ -84,8 +75,15 @@ git '/var/www/html' do
   repository node['kawf']['repository']
   revision node['kawf']['revision']
   ssh_wrapper "#{node['kawf']['home']}/git_wrapper.sh"
-  user node['kawf']['apache_user']
-  group node['kawf']['apache_group']
+  user node['kawf']['user']
+  group node['kawf']['group']
+end
+
+execute "chown_apache_docroot" do
+  command "chown -R #{node['kawf']['apache_user']}:#{node['kawf']['apache_group']} /var/www"
+  user 'root'
+  group 'root'
+  action :run
 end
 
 template "#{node['kawf']['deploy_dir']}/config/config.inc" do
@@ -152,15 +150,16 @@ execute "enable_mod_rewrite" do
   action :run
 end
 
-service 'mysql' do
-  action [:start, :enable]
-end
-
 service 'apache2' do
   action [:start, :enable]
 end
 
 if (node['kawf']['vagrant'] == true) && (!Dir.exists? (node['kawf']['database_dir']))
+
+  service 'mysql' do
+    action [:start, :enable]
+  end
+
   # configure local database
   execute 'create_kawf_user' do
     cwd node['kawf']['home']

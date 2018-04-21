@@ -89,7 +89,7 @@ file "#{node['kawf']['home']}/.ssh/#{node['kawf']['deploy_key']}" do
   sensitive true
   owner node['kawf']['user']
   group node['kawf']['group']
-  mode 0600
+  mode 0400
 end
 
 template "#{node['kawf']['home']}/git_wrapper.sh" do
@@ -103,8 +103,15 @@ git '/var/www/html' do
   repository node['kawf']['repository']
   revision node['kawf']['revision']
   ssh_wrapper "#{node['kawf']['home']}/git_wrapper.sh"
-  user node['kawf']['apache_user']
-  group node['kawf']['apache_group']
+  user node['kawf']['user']
+  group node['kawf']['group']
+end
+
+execute "chown_git_repo" do
+  command "chown -R #{node['kawf']['apache_user']}:#{node['kawf']['apache_group']} #{node['kawf']['deploy_dir']}"
+  user 'root'
+  group 'root'
+  action :run
 end
 
 template "#{node['kawf']['deploy_dir']}/config/config.inc" do
@@ -146,7 +153,7 @@ end
 # modify /etc/php.ini to uncomment the last line
 ruby_block 'php_fix_date_timezone' do
   block do
-    file = Chef::Util::FileEdit.new("/etc/php/7.0/apache2/php.ini")
+    file = Chef::Util::FileEdit.new("/etc/php/5.6/apache2/php.ini")
     file.search_file_replace_line("/;date.timezone =/", "date.timezone = \"UTC\"")
     file.write_file
   end
@@ -171,15 +178,16 @@ execute "enable_mod_rewrite" do
   action :run
 end
 
-service 'mysql' do
-  action [:start, :enable]
-end
-
 service 'apache2' do
   action [:start, :enable]
 end
 
 if (node['kawf']['vagrant'] == true) && (!Dir.exists? (node['kawf']['database_dir']))
+
+  service 'mysql' do
+    action [:start, :enable]
+  end
+
   # configure local database
   execute 'create_kawf_user' do
     cwd node['kawf']['home']

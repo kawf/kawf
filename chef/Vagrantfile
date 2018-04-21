@@ -32,7 +32,7 @@ Vagrant.configure(VAGRANTFILE_dev_VERSION) do |config|
     dev.berkshelf.enabled = true
     dev.vm.provision :chef_solo do |chef|
       chef.json = @custom_json
-      chef.run_list = ["recipe[apt::default]","recipe[kawf::security_updates]","recipe[kawf::php7]","recipe[kawf::aws]","recipe[kawf::restore]","recipe[kawf::reboot]"]
+      chef.run_list = ["recipe[apt::default]","recipe[kawf::security_updates]","recipe[kawf::php7]","recipe[kawf::reboot]"]
     end
   end
 
