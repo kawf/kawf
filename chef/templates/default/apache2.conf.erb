@@ -189,11 +189,22 @@ Include ports.conf
       Require all granted
   </Directory>
 
+  <Directory <%= node[:kawf][:docroot] %>/search>
+      SetEnv search
+  </Directory>
+
   FileETag none
 
   <IfModule mod_rewrite.c>
       RewriteEngine On
-      RewriteRule ^/.*        /index.php [L]
+      # todo: move to index.php
+      RewriteRule ^/(search/.*)$	/$1 [L]
+      RewriteRule ^/.*		/index.php [L]
+  </IfModule>
+
+  <IfModule mod_php5.c>
+      php_value post_max_size 8M
+      php_value upload_max_filesize 8M
   </IfModule>
 
   <IfModule mod_php7.c>
@@ -238,6 +249,8 @@ LogFormat "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" combine
 LogFormat "%h %l %u %t \"%r\" %>s %O" common
 LogFormat "%{Referer}i -> %U" referer
 LogFormat "%{User-agent}i" agent
+CustomLog /var/log/apache2/search.log search env=search
+LogFormat "%h %l %u %t \"%r\" %>s %b aid:%{aid}n" search
 
 # Include of directories ignores editors' and dpkg's backup files,
 # see README.Debian for details.
