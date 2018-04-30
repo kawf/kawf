@@ -5,8 +5,6 @@ require_once($kawf_base . "/config/config.inc");
 require_once($kawf_base . "/config/setup.inc");
 require_once($kawf_base . "/include/sql.inc");
 
-// date_default_timezone_set("America/Los_Angeles");
-
 $opts = getopt('u:nlpr:');
 if(!array_key_exists('u', $opts) or !($aid = (int)$opts['u'])) {
   echo "you must supply -u <aid>\n";

@@ -1,4 +1,8 @@
 <?php
+/* All server side dates should be UTC. date.timezone will set local time,
+ * which will break tracking and post timestamps */
+date_default_timezone_set('UTC');
+
 /* Where the kawf tree sits in the filesystem */
 $srcroot = dirname(__FILE__) . "/..";
 
@@ -64,11 +68,6 @@ $default_page = "/directory.phtml";
 
 /* modern or classic */
 $default_skin = "modern";
-
-/* Workaround Debian bug 571762 */
-/* http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=571762 */
-/* ONLY uncomment this if you know what you are doing. */
-//date_default_timezone_set(@date_default_timezone_get());
 
 /* allow user to override default in a separate file (prevents merge problems
    when using source control */
