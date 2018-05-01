@@ -2,4 +2,7 @@
 
 kawf is a web forum written in PHP.
 
-See README.install for install instructions.
+See docs/INSTALL for install instructions.
+
+If you are migrating from an older version of kawf, please read
+docs/schema-migration
