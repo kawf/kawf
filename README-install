@@ -1,7 +1,8 @@
 Quick setup guide:
 ------------------
-* Make sure php-mysql and apg are installed
-  - "apt-get install php-mysql apg"
+* Make sure php-mysql php-curl are installed (and that they are for the version
+  of php that you are running!)
+  - "apt-get install php-mysql php-curl"
 
 * Unpack kawf into a known location (e.g. /var/www/kawf) that is accessible by
   apache
@@ -40,6 +41,7 @@ Quick setup guide:
   2) Create the database (e.g. "kawf").
   3) Give the user above complete access to that database (including host
     information!).
+  You may need to install "apg" for the password generator to work
 
 * Edit tools/initial.php
   - make sure $include_path contains the location of your config.inc
