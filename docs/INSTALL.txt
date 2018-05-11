@@ -1,8 +1,11 @@
 Quick setup guide:
 ------------------
-* Make sure php-mysql php-curl are installed (and that they are for the version
+* Make sure php-mysql, php-curl, and php-mbstring are installed (and that they are for the version
   of php that you are running!)
-  - "apt-get install php-mysql php-curl"
+  - "apt-get install php-mysql php-curl php-mbstring"
+    or
+  - "apt-get install phpX.X-mysql phpX.X-curl phpX.X-mbstring"
+    where X.X is the version of php that your webserver is using
 
 * Unpack kawf into a known location (e.g. /var/www/kawf) that is accessible by
   apache
