@@ -10,6 +10,8 @@ $server_port=$_SERVER['SERVER_PORT'];
 $remote_addr=$_SERVER['REMOTE_ADDR'];
 
 $http_host=$_SERVER['HTTP_HOST'];
+$request_uri=$_SERVER['REQUEST_URI'];
+$request_path=(parse_url($request_uri))['path'];
 $script_name=$_SERVER['SCRIPT_NAME'];
 $path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
 
@@ -35,13 +37,17 @@ function full_url( $s, $use_forwarded_host = false )
 function dump_env()
 {
     global $server_name, $server_port, $remote_addr;
-    global $http_host, $script_name, $path_info, $query_string;
+    global $http_host;
+    global $request_uri, $request_path;
+    global $script_name, $path_info, $query_string;
 
     $ret="url = '".full_url($_SERVER)."'\n";
     $ret.="server_name = '$server_name'\n";
     $ret.="server_port = '$server_port'\n";
     $ret.="remote_addr = '$remote_addr'\n";
     $ret.="http_host = '$http_host'\n";
+    $ret.="request_uri = '$request_uri'\n";
+    $ret.="request_path = '$request_path'\n";
     $ret.="script_name = '$script_name'\n";
     $ret.="path_info = '$path_info'\n";
     $ret.="query_string = '$query_string'\n";
@@ -53,6 +59,7 @@ function err_not_found($description = "")
   global $_SERVER;
   global $template_dir, $srcroot;
   global $server_name, $server_port;
+  global $request_uri, $request_path;
   global $script_name, $path_info;
 
   Header("HTTP/1.0 404 Not found");
@@ -68,7 +75,7 @@ function err_not_found($description = "")
 
   $tpl->set_var(array(
     "DESCRIPTION" => $description . "\n". dump_env(),
-    "URL" => htmlspecialchars($script_name . $path_info, ENT_QUOTES),
+    "URI" => htmlspecialchars($request_uri, ENT_QUOTES),
     "SERVER_SOFTWARE" => $_SERVER['SERVER_SOFTWARE'],
     "SERVER_NAME" => $server_name,
     "SERVER_PORT" => $server_port,
@@ -76,6 +83,7 @@ function err_not_found($description = "")
 
   $tpl->pparse("content", "errnotfound");
 
+  //phpinfo(INFO_VARIABLES);
   exit;
 }
 
