@@ -288,7 +288,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
       Header("Location: http://$_url$script_name$path_info/");
       exit;
     } else
-      err_not_found("Unknown script " . $regs[2]);
+      err_not_found("Unknown script \"" . $regs[2] . "\" in \"$script_name.$path_info\"");
   }
 
   include_once($scripts[$regs[2]]);
@@ -307,7 +307,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
     err_not_found("Unknown forum " . $regs[1]);
 
   if (!isset($fscripts[$regs[2]]))
-    err_not_found("Unknown script " . $regs[2]);
+    err_not_found("Unknown script \"" . $regs[2] . "\" in \"$script_name.$path_info\"");
 
   include_once($fscripts[$regs[2] . ""]);
 } else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/pages\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
