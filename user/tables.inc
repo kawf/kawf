@@ -2,7 +2,7 @@
 
 # Update this to the proper migration when changing the schema.
 # TODO: automatically derive this from db/migrations contents.
-$SCHEMA_VERSION = "20180415011839";
+$SCHEMA_VERSION = "20180713130236";
 
 # f_messages* and f_threads* are create automatically when you create a form
 #    pmid int not null,
@@ -26,8 +26,11 @@ $create_message_table = "
     views int not null,
     changes text not null,
     primary key (mid),
+    fulltext (subject,message),
     index (pid),
-    index (tid)
+    index (tid),
+    index (state),
+    index (date)
   )";
 
 $create_thread_table = "
