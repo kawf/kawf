@@ -29,7 +29,7 @@ if (node['kawf']['vagrant'] == true) && (!Dir.exists? (node['kawf']['database_di
     action :start
   end
 
-  service 'apache2' do
+  service 'nginx' do
     action :reload
   end
 

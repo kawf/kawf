@@ -84,47 +84,56 @@ package ['unzip', 'curl', 'php5.6', 'libapache2-mod-php5.6', 'php5.6-mysql'] do
   action :install
 end
 
-file "#{node['kawf']['home']}/.ssh/#{node['kawf']['deploy_key']}" do
-  content node['wayot']['deploy_key']
-  sensitive true
-  owner node['kawf']['user']
-  group node['kawf']['group']
-  mode 0400
+if node['kawf']['wayot'] == true
+  file "#{node['kawf']['home']}/.ssh/#{node['kawf']['deploy_key']}" do
+    content node['wayot']['deploy_key']
+    sensitive true
+    owner node['kawf']['user']
+    group node['kawf']['group']
+    mode 0400
+  end
+
+  template "#{node['kawf']['home']}/git_wrapper.sh" do
+    source 'git_wrapper.sh.erb'
+    owner node['kawf']['user']
+    group node['kawf']['group']
+    mode 0755
+  end
+
+  git "#{node['kawf']['deploy_dir']}" do
+    repository node['kawf']['repository']
+    revision node['kawf']['revision']
+    ssh_wrapper "#{node['kawf']['home']}/git_wrapper.sh"
+    user node['kawf']['user']
+    group node['kawf']['group']
+  end
+else
+  git "#{node['kawf']['deploy_dir']}" do
+    repository node['kawf']['repository']
+    revision node['kawf']['revision']
+    user node['kawf']['user']
+    group node['kawf']['group']
+  end
 end
 
-template "#{node['kawf']['home']}/git_wrapper.sh" do
-  source 'git_wrapper.sh.erb'
-  owner node['kawf']['user']
-  group node['kawf']['group']
-  mode 0755
-end
-
-git '/var/www/html' do
-  repository node['kawf']['repository']
-  revision node['kawf']['revision']
-  ssh_wrapper "#{node['kawf']['home']}/git_wrapper.sh"
-  user node['kawf']['user']
-  group node['kawf']['group']
-end
-
-execute "chown_git_repo" do
-  command "chown -R #{node['kawf']['apache_user']}:#{node['kawf']['apache_group']} #{node['kawf']['deploy_dir']}"
+execute "chown_docroot" do
+  command "chown -R root:root /var/www"
   user 'root'
   group 'root'
   action :run
 end
 
-template "#{node['kawf']['deploy_dir']}/config/config.inc" do
+template "#{node['kawf']['deploy_dir']}/config/config-local.inc" do
   source 'config.inc.erb'
-  owner node['kawf']['apache_user']
+  owner 'root'
   group node['kawf']['apache_group']
-  mode 0644
+  mode 0640
 end
 
-template "#{node['kawf']['deploy_dir']}/config/setup.inc" do
+template "#{node['kawf']['deploy_dir']}/config/setup-local.inc" do
   source 'setup.inc.erb'
-  owner node['kawf']['apache_user']
-  group node['kawf']['apache_group']
+  owner 'root'
+  group 'root'
   mode 0644
 end
 
@@ -140,8 +149,8 @@ if node['kawf']['search'] == true
   execute 'extract_search_to_kawf' do
     cwd node['kawf']['home']
     command "tar -xvzf search.tar.gz -C #{node['kawf']['deploy_dir']}/config"
-    user node['kawf']['apache_user']
-    group node['kawf']['apache_group']
+    user 'root'
+    group 'root'
     action :run
   end
 end
@@ -159,16 +168,39 @@ ruby_block 'php_fix_date_timezone' do
   end
 end
 
-template '/etc/apache2/apache2.conf' do
-  source 'apache2.conf.erb'
-  owner 'root'
-  group 'root'
-  mode 0644
-end
-
 link '/etc/apache2/sites-enabled/000-default.conf' do
   action :delete
   only_if 'test -L /etc/apache2/sites-enabled/000-default.conf'
+end
+
+if node['kawf']['wayot'] == true
+  template '/etc/apache2/sites-available/wayot.conf' do
+    source 'wayot.conf.erb'
+    owner 'root'
+    group 'root'
+    mode 0644
+  end
+
+  execute "enable_wayot" do
+    command 'a2ensite wayot.conf'
+    user 'root'
+    group 'root'
+    action :run
+  end
+else
+  template '/etc/apache2/sites-available/kawf.conf' do
+    source 'kawf.conf.erb'
+    owner 'root'
+    group 'root'
+    mode 0644
+  end
+
+  execute "enable_kawf" do
+    command 'a2ensite kawf.conf'
+    user 'root'
+    group 'root'
+    action :run
+  end
 end
 
 execute "enable_mod_rewrite" do

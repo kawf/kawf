@@ -55,10 +55,10 @@ end
 
 execute 'set_keys_env_var_user_1' do
   user node['kawf']['user']
-  command "export AWS_ACCESS_KEY_ID=/#{node['kawf']['s3_access']} && export AWS_SECRET_ACCESS_KEY=/#{node['kawf']['s3_secret']} && export AWS_DEFAULT_REGION=/#{node['kawf']['s3_region']}"
+  command "export AWS_ACCESS_KEY_ID=/#{node['wayot']['s3_access']} && export AWS_SECRET_ACCESS_KEY=/#{node['wayot']['s3_secret']} && export AWS_DEFAULT_REGION=/#{node['wayot']['s3_region']}"
 end
 
 execute 'set_keys_env_var_user_2' do
   user node['kawf']['apache_user']
-  command "export AWS_ACCESS_KEY_ID=/#{node['kawf']['s3_access']} && export AWS_SECRET_ACCESS_KEY=/#{node['kawf']['s3_secret']} && export AWS_DEFAULT_REGION=/#{node['kawf']['s3_region']}"
+  command "export AWS_ACCESS_KEY_ID=/#{node['wayot']['s3_access']} && export AWS_SECRET_ACCESS_KEY=/#{node['wayot']['s3_secret']} && export AWS_DEFAULT_REGION=/#{node['wayot']['s3_region']}"
 end

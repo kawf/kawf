@@ -1,6 +1,6 @@
 #
 # Cookbook Name:: kawf
-# Recipe:: php7
+# Recipe:: nginxphp7
 #
 # All rights reserved - Do Not Redistribute
 #
@@ -13,12 +13,12 @@ git_client 'default' do
   action :install
 end
 
-Chef::Log.info("install apache")
-package 'apache2' do
+Chef::Log.info("install nginx")
+package 'nginx' do
   action :install
 end
 
-service 'apache2' do
+service 'nginx' do
   action :stop
 end
 
@@ -52,40 +52,36 @@ else
 end
 
 Chef::Log.info("install required packages")
-package ['unzip', 'curl', 'php', 'libapache2-mod-php', 'php-mysql'] do
+package ['unzip', 'curl', 'php-fpm', 'php-mysql'] do
   action :install
 end
 
-if node['kawf']['wayot'] == true
-  file "#{node['kawf']['home']}/.ssh/#{node['kawf']['deploy_key']}" do
-    content node['wayot']['deploy_key']
-    sensitive true
-    owner node['kawf']['user']
-    group node['kawf']['group']
-    mode 0400
-  end
+service 'php7.0-fpm' do
+  action :stop
+end
 
-  template "#{node['kawf']['home']}/git_wrapper.sh" do
-    source 'git_wrapper.sh.erb'
-    owner node['kawf']['user']
-    group node['kawf']['group']
-    mode 0755
-  end
 
-  git "#{node['kawf']['deploy_dir']}" do
-    repository node['kawf']['repository']
-    revision node['kawf']['revision']
-    ssh_wrapper "#{node['kawf']['home']}/git_wrapper.sh"
-    user node['kawf']['user']
-    group node['kawf']['group']
-  end
-else
-  git "#{node['kawf']['deploy_dir']}" do
-    repository node['kawf']['repository']
-    revision node['kawf']['revision']
-    user node['kawf']['user']
-    group node['kawf']['group']
-  end
+file "#{node['kawf']['home']}/.ssh/#{node['kawf']['deploy_key']}" do
+  content node['wayot']['deploy_key']
+  sensitive true
+  owner node['kawf']['user']
+  group node['kawf']['group']
+  mode 0400
+end
+
+template "#{node['kawf']['home']}/git_wrapper.sh" do
+  source 'git_wrapper.sh.erb'
+  owner node['kawf']['user']
+  group node['kawf']['group']
+  mode 0755
+end
+
+git "#{node['kawf']['deploy_dir']}" do
+  repository node['kawf']['repository']
+  revision node['kawf']['revision']
+  ssh_wrapper "#{node['kawf']['home']}/git_wrapper.sh"
+  user node['kawf']['user']
+  group node['kawf']['group']
 end
 
 execute "chown_docroot" do
@@ -121,7 +117,7 @@ if node['kawf']['search'] == true
   execute 'extract_search_to_kawf' do
     cwd node['kawf']['home']
     command "tar -xvzf search.tar.gz -C #{node['kawf']['deploy_dir']}/config"
-    user 'root'
+    owner 'root'
     group 'root'
     action :run
   end
@@ -134,55 +130,51 @@ end
 # modify /etc/php.ini to uncomment the last line
 ruby_block 'php_fix_date_timezone' do
   block do
-    file = Chef::Util::FileEdit.new("/etc/php/7.0/apache2/php.ini")
+    file = Chef::Util::FileEdit.new("/etc/php/7.0/fpm/php.ini")
     file.search_file_replace_line("/;date.timezone =/", "date.timezone = \"UTC\"")
     file.write_file
   end
 end
 
-link '/etc/apache2/sites-enabled/000-default.conf' do
+ruby_block 'php_fix_insecure_execution' do
+  block do
+    file = Chef::Util::FileEdit.new("/etc/php/7.0/fpm/php.ini")
+    file.search_file_replace_line("/;cgi.fix_pathinfo=1/", "cgi.fix_pathinfo=0")
+    file.write_file
+  end
+end
+
+template '/etc/nginx/sites-available/wayot' do
+  source 'wayot.nginx.erb'
+  owner 'root'
+  group 'root'
+  mode 0644
+end
+
+link '/etc/nginx/sites-enabled/default' do
   action :delete
-  only_if 'test -L /etc/apache2/sites-enabled/000-default.conf'
+  only_if 'test -L /etc/nginx/sites-enabled/default'
 end
 
-if node['kawf']['wayot'] == true
-  template '/etc/apache2/sites-available/wayot.conf' do
-    source 'wayot.conf.erb'
-    owner 'root'
-    group 'root'
-    mode 0644
-  end
-
-  execute "enable_wayot" do
-    command 'a2ensite wayot.conf'
-    user 'root'
-    group 'root'
-    action :run
-  end
-else
-  template '/etc/apache2/sites-available/kawf.conf' do
-    source 'kawf.conf.erb'
-    owner 'root'
-    group 'root'
-    mode 0644
-  end
-
-  execute "enable_kawf" do
-    command 'a2ensite kawf.conf'
-    user 'root'
-    group 'root'
-    action :run
-  end
-end
-
-execute "enable_mod_rewrite" do
-  command 'a2enmod rewrite'
+execute "enable_wayot" do
+  command 'ln -s /etc/nginx/sites-available/wayot /etc/nginx/sites-enabled/'
   user 'root'
   group 'root'
   action :run
 end
 
-service 'apache2' do
+# execute "enable_mod_rewrite" do
+#   command 'a2enmod rewrite'
+#   user 'root'
+#   group 'root'
+#   action :run
+# end
+
+service 'php7.0-fpm' do
+  action [:start, :enable]
+end
+
+service 'nginx' do
   action [:start, :enable]
 end
 
