@@ -6,4 +6,4 @@ favicon.ico
 **/.lock
 **/.ruby-version
 **/berks-cookbooks
-.DS_Store
+**/.DS_Store
