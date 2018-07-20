@@ -1,0 +1,40 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+require 'json'
+
+# Vagrantfile dev/syntax version. Don't touch unless you know what you're doing!
+VAGRANTFILE_dev_VERSION = "2"
+
+Vagrant.require_version ">= 1.5.0"
+
+@chef_ver = 13.8
+@vm_box = "bento/ubuntu-16.04"
+
+@custom_json = JSON.parse(File.read('./custom.json'))
+
+Vagrant.configure(VAGRANTFILE_dev_VERSION) do |config|
+  config.vm.network "forwarded_port", guest: 80, host: 80
+
+  config.vm.provider "virtualbox" do |vbox, override|
+    vbox.memory = 2048
+    vbox.cpus = 2
+
+    # Enable multiple guest CPUs if available
+    vbox.customize ["modifyvm", :id, "--ioapic", "on"]
+  end
+
+  config.vm.define :kawf do |dev|
+    dev.vm.hostname = "kawf"
+    dev.omnibus.chef_version = @chef_ver
+    dev.vm.box = @vm_box
+    dev.vm.network :private_network, ip: "10.111.111.111"
+    dev.berkshelf.enabled = true
+    dev.vm.provision :chef_solo do |chef|
+      chef.cookbooks_path = [ 'berks-cookbooks' ]
+      chef.json = @custom_json
+      chef.run_list = ["recipe[apt::default]","recipe[kawf::security_updates]","recipe[kawf::php7]","recipe[kawf::reboot]"]
+    end
+  end
+
+end

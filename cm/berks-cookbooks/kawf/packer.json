@@ -1,0 +1,77 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "profile": "wayot",
+    "region": "us-west-2",
+    "account_id": "099720109477",
+    "vpc_id": "vpc-e44a159d",
+    "subnet_id": "subnet-b3ed74e9",
+    "ami_type": "c5.xlarge",
+    "deploy_key": "-----BEGIN RSA PRIVATE KEY-----\nMIIEowIBAAKCAQEAu4JUfgwnWeV9rBEszHcuM/zBcsyA+HdG6HBUxO4pTt32Vdo6\notKZvYtHeULARkTiVPTRqTRwwP6gFqSpFzQ77dPkOKNjSRNOVmCVf/5ZyMfWf05i\nPRwsAn9LlRSO4FpyDg83YOYL3t4hQBzGSaMvVZWcypHQDzkrJwyb7n7reTSLEEGQ\n6wcGiHZKBFeIRoDxinzxZMjX+w7m/9d2CDJGeP07l6QJxiorfucIKzJZpUVjBpG0\nIzlf2ng1BGYFQxCUm0i2fg4V3t62CBABbdAC6OM5ZCpV9CR634hn7yTgbEQbySTR\nq+GpfY6YOovxl2w4RaPWGrbIU+4UKQZQ00OK9wIDAQABAoIBAHW9oNCFUTBhqkgh\ngL/jFmAOlmo/f7yFKUFLR+9gnQ+o0MWYArm7BE7A5mB+Sb3WA0jVcdGN3D9To7KU\nMpkfc4IjS2tFLVL1jHswqq90R2yMD2RhE87Lodbvl8ZE4nJ+WJ/7bgqqaUnIsZhQ\neTJEBbT3/Tw10y+79hzPDhr0F2hDQtua/kNGFPCiYA0MrOWCeQuxpbVQ6kySGZ58\nWACaSDTrG0yH5oSo78rlXnhsDu9rrmvRIMfijptMRrHi3JzjHBi4RfvDl+OWNciV\nnK2uhLMSFTgzODhGW+Ia820d8c2lINuxfTt2Fwl6VNUDfkHwl6XbSbUNpOCP2gCa\nmDywDgECgYEA3036dIBX0smeKHvTTTZqQumsUCV+aEb34Xo5BbQmB61lGs/EXjWe\n8zSN9qHcDtI1q2tV0YRezHDnhdWDyHyc+uWpL3xmJGrsbg5rTjUBel73LQkK5Ur4\njOE4lH2Qv8fGJAVYVEy0J1dWN/yXy1hJiPpEIaIOqodtTNsBUdIxN6sCgYEA1val\nTsqbiv6ZhSt5HuGcQ9cX/JNa9hbZeK2xm75vU2dX7Xk47sVmQ+l4Q4QYiSkXfobu\nkaTOGAEWPuu9Huqu90v9sa5i8Zt5FzYWu4/trClulaXrYajIRVTDjIaSV7ZD8vts\nYmrNcW4spDo4HEJtX+0Y8HzkEsMEmDj9RuvrPeUCgYB6DLjTbEKUJzaWkfdPwGob\n4HQZ6iRJAmEBkDgScgBHOfKE0QJXK5+Q9iyRnK4WO7ax1py1Q1A9FYi1kZnRvqpe\nR6BNIAUD6p0HGkJ0IGyKYdVffA3EfVGUTpUKNAclix81GObKTJI63nV1bE3bCopG\nn+MVLuotMo/+7cSu39+euQKBgQCAhKnEd6GS8jC6y4j4i44viROQMFE7u+F9IuuC\n39ITHUAWfFkrd91yUM1UIE/DAUxIm0da0BtfgpbYO3ywVUMSGt6sMkR5iqhU1kO1\nE5HXUlYJJk+Z7Zz+xnS7OWGZCyGIzgS4un3liScrcJtHWfemWEyGy0RYazv9/mR+\n2GGmeQKBgF2jKYW0URtVUO4hPQFTh6gH0UG1bZdB/THcMwXKpBuSXtplQttvurKL\nGRgv7ju4hhwBIRqBSukg9qO3viAWRdOxvfMLTvxXVebldvUpaubKysL+ooNW0Otp\nj+GSzILOH+FziztjqI8UX2deX+c6CtfFZVCsaf0rYQ73ZFrs6/XS\n-----END RSA PRIVATE KEY-----\n"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "run_tags": {
+      "Name": "packer builder for wayot",
+      "CostCenter": "ryan_fackett@yahoo.com",
+      "Application": "search",
+      "Environment": "wayot"
+    },
+    "run_volume_tags": {
+      "Name": "packer builder for wayot",
+      "CostCenter": "ryan_fackett@yahoo.com",
+      "Application": "search",
+      "Environment": "wayot"
+    },
+    "profile":"{{user `profile`}}",
+    "region": "{{user `region`}}",
+    "vpc_id": "{{user `vpc_id`}}",
+    "subnet_id": "{{user `subnet_id`}}",
+    "associate_public_ip_address": true,
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
+        "root-device-type": "ebs"
+      },
+      "owners": ["{{user `account_id`}}"],
+      "most_recent": true
+    },
+    "ami_block_device_mappings": [
+      {
+        "device_name": "/dev/sda1",
+        "volume_type": "gp2",
+        "delete_on_termination": true
+      }
+    ],
+    "instance_type": "{{user `ami_type`}}",
+    "ssh_username": "ubuntu",
+    "ssh_pty": true,
+    "ami_name": "wayot_{{timestamp}}",
+    "ami_description": "canonical ubuntu 16.04 wayot",
+    "tags": {
+      "Name": "packer builder for wayot",
+      "CostCenter": "ryan_fackett@yahoo.com",
+      "Application": "search",
+      "Environment": "wayot"
+    }
+  }],
+  "provisioners": [{
+    "type": "chef-solo",
+    "version": "13.8",
+    "json": {
+      "wayot" : {
+        "deploy_key" : "{{user `deploy_key`}}"
+      }
+    },
+    "cookbook_paths": [
+        "./berks-cookbooks"
+    ],
+    "run_list": [
+        "apt::default",
+        "kawf::security_updates",
+        "kawf::php7"
+    ]
+  }]
+}
