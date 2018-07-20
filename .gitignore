@@ -1,1 +1,8 @@
 favicon.ico
+**/.git
+**/.vagrant
+**/custom.json
+**/Berksfile.lock
+**/.lock
+**/.ruby-version
+**/berks-cookbooks
