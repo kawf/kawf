@@ -1,1 +1,8 @@
 favicon.ico
+**/.vagrant
+**/custom.json
+**/Berksfile.lock
+**/.lock
+**/.ruby-version
+**/berks-cookbooks
+**/.DS_Store

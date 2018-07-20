@@ -1,0 +1,72 @@
+{
+  "variables": {
+    "aws_access_key": "",
+    "aws_secret_key": "",
+    "profile": "",
+    "region": "",
+    "account_id": "",
+    "vpc_id": "",
+    "subnet_id": "",
+    "ami_type": "",
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "run_tags": {
+      "Name": "packer builder for kawf",
+      "CostCenter": "ryan_fackett@yahoo.com",
+      "Application": "kawf",
+      "Environment": "kawf"
+    },
+    "run_volume_tags": {
+      "Name": "packer builder for kawf",
+      "CostCenter": "ryan_fackett@yahoo.com",
+      "Application": "kawf",
+      "Environment": "kawf"
+    },
+    "profile":"{{user `profile`}}",
+    "region": "{{user `region`}}",
+    "vpc_id": "{{user `vpc_id`}}",
+    "subnet_id": "{{user `subnet_id`}}",
+    "associate_public_ip_address": true,
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
+        "root-device-type": "ebs"
+      },
+      "owners": ["{{user `account_id`}}"],
+      "most_recent": true
+    },
+    "ami_block_device_mappings": [
+      {
+        "device_name": "/dev/sda1",
+        "volume_type": "gp2",
+        "delete_on_termination": true
+      }
+    ],
+    "instance_type": "{{user `ami_type`}}",
+    "ssh_username": "ubuntu",
+    "ssh_pty": true,
+    "ami_name": "kawf_{{timestamp}}",
+    "ami_description": "canonical ubuntu 16.04 kawf",
+    "tags": {
+      "Name": "packer builder for kawf",
+      "CostCenter": "ryan_fackett@yahoo.com",
+      "Application": "kawf",
+      "Environment": "kawf"
+    }
+  }],
+  "provisioners": [{
+    "type": "chef-solo",
+    "version": "13.8",
+    "json": {},
+    "cookbook_paths": [
+        "./berks-cookbooks"
+    ],
+    "run_list": [
+        "apt::default",
+        "kawf::security_updates",
+        "kawf::php7"
+    ]
+  }]
+}
