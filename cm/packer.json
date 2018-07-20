@@ -8,21 +8,20 @@
     "vpc_id": "",
     "subnet_id": "",
     "ami_type": "",
-    "deploy_key": ""
   },
   "builders": [{
     "type": "amazon-ebs",
     "run_tags": {
-      "Name": "packer builder for wayot",
+      "Name": "packer builder for kawf",
       "CostCenter": "ryan_fackett@yahoo.com",
-      "Application": "search",
-      "Environment": "wayot"
+      "Application": "kawf",
+      "Environment": "kawf"
     },
     "run_volume_tags": {
-      "Name": "packer builder for wayot",
+      "Name": "packer builder for kawf",
       "CostCenter": "ryan_fackett@yahoo.com",
-      "Application": "search",
-      "Environment": "wayot"
+      "Application": "kawf",
+      "Environment": "kawf"
     },
     "profile":"{{user `profile`}}",
     "region": "{{user `region`}}",
@@ -48,23 +47,19 @@
     "instance_type": "{{user `ami_type`}}",
     "ssh_username": "ubuntu",
     "ssh_pty": true,
-    "ami_name": "wayot_{{timestamp}}",
-    "ami_description": "canonical ubuntu 16.04 wayot",
+    "ami_name": "kawf_{{timestamp}}",
+    "ami_description": "canonical ubuntu 16.04 kawf",
     "tags": {
-      "Name": "packer builder for wayot",
+      "Name": "packer builder for kawf",
       "CostCenter": "ryan_fackett@yahoo.com",
-      "Application": "search",
-      "Environment": "wayot"
+      "Application": "kawf",
+      "Environment": "kawf"
     }
   }],
   "provisioners": [{
     "type": "chef-solo",
     "version": "13.8",
-    "json": {
-      "wayot" : {
-        "deploy_key" : "{{user `deploy_key`}}"
-      }
-    },
+    "json": {},
     "cookbook_paths": [
         "./berks-cookbooks"
     ],

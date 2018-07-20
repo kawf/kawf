@@ -56,36 +56,11 @@ package ['unzip', 'curl', 'php', 'libapache2-mod-php', 'php-mysql'] do
   action :install
 end
 
-if node['kawf']['wayot'] == true
-  file "#{node['kawf']['home']}/.ssh/#{node['kawf']['deploy_key']}" do
-    content node['wayot']['deploy_key']
-    sensitive true
-    owner node['kawf']['user']
-    group node['kawf']['group']
-    mode 0400
-  end
-
-  template "#{node['kawf']['home']}/git_wrapper.sh" do
-    source 'git_wrapper.sh.erb'
-    owner node['kawf']['user']
-    group node['kawf']['group']
-    mode 0755
-  end
-
-  git "#{node['kawf']['deploy_dir']}" do
-    repository node['kawf']['repository']
-    revision node['kawf']['revision']
-    ssh_wrapper "#{node['kawf']['home']}/git_wrapper.sh"
-    user node['kawf']['user']
-    group node['kawf']['group']
-  end
-else
-  git "#{node['kawf']['deploy_dir']}" do
-    repository node['kawf']['repository']
-    revision node['kawf']['revision']
-    user node['kawf']['user']
-    group node['kawf']['group']
-  end
+git "#{node['kawf']['deploy_dir']}" do
+  repository node['kawf']['repository']
+  revision node['kawf']['revision']
+  user node['kawf']['user']
+  group node['kawf']['group']
 end
 
 execute "chown_docroot" do
@@ -109,24 +84,6 @@ template "#{node['kawf']['deploy_dir']}/config/setup-local.inc" do
   mode 0644
 end
 
-if node['kawf']['search'] == true
-  cookbook_file "#{node['kawf']['home']}/search.tar.gz" do
-    source 'search.tar.gz'
-    user node['kawf']['user']
-    group node['kawf']['group']
-    mode 0755
-    action :create
-  end
-
-  execute 'extract_search_to_kawf' do
-    cwd node['kawf']['home']
-    command "tar -xvzf search.tar.gz -C #{node['kawf']['deploy_dir']}/config"
-    user 'root'
-    group 'root'
-    action :run
-  end
-end
-
 # [Date]
 # ; Defines the default timezone used by the date functions
 # ; http://www.php.net/manual/en/datetime.configuration.php#ini.date.timezone
@@ -145,34 +102,18 @@ link '/etc/apache2/sites-enabled/000-default.conf' do
   only_if 'test -L /etc/apache2/sites-enabled/000-default.conf'
 end
 
-if node['kawf']['wayot'] == true
-  template '/etc/apache2/sites-available/wayot.conf' do
-    source 'wayot.conf.erb'
-    owner 'root'
-    group 'root'
-    mode 0644
-  end
+template '/etc/apache2/sites-available/kawf.conf' do
+  source 'kawf.conf.erb'
+  owner 'root'
+  group 'root'
+  mode 0644
+end
 
-  execute "enable_wayot" do
-    command 'a2ensite wayot.conf'
-    user 'root'
-    group 'root'
-    action :run
-  end
-else
-  template '/etc/apache2/sites-available/kawf.conf' do
-    source 'kawf.conf.erb'
-    owner 'root'
-    group 'root'
-    mode 0644
-  end
-
-  execute "enable_kawf" do
-    command 'a2ensite kawf.conf'
-    user 'root'
-    group 'root'
-    action :run
-  end
+execute "enable_kawf" do
+  command 'a2ensite kawf.conf'
+  user 'root'
+  group 'root'
+  action :run
 end
 
 execute "enable_mod_rewrite" do
@@ -217,13 +158,11 @@ if (node['kawf']['vagrant'] == true) && (!Dir.exists? (node['kawf']['database_di
     action :run
   end
 
-  if node['kawf']['restore'] == false
-    execute 'php_tools_initial' do
-      cwd node['kawf']['home']
-      command "#{node['kawf']['deploy_dir']}/tools/initial.php"
-      user node['kawf']['apache_user']
-      group node['kawf']['apache_group']
-      action :run
-    end
+  execute 'php_tools_initial' do
+    cwd node['kawf']['home']
+    command "#{node['kawf']['deploy_dir']}/tools/initial.php"
+    user node['kawf']['apache_user']
+    group node['kawf']['apache_group']
+    action :run
   end
 end

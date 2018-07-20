@@ -5,26 +5,10 @@ require 'json'
 
 # Vagrantfile dev/syntax version. Don't touch unless you know what you're doing!
 VAGRANTFILE_dev_VERSION = "2"
-
 Vagrant.require_version ">= 1.5.0"
 
 @chef_ver = 13.8
 @vm_box = "bento/ubuntu-16.04"
-
-# if you are building wayot, you will need a custom json file to set: wayot:deploy_key
-# if you are restoring from wayot backup, you also need: wayot:s3_access, wayot:s3_secret, wayot:s3_region, wayot:s3_backup
-# e.g. custom.json
-# {
-#   "wayot" : {
-#     "deploy_key" : "",
-#     "s3_access" : "",
-#     "s3_secret" : "",
-#     "s3_region" : ",
-#     "s3_backup" : ""
-#   }
-# }
-
-@custom_json = JSON.parse(File.read('./custom.json'))
 
 Vagrant.configure(VAGRANTFILE_dev_VERSION) do |config|
   config.vm.network "forwarded_port", guest: 80, host: 80
@@ -43,12 +27,10 @@ Vagrant.configure(VAGRANTFILE_dev_VERSION) do |config|
     dev.berkshelf.enabled = true
     dev.vm.provision :chef_solo do |chef|
       chef.cookbooks_path = [ 'berks-cookbooks' ]
-      chef.json = @custom_json
       # run list for PHP7 on Apache on Ubuntu
       chef.run_list = ["recipe[apt::default]","recipe[kawf::security_updates]","recipe[kawf::php7]","recipe[kawf::reboot]"]
-      # run list for PHP7 on Nginx on Ubuntu - DOES NOT WORK!
-      # chef.run_list = ["recipe[apt::default]","recipe[kawf::security_updates]","recipe[kawf::nginxphp7]","recipe[kawf::aws]","recipe[kawf::restore]","recipe[kawf::reboot]"]
+      # run list for PHP5 on Apache on Ubuntu
+      # chef.run_list = ["recipe[apt::default]","recipe[kawf::security_updates]","recipe[kawf::php5]","recipe[kawf::reboot]"]
     end
   end
-
 end

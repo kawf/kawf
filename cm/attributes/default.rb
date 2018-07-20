@@ -23,25 +23,20 @@ else
   default[:kawf][:user]                             = 'ubuntu'
   default[:kawf][:group]                            = 'ubuntu'
   default[:kawf][:sql_host]                         = ''
-  default[:kawf][:alias]                            = 'search'
+  default[:kawf][:alias]                            = 'www'
 end
 
 # kawf settings
-default[:kawf][:search]                             = false
-default[:kawf][:wayot]                              = false
-default[:kawf][:restore]                            = false
 default[:kawf][:deploy_dir]                         = '/var/www/kawf'
 default[:kawf][:apache_user]                        = 'www-data'
 default[:kawf][:apache_group]                       = 'www-data'
-default[:kawf][:contact]                            = 'info@wayot.org'
-default[:kawf][:domain]                             = 'wayot.org'
+default[:kawf][:domain]                             = 'kawf.org'
+default[:kawf][:contact]                            = "info@#{node[:kawf][:domain]}"
 default[:kawf][:docroot]                            = "#{node[:kawf][:deploy_dir]}/config"
 default[:kawf][:server_aliases]                     = ["#{node[:kawf][:alias]}.#{node[:kawf][:domain]}"]
 default[:kawf][:server_name]                        = "#{node[:kawf][:alias]}.#{node[:kawf][:domain]}"
 default[:kawf][:bounce_host]                        = "bounce.#{node[:kawf][:domain]}"
 default[:kawf][:cookie_host]                        = ".#{node[:kawf][:domain]}"
-default[:kawf][:imgur_client_id]                    = ''
-default[:kawf][:imgur_client_secret]                = ''
 default[:kawf][:sql_username]                       = ''
 default[:kawf][:sql_password]                       = ''
 default[:kawf][:db_user]                            = 'mysql'
@@ -49,11 +44,5 @@ default[:kawf][:db_group]                           = 'mysql'
 default[:kawf][:database]                           = 'kawf'
 
 # git repo settings
-if node[:kawf][:wayot]
-  default[:kawf][:repository]                         = 'git@bitbucket.org:kawf/wayot.git'
-  default[:kawf][:revision]                           = 'master'
-  default[:kawf][:deploy_key]                         = 'wayot'
-else
-  default[:kawf][:repository]                         = 'git://github.com/kawf/kawf.git'
-  default[:kawf][:revision]                           = 'master'
-end
+default[:kawf][:repository]                         = 'git://github.com/kawf/kawf.git'
+default[:kawf][:revision]                           = 'master'
