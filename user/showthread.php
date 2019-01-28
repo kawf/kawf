@@ -97,7 +97,7 @@ function print_message($thread, $msg)
   return $mtpl->get_var("MESSAGE");
 }
 
-$messagestr = list_thread(print_message, $messages, $tree, reset($tree), $thread);
+$messagestr = list_thread('print_message', $messages, $tree, reset($tree), $thread);
 
 $tpl->set_var("MESSAGES", $messagestr);
 
