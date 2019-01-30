@@ -82,8 +82,9 @@ if (!$threadsperpage)
 /* Figure out how many total threads the user can see */
 $numthreads = 0;
 
-reset($indexes);
-while (list($key) = each($indexes))
+//reset($indexes);
+//while (list($key) = each($indexes))
+foreach(array_keys($indexes) as $key)
   $numthreads += threads($key);
 
 $numpages = ceil($numthreads / $threadsperpage);

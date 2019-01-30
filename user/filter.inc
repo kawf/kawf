@@ -48,9 +48,9 @@ function filter_messages(&$messages, $tree, $siblings, $path = array())
     return $messages;
   }
 
-  next($siblings);
-
-  while (list(, $s) = each($siblings)) {
+  //next($siblings);
+  //while (list(, $s) = each($siblings)) {
+  while ($s = next($siblings)) {
     filter_messages($messages, $tree, $tree[$messages[$s]['mid']], $path);
   }
 }

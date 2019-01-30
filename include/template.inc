@@ -84,8 +84,9 @@ class Template {
       }
       $this->file[$handle] = $this->filename($filename);
     } else {
-      reset($handle);
-      while(list($h, $f) = each($handle)) {
+      //reset($handle);
+      //while(list($h, $f) = each($handle)) {
+      foreach($handle as $h => $f) {
         $this->file[$h] = $this->filename($f);
       }
     }
@@ -125,8 +126,9 @@ class Template {
         $this->varkeys[$varname] = "/".$this->varname($varname)."/";
         $this->varvals[$varname] = $value;
     } else {
-      reset($varname);
-      while(list($k, $v) = each($varname)) {
+      //reset($varname);
+      //while(list($k, $v) = each($varname)) {
+      foreach($varname as $k => $v) {
         if (!empty($k))
           if ($this->debug) print "array: set *$k* to *$v*<br>\n";
           $this->varkeys[$k] = "/".$this->varname($k)."/";
@@ -141,8 +143,9 @@ class Template {
       $this->varkeys[$varname] = "/".$this->varname($varname)."/";
       $this->varvals[$varname] = preg_replace(array("/\{([A-Za-z_]+)\}/", "/\\\$/", "/\\\\/"), array("&#" . ord('{') . ";\\1}", "&#" . ord('$') . ";", "&#" . ord('\\') . ";"), $value);
     } else {
-      reset($varname);
-      while(list($k, $v) = each($varname)) {
+      //reset($varname);
+      //while(list($k, $v) = each($varname)) {
+      foreach($varname as $k => $v) {
         if (!empty($k))
           if ($this->debug) print "array: set *$k* to *$v*<br>\n";
         $this->varkeys[$k] = "/".$this->varname($k)."/";
@@ -189,8 +192,9 @@ class Template {
         $this->_set_var($target, $str);
       }
     } else {
-      reset($handle);
-      while(list($i, $h) = each($handle)) {
+      //reset($handle);
+      //while(list($i, $h) = each($handle)) {
+      foreach($handle as $h) {
         $str = $this->subst($h);
         $this->_set_var($target, $str);
       }
@@ -207,8 +211,9 @@ class Template {
   /* public: get_vars()
    */
   function get_vars() {
-    reset($this->varkeys);
-    while(list($k, $v) = each($this->varkeys)) {
+    //reset($this->varkeys);
+    //while(list($k, $v) = each($this->varkeys)) {
+    foreach(array_keys($this->varkeys) as $k) {
       $result[$k] = $this->varvals[$k];
     }
     
@@ -225,8 +230,9 @@ class Template {
     if (!is_array($varname)) {
       return $this->varvals[$varname];
     } else {
-      reset($varname);
-      while(list($k, $v) = each($varname)) {
+      //reset($varname);
+      //while(list($k, $v) = each($varname)) {
+      foreach(array_keys($varname) as $k) {
         $result[$k] = $this->varvals[$k];
       }
       
@@ -248,8 +254,9 @@ class Template {
     if (!is_array($m))
       return false;
 
-    reset($m);
-    while(list($k, $v) = each($m)) {
+    //reset($m);
+    //while(list($k, $v) = each($m)) {
+    foreach($m as $v) {
       if (!isset($this->varkeys[$v]))
         $result[$v] = $v;
     }
@@ -297,7 +304,8 @@ class Template {
    */
   function filename($filename) {
     if(is_array($filename)) {
-      while(list(,$f) = each($filename)) {
+      //while(list(,$f) = each($filename)) {
+      foreach($filename as $f) {
 	$ret=$this->filename($f);
 	if($ret) return $ret;
       }

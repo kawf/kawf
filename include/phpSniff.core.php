@@ -344,7 +344,8 @@ class phpSniff_core
 
     function _build_regex ()
     {   $browsers = '';
-        while(list($k,) = each($this->_browsers))
+        //while(list($k,) = each($this->_browsers))
+        foreach(array_keys($this->_browsers) as $k)
         {   if(!empty($browsers)) $browsers .= "|";
             $browsers .= $k;
         }
@@ -389,9 +390,11 @@ class phpSniff_core
     function _get_javascript ()
     {   $set=false;
 		// see if we have any matches
-        while(list($version,$browser) = each($this->_javascript_versions))
+        //while(list($version,$browser) = each($this->_javascript_versions))
+        foreach($this->_javascript_versions as $version => $browser)
         {   $browser = explode(',',$browser);
-            while(list(,$search) = each($browser))
+            //while(list(,$search) = each($browser))
+            foreach($browser as $search)
             {   if($this->is('b:'.$search))
                 {   $this->_insert('javascript',$version);
                     $set = true;

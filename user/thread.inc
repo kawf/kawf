@@ -29,8 +29,9 @@ function get_thread_messages($thread, $vmid = 0)
   }
 
   /* Create a tree of the messages */
-  reset($messages);
-  while (list($key, $msg) = each($messages)) {
+  //reset($messages);
+  //while (list($key, $msg) = each($messages)) {
+  foreach($messages as $key => $msg) {
     $tree[$msg['mid']][] = $key;
     $tree[$msg['pmid']][] = $key;
   }
