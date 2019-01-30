@@ -45,8 +45,9 @@ for ($index = find_msg_index($thread['mid']); isset($indexes[$index]); $index++)
 }
 
 /* Filter out moderated or deleted messages, if necessary */
-reset($messages);
-while (list($key, $message) = each($messages)) {
+//reset($messages);
+//while (list($key, $message) = each($messages)) {
+foreach($messages as $key => $message) {
   $tree[$message['mid']][] = $key;
   $tree[$message['pmid']][] = $key;
 }
