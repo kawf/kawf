@@ -415,8 +415,8 @@ function validate_tag($elements, $curpos, $allowed_tags)
     //reset($element['attr']);
     //next($element['attr']);	/* Skip the first attribute */
     //while (list($key, $val) = each($element['attr'])) {
-    /* Skip the first attribute */
-    foreach (array_slice($element['attr'], 1) as $key => $val) {
+    foreach ($element['attr'] as $key => $val) {
+      if ($key == 0) continue;    /* Skip the first attribute */
       if (substr($attr, -1) == '=') {
         /* Ignore empty attribute values */
         if (!strlen($element['val'][$key]))
