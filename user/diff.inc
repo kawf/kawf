@@ -5,6 +5,7 @@ function diff($old, $new)
     require_once("Text/Diff.php");
     require_once("Text/Diff/Engine/Native.php");
     require_once("Text/Diff/Op/Base.php");
+    require_once("Text/Diff/Op/Change.php");
     require_once("Text/Diff/Op/Copy.php");
     require_once("Text/Diff/Op/Add.php");
     require_once("Text/Diff/Renderer.php");
