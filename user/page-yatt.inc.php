@@ -3,7 +3,7 @@ require_once("lib/YATT/YATT.class.php");
 
 function generate_page($title, $contents, $skip_header=false, $meta_robots=false)
 {
-    global $template_dir, $domain;
+    global $template_dir, $domain, $Debug;
 
     $page = new YATT($template_dir, 'page.yatt');
     $page->set('domain', $domain);
@@ -23,6 +23,10 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
     }
     $page->set('title', $title);
     $page->set('contents', $contents);
+    if ($Debug) {
+	$page->set('debug_contents', "<pre>\n" . get_debug_log() . "</pre>\n");
+	$page->parse('page.debug_log');
+    }
     if (!$skip_header)
       $page->parse('page.header');
     $page->parse('page');

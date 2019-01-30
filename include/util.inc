@@ -174,4 +174,15 @@ function time_ago($since_secs)
 	return $ago . " second" . ($ago == 1 ? "" : "s") . " ago";
 }
 
+function debug_log($msg)
+{
+    global $DEBUG_LOG;
+    $DEBUG_LOG .= $msg;
+}
+
+function get_debug_log()
+{
+    global $DEBUG_LOG;
+    return $DEBUG_LOG;
+}
 ?>

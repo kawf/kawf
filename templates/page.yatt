@@ -32,6 +32,13 @@
 %include [footer.yatt]
 </div>
 
+%begin [debug_log]
+<div class="debug">
+<!-- DEBUG_LOG -->
+%[debug_contents]
+</div>
+%end [debug_log]
+
 </body>
 </html>
 %end [page]
