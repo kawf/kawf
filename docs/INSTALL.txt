@@ -54,7 +54,10 @@ Quick setup guide:
   to your /config directory.
   - symlink or move the new kawf.conf into /etc/apache2/sites-available
 
-# Enable the config
+* If you are using FPM, you will need to override upload_max_filesize in
+  /etc/php/x.x/fpm/php.ini, since with FPM, it is not controlled by apache.
+
+* Enable the config
   - "sudo a2ensite kawf.conf"
 
 * Enable mod rewrite
