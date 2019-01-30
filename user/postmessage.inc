@@ -121,7 +121,7 @@ function postmessage($user, $fid, &$msg, $request)
             . "values ( ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, 0, ? );";
 
     if ($msg["imagedeleteurl"]) {
-      $msg["changes"] = "image delete url for " . $msg["imageurl"] . " = " . $msg["imagedeleteurl"];
+      $msg["changes"] = "Image delete url for " . $msg["imageurl"] . " = " . $msg["imagedeleteurl"] . "\n";
     } else {
       $msg["changes"] = "";
     }
