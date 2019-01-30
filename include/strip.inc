@@ -403,15 +403,17 @@ function validate_tag($elements, $curpos, $allowed_tags)
   $message .= $element['attr'][0];
 
   reset($tags[0]);
-  while (list(, $attr) = each($tags[0])) {
-    list(, $required) = each($tags[0]);
-    list(, $validate_func) = each($tags[0]);
+  while ($attr = next($tags[0])) {
+    $required = next($tags[0]);
+    $validate_func = next($tags[0]);
 
     $accepted = 0;
 
-    reset($element['attr']);
-    next($element['attr']);	/* Skip the first attribute */
-    while (list($key, $val) = each($element['attr'])) {
+    //reset($element['attr']);
+    //next($element['attr']);	/* Skip the first attribute */
+    //while (list($key, $val) = each($element['attr'])) {
+    /* Skip the first attribute */
+    foreach (array_slice($element['attr'], 1) as $key => $val) {
       if (substr($attr, -1) == '=') {
         /* Ignore empty attribute values */
         if (!strlen($element['val'][$key]))
@@ -443,11 +445,12 @@ function validate_tag($elements, $curpos, $allowed_tags)
   /* Deal with XML style terminating /'s correctly */
   /* FIXME: Lame, but list(, $val) = end($element['attr']); doesn't seem */
   /*  to work */
-  $val = "";
-  reset($element['attr']);
-  next($element['attr']);	/* Skip the first attribute */
-  while (list(, $oval) = each($element['attr']))
-    $val = $oval;
+  //$val = "";
+  //reset($element['attr']);
+  //next($element['attr']);	/* Skip the first attribute */
+  //while (list(, $oval) = each($element['attr']))
+  //  $val = $oval;
+  $val = end($element['attr']);
 
   if ($val == "/" && !isset($tags[1]))
     $message .= " /";
