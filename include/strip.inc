@@ -402,8 +402,11 @@ function validate_tag($elements, $curpos, $allowed_tags)
   $message = "<";
   $message .= $element['attr'][0];
 
-  reset($tags[0]);
-  while ($attr = next($tags[0])) {
+  //reset($tags[0]);
+  //while (list(, $attr) = each($tags[0])) {
+  //  list(, $required) = each($tags[0]);
+  //  list(, $validate_func) = each($tags[0]);
+  for (reset($tags[0]); $attr = current($tags[0]); next($tags[0])) {
     $required = next($tags[0]);
     $validate_func = next($tags[0]);
 
