@@ -4,36 +4,27 @@
  *
  * This class renders the diff in classic "unified diff" format.
  *
- * $Horde: framework/Text_Diff/Diff/Renderer/unified.php,v 1.3.10.7 2009/01/06 15:23:42 jan Exp $
+ * Copyright 2004-2017 Horde LLC (http://www.horde.org/)
  *
- * Copyright 2004-2009 The Horde Project (http://www.horde.org/)
- *
- * See the enclosed file COPYING for license information (LGPL). If you did
- * not receive this file, see http://opensource.org/licenses/lgpl-license.php.
+ * See the enclosed file LICENSE for license information (LGPL). If you did
+ * not receive this file, see http://www.horde.org/licenses/lgpl21.
  *
  * @author  Ciprian Popovici
  * @package Text_Diff
  */
-
-/** Text_Diff_Renderer */
-require_once 'Text/Diff/Renderer.php';
-
-/**
- * @package Text_Diff
- */
-class Text_Diff_Renderer_unified extends Text_Diff_Renderer {
-
+class Horde_Text_Diff_Renderer_Unified extends Horde_Text_Diff_Renderer
+{
     /**
      * Number of leading context "lines" to preserve.
      */
-    var $_leading_context_lines = 4;
+    protected $_leading_context_lines = 4;
 
     /**
      * Number of trailing context "lines" to preserve.
      */
-    var $_trailing_context_lines = 4;
+    protected $_trailing_context_lines = 4;
 
-    function _blockHeader($xbeg, $xlen, $ybeg, $ylen)
+    protected function _blockHeader($xbeg, $xlen, $ybeg, $ylen)
     {
         if ($xlen != 1) {
             $xbeg .= ',' . $xlen;
@@ -44,24 +35,23 @@ class Text_Diff_Renderer_unified extends Text_Diff_Renderer {
         return "@@ -$xbeg +$ybeg @@";
     }
 
-    function _context($lines)
+    protected function _context($lines)
     {
         return $this->_lines($lines, ' ');
     }
 
-    function _added($lines)
+    protected function _added($lines)
     {
         return $this->_lines($lines, '+');
     }
 
-    function _deleted($lines)
+    protected function _deleted($lines)
     {
         return $this->_lines($lines, '-');
     }
 
-    function _changed($orig, $final)
+    protected function _changed($orig, $final)
     {
         return $this->_deleted($orig) . $this->_added($final);
     }
-
 }

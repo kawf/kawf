@@ -1,11 +1,17 @@
 <?php
 function diff($old, $new)
 {
+    /* FIXME, use Hoard autoloader */
     require_once("Text/Diff.php");
-    require_once("Text/Diff/Renderer/unified.php");
+    require_once("Text/Diff/Engine/Native.php");
+    require_once("Text/Diff/Op/Base.php");
+    require_once("Text/Diff/Op/Copy.php");
+    require_once("Text/Diff/Op/Add.php");
+    require_once("Text/Diff/Renderer.php");
+    require_once("Text/Diff/Renderer/Unified.php");
 
-    $td = new Text_Diff('auto', array($old, $new));
-    $rend = new Text_Diff_Renderer_unified();
+    $td = new Horde_Text_Diff('auto', array($old, $new));
+    $rend = new Horde_Text_Diff_Renderer_Unified();
     return $rend->render($td);
 }
 
