@@ -51,7 +51,8 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
-    while (list(,$flag) = each($flagexp))
+    //while (list(,$flag) = each($flagexp))
+    foreach($flagexp as $flag)
       $flags[$flag] = true;
   }
 
@@ -234,7 +235,8 @@ function render_message($tpl, $msg, $viewer, $owner=null)
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
-    while (list(,$flag) = each($flagexp))
+    //while (list(,$flag) = each($flagexp))
+    foreach($flagexp as $flag)
       $flags[$flag] = true;
   }
 

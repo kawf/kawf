@@ -39,7 +39,8 @@ db_exec($sql, array($mid));
 
 if (!empty($msg['flags'])) {
   $flagexp = explode(",", $msg['flags']);
-  while (list(,$flag) = each($flagexp))
+  //while (list(,$flag) = each($flagexp))
+  foreach($flagexp as $flag)
     $flags[$flag] = true;
 }
 
