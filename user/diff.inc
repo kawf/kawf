@@ -1,16 +1,15 @@
 <?php
+spl_autoload_register(function ($class_name) {
+    if (substr($class_name, 0, strlen('Horde_')) != 'Horde_')
+	return false;
+
+    $file = substr($class_name, strlen('Horde_'));
+    $file = str_replace("_", DIRECTORY_SEPARATOR, $file);
+    return include_once($file . '.php');
+});
+
 function diff($old, $new)
 {
-    /* FIXME, use Hoard autoloader */
-    require_once("Text/Diff.php");
-    require_once("Text/Diff/Engine/Native.php");
-    require_once("Text/Diff/Op/Base.php");
-    require_once("Text/Diff/Op/Change.php");
-    require_once("Text/Diff/Op/Copy.php");
-    require_once("Text/Diff/Op/Add.php");
-    require_once("Text/Diff/Renderer.php");
-    require_once("Text/Diff/Renderer/Unified.php");
-
     $td = new Horde_Text_Diff('auto', array($old, $new));
     $rend = new Horde_Text_Diff_Renderer_Unified();
     return $rend->render($td);
