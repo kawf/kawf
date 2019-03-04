@@ -99,6 +99,15 @@ Quick setup guide:
 ADVANCED TOPICS
 ---------------
 
+php-fpm:
+
+If you are using php-fpm, you will need to add an .ini file to /etc/php/x.x/fpm/conf.d/
+that contains something like
+
+upload_max_filesize = 8M
+
+since you cannot modify php parameters from apache.conf using php_value
+
 Customizing forum templates:
 * add a .tpl file of the form [shortname].tpl to templates/forum - there
   are samples in the templates/samples directory.
