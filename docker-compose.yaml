@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+   db:
+     image: mysql:5.7
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     env_file:
+       - /path/to/envvars
+
+   kawf:
+     depends_on:
+       - db
+     image: kawf:latest
+     ports:
+       - "80:80"
+     restart: always
+     env_file:
+       - /path/to/envvars
+
+volumes:
+    db_data: {}
