@@ -12,12 +12,12 @@ RUN apt-get update && apt-get install -y \
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
 # copy site and confs
-ARG BUILD_TYPE
+ARG build_type
 COPY ./ /var/www/html/
 COPY ./cm/docker/*.inc /var/www/html/config/
-COPY ./cm/docker/$BUILD_TYPE.conf /etc/apache2/sites-available
+COPY ./cm/docker/$build_type.conf /etc/apache2/sites-available
 
-RUN a2ensite $BUILD_TYPE.conf && a2enmod rewrite
+RUN a2ensite $build_type.conf && a2enmod rewrite
 RUN rm /etc/apache2/sites-enabled/000-default.conf
 
 WORKDIR /var/www/html/config
