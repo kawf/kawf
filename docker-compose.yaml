@@ -7,7 +7,7 @@ services:
        - db_data:/var/lib/mysql
      restart: always
      env_file:
-       - /path/to/envvars
+       - config/envvars
 
    kawf:
      depends_on:
@@ -17,7 +17,7 @@ services:
        - "80:80"
      restart: always
      env_file:
-       - /path/to/envvars
+       - config/envvars
 
 volumes:
     db_data: {}

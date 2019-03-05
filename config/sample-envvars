@@ -1,0 +1,13 @@
+APACHE_SERVER_NAME=kawf.org
+APACHE_DOCROOT=/var/www/html/config
+APACHE_SERVERALIAS=forums.kawf.org
+DB_HOST=db
+RO_USERNAME=""
+RO_PASSWORD=""
+MYSQL_ROOT_PASSWORD=password
+MYSQL_DATABASE=kawf
+MYSQL_USER=kawf
+MYSQL_PASSWORD=password
+BOUNCE_HOST=bounce.kawf.org
+COOKIE_HOST=.kawf.org
+DOMAIN=kawf.org
