@@ -4,10 +4,10 @@ services:
    db:
      image: mysql:5.7
      volumes:
-       - db_data:/var/lib/mysql
-     restart: always
+       - 'db_data:/var/lib/mysql'
+     restart: unless-stopped
      env_file:
-       - config/envvars
+       - 'config/envvars'
 
    kawf:
      depends_on:
@@ -15,9 +15,9 @@ services:
      image: kawf:latest
      ports:
        - "80:80"
-     restart: always
+     restart: unless-stopped
      env_file:
-       - config/envvars
+       - 'config/envvars'
 
 volumes:
     db_data: {}

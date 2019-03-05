@@ -1,0 +1,15 @@
+version: '3'
+
+services:
+   kawf-init:
+     image: kawf:latest
+     build:
+        context: .
+        args:
+          build_type: ${BUILD_TYPE}
+        dockerfile: 'docker/Dockerfile'
+     depends_on:
+       - db
+     env_file:
+       - 'config/envvars'
+     command: '/var/www/html/docker/init-db.sh'
