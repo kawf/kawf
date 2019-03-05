@@ -30,7 +30,6 @@ Install docker and if necessary (i.e. did not come with docker install) docker-c
 * run `$ docker ps` to get the ID of the kawf:latest
 * run `$ docker exec -it <CONTAINER_ID> /bin/bash` to SSH to the kawf container
 * run `$ /var/www/html/docker/kawf.sh` to setup MySQL for kawf (replaces setup-db.sh)
-* run `$ php /var/www/html/tools/initial.php` but note that this threw an error
 * from a browser, head to `http://localhost/` and follow `docs/INSTALL.txt` and skip to:
 ```
   * Try to hit "http://site/create.phtml" where "site" is the domain where "site"

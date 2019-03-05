@@ -12,6 +12,4 @@ mysql -h$DB_HOST -p$MYSQL_ROOT_PASSWORD -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO 
 mysql -h$DB_HOST -p$MYSQL_ROOT_PASSWORD -e "GRANT ALL ON ${MYSQL_DATABASE}.* TO '${MYSQL_USER}'@'%';"
 mysql -h$DB_HOST -p$MYSQL_ROOT_PASSWORD -e "FLUSH PRIVILEGES;"
 
-# error in script:
-# Base table or view already exists: 1050 Table 'acl_ips' already exists
-# php /var/www/html/tools/initial.php
+php /var/www/html/tools/initial.php

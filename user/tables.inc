@@ -246,7 +246,7 @@ $set_current_schema_version = "
 
 # ACL - IP bans.
 $create_acl_ips_table = "
-  CREATE TABLE acl_ips (
+  create table if not exists acl_ips (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     ip INT UNSIGNED NOT NULL,
     mask INT UNSIGNED NOT NULL,
@@ -258,7 +258,7 @@ $create_acl_ips_table = "
   )";
 
 $create_acl_proxy_types_table = "
-  CREATE TABLE acl_proxy_types (
+  create table if not exists acl_proxy_types (
     id INT NOT NULL,
     proxy_type VARCHAR(50) NOT NULL,
     PRIMARY KEY (id),
@@ -266,13 +266,13 @@ $create_acl_proxy_types_table = "
   )";
 
 $insert_acl_proxy_types = "
-  INSERT INTO acl_proxy_types
+  replace into acl_proxy_types
     (id, proxy_type)
   VALUES
     (1, 'TOR')";
 
 $create_acl_ban_types_table = "
-  CREATE TABLE acl_ban_types (
+  create table if not exists acl_ban_types (
     id INT NOT NULL,
     ban_type VARCHAR(50) NOT NULL,
     PRIMARY KEY (id),
@@ -280,7 +280,7 @@ $create_acl_ban_types_table = "
   )";
 
 $insert_static_ban_types = "
-  INSERT INTO acl_ban_types
+  replace into acl_ban_types
     (id, ban_type)
   VALUES
     (1, 'account_creation'),
@@ -289,7 +289,7 @@ $insert_static_ban_types = "
     (4, 'all')";
 
 $create_acl_ip_bans_table = "
-  CREATE TABLE acl_ip_bans (
+  create table if not exists acl_ip_bans (
     id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
     ip_id INT NOT NULL,
     ban_type_id INT NOT NULL,
