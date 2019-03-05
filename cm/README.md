@@ -55,13 +55,13 @@ You will need to create a hosts file entry on your development environment to ac
 
 ## Chef Attributes
 Chef uses an attributes file `./kawf/chef/attributes/default.rb` to set parameters.  These will likely remain largely unchanged, but it's worth mentioning a few:
-* sql_username - this is the username for the database connection
-* sql_password - this is the password for the username for the database connection
+* `sql_username` - this is the username for the database connection
+* `sql_password` - this is the password for the username for the database connection
 
 Issues:
 * Using special characters in the mysql user password has caused issues on build
-* Changing the database_dir attribute does not modify the MySQL installation location, this is simply to reference where MySQL installation is
-* Don't modify the deploy_dir for kawf, there are assumptions made that it will be in /var/www, though changing the deploy_dir will load kawf to a new directory (with errors to follow)
+* Changing the `database_dir` attribute does not modify the MySQL installation location, this is simply to reference where MySQL installation is
+* Don't modify the `deploy_dir` for kawf, there are assumptions made that it will be in /var/www, though changing the deploy_dir will load kawf to a new directory (with errors to follow)
 
 ## Chef Run List in Vagrant & Packer
 Vagrant and Packer are set up to use chef-solo provider.  This requires a run list, the order is important, note that on Vagrant it triggers a reboot, on Packer it does not as the image will boot on next launch.

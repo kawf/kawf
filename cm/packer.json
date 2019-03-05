@@ -7,7 +7,7 @@
     "account_id": "",
     "vpc_id": "",
     "subnet_id": "",
-    "ami_type": "",
+    "ami_type": ""
   },
   "builders": [{
     "type": "amazon-ebs",
