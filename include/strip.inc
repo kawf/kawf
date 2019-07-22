@@ -382,6 +382,7 @@ function convert_brackets($string)
   $string = preg_replace("/&amp;deg;/", "&deg;", $string);
   $string = preg_replace("/&amp;frac12;/", "&frac12;", $string);
   $string = preg_replace("/&amp;frac14;/", "&frac14;", $string);
+  $string = preg_replace("/&amp;mdash;/", "&mdash;", $string);
   $string = preg_replace("/&amp;amp;/", "&amp;", $string); // Always last
 
   return $string;
