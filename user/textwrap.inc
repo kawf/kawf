@@ -37,36 +37,36 @@ function softbreakword(&$Word, $breakStr = '<wbr>', $skiptags = 1)
 
     for($i=0;$i<$len;$i++) {
 	if($skiptags) {
-	    if($Word{$i}=='<') {
+	    if($Word[$i]=='<') {
 		$intag++;
-		$newword.=$Word{$i};
+		$newword.=$Word[$i];
 		continue;
 	    }
-	    if($Word{$i}=='>') {
+	    if($Word[$i]=='>') {
 		if($intag>0) $intag--;
-		$newword.=$Word{$i};
+		$newword.=$Word[$i];
 		continue;
 	    }
 	    if($intag) {
-		$newword.=$Word{$i};
+		$newword.=$Word[$i];
 		continue;
 	    }
-	    if($Word{$i}=='&' && !$inamp) {
+	    if($Word[$i]=='&' && !$inamp) {
 		$inamp=1;
-		$newword.=$Word{$i};
+		$newword.=$Word[$i];
 		continue;
 	    }
-	    if($Word{$i}==';' && $inamp) {
+	    if($Word[$i]==';' && $inamp) {
 		$inamp=0;
-		$newword.=$Word{$i};
+		$newword.=$Word[$i];
 		continue;
 	    }
 	    if($inamp) {
-		$newword.=$Word{$i};
+		$newword.=$Word[$i];
 		continue;
 	    }
 	}
-	$newword.=$Word{$i}.$breakStr;
+	$newword.=$Word[$i].$breakStr;
 	$correction+=strlen($breakStr);
     }
     $Word=$newword;
@@ -84,7 +84,7 @@ function softbreaklongwords($String, $Maxlen = 78, $breakStr = '<wbr>', $skiptag
     $startpos=0;
     $len=strlen($String);
     for($i=0;$i<$len;$i++) {
-	if((!$intag && ctype_space($String{$i})) || $i+1==$len) {
+	if((!$intag && ctype_space($String[$i])) || $i+1==$len) {
 	    if($long) {
 		// found the end of a long word, process 
 		$prefix=substr($String,0,$startpos);
@@ -107,11 +107,11 @@ function softbreaklongwords($String, $Maxlen = 78, $breakStr = '<wbr>', $skiptag
 	    continue;
 	}
 	if($skiptags) {
-	    if($String{$i}=='<') {
+	    if($String[$i]=='<') {
 		$intag++;
 		continue;
 	    }
-	    if($String{$i}=='>') {
+	    if($String[$i]=='>') {
 		if($intag>0) $intag--;
 		continue;
 	    }
