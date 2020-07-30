@@ -96,7 +96,7 @@ while ($forum = $sth->fetch()) {
 
   if(isset($fixup)) {
       echo ": fixing up indexes";
-      $fixup=join($fixup,", ");
+      $fixup=join(", ", $fixup);
       $sql = "update f_indexes set ". $fixup ." where fid = ?";
       db_exec($sql, array($forum['fid']));
   }
