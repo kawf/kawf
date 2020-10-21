@@ -175,7 +175,7 @@ if (isset($_POST['postcookie'])) {
     $error["subject_change"] = true;
   } elseif (strlen($msg['subject']) > 100) {
     $error["subject_too_long"] = true;
-    $msg['subject'] = substr($msg['subject'], 0, 100);
+    $msg['subject'] = mb_strcut($msg['subject'], 0, 100);
   }
 
   // Issue #28 - make sure we don't overflow url, urltext, imageurl, or video
@@ -185,7 +185,7 @@ if (isset($_POST['postcookie'])) {
   foreach ($items as $item) {
     if (strlen($msg[$item]) > $max_item_len) {
       $error[$item . '_too_long'] = true;
-      $msg[$item] = substr($msg[$item], 0, $max_item_len);
+      $msg[$item] = mb_strcut($msg[$item], 0, $max_item_len);
     }
   }
 
@@ -305,7 +305,7 @@ if (!$accepted || isset($preview)) {
 
     list($t_subject) = $row;
 
-    $e_message = substr($msg['message'], 0, 1024);
+    $e_message = mb_strcut($msg['message'], 0, 1024);
     if (strlen($msg['message']) > 1024) {
       $bytes = strlen($msg['message']) - 1024;
       $plural = ($bytes == 1) ? '' : 's';

@@ -166,7 +166,7 @@ if (empty($nmsg['subject']) && strlen($nmsg['subject']) == 0)
 
 if (strlen($nmsg['subject']) > 100) {
   $error["subject_too_long"] = true;
-  $nmsg['subject'] = substr($nmsg['subject'], 0, 100);
+  $nmsg['subject'] = mb_strcut($nmsg['subject'], 0, 100);
 }
 
 /* render new message */
