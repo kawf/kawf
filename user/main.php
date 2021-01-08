@@ -128,7 +128,7 @@ function update_visits()
 
 function find_forum($shortname)
 {
-  global $user, $forum, $indexes, $tthreads, $tthreads_by_tid, $down_for_maint;
+  global $user, $forum, $indexes, $tthreads, $tthreads_by_tid;
 
   $sql = "select * from f_forums where shortname = ?";
   $forum = db_query_first($sql, array($shortname));
@@ -136,8 +136,7 @@ function find_forum($shortname)
   if (!$forum)
     return 0;
 
-  /* Short circuit it here */
-  if ($down_for_maint || (isset($forum['version']) && $forum['version'] == 1)) {
+  if (isset($forum['version']) && $forum['version'] == 1) {
     echo "This forum is currently undergoing maintenance, please try back in a couple of minutes\n";
     exit;
   }

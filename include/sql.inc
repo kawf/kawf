@@ -44,7 +44,7 @@ function db_connect($sql_auth=null) {
   global $DBH, $down_for_maint;
 
   if ($down_for_maint) {
-    echo "This forum is currently undergoing maintenance, please try back in a couple of minutes\n";
+    echo "The forums are currently undergoing maintenance, please try back in a couple of minutes\n";
     exit;
   }
 
