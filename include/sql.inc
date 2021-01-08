@@ -41,7 +41,12 @@ function _db_connect($sql_auth) {
 // The database handle is the global $DBH.  The connection will throw an
 // exception on any error in connect or any query.
 function db_connect($sql_auth=null) {
-  global $DBH;
+  global $DBH, $down_for_maint;
+
+  if ($down_for_maint) {
+    echo "This forum is currently undergoing maintenance, please try back in a couple of minutes\n";
+    exit;
+  }
 
   if (!isset($sql_auth)) {
     global $sql_host, $database, $sql_username, $sql_password;
