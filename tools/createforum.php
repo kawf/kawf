@@ -35,5 +35,7 @@ db_exec("insert into f_unique ( fid, type, id ) values ( ?, 'Thread', 0 )", arra
 
 db_exec(sprintf($create_message_table, $iid));
 db_exec(sprintf($create_thread_table, $iid));
+db_exec(sprintf($create_sticky_table, $iid));
+db_exec(sprintf($create_sticky_trigger, $iid, $iid, $iid, $iid));
 
 ?>

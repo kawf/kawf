@@ -4,7 +4,7 @@
 # TODO: automatically derive this from db/migrations contents.
 $SCHEMA_VERSION = "20180713130236";
 
-# f_messages* and f_threads* are create automatically when you create a form
+# f_messages*, f_threads*, f_sticky*, and associated trigger are create automatically when you create a form
 #    pmid int not null,
 $create_message_table = "
   create table if not exists f_messages%d (
@@ -43,6 +43,29 @@ $create_thread_table = "
     primary key (tid),
     index (mid)
   )";
+
+$create_sticky_trigger = "
+  create trigger trigger_f%d_sticky_update
+  after update on f_threads%d
+  for each row
+  begin
+    if new.flags like '%%STICKY%%' then 
+      insert into f_sticky%d(tid, mid) values (new.tid, new.mid);
+    else 
+      delete from f_sticky%d where tid = new.tid;     
+  end if; 
+  end
+  ";
+
+
+$create_sticky_table = "
+  create table if not exists f_sticky%d (
+    sid int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'Primary Key',
+    tid int not null,
+    mid int not null
+  )";
+
+
 
 # Unused
 $create_visits_table = "

@@ -157,7 +157,7 @@ if ($curpage == 1) {
   /* show stickies next */
   /**********************/
   foreach ($indexes as $index) {
-    $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $index['iid'] . " where flags like '%Sticky%'";
+    $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $index['iid'] . " where tid in (SELECT tid FROM f_sticky" . $index['iid'] . ")";
     $sth = db_query($sql);
     while ($thread = $sth->fetch()) {
 	gen_thread_flags($thread);
