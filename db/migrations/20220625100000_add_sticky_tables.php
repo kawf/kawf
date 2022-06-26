@@ -26,6 +26,12 @@ class AddStickyTables extends DatabaseMigration {
     "end ";
 	echo "Creating update trigger for $tbl\n";
   db_exec($sqlTrigger);
+  $sqlUpdateStickyTable = "insert into " . $tbl . " (tid, mid) " .
+    "select tid, mid " .
+    "from " . $triggertbl . " " .
+    "where flags like '%STICKY%';";
+  echo "Backfilling $tbl with stuck threads\n";
+  db_exec($sqlUpdateStickyTable);
     }
     $sth->closeCursor();
   }
