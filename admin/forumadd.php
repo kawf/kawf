@@ -39,6 +39,8 @@ if (isset($_POST['submit'])) {
 
   db_exec(sprintf($create_message_table, $iid));
   db_exec(sprintf($create_thread_table, $iid));
+  db_exec(sprintf($create_sticky_table, $iid));
+  db_exec(sprintf($create_sticky_trigger, $iid, $iid, $iid, $iid));
 
   Header("Location: index.phtml?message=" . urlencode("Forum Added"));
   exit;

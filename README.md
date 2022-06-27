@@ -12,7 +12,7 @@ If you are migrating from an older version of kawf, please read
 ## docker build
 You need to build kawf first before you can run docker-compose (or just docker run). The build uses environment variables, first create that file (not in the repository):
 ```
-cp config/sample-envfile config/envfile
+cp config/sample-envvars config/envvars
 ```
 Edit to taste.
 

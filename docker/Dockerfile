@@ -2,7 +2,7 @@ FROM php:7.2-apache
 
 # add dependencies
 RUN apt-get update && apt-get install -y \
-      mariadb-client-10.1 \
+      mariadb-client-10.3 \
       tar \
       unzip \
       vim \
