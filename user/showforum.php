@@ -78,7 +78,6 @@ else
 if (!$threadsperpage)
   $threadsperpage = 50;
 
-
 /* Figure out how many total threads the user can see */
 $numthreads = 0;
 
