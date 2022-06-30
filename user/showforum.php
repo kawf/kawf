@@ -98,6 +98,7 @@ $tpl->set_var("TIME", time());
 
 $numshown = 0;
 $tthreadsshown = 0;
+$stickythreads = 0;
 
 if ($curpage == 1) {
   /******************************/
@@ -156,7 +157,10 @@ if ($curpage == 1) {
   /* show stickies next */
   /**********************/
   foreach ($indexes as $index) {
-    $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $index['iid'] . " where mid in (SELECT mid FROM f_sticky" . $index['iid'] . ")";
+    $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $index['iid'] . 
+    " where tid in" . 
+    " (SELECT tid FROM f_sticky" . $index['iid'] . ")" .
+    " order by tid desc";
     $sth = db_query($sql);
     while ($thread = $sth->fetch()) {
 	gen_thread_flags($thread);
@@ -173,6 +177,7 @@ if ($curpage == 1) {
 	$tpl->parse("_row", "row", true);
 
 	$threadshown[$thread['tid']] = 'true';
+	$stickythreads++;
 	$numshown++;
 	if (!$collapse) $tthreadsshown++;
     }
@@ -218,6 +223,16 @@ $skipthreads = ($curpage - 1) * $threadsperpage;
 
 $threadtable = count($indexes) - 1;
 
+/*  get number of sticky threads that would have been shown on page 1, 
+    correct offset for thread selection to avoid skipping threads*/
+if ($curpage > 1) {
+  foreach ($indexes as $index) {
+    $sql = "select count(mid) FROM f_sticky" . $index['iid'];
+    $row = db_query_first($sql, array());
+    $stickythreads = $row[0];
+  }
+}
+
 while ($threadtable >= 0 && isset($indexes[$threadtable])) {
   if (threads($threadtable) > $skipthreads)
     break;
@@ -245,6 +260,7 @@ while ($numshown < $threadsperpage) {
 	" $ttable.tid <= ? and" .
 	" $ttable.mid >= ? and" .
 	" $ttable.mid <= ? and" .
+	" $ttable.flags NOT LIKE '%STICKY%' and " .   // removing sticky threads from the selection keeps offsets correct if sticky is on page 1
 	" $ttable.mid = $mtable.mid and ( $mtable.state = 'Active' ";
     $sql_args = array($index['mintid'], $index['maxtid'], $index['minmid'], $index['maxmid']);
     if ($user->capable($forum['fid'], 'Delete'))
@@ -265,9 +281,14 @@ while ($numshown < $threadsperpage) {
     /* Sort all of the messages by date and descending order */
     $sql .= ") order by $ttable.tid desc";
 
-    /* Limit to the maximum number of threads per page */
-    $sql .= " limit " . (int)$skipthreads . "," . (int)($threadsperpage - $numshown);
-
+    /*  Limit to the maximum number of threads per page
+        correct offsets for sticky thread shown on first page */
+    if ($curpage == 1) {
+      $sql .= " limit " . (int)($skipthreads) . "," . (int)($threadsperpage - $numshown - $stickythreads);
+    } else {
+      $sql .= " limit " . (int)($skipthreads - $stickythreads) . "," . (int)($threadsperpage - $numshown);
+    }
+        
     $sth = db_query($sql, $sql_args);
     $thread = $sth->fetch();
 
