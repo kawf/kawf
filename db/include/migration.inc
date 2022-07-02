@@ -50,6 +50,27 @@ class DatabaseMigration {
     return $matching;
   }
 
+  public static function get_latest_schema_version($dirpath) {
+    // Given the path to the directory containing the migrations,
+    // will return latest database SCHEMA_VERSION based list of filepaths.
+    if(! is_dir($dirpath)) {
+      return array();
+    }
+    $all = glob($dirpath . "/*.php"); 
+    $latest = '';
+    foreach($all as $filepath) {
+      $parts = explode("_", basename($filepath, ".php"), 2);
+      $version = $parts[0];
+      if(! preg_match('/^\d+$/', $version)) {
+        continue;
+      }      
+      if($version > $latest) {
+        $latest = $version;
+      }
+    }
+    return $latest;
+  }
+
   public static function find_current_version() {
     // Find the current schema version in the database.
     // db_connect() should have been called before this.

@@ -1,9 +1,5 @@
 <?php
 
-# Update this to the proper migration when changing the schema.
-# TODO: automatically derive this from db/migrations contents.
-$SCHEMA_VERSION = "20220625100000";
-
 # f_messages*, f_threads*, f_sticky*, and associated trigger are create automatically when you create a form
 #    pmid int not null,
 $create_message_table = "
@@ -264,7 +260,7 @@ $set_current_schema_version = "
   insert into schema_version
     (version)
   values
-    ('$SCHEMA_VERSION')
+    (?)
   ";
 
 # ACL - IP bans.
