@@ -12,6 +12,8 @@
   | <a href="#post"><b>Post New Thread</b></a>
   | <a href="#" id="view-all-images">View All Images</a>
   | <a href="#" id="night-mode">Night Mode: <span id="night-mode-status">Off</span></a>
+  <div style="display: inline"> | </div>
+  <a href="#" id="admin-mode">Admin Mode: <span id="admin-mode-status">Disabled</span></a>
   </td>
   <td class="right">
 <!-- BEGIN tracked_threads -->

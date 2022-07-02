@@ -1,7 +1,13 @@
 // Global Variables
+var adminModeActive  = false;
 var nightModeActive  = false;
 var showingAllImages = false;
 var imageData        = [];
+
+// admin mode initialization
+var adminModeConfig   = getLocalStorage('admin-mode', { 'active' : false });
+adminModeActive       = adminModeConfig.active;
+applyAdminMode();
 
 // Night mode initialization
 var nightModeConfig   = getLocalStorage('night-mode', { 'active' : false });
@@ -10,22 +16,61 @@ applyNightMode();
 
 // Startup Script
 $(document).ready(function() {
-	$('#view-all-images').click(viewAllImages);
-    $('#night-mode').click(toggleNightMode);
-    
-    // Initialization for image resizing
-    document.addEventListener('dragstart', function() {return false}, false);
+  $('#view-all-images').click(viewAllImages);
+  $('#admin-mode').click(toggleAdminMode);
+  $('#night-mode').click(toggleNightMode);
+  
+  if(!$("a[title|='Unstick thread']").length){
+    var admin_mode = $("#admin-mode");
+    admin_mode.prev().remove();
+    admin_mode.remove();
+  }
 
-    // Night Mode
-    applyNightMode();
+  // Initialization for image resizing
+  document.addEventListener('dragstart', function() {return false}, false);
 
-    // Image Resizing
-    $.map($('div.message img'), function(img) {
-        imageData[img] = {};
-        imageData[img].resized = false;
-        makeImageZoomable(img);
-    });
+  // Admin Mode
+  applyAdminMode();
+
+  // Night Mode
+  applyNightMode();
+
+  // Image Resizing
+  $.map($('div.message img'), function(img) {
+      imageData[img] = {};
+      imageData[img].resized = false;
+      makeImageZoomable(img);
+  });
 });
+
+// Admin Mode
+function toggleAdminMode() {
+  adminModeActive = !adminModeActive;
+  setLocalStorage('admin-mode', { 'active' : adminModeActive });
+  applyAdminMode();
+}
+
+function applyAdminMode(){
+  if (!adminModeActive) {
+    $("a[title|='Mark offtopic']").hide();
+    $("a[title|='Mark on-topic']").hide();
+    $("a[title|='Delete']").hide();
+    $("a[title|='Undelete']").hide();
+    $("a[title|='Sticky thread']").hide();
+    $("a[title|='Unstick thread']").hide();
+    $("a[title|='Lock']").hide();
+    $('#admin-mode-status').text('Disabled');
+  } else {
+    $("a[title|='Mark offtopic']").show();
+    $("a[title|='Mark on-topic']").show();
+    $("a[title|='Delete']").show();
+    $("a[title|='Undelete']").show();
+    $("a[title|='Sticky thread']").show();
+    $("a[title|='Unstick thread']").show();
+    $("a[title|='Lock']").show();
+    $('#admin-mode-status').text('Active');
+  }    
+}
 
 // Night Mode
 function toggleNightMode() {
