@@ -104,7 +104,7 @@ function applyNightMode() {
         
         $('#night-mode-status').text('Off');
     } else {
-	$('html, body, select, a, em, a.tt, a.ut, .row0, .row1, .srow0, .srow1, .trow0, .trow1, .grow0, .grow1, .username, .threadinfo, .messageblock .subject, .vmid, .postform tr, .postform .text, .thread > li > a, .preferences tr, td.signaturepreview, textarea, .arrow, .navigate').addClass('night-mode');
+	$('html, body, select, a, em, a.tt, a.ut, .row0, .row1, .srow0, .srow1, .trow0, .trow1, .grow0, .grow1, .username, .threadinfo, .messageblock .subject, .vmid, .postform tr, .postform .text, .thread > li > a, .preferences tr, td.signaturepreview, textarea, .arrow, .navigate, div.changes').addClass('night-mode');
         
         var allImages = $('img');
         $.map(allImages, function(image) {

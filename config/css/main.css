@@ -328,6 +328,7 @@ a.tt.night-mode { color: #575  !important; }
 a:hover.tt.night-mode { text-decoration: underline !important;}
 a.up.night-mode { color: #755 !important; }
 a:hover.up.night-mode { text-decoration: underline !important;}
+div.changes.night-mode { background: #2c0d0d !important; }
 .message a.night-mode { text-decoration: underline !important;}
 .row0.night-mode { background: #1a1a1d !important; }
 .row1.night-mode { background: #242426 !important; }
