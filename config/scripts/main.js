@@ -21,8 +21,8 @@ $(document).ready(function() {
   $('#view-all-images').click(viewAllImages);
   $('#night-mode').click(toggleNightMode);
   
-  if($("a[title|='Unstick thread']").length){
-    $("#night-mode").after(adminHTML)
+  if($("a[title|='Unstick thread']").length || $("a[title|='Sticky thread']").length){
+    $("#night-mode").after(adminHTML);
     $('#admin-mode').click(toggleAdminMode);
   }
 
