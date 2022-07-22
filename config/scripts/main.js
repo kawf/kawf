@@ -14,16 +14,16 @@ var nightModeConfig   = getLocalStorage('night-mode', { 'active' : false });
 nightModeActive       = nightModeConfig.active;
 applyNightMode();
 
+var adminHTML = ' | <a href="#" id="admin-mode">Admin Mode: <span id="admin-mode-status">Disabled</span></a>';
+
 // Startup Script
 $(document).ready(function() {
   $('#view-all-images').click(viewAllImages);
-  $('#admin-mode').click(toggleAdminMode);
   $('#night-mode').click(toggleNightMode);
   
-  if(!$("a[title|='Unstick thread']").length){
-    var admin_mode = $("#admin-mode");
-    admin_mode.prev().remove();
-    admin_mode.remove();
+  if($("a[title|='Unstick thread']").length || $("a[title|='Sticky thread']").length){
+    $("#night-mode").after(adminHTML);
+    $('#admin-mode').click(toggleAdminMode);
   }
 
   // Initialization for image resizing
@@ -104,7 +104,7 @@ function applyNightMode() {
         
         $('#night-mode-status').text('Off');
     } else {
-	$('html, body, select, a, em, a.tt, a.ut, .row0, .row1, .srow0, .srow1, .trow0, .trow1, .grow0, .grow1, .username, .threadinfo, .messageblock .subject, .vmid, .postform tr, .postform .text, .thread > li > a, .preferences tr, td.signaturepreview, textarea, .arrow, .navigate').addClass('night-mode');
+	$('html, body, select, a, em, a.tt, a.ut, .row0, .row1, .srow0, .srow1, .trow0, .trow1, .grow0, .grow1, .username, .threadinfo, .messageblock .subject, .vmid, .postform tr, .postform .text, .thread > li > a, .preferences tr, td.signaturepreview, textarea, .arrow, .navigate, div.changes').addClass('night-mode');
         
         var allImages = $('img');
         $.map(allImages, function(image) {
