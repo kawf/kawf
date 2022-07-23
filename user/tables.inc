@@ -1,9 +1,5 @@
 <?php
 
-# Update this to the proper migration when changing the schema.
-# TODO: automatically derive this from db/migrations contents.
-$SCHEMA_VERSION = "20220625100000";
-
 # f_messages*, f_threads*, f_sticky*, and associated trigger are create automatically when you create a form
 #    pmid int not null,
 $create_message_table = "
@@ -57,15 +53,12 @@ $create_sticky_trigger = "
   end
   ";
 
-
 $create_sticky_table = "
   create table if not exists f_sticky%d (
     sid int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'Primary Key',
     tid int not null,
     mid int not null
   )";
-
-
 
 # Unused
 $create_visits_table = "
@@ -257,6 +250,7 @@ $create_user_preferences_table = "
 # schema version.
 $create_schema_version_table = "
   create table if not exists schema_version (
+    integrity_keeper ENUM('') NOT NULL PRIMARY KEY,
     version varchar(14) not null
   )";
 
@@ -264,7 +258,9 @@ $set_current_schema_version = "
   insert into schema_version
     (version)
   values
-    ('$SCHEMA_VERSION')
+    (?)
+  on duplicate key update
+    version = version 
   ";
 
 # ACL - IP bans.

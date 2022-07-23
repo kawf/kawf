@@ -4,6 +4,11 @@ $kawf_base = realpath(dirname(__FILE__) . "/..");
 require_once($kawf_base . "/config/config.inc");
 require_once($kawf_base . "/include/sql.inc");
 require_once($kawf_base . "/user/tables.inc");
+require_once($kawf_base . "/db/include/migration.inc");
+
+$migrationsdirpath = $kawf_base . "/db/migrations";
+$databaseMigration = new DatabaseMigration();
+$current_schema_version = $databaseMigration->get_latest_schema_version($migrationsdirpath);
 
 if(!ini_get('safe_mode'))
     set_time_limit(0);
@@ -27,7 +32,7 @@ db_exec($create_user_preferences_table);
 db_exec($create_global_messages_table);
 
 db_exec($create_schema_version_table);
-db_exec($set_current_schema_version);
+db_exec($set_current_schema_version, array($current_schema_version));
 
 /* Static preferences. */
 db_exec($insert_static_preferences);
