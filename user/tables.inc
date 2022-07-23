@@ -53,15 +53,12 @@ $create_sticky_trigger = "
   end
   ";
 
-
 $create_sticky_table = "
   create table if not exists f_sticky%d (
     sid int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'Primary Key',
     tid int not null,
     mid int not null
   )";
-
-
 
 # Unused
 $create_visits_table = "
@@ -253,6 +250,7 @@ $create_user_preferences_table = "
 # schema version.
 $create_schema_version_table = "
   create table if not exists schema_version (
+    integrity_keeper ENUM('') NOT NULL PRIMARY KEY,
     version varchar(14) not null
   )";
 
@@ -261,6 +259,8 @@ $set_current_schema_version = "
     (version)
   values
     (?)
+  on duplicate key update
+    version = version 
   ";
 
 # ACL - IP bans.
