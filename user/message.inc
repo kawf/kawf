@@ -329,7 +329,7 @@ function process_message($user, &$msg)
     if (!isset($msg['pmid']) && isset($msg['pid']))
         $msg['pmid'] = $msg['pid'];
 
-    /* msg['date'] is time local to user... strftime would normally be
+    /* msg['date'] is time local to user... date() would normally be
        time local to PHP server */
     $msg['date'] = gen_date($user, $msg['unixtime']);
 
@@ -413,9 +413,10 @@ function gen_date($user, $unixtime = null)
     else if ($unixtime>time())
       $err=" error";
 
-    /* msg['date'] is time local to user... strftime would normally be
+    /* msg['date'] is time local to user... date() would normally be
        time local to PHP server */
-    $ret = strftime("%Y-%m-%d %H:%M:%S", $unixtime - $tzoff);
+    //$ret = strftime("%Y-%m-%d %H:%M:%S", $unixtime - $tzoff); // FIXME Deprecated
+    $ret = date('Y-m-d H:i:s', $unixtime - $tzoff);
     if ($debug_f_tracking)
       $ret .= sprintf("(%d, %d, off=%d)", time(), $unixtime, $tzoff/60/60).$err;
     return $ret;
@@ -474,8 +475,8 @@ function is_msg_bumped($msg)
 /*
     if ($tthread) {
       $tid = $msg['tid'];
-      $mtime = strftime("%Y-%m-%d %H:%M:%S", $msg['unixtime']);
-      $ttime = strftime("%Y-%m-%d %H:%M:%S", $tthread['unixtime']);
+      $mtime = date("Y-m-d H:i:s", $msg['unixtime']);
+      $ttime = date("Y-m-d H:i:s", $tthread['unixtime']);
       error_log("$tid: mtime $mtime ttime $ttime");
     }
 */

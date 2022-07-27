@@ -270,7 +270,8 @@ class ForumUser {
   function token($salt = 'token', $tokentime = NULL)
   {
     $time = $tokentime ? $tokentime : $this->tokentime;
-    $timestr = gmstrftime("%Y%m%d%H%M", $time);
+    //$timestr = gmstrftime("%Y%m%d%H%M", $time); // FIXME Deprecated
+    $timestr = gmdate("YmdHi", $time);
     return md5($salt . $this->email . $this->password . $timestr);
   }
 

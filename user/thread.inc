@@ -207,7 +207,8 @@ function track_thread($fid, $tid, $options='', $time=null)
 
   /* use replace because we might have a uniq key */
   if (is_numeric($time)) {
-    $tstamp = strftime("%Y%m%d%H%M%S", $time);
+    //$tstamp = strftime("%Y%m%d%H%M%S", $time); // FIXME Deprecated
+    $tstamp = date("YmdHis", $time);
     $sql = "replace into f_tracking ( fid, tid, aid, options, tstamp ) values ( " .
       "?, ?, ?, ?, ? )";
     db_exec($sql, array($fid, $tid, $aid, $options, $tstamp));

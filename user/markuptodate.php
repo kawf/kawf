@@ -17,8 +17,9 @@ else
   $time = time();	/* Unix time (seconds since epoch) */
 
 /* Convert it to MySQL format */
-/* TZ: strftime is local time of SQL server -> used for tstamp */
-$time = strftime("%Y%m%d%H%M%S", $time);
+/* TZ: date() is local time of SQL server -> used for tstamp */
+//$time = strftime("%Y%m%d%H%M%S", $time); // FIXME Deprecated
+$time = date("YmdHis", $time);
 
 if ($tid == "all") {
   require_once("thread.inc");	/* for is_thread_bumped() */
