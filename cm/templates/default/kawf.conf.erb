@@ -22,6 +22,11 @@
       php_value upload_max_filesize 8M
   </IfModule>
 
+  <IfModule php_module>
+      php_value post_max_size 8M
+      php_value upload_max_filesize 8M
+  </IfModule>
+
   AddDefaultCharset ISO-8859-1
 
 </VirtualHost>
