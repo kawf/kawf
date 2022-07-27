@@ -109,17 +109,16 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
       /*********************/
       /* message and links */
       /*********************/
-      $tpl->set_var("SUBJECT", escape_form($msg['subject']));
-
       if (isset($msg['message']))
 	$tpl->set_var("MESSAGE", $msg['message']);
       else
 	$tpl->set_var("MESSAGE", '');
 
-      $tpl->set_var("URLLINK", escape_form_url($msg['url']));
-      $tpl->set_var("URLTEXT", escape_form($msg['urltext']));
-      $tpl->set_var("VIDEO", escape_form_url($msg['video']));
-      $tpl->set_var("IMAGEURL", escape_form_url($msg['imageurl']));
+      $tpl->set_var("SUBJECT", @escape_form($msg['subject']));
+      $tpl->set_var("URLLINK", @escape_form_url($msg['url']));
+      $tpl->set_var("URLTEXT", @escape_form($msg['urltext']));
+      $tpl->set_var("VIDEO", @escape_form_url($msg['video']));
+      $tpl->set_var("IMAGEURL", @escape_form_url($msg['imageurl']));
 
       $tpl->set_var("USER_NAME", $user->name);
       $tpl->set_var("USER_EMAIL", $user->email);
@@ -132,9 +131,9 @@ function render_postform($tpl, $action, $user, $msg=null, $imgpreview=false)
       /***************/
       if (isset($_REQUEST['preview']) || isset($_REQUEST['post'])) {
 	/* preview/post - take values submitted by user */
-	$offtopic = $_REQUEST['OffTopic'];
-	$expose_email = $_REQUEST['ExposeEmail'];
-	$email_followup = $_REQUEST['EmailFollowup'];
+	$offtopic = isset($_REQUEST['OffTopic']);
+	$expose_email = isset($_REQUEST['ExposeEmail']);
+	$email_followup = isset($_REQUEST['EmailFollowup']);
 	$track_thread = isset($_REQUEST['TrackThread']);
       } else if (isset($msg['mid'])) {
 	/* edit existing message - take values from old msg */

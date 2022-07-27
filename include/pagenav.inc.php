@@ -25,6 +25,8 @@ function gen_pagenav($fmt, $curpage, $numpages, $maxjump=20)
   if (isset($maxjump) && $maxjump>0 && $numpages > $end + $maxjump) {
     $numpages = floor(($end+$maxjump)/$maxjump)*$maxjump;
     $capped = true;
+  } else {
+    $capped = false;
   }
 
   /* prev link */

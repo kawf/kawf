@@ -145,7 +145,7 @@ function time_ago($since_secs)
 	$ago -= ($months * 60 * 60 * 24 * 30.4);
 
 	$weeks = floor($ago / 60 / 60 / 24 / 7);
-	$ago -= ($days * 60 * 60 * 24 / 7);
+	$ago -= ($weeks * 60 * 60 * 24 / 7);
 
 	$days = floor($ago / 60 / 60 / 24);
 	$ago -= ($days * 60 * 60 * 24);

@@ -258,7 +258,7 @@ class ForumUser {
       return isset($this->capable[$fid][$type]);
 
     $row = db_query_first("select capabilities from f_moderators where aid = ? and ( fid = ? or fid = -1 )", array($this->aid, $fid));
-    $capabilities = $row ? $row[0] : NULL;
+    $capabilities = $row ? $row[0] : "";
 
     $caps = explode(",", $capabilities);
     foreach ($caps as $flag)

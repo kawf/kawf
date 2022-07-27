@@ -64,7 +64,7 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
   if ($moderator) {
     $tpl->set_var("MSG_IP", $msg['ip']);
     /* unfortunately, may be blank, if poster did not set ExposeEmail */
-    $tpl->set_var("MSG_EMAIL", $msg['email']);
+    $tpl->set_var("MSG_EMAIL", array_key_exists('email', $msg)?$msg['email']:'');
     $msg['changes'] = trim($msg['changes']);
     if(strlen($msg['changes'])>0) {
 	$changes = preg_replace("/&/", "&amp;", $msg['changes']);
@@ -94,6 +94,12 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
      so we can deterministically place the | bars such that every combination
      looks right. Edit/Delete/Undelete all have | after in message.tpl */
 
+  $own = false;
+  $locked = false;
+  $delete = false;
+  $undelete = false;
+  $reply = false;
+
   if (!$viewer->valid() || (isset($thread['flag']['Locked']) && !$locker)) {
     /* viewer not logged in, or does not have lock permissions and
        thread is locked */
@@ -117,7 +123,7 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
       }
     }
   }
-  if ($p2f_address[$forum['shortname']]) {
+  if (array_key_exists($forum['shortname'], $p2f_address) && $p2f_address[$forum['shortname']]) {
     $tpl->set_var('P2F', $p2f_address[$forum['shortname']]);
   } else {
     $tpl->set_var('p2freply', "");
@@ -182,6 +188,7 @@ function postprocess($msg, $noembed=false)
   if (!empty($msg['url']) && validate_url($msg['url'])) {
     $url = escapequotes($msg['url']);
     // $target = " target=\"_blank\"";
+    $target = "";
     if (!empty($msg['urltext']))
       $text = $msg['urltext'];
     else
@@ -209,7 +216,7 @@ function render_message($tpl, $msg, $viewer, $owner=null)
   $expose_email = !empty($msg['email']);
 
   /* for now, just hack in the current email for moderators to see */
-  if (!$expose_email)
+  if (!$expose_email && isset($owner))
       $msg['email'] = stripcrap($owner->email);
   /*---------------------------------------------------------------------*/
 
@@ -275,9 +282,9 @@ function render_message($tpl, $msg, $viewer, $owner=null)
   $tpl->set_var(array(
     "MSG_SUBJECT" => $msg['subject'],
     "MSG_DATE" => $msg['date'],
-    "MSG_MID" => $msg['mid'],
-    "MSG_AID" => $msg['aid'],
-    "MSG_TID" => $msg['tid'],
+    "MSG_MID" => array_key_exists('mid', $msg)?$msg['mid']:'',
+    "MSG_AID" => array_key_exists('aid', $msg)?$msg['aid']:'',
+    "MSG_TID" => array_key_exists('tid', $msg)?$msg['tid']:'',
   ));
 
   if ($extras)
@@ -305,7 +312,7 @@ function image_url_hack_extract($msg)
        imageurl. Theoretically, users shouldn't be able to add <p>'s to their
        message, so this should ONLY be in messages that were prepended with
        images automatcially by post/edit */
-    if (empty($msg['imageurl']) &&
+    if (empty($msg['imageurl']) && array_key_exists('message', $msg) &&
       preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>\s*(.*)$/s", $msg['message'], $regs)) {
       $msg['imageurl'] = unescapequotes($regs[1]);
       $msg['message'] = $regs[2];
@@ -334,14 +341,16 @@ function process_message($user, &$msg)
     $msg['date'] = gen_date($user, $msg['unixtime']);
 
     /* Workaround for issue $38 - db may still contain non-utf8 */
-    $msg['subject'] = remoronize($msg['subject']);
-    $msg['subject'] = utf8ize($msg['subject']);
-    $msg['name'] = utf8ize($msg['name']);
+    $msg['subject'] = @remoronize($msg['subject']);
+    $msg['subject'] = @utf8ize($msg['subject']);
+    $msg['name'] = @utf8ize($msg['name']);
     if (isset($msg['message'])) {
 	$msg['message'] = remoronize($msg['message']);
 	$msg['message'] = utf8ize($msg['message']);
 	//$msg['message'] = debug_hexdump($msg['message']);
     }
+
+    $keys = array();
 
     /* auto update db if remoronize made a change */
     if (isset($msg['mid'])) {
@@ -349,7 +358,6 @@ function process_message($user, &$msg)
 	$mid = $msg['mid'];
 
 	$vals = array();
-	$keys = array();
 
 	$items = array('subject','name','message');
 	foreach ($items as $k) {
@@ -409,6 +417,7 @@ function gen_date($user, $unixtime = null)
     /* TZ: tzoff is difference between PHP server and viewer, not SQL server and viewer */
     $tzoff = isset($user->tzoff)?$user->tzoff:0;
 
+    $err="";
     if (!isset($unixtime)) $unixtime=time();
     else if ($unixtime>time())
       $err=" error";
@@ -455,23 +464,31 @@ function mark_thread_read($fid, $msg, $user)
   }
 }
 
-function is_msg_etracked($msg)
+function get_tthread_by_msg($msg)
 {
     global $tthreads_by_tid;
-    $tthread = $tthreads_by_tid[$msg['tid']];
+    if ($msg == NULL || !array_key_exists('tid', $msg)) {
+        return NULL;
+    }
+    $tid = $msg['tid'];
+    return array_key_exists($tid, $tthreads_by_tid)?$tthreads_by_tid[$tid]:NULL;
+}
+
+function is_msg_etracked($msg)
+{
+    $tthread = get_tthread_by_msg($msg);
     return ($tthread && isset($tthread['option']['SendEmail']));
 }
 
 function is_msg_tracked($msg)
 {
-    global $tthreads_by_tid;
-    return isset($tthreads_by_tid[$msg['tid']]);
+    $tthread = get_tthread_by_msg($msg);
+    return isset($tthread);
 }
 
 function is_msg_bumped($msg)
 {
-    global $tthreads_by_tid;
-    $tthread = $tthreads_by_tid[$msg['tid']];
+    $tthread = get_tthread_by_msg($msg);
 /*
     if ($tthread) {
       $tid = $msg['tid'];

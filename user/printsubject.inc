@@ -17,6 +17,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
   if (isset($flags['NewStyle']) && isset($flags['NoText']) && count($flags)==2)
     $nt = " class=\"nt\"";
 
+  $string = "";
   if (isset($vmid) && $vmid == $msg['mid'])
     $string .= "<span class=\"vmid\">" . $msg['subject'] . "</span>";
   else {

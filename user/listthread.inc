@@ -45,6 +45,7 @@ function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = a
     if(strlen($sibs)>0)
       $string .= "\n<ul>\n" . $sibs . "</ul>\n";
 
+    $hidden = '';
   } else {
     $count = 0;
 

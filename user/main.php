@@ -40,7 +40,9 @@ $tpl = new Template($template_dir, "comment");
 
 /* $_page saved off for others here for use in resused template that recurse,
    or for the set_var order sensitivity for vars within blocks */
-$_page = $_REQUEST['page'];
+if (array_key_exists('page', $_REQUEST)) {
+   $_page = $_REQUEST['page'];
+}
 
 $tpl->set_var("PAGE", $script_name . $path_info);
 if (isset($http_host) && !empty($http_host))

@@ -98,7 +98,7 @@ if (!$user->capable($forum['fid'], 'Delete')) {
 
 $tpl->set_var("disabled", "");
 
-if (is_numeric($_POST['tid'])) {
+if (isset($_POST['tid']) && is_numeric($_POST['tid'])) {
   $thread = get_thread($_POST['tid']);
 
   if (isset($thread['flag']['Locked']) && !$user->capable($forum['fid'], 'Lock')) {
@@ -136,16 +136,16 @@ $msg['aid'] = $user->aid;
 $msg['flags'] = 'NewStyle';
 
 if (isset($_POST['postcookie'])) {
-  if ($_POST['preview'])
+  if (isset($_POST['preview']))
     $preview = 1;
 
-  if ($_POST['imgpreview'])
+  if (isset($_POST['imgpreview']))
     $imgpreview = 1;
 
   /* FIXME: Sanitize integers */
-  if (is_numeric($_POST['mid'])) $msg['mid'] = $_POST['mid'];
-  if (is_numeric($_POST['pmid'])) $msg['pmid'] = $_POST['pmid'];
-  if (is_numeric($_POST['tid'])) $msg['tid'] = $_POST['tid'];
+  if (array_key_exists('mid', $_POST) && is_numeric($_POST['mid'])) $msg['mid'] = $_POST['mid'];
+  if (array_key_exists('pmid', $_POST) && is_numeric($_POST['pmid'])) $msg['pmid'] = $_POST['pmid'];
+  if (array_key_exists('tid', $_POST) && is_numeric($_POST['tid'])) $msg['tid'] = $_POST['tid'];
 
   /* Sanitize the strings */
   $msg['name'] = stripcrap($user->name);

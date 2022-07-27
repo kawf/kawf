@@ -114,7 +114,7 @@ class YATT {
 
     # INTERNAL: Find the node that corrosponds to an OID
     function &find_node($path) {
-        $oid = explode('.', $path);
+        $oid = $path!=NULL?explode('.', $path):[];
         $node = &$this->obj;
 
         while ($cmp = array_shift($oid)) {

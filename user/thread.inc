@@ -93,6 +93,7 @@ function gen_thread($thread, $collapse = false)
 
   if (isset($user->pref['Collapsed']) || $collapse) {
     if ($count>1) $hidden = " class=\"hidden\"";
+    else $hidden = "";
     $messagestr = "<li$hidden>".print_subject($thread, reset($messages), $count - 1, true)."</li>";
   } else
     $messagestr = list_thread('print_subject', $messages, $tree, reset($tree), $thread);
@@ -113,7 +114,7 @@ function gen_threadlinks($thread, $collapse = false)
 
     /* not logged in, dont generate anything */
     if (!$user->valid()) return '';
-    $tthread = $tthreads_by_tid[$thread['tid']];
+    $tthread = get_tthread_by_thread($thread);
 
     /* is thread tracked by user? */
     if (isset($tthread))  {
@@ -235,23 +236,31 @@ function untrack_thread($fid, $tid)
   db_exec($sql, array($fid, $tid, $aid));
 }
 
-function is_thread_etracked($thread)
+function get_tthread_by_thread($thread)
 {
     global $tthreads_by_tid;
-    $tthread = $tthreads_by_tid[$thread['tid']];
+    if ($thread == NULL || !array_key_exists('tid', $thread)) {
+        return NULL;
+    }
+    $tid = $thread['tid'];
+    return array_key_exists($tid, $tthreads_by_tid)?$tthreads_by_tid[$tid]:NULL;
+}
+
+function is_thread_etracked($thread)
+{
+    $tthread = get_tthread_by_thread($thread);
     return ($tthread && isset($tthread['option']['SendEmail']));
 }
 
 function is_thread_tracked($thread)
 {
-    global $tthreads_by_tid;
-    return isset($tthreads_by_tid[$thread['tid']]);
+    $tthread = get_tthread_by_thread($thread);
+    return isset($tthread);
 }
 
 function is_thread_bumped($thread)
 {
-    global $tthreads_by_tid;
-    $tthread = $tthreads_by_tid[$thread['tid']];
+    $tthread = get_tthread_by_thread($thread);
     return ($tthread && $thread['unixtime'] > $tthread['unixtime']);
 }
 

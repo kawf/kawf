@@ -70,6 +70,9 @@ class nl2brPre {
 
     private static function find_tag($string, &$pos)
     {
+	if ($pos == NULL) {
+            $pos = 0;
+	}
 	$p = strpos($string, "<pre>", $pos);
 	$n = strpos($string, "</pre>", $pos);
 

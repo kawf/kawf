@@ -108,7 +108,7 @@ class Template {
     $reg = "/<!--\s+BEGIN $handle\s+-->(.*)\n\s*<!--\s+END $handle\s+-->/sm";
     preg_match_all($reg, $str, $m);
     $str = preg_replace($reg, "{" . "$name}", $str);
-    $this->_set_var($handle, $m[1][0]);
+    $this->_set_var($handle, count($m[1])>0?$m[1][0]:'');
     $this->_set_var($parent, $str);
   }
   
@@ -228,7 +228,7 @@ class Template {
    */
   function get_var($varname) {
     if (!is_array($varname)) {
-      return $this->varvals[$varname];
+      return array_key_exists($varname, $this->varvals)?$this->varvals[$varname]:NULL;
     } else {
       //reset($varname);
       //while(list($k, $v) = each($varname)) {

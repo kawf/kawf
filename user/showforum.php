@@ -318,7 +318,7 @@ while ($numshown < $threadsperpage) {
       $tpl->set_var("CLASS", "mrow" . ($numshown % 2));
     else
 */
-    if ($thread['flag']['Sticky']) {	/* calculated by gen_thread_flags() */
+    if (array_key_exists('flag', $thread) && $thread['flag']['Sticky']) {	/* calculated by gen_thread_flags() */
       $tpl->set_var("CLASS", "srow" . ($numshown % 2));
       if (is_thread_bumped($thread)) $tthreadsshown++;
     } else if (is_thread_bumped($thread)) {
@@ -353,11 +353,15 @@ $row = db_query_first("select count(*) from f_visits where UNIX_TIMESTAMP(NOW())
 $active_users = $row ? $row[0] : 0;
 $row = db_query_first("select count(*) from f_visits where UNIX_TIMESTAMP(NOW()) - UNIX_TIMESTAMP(tstamp) <= 15 * 60 and aid = 0");
 $active_guests = $row ? $row[0] : 0;
-*/
-
 $tpl->set_var(array(
   "ACTIVE_USERS" => $active_users,
   "ACTIVE_GUESTS" => $active_guests,
+));
+*/
+
+$tpl->set_var(array(
+  "ACTIVE_USERS" => 1,
+  "ACTIVE_GUESTS" => 1,
 ));
 
 unset($thread);

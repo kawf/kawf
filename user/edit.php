@@ -87,10 +87,10 @@ if (!empty($msg['flags'])) {
     $flags[$flag] = true;
 }
 
-if ($_REQUEST['preview'])
+if (isset($_REQUEST['preview']))
     $preview = 1;
 
-if ($_REQUEST['imgpreview'])
+if (isset($_REQUEST['imgpreview']))
     $imgpreview = 1;
 
 if (!isset($_POST['message'])) {

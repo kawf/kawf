@@ -84,7 +84,7 @@ function postmessage($user, $fid, &$msg, $request)
     /* unwind... do we really need these? */
     /* unwind index for old message */
     if (!is_null($omsg['state'])) {
-	if (!$msg['pmid'])
+	if (!isset($msg['pmid']))
 	  db_exec("update f_indexes set " . $omsg['state'] . " = " . $omsg['state'] . " - 1 where iid = ?", array($iid));
 
 	/* unwind post count for old message */
@@ -120,20 +120,22 @@ function postmessage($user, $fid, &$msg, $request)
 	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, video, state, views, changes ) "
             . "values ( ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, 0, ? );";
 
-    if ($msg["imagedeleteurl"]) {
+    if (array_key_exists('imagedeleteurl', $msg) && $msg["imagedeleteurl"]) {
       $msg["changes"] = "Image delete url for " . $msg["imageurl"] . " = " . $msg["imagedeleteurl"] . "\n";
     } else {
       $msg["changes"] = "";
     }
 
     db_exec($sql, array(
-      $msg['mid'], $user->aid, $msg['pmid'] ? $msg['pmid'] : 0, $msg['tid'] ? $msg['tid'] : 0, $msg['name'],
+      $msg['mid'], $user->aid, isset($msg['pmid']) ? $msg['pmid'] : 0, isset($msg['tid']) ? $msg['tid'] : 0, $msg['name'],
       $msg['email'], $msg['ip'], $msg['flags'], $msg['subject'],
       $msg['message'], $msg['url'], $msg['urltext'], $msg['video'],
       $msg['state'], $msg['changes']
     ));
 
-    if (!$msg['pmid']) {
+
+    $tstamp = NULL;
+    if (!isset($msg['pmid'])) {
       /* Grab a new tid, this should work reliably */
       do {
         $row = db_query_first("select max(id) + 1 from f_unique where fid = ? and type = 'Thread'", array($fid));
@@ -192,7 +194,7 @@ function postmessage($user, $fid, &$msg, $request)
     db_exec($sql, array($msg['mid'], $iid, $msg['mid']));
 
     /* update index for new message */
-    if (!$msg['pmid']) {
+    if (!isset($msg['pmid'])) {
       $status = $msg['state'];
       $sql = "update f_indexes set $status = $status + 1 where iid = ?";
       db_exec($sql, array($iid));

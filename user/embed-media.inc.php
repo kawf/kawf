@@ -53,7 +53,8 @@ function embed_youtube_video($url)
   $u = parse_url(html_entity_decode($url));
   if ($u==null) return null;
 
-  $q = explode_query($u["query"]);
+  $tag = null;
+  $q = array_key_exists('query', $u)?explode_query($u["query"]):[];
   if (preg_match("#(\w+\.)*youtube\.com#", $u["host"])) {
     $p = explode("/", $u["path"]);
     if (array_key_exists('v', $q)) {
@@ -146,7 +147,7 @@ function embed_vine_video($url)
 function embed_html5_video($url)
 {
   $u = parse_url(html_entity_decode($url));
-  if ($u==null) return null;
+  if ($u==null || !array_key_exists('path', $u)) return null;
 
   # only support ogg, mp4, and webm
   if (!preg_match("/\.(og[gvm]|mp[4v]|webm)$/i", $u["path"]))

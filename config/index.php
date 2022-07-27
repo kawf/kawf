@@ -31,7 +31,7 @@ function readfile_header($file)
     $etag = md5_file($file); 
 
     if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $last_modified_time || 
-        trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag) { 
+        @trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag) {
         header("HTTP/1.1 304 Not Modified"); 
         return;
     }

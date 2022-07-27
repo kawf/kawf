@@ -29,7 +29,8 @@ if($tou_available) {
   $tpl->set_var("tou_agreement", "");
 }
 
-$page = $_REQUEST['page'];
+if (isset($_REQUEST['page']))
+  $page = $_REQUEST['page'];
 
 if (isset($_REQUEST['url']))
   $page = "http://" . $_REQUEST['url'];

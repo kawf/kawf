@@ -534,6 +534,7 @@ function striptag($message, $allowed_tags)
 
   $elements[] = substr($message, $pos);
 
+  $n_message = '';
   for ($i = 0; $i < count($elements); $i++) {
     $element = $elements[$i];
 
