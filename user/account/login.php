@@ -38,7 +38,7 @@ if (isset($_REQUEST['url']))
 if (!isset($page))
   $page = "/";
 
-$tpl->set_var("PAGE", $page);
+$tpl->set_var("PAGE", isset($page)?$page:'');
 
 if (isset($_POST['login']) && isset($_POST['email'])) {
   $email = $_POST['email'];

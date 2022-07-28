@@ -96,7 +96,7 @@ $threadmsg .= "</ul>\n";
 
 $threadlinks = gen_threadlinks($thread);
 
-if (array_key_exists('flag', $thread) && $thread['flag']['Sticky'])
+if (isset($thread['flag']['Sticky']))
   $tpl->set_var("CLASS", "srow0");
 else if (is_thread_bumped($thread))
   $tpl->set_var("CLASS", "trow0");

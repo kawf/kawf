@@ -31,13 +31,10 @@ $sql = "select * from f_threads$iid where tid = ?";
 $thread = db_query_first($sql, array($tid));
 
 $options = explode(",", $thread['flags']);
-foreach ($options as $name => $value) {
-  if ($options[$name] == 'Locked')
-    unset($options[$name]);
-}
-$options[] = 'Locked';
+$options[] = "Locked"; // add locked flag
+$options = array_unique($options); // remove if dupe
 
-$flags = implode(",", $options);
+$flags = implode(",", array_filter($options));
 
 $sql = "update f_threads$iid set flags = ? where tid = ?";
 db_exec($sql, array($flags, $tid));

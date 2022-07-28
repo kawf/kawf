@@ -4,18 +4,23 @@ error_reporting(E_ALL & ~E_NOTICE);
 /* We use the templates for everything */
 require_once("template.inc");
 
-$server_name=$_SERVER['SERVER_NAME'];
-$server_port=$_SERVER['SERVER_PORT'];
+function safe_server_var($key)
+{
+    return (isset($_SERVER[$key])?$_SERVER[$key]:'');
+}
 
-$remote_addr=$_SERVER['REMOTE_ADDR'];
+$server_name=safe_server_var('SERVER_NAME');
+$server_port=safe_server_var('SERVER_PORT');
 
-$http_host=$_SERVER['HTTP_HOST'];
-$request_uri=$_SERVER['REQUEST_URI'];
-$request_path=(parse_url($request_uri))['path'];
-$script_name=$_SERVER['SCRIPT_NAME'];
-$path_info=isset($_SERVER['PATH_INFO'])?$_SERVER['PATH_INFO']:'';
+$remote_addr=safe_server_var('REMOTE_ADDR');
 
-$query_string=$_SERVER['QUERY_STRING'];
+$http_host=safe_server_var('HTTP_HOST');
+$request_uri=safe_server_var('REQUEST_URI');
+$request_path=(@parse_url($request_uri))['path'];
+$script_name=safe_server_var('SCRIPT_NAME');
+$path_info=safe_server_var('PATH_INFO');
+
+$query_string=safe_server_var('QUERY_STRING');
 
 function url_origin( $s, $use_forwarded_host = false )
 {

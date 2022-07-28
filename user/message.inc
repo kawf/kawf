@@ -146,19 +146,19 @@ function preprocess(&$msg, $req)
 {
   global $subject_tags, $standard_tags;
 
-  $msg['subject'] = stripcrap($req['subject'], $subject_tags);
-  $msg['message'] = stripcrap($req['message'], $standard_tags);
-  $msg['urltext'] = stripcrap($req['urltext']);
+  $msg['subject'] = @stripcrap($req['subject'], $subject_tags);
+  $msg['message'] = @stripcrap($req['message'], $standard_tags);
+  $msg['urltext'] = @stripcrap($req['urltext']);
 
-  $msg['url'] = stripcrapurl($req['url']);
+  $msg['url'] = @stripcrapurl($req['url']);
   if (!empty($msg['url']))
     $msg['url'] = normalize_url_scheme($msg['url']);
 
-  $msg['imageurl'] = stripcrapurl($req['imageurl']);
+  $msg['imageurl'] = @stripcrapurl($req['imageurl']);
   if (!empty($msg['imageurl']))
     $msg['imageurl'] = normalize_url_scheme($msg['imageurl']);
 
-  $msg['video'] = stripcrapurl($req['video']);
+  $msg['video'] = @stripcrapurl($req['video']);
   if (!empty($msg['video']))
     $msg['video'] = normalize_url_scheme($msg['video']);
 }
@@ -561,7 +561,7 @@ function get_uploaded_image_urls($filename) {
 
     if ($result != "") {
       $j = json_decode($result, true);
-      if ($j["data"] && $j["data"]["link"]) {
+      if ($j["data"] && array_key_exists("link", $j["data"]) && $j["data"]["link"]) {
         $iu = preg_replace("/^http:/", "https:", $j["data"]["link"]);
         return array($iu, "https://imgur.com/delete/" . $j["data"]["deletehash"]);
       } else {

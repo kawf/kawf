@@ -1,7 +1,9 @@
 <?php
 function domain_exists($email, $record = 'MX')
 {
+  if (!str_contains($email, "@")) return false;
   list($user, $domain) = explode('@', $email);
+  if (!isset($domain) || $domain == '') return false;
   return checkdnsrr($domain, $record);
 }
 

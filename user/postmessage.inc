@@ -83,7 +83,7 @@ function postmessage($user, $fid, &$msg, $request)
 
     /* unwind... do we really need these? */
     /* unwind index for old message */
-    if (!is_null($omsg['state'])) {
+    if ($omsg != null && !is_null($omsg['state'])) {
 	if (!isset($msg['pmid']))
 	  db_exec("update f_indexes set " . $omsg['state'] . " = " . $omsg['state'] . " - 1 where iid = ?", array($iid));
 

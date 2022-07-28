@@ -36,7 +36,7 @@ foreach ($options as $name => $value) {
     unset($options[$name]);
 }
 
-$flags = implode(",", $options);
+$flags = implode(",", array_filter($options));
 
 $sql = "update f_threads$iid set flags = ? where tid = ?";
 db_exec($sql, array($flags, $tid));

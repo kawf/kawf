@@ -183,7 +183,7 @@ if (isset($_POST['postcookie'])) {
   $items = array('url', 'urltext', 'imageurl', 'video');
 
   foreach ($items as $item) {
-    if (strlen($msg[$item]) > $max_item_len) {
+    if (isset($msg[$item]) && strlen($msg[$item]) > $max_item_len) {
       $error[$item . '_too_long'] = true;
       $msg[$item] = mb_strcut($msg[$item], 0, $max_item_len);
     }
@@ -275,9 +275,9 @@ if (isset($error)) {
 } else
   $tpl->set_var("error", "");
     
-if (!$accepted || isset($preview)) {
+if (!isset($accepted) || isset($preview)) {
   require_once("postform.inc");
-  render_postform($tpl, "post", $user, $msg, $imgpreview);
+  render_postform($tpl, "post", $user, $msg, isset($imgpreview));
 
   $tpl->set_var(array(
     "accept" => "",
@@ -293,7 +293,7 @@ if (!$accepted || isset($preview)) {
   require_once("mailfrom.inc");
 
   $sql = "select * from f_tracking where fid = ? and tid = ? and options = 'SendEmail' and aid != ?";
-  $sth = db_query($sql, array($forum['fid'], $msg['tid'], $user->aid));
+  $sth = db_query($sql, array($forum['fid'], isset($msg['tid']) ? $msg['tid'] : 0, $user->aid));
   $track = $sth->fetch();
 
   if ($track) {

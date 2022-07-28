@@ -318,7 +318,7 @@ while ($numshown < $threadsperpage) {
       $tpl->set_var("CLASS", "mrow" . ($numshown % 2));
     else
 */
-    if (array_key_exists('flag', $thread) && $thread['flag']['Sticky']) {	/* calculated by gen_thread_flags() */
+    if (isset($thread['flag']['Sticky'])) {	/* calculated by gen_thread_flags() */
       $tpl->set_var("CLASS", "srow" . ($numshown % 2));
       if (is_thread_bumped($thread)) $tthreadsshown++;
     } else if (is_thread_bumped($thread)) {

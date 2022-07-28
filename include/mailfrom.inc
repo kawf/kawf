@@ -7,7 +7,8 @@ require_once("strip.inc");
    rather than passed into mailfrom
 */
 function mailfrom($fromaddress, $toaddress, $message) {
-  $xmailer .= "PHP/" . phpversion() . "\n";
+  global $domain;
+  $xmailer = "PHP/" . phpversion() . "\n";
   $subject = "";
 
   list($oheader, $obody) = explode("\n\n", $message, 2);

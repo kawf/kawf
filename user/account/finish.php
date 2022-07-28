@@ -70,7 +70,7 @@ if (!$pending) {
       $user->email($pending['data']);
       if (!$user->update()) {
         $error = "dup_email";
-	$tpl->set_var("EMAIL", $pending{'data'});
+	$tpl->set_var("EMAIL", $pending['data']);
       } else {
 	$tpl->set_var("OLD_EMAIL", $old_email);
 	$tpl->set_var("EMAIL", $user->email);

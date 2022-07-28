@@ -72,6 +72,7 @@ function db_query($sql, $args=array()) {
   try {
     $sth->execute($args);
   } catch(PDOException $e) {
+    //error_log(sprintf("query: '%s', args: [%s]", $sql, implode(',', $args)));
     if($e->getCode() == '23000') {
       // '23000' is actually integrity constraint violation, but in case
       // of MySQL it's the same as duplicate key exception.

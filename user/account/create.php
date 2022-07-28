@@ -59,7 +59,7 @@ else
 /* FIXME: Dumb workaround */
 unset($tpl->varkeys["PAGE"]);
 unset($tpl->varvals["PAGE"]);
-$tpl->set_var("PAGE", $page);
+$tpl->set_var("PAGE", isset($_page)?$_page:'');
 
 if (isset($_POST['name']))
   $name = $_POST['name'];
@@ -71,7 +71,7 @@ if (isset($_POST['email']))
 else
   $email = "";
 
-if ($_POST['submit'] && !$create_disabled && !$banned_ip) {
+if (isset($_POST['submit']) && !$create_disabled && !$banned_ip) {
   $name = striptag($name, $no_tags);
   $name = trim($name);
 
@@ -120,7 +120,7 @@ if ($_POST['submit'] && !$create_disabled && !$banned_ip) {
   }
 }
 
-if (empty($error) && $_POST['submit'] && !$create_disabled && !$banned_ip) {
+if (empty($error) && isset($_POST['submit']) && !$create_disabled && !$banned_ip) {
   if (!$user->create()) {
     if (!$user->email)
       $error .= "The email address '$email' is taken. Perhaps you forgot your password?\n";
