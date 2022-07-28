@@ -6,7 +6,7 @@ if(!$user->is_valid_token($_REQUEST['token'])) {
     err_not_found('Invalid token');
 }
 
-if($_GET['clean'] == 1) {
+if(isset($_GET['clean']) && $_GET['clean'] == 1) {
     $sql="delete from u_pending where status = 'Done'";
     db_exec($sql);
     $sql = "delete from u_pending where TO_DAYS(NOW()) - TO_DAYS(tstamp) > 30";

@@ -8,7 +8,7 @@ page_header("User list");
 
 $accountsperpage = 100;
 
-if (is_valid_integer($_GET['page']))
+if (isset($_GET['page']) && is_valid_integer($_GET['page']))
   $page=$_GET['page'];
 else
   $page = 1;
@@ -75,14 +75,14 @@ $sth = db_query($sql, $args);
 <table class="contents">
 <tr><th>aid</th><th>name</th><th>email</th><th>status</th></tr>
 <?php
-while ($acct = $sth->fetch()) {
+for ($count = 0; $acct = $sth->fetch(); $count++) {
   $i = ($count % 2);
   echo "<tr class=\"row$i\"\n>";
 ?>
     <td><a href="/account/<?php echo $acct['aid']; ?>.phtml"><?php echo $acct['aid']; ?></a></td>
     <td><?php echo stripslashes($acct['name']); ?></td>
     <td><?php echo stripslashes($acct['email']); ?></td>
-    <td><?php echo $acct['status']; $count++ ?></td>
+    <td><?php echo $acct['status']; $count ?></td>
   </tr>
 <?php
 }

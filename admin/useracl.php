@@ -10,7 +10,7 @@ if (isset($_GET['message']))
 
 $rowsperpage = 100;
 
-if (is_valid_integer($_GET['page']))
+if (isset($_GET['page']) && is_valid_integer($_GET['page']))
   $page=$_GET['page'];
 else
   $page = 1;
@@ -72,6 +72,7 @@ while ($useracl = $sth->fetch()) {
 }
 $sth->closeCursor();
 
+$count = 0;
 foreach ($acllist as $useracl) {
   $i = ($count % 2);
   echo "<tr class=\"row$i\">\n";

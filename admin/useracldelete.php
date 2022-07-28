@@ -2,7 +2,7 @@
 
 $user->req("ForumAdmin");
 
-if(is_valid_integer($_GET['aid']) && is_valid_signed_integer($_GET['fid'])) {
+if (isset($_GET['aid']) && isset($_GET['fid']) && is_valid_integer($_GET['aid']) && is_valid_signed_integer($_GET['fid'])) {
     $aid=$_GET['aid'];
     $fid=$_GET['fid'];
 } else {

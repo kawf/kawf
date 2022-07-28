@@ -32,7 +32,7 @@ $sth = db_query("select * from f_forums,f_indexes where f_forums.fid=f_indexes.f
 </tr>
 
 <?php
-while ($forum = $sth->fetch()) {
+for ($count = 0; $forum = $sth->fetch(); $count++) {
   $i = ($count & 1);
   echo "<tr class=\"row$i\">\n";
   echo "<td><a href=\"forumshow.phtml?fid=" . $forum['fid'] . "\">" . $forum['fid'] . "</a></td>\n";
@@ -43,8 +43,6 @@ while ($forum = $sth->fetch()) {
   echo "<td>" . $forum['deleted'] . "</td>\n";
   echo "<td>" . $forum['offtopic'] . "</td>\n";
   echo "</tr>\n";
-
-  $count++;
 }
 $sth->closeCursor();
 ?>

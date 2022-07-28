@@ -10,7 +10,7 @@ if (isset($_GET['message']))
 
 $visitsperpage = 100;
 
-if (is_valid_integer($_GET['page']))
+if (isset($_GET['page']) && is_valid_integer($_GET['page']))
   $page=$_GET['page'];
 else
   $page = 1;

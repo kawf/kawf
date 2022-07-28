@@ -2,7 +2,7 @@
 
 $user->req("ForumAdmin");
 
-if (!is_valid_integer($_GET['aid'])) {
+if (!isset($_GET['aid']) || !is_valid_integer($_GET['aid'])) {
     Header("Location: /admin/?message=" . urlencode("No AID!"));
     exit();
 }

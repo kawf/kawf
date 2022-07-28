@@ -45,6 +45,7 @@ while ($request = $sth->fetch()) {
 }
 $sth->closeCursor();
 if(isset($requestlist)) {
+    $count = 0;
     foreach ($requestlist as $request) {
       $i = ($count % 2);
       echo "<tr class=\"row$i\">\n";
