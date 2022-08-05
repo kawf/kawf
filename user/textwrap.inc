@@ -7,7 +7,7 @@ function textwrap($String, $breaksAt = 78, $breakStr = "\n", $padStr = "")
     if (strlen($lines[$x]) > $breaksAt) {
       $str = $lines[$x];
       while (strlen($str) > $breaksAt) {
-        $pos = strrpos(chop(substr($str, 0, $breaksAt)), " ");
+        $pos = strrpos(chop(mb_strcut($str, 0, $breaksAt)), " ");
         if ($pos === false)
           /* Failed, so find the next blank character and leave it long */
           $pos = strpos(chop($str), " ");
@@ -16,8 +16,8 @@ function textwrap($String, $breaksAt = 78, $breakStr = "\n", $padStr = "")
           /* Really nothing more, we're done */
           break;
 
-        $newString .= $padStr . substr($str, 0, $pos) . $breakStr;
-        $str = trim(substr($str, $pos));
+        $newString .= $padStr . mb_strcut($str, 0, $pos) . $breakStr;
+        $str = trim(mb_strcut($str, $pos));
       }
       $newString .= $padStr . $str . $breakStr;
     } else
@@ -35,7 +35,7 @@ function softbreakword(&$Word, $breakStr = '<wbr>', $skiptags = 1)
 
     // echo "breaking $Word\n";
 
-    for($i=0;$i<$len;$i++) {
+    for($newword='',$i=0;$i<$len;$i++) {
 	if($skiptags) {
 	    if($Word[$i]=='<') {
 		$intag++;
@@ -83,13 +83,14 @@ function softbreaklongwords($String, $Maxlen = 78, $breakStr = '<wbr>', $skiptag
     $intag=0;
     $startpos=0;
     $len=strlen($String);
+    $long=0;
     for($i=0;$i<$len;$i++) {
 	if((!$intag && ctype_space($String[$i])) || $i+1==$len) {
 	    if($long) {
 		// found the end of a long word, process 
-		$prefix=substr($String,0,$startpos);
-		$longword=substr($String,$startpos,$i-$startpos-1);
-		$postfix=substr($String,$i-1);
+		$prefix=mb_strcut($String,0,$startpos);
+		$longword=mb_strcut($String,$startpos,$i-$startpos-1);
+		$postfix=mb_strcut($String,$i-1);
 		//echo '<pre>';
 		//echo "prefix '$prefix'\n";
 		//echo "longword '$longword'\n";
