@@ -11,3 +11,4 @@ MYSQL_PASSWORD=password
 BOUNCE_HOST=bounce.kawf.org
 COOKIE_HOST=.kawf.org
 DOMAIN=kawf.org
+P2F_ADDRESS=""
