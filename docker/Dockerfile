@@ -1,12 +1,12 @@
-FROM php:7.2-apache
+FROM php:8.1-apache
 
 # add dependencies
 RUN apt-get update && apt-get install -y \
-      mariadb-client-10.3 \
+      mariadb-client-10.5 \
       tar \
       unzip \
       vim \
-    && /usr/local/bin/docker-php-ext-install -j$(nproc) mysqli pdo_mysql shmop
+    && /usr/local/bin/docker-php-ext-install -j$(nproc) mysqli pdo_mysql opcache
 
 # use custom php configuration
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"

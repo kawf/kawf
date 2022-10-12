@@ -2,7 +2,7 @@ BUILD_TYPE?=kawf
 
 .PHONY: all docker-build docker-init docker-update
 all:
-	@echo "usage: 'make docker-build,' 'make docker-init,' or 'make docker-re-up'"
+	@echo "usage: 'make docker-build,' 'make docker-init,' or 'make docker-update'"
 
 docker-build:
 	BUILD_TYPE=${BUILD_TYPE} docker-compose -f docker-compose.yaml -f docker/docker-compose-tasks.yaml build
