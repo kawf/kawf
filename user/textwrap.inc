@@ -31,6 +31,7 @@ function softbreakword(&$Word, $breakStr = '<wbr>', $skiptags = 1)
 {
     $intag=0;
     $inamp=0;
+    $correction=0;
     $len=strlen($Word);
 
     // echo "breaking $Word\n";
