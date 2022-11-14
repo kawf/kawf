@@ -227,9 +227,9 @@ $threadtable = count($indexes) - 1;
     correct offset for thread selection to avoid skipping threads*/
 if ($curpage > 1) {
   foreach ($indexes as $index) {
-    $sql = "select count(mid) FROM f_sticky" . $index['iid'];
+    $sql = "select count(distinct mid) FROM f_sticky" . $index['iid'];
     $row = db_query_first($sql, array());
-    //$stickythreads = $row[0];
+    $stickythreads = $row[0];
   }
 }
 
