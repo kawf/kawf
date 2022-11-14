@@ -7,7 +7,7 @@ class AddStickyTables extends DatabaseMigration {
     while ($i = $sth->fetch() ) {
   $tbl = "f_sticky" . $i['iid'];
   $triggertbl = "f_threads" . $i['iid'];
-	$sqlTable = "create table if not exists ". $tbl . " (" . 
+	$sqlTable = "create table if not exists ". $tbl . " (" .
     "sid int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'Primary Key', " .
     "tid int not null, " .
     "mid int not null " .
@@ -16,12 +16,12 @@ class AddStickyTables extends DatabaseMigration {
 	db_exec($sqlTable);
   $sqlTrigger = "create trigger trigger_" . $tbl . "_sticky_update " .
     "after update on " . $triggertbl . " " .
-    "for each row " . 
+    "for each row " .
     "begin " .
     "  if new.flags like '%STICKY%' then " .
     "    insert into " . $tbl . "(tid, mid) values (new.tid, new.mid); " .
     " else " .
-    "    delete from " . $tbl . " where tid = new.tid; " .     
+    "    delete from " . $tbl . " where tid = new.tid; " .
     "end if; " .
     "end ";
 	echo "Creating update trigger for $tbl\n";

@@ -30,7 +30,7 @@ function external_diff($old, $new)
     if($origfd && $newfd) {
 	fwrite($origfd, implode("\n", $old)."\n");
 	fwrite($newfd, implode("\n", $new)."\n");
-    
+
 	fclose($origfd);
 	fclose($newfd);
 

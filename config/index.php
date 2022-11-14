@@ -27,18 +27,18 @@ function readfile_header($file)
     //header('Content-Description: File Transfer');
     //header('Content-Disposition: attachment; filename="'.basename($file).'"');
 
-    $last_modified_time = filemtime($file); 
-    $etag = md5_file($file); 
+    $last_modified_time = filemtime($file);
+    $etag = md5_file($file);
 
-    if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $last_modified_time || 
+    if (@strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) == $last_modified_time ||
         @trim($_SERVER['HTTP_IF_NONE_MATCH']) == $etag) {
-        header("HTTP/1.1 304 Not Modified"); 
+        header("HTTP/1.1 304 Not Modified");
         return;
     }
-    
+
     header('Content-Length: ' . filesize($file));
-    header("Last-Modified: " . gmdate("D, d M Y H:i:s", $last_modified_time)." GMT"); 
-    header("Etag: $etag"); 
+    header("Last-Modified: " . gmdate("D, d M Y H:i:s", $last_modified_time)." GMT");
+    header("Etag: $etag");
     header('cache-control: public, max-age=86400, no-cache');
     readfile($file);
 }

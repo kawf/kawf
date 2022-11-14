@@ -195,7 +195,7 @@ function log_backtrace($bt)
 function track_thread($fid, $tid, $options='', $time=null)
 {
   global $user;
-  
+
   $aid = $user->aid;
 
   if (!is_numeric($fid) || !is_numeric($tid) || $fid<=0 || $tid<=0) {

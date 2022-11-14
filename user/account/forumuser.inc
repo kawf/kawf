@@ -125,14 +125,14 @@ class ForumUser {
     if ($script_name . $path_info == '/login.phtml')
       return true;
 
-    /* always allow people to create */	
+    /* always allow people to create */
     if ($script_name . $path_info == '/create.phtml')
       return true;
 
     if ($script_name . $path_info == '/finish.phtml')
       return true;
 
-    /* always allow people to request password */	
+    /* always allow people to request password */
     if ($script_name . $path_info == '/forgotpassword.phtml')
       return true;
 
@@ -374,7 +374,7 @@ class AccountUser extends ForumUser {
       $row = db_query_first("select name from u_users where name = ?", array($this->name));
       if ($row)
         $this->name = "";
-      
+
       $row = db_query_first("select email from u_users where email = ?", array($this->email));
       if ($row)
         $this->email = "";

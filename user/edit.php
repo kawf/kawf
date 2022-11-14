@@ -97,7 +97,7 @@ if (!isset($_POST['message'])) {
   /* hit "edit" link, prefill postform (step 1) */
   $preview = 1;
 
-  /* Synthesize state based on the state of the existing message. */ 
+  /* Synthesize state based on the state of the existing message. */
   $offtopic = ($msg['state'] == 'OffTopic');
   $expose_email = !empty($msg['email']);
   $send_email = is_msg_etracked($msg);
@@ -105,7 +105,7 @@ if (!isset($_POST['message'])) {
 } else {
   /* form submitted via edit (step 2) */
   preprocess($nmsg, $_POST);
-  
+
   $offtopic = isset($_POST['OffTopic']);
   $expose_email = isset($_POST['ExposeEmail']);
   $send_email = isset($_POST['EmailFollowup']);

@@ -161,7 +161,7 @@ function escape_form($msg)
   $msg = preg_replace("/&lt;/", "<", $msg);
   $msg = preg_replace("/&gt;/", ">", $msg);
   $msg = preg_replace("/\"/", "&quot;", $msg);
-  
+
   return $msg;
 }
 
@@ -171,7 +171,7 @@ function escape_form_url($url)
 
   $url = preg_replace("/&/", "&amp;",  $url);
   $url = preg_replace("/\"/", "&quot;", $url);
-  
+
   return $url;
 }
 
@@ -210,7 +210,7 @@ function normalize_url_scheme($url)
 
   if (preg_match("#^/#", $url))
     return "http:/$url";
- 
+
   return "http://$url";
 }
 

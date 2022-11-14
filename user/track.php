@@ -22,10 +22,10 @@ if (!isset($iid)) {
 }
 
 if (!$user->is_valid_token($_REQUEST['token']))
-  err_not_found("Invalid token"); 
+  err_not_found("Invalid token");
 
 if (!is_numeric($time))
-  err_not_found("Invalid timestamp"); 
+  err_not_found("Invalid timestamp");
 
 track_thread($forum['fid'], $tid, '', $time);
 

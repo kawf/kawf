@@ -132,7 +132,7 @@ class nl2brPre {
 	    array("<pre>a<b</pre>", "<pre>a&lt;b</pre>"),
 	);
 
-	$p = $i = 0; 	
+	$p = $i = 0;
 	foreach ($a as $t) {
 	    $out = nl2brPre::out($t[0], $xhtml);
 	    if ($out != $t[1]) {

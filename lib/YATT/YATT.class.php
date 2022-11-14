@@ -67,7 +67,7 @@ class YATT {
                     $data);
     }
 
-    # load template file on class creation 
+    # load template file on class creation
     # You can load multiple files
     function load($fname) {
         $data = $this->preprocess($fname);
@@ -75,7 +75,7 @@ class YATT {
 
         $cur = &$this->obj;
         $nchunks = preg_match_all(
-                '/(.*?)[ \t]*\%(begin|end)[\t ]+\[([A-Za-z-_]+)\][\t ]*$/ism', 
+                '/(.*?)[ \t]*\%(begin|end)[\t ]+\[([A-Za-z-_]+)\][\t ]*$/ism',
                 $data, $matches, PREG_SET_ORDER);
 
         # array[1] == text, array[2] == (begin|end), array[3] == NAME
@@ -133,7 +133,7 @@ class YATT {
         return $node;
     }
 
-    # INTERNAL: Substitute some stuff! 
+    # INTERNAL: Substitute some stuff!
     function subst($matches) {
         if (!isset($this->vars[$matches[1]])) {
            $this->error('PARSE(): unbound variable %s', $matches[1]);
@@ -166,7 +166,7 @@ class YATT {
         }
         return $out;
     }
- 
+
     # INTERNAL: Return all of the generated output
     function return_output(&$node) {
         $out = $node[YATT_OUTPUT];
@@ -201,7 +201,7 @@ class YATT {
         }
     }
 
-    # Set a variable to some value 
+    # Set a variable to some value
     function set($var, $value=NULL) {
         if (is_array($var)) {
             $this->vars = array_merge($this->vars, $var);
@@ -217,7 +217,7 @@ class YATT {
 	$this->vars = array();
     }
 
-    # Get errors, or return FALSE if there are none. 
+    # Get errors, or return FALSE if there are none.
     # Resets error list to zero!
     function get_errors() {
         $err = $this->errors;

@@ -44,7 +44,7 @@ if (isset($_POST['submit'])) {
 
   Header("Location: index.phtml?message=" . urlencode("Forum Added"));
   exit;
-}  
+}
 
 page_header("Add Forum");
 #page_show_nav("1.2");

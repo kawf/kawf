@@ -45,11 +45,11 @@ $create_sticky_trigger = "
   after update on f_threads%d
   for each row
   begin
-    if new.flags like '%%STICKY%%' then 
+    if new.flags like '%%STICKY%%' then
       insert into f_sticky%d(tid, mid) values (new.tid, new.mid);
-    else 
-      delete from f_sticky%d where tid = new.tid;     
-  end if; 
+    else
+      delete from f_sticky%d where tid = new.tid;
+  end if;
   end
   ";
 
@@ -260,7 +260,7 @@ $set_current_schema_version = "
   values
     (?)
   on duplicate key update
-    version = version 
+    version = version
   ";
 
 # ACL - IP bans.

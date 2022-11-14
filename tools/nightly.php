@@ -89,10 +89,10 @@ while ($forum = $sth->fetch()) {
   echo " checking indexes";
   $fixup=NULL;
   // db_exec("lock tables f_indexes write");
-  verify_count($fixup,$forum,'active'); 
-  verify_count($fixup,$forum,'deleted'); 
-  verify_count($fixup,$forum,'offtopic'); 
-  verify_count($fixup,$forum,'moderated'); 
+  verify_count($fixup,$forum,'active');
+  verify_count($fixup,$forum,'deleted');
+  verify_count($fixup,$forum,'offtopic');
+  verify_count($fixup,$forum,'moderated');
 
   if(isset($fixup)) {
       echo ": fixing up indexes";

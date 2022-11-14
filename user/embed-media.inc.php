@@ -3,13 +3,13 @@ $video_embedders = array ('redtube', 'vimeo', 'youtube', 'html5', 'vine');
 
 function explode_query($query) {
     $queryParts = explode('&', $query);
-   
+
     $params = array();
     foreach ($queryParts as $param) {
         $item = explode('=', $param);
         $params[$item[0]] = $item[1];
     }
-   
+
     return $params;
 }
 

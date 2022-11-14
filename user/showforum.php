@@ -157,8 +157,8 @@ if ($curpage == 1) {
   /* show stickies next */
   /**********************/
   foreach ($indexes as $index) {
-    $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $index['iid'] . 
-    " where tid in" . 
+    $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads" . $index['iid'] .
+    " where tid in" .
     " (SELECT tid FROM f_sticky" . $index['iid'] . ")" .
     " order by tid desc";
     $sth = db_query($sql);
@@ -223,7 +223,7 @@ $skipthreads = ($curpage - 1) * $threadsperpage;
 
 $threadtable = count($indexes) - 1;
 
-/*  get number of sticky threads that would have been shown on page 1, 
+/*  get number of sticky threads that would have been shown on page 1,
     correct offset for thread selection to avoid skipping threads*/
 if ($curpage > 1) {
   foreach ($indexes as $index) {
@@ -264,7 +264,7 @@ while ($numshown < $threadsperpage) {
 	" $ttable.mid = $mtable.mid and ( $mtable.state = 'Active' ";
     $sql_args = array($index['mintid'], $index['maxtid'], $index['minmid'], $index['maxmid']);
     if ($user->capable($forum['fid'], 'Delete'))
-      $sql .= "or $mtable.state = 'Deleted' or $mtable.state = 'Moderated' or $mtable.state = 'OffTopic' "; 
+      $sql .= "or $mtable.state = 'Deleted' or $mtable.state = 'Moderated' or $mtable.state = 'OffTopic' ";
     else {
       if (isset($user->pref['ShowModerated']))
         $sql .= "or $mtable.state = 'Moderated' ";
@@ -288,7 +288,7 @@ while ($numshown < $threadsperpage) {
     } else {
       $sql .= " limit " . (int)($skipthreads - $stickythreads) . "," . (int)($threadsperpage - $numshown);
     }
-        
+
     $sth = db_query($sql, $sql_args);
     $thread = $sth->fetch();
 

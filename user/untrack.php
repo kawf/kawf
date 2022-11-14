@@ -21,7 +21,7 @@ if (!isset($iid)) {
 }
 
 if (!$user->is_valid_token($_REQUEST['token']))
-  err_not_found("Invalid token"); 
+  err_not_found("Invalid token");
 
 untrack_thread($forum['fid'], $tid);
 

@@ -165,7 +165,7 @@ function build_indexes($fid)
   while ($index = $sth->fetch())
     $indexes[] = $index;
   $sth->closeCursor();
-  
+
   return $indexes;
 }
 
@@ -198,7 +198,7 @@ function build_tthreads($fid)
 	  foreach ($tthreads as $t) {
 	    if ($t['tid']!=$tthread['tid']) $new[]=$tthread;
 	  }
-	  $tthreads[] = $new; 
+	  $tthreads[] = $new;
 	} else {
 	  // echo "dup tracking entry for tid $tid, ignoring<br>\n";
 	  /* Throw it away. Don't add it to $tthreads_by_tid or $tthread */

@@ -9,7 +9,7 @@ $tid = $_REQUEST['tid'];
 $page = $_REQUEST['page'];
 
 if (!$user->is_valid_token($_REQUEST['token']))
-  err_not_found("invalid token"); 
+  err_not_found("invalid token");
 
 if (isset($_REQUEST['time']) && is_numeric($_REQUEST['time']))
   $time = $_REQUEST['time'];

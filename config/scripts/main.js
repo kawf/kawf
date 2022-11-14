@@ -20,7 +20,7 @@ var adminHTML = ' | <a href="#" id="admin-mode">Admin Mode: <span id="admin-mode
 $(document).ready(function() {
   $('#view-all-images').click(viewAllImages);
   $('#night-mode').click(toggleNightMode);
-  
+
   if($("a[title|='Unstick thread']").length || $("a[title|='Sticky thread']").length){
     $("#night-mode").after(adminHTML);
     $('#admin-mode').click(toggleAdminMode);
@@ -69,7 +69,7 @@ function applyAdminMode(){
     $("a[title|='Unstick thread']").show();
     $("a[title|='Lock']").show();
     $('#admin-mode-status').text('Active');
-  }    
+  }
 }
 
 // Night Mode
@@ -79,10 +79,10 @@ function toggleNightMode() {
     applyNightMode();
 }
 
-function applyNightMode() { 
+function applyNightMode() {
 	if (!nightModeActive) {
     	$('.night-mode').removeClass('night-mode');
-        
+
         var allImages = $('img');
         $.map(allImages, function(image) {
             var imgSrc = $(image).attr('src');
@@ -101,11 +101,11 @@ function applyNightMode() {
             else if (imgSrc.indexOf('/other-night.png') >= 0)
                 $(image).attr('src', imgSrc.replace('other-night.png', 'other.png'));
         });
-        
+
         $('#night-mode-status').text('Off');
     } else {
 	$('html, body, select, a, em, a.tt, a.ut, .row0, .row1, .srow0, .srow1, .trow0, .trow1, .grow0, .grow1, .username, .threadinfo, .messageblock .subject, .vmid, .postform tr, .postform .text, .thread > li > a, .preferences tr, td.signaturepreview, textarea, .arrow, .navigate, div.changes').addClass('night-mode');
-        
+
         var allImages = $('img');
         $.map(allImages, function(image) {
             var imgSrc = $(image).attr('src');
@@ -126,7 +126,7 @@ function applyNightMode() {
         });
 
         $('#night-mode-status').text('Active');
-    }    
+    }
 }
 
 // View All Images
@@ -138,7 +138,7 @@ function viewAllImages() {
     } else {
 		showingAllImages = true;
     	$('#view-all-images').text('Hide All Images');
-	
+
         var imgThreads = $('img[src$="/pic.gif"], img[src$="/pic-night.gif"]');
         $.map(imgThreads, function(imgThread) {
             var threadURL = $('a', $(imgThread).parent())[0].href;
@@ -159,7 +159,7 @@ function viewAllImages() {
 
 					threadImages.appendTo(imgContainer);
                     $(threadInfo).after(imgContainer);
-                    
+
                     for(i = 0; i < threadImages.length; i++) {
                     	imageData[threadImages[i]] = {};
                         imageData[threadImages[i]].resized = false;
@@ -168,7 +168,7 @@ function viewAllImages() {
                 }
             });
         });
-	}  
+	}
 }
 
 // Drag to Resize (borrowed from https://github.com/kabaka/drag-to-resize)
@@ -221,7 +221,7 @@ function makeImageZoomable(imgTag) {
       return false;
     }
   }, true);
-  
+
   imgTag.addEventListener('dblclick', function(e) {
     if(e.ctrlKey != 0)
       return true;
@@ -239,7 +239,7 @@ function makeImageZoomable(imgTag) {
     e.target.style.left = 0;
     e.target.style.maxWidth = e.target.style.width = "auto";
     e.target.style.maxHeight = e.target.style.height = getHeight() + "px";
-      
+
     imageData[e.target].resized = true;
 
     e.preventDefault();
@@ -247,7 +247,7 @@ function makeImageZoomable(imgTag) {
     e.stopPropagation();
     return false;
   }, true);
-  
+
   imgTag.addEventListener('mousemove', function(e){
     if (dragTargetData.d) {
       e.target.style.maxWidth = e.target.style.width = ((getDragSize(e)) * dragTargetData.iw / dragTargetData.d) + "px";
@@ -287,7 +287,7 @@ function makeImageZoomable(imgTag) {
       e.preventDefault();
       return false;
     }
-    
+
     if(imageData[e.target].resized) {
       e.preventDefault();
       e.returnValue = false;

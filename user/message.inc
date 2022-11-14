@@ -60,7 +60,7 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
     $tpl->set_var("USER_TOKEN", $viewer->token());
   } else {
     $tpl->set_var("admin", "");
-  } 
+  }
   if ($moderator) {
     $tpl->set_var("MSG_IP", $msg['ip']);
     /* unfortunately, may be blank, if poster did not set ExposeEmail */

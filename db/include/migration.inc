@@ -56,14 +56,14 @@ class DatabaseMigration {
     if(! is_dir($dirpath)) {
       return array();
     }
-    $all = glob($dirpath . "/*.php"); 
+    $all = glob($dirpath . "/*.php");
     $latest = '';
     foreach($all as $filepath) {
       $parts = explode("_", basename($filepath, ".php"), 2);
       $version = $parts[0];
       if(! preg_match('/^\d+$/', $version)) {
         continue;
-      }      
+      }
       if($version > $latest) {
         $latest = $version;
       }

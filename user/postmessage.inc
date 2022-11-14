@@ -167,7 +167,7 @@ function postmessage($user, $fid, &$msg, $request)
 
       $tid = addslashes($msg['tid']);
 
-      /* check to make sure we're not already tracking, or we're already 
+      /* check to make sure we're not already tracking, or we're already
 	 not tracking */
       $row = db_query_first(
         "select count(*) from f_tracking where fid = ? and aid = ? and tid = ?",

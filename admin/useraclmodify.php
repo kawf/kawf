@@ -37,7 +37,7 @@ if (isset($_POST['submit'])) {
 
   Header("Location: useracl.phtml?message=" . urlencode("User ACL Modified"));
   exit;
-}  
+}
 
 if (!isset($aid)) {
   page_header("Modify User ACL");

@@ -76,7 +76,7 @@ function softbreakword(&$Word, $breakStr = '<wbr>', $skiptags = 1)
 
 // add soft breaks after EVERY character in a long word to let browsers wrap
 // in the middle of the word.
-// by default, ignore tags, and do not treat them as printable parts of the 
+// by default, ignore tags, and do not treat them as printable parts of the
 // string
 function softbreaklongwords($String, $Maxlen = 78, $breakStr = '<wbr>', $skiptags = 1)
 {
@@ -88,7 +88,7 @@ function softbreaklongwords($String, $Maxlen = 78, $breakStr = '<wbr>', $skiptag
     for($i=0;$i<$len;$i++) {
 	if((!$intag && ctype_space($String[$i])) || $i+1==$len) {
 	    if($long) {
-		// found the end of a long word, process 
+		// found the end of a long word, process
 		$prefix=mb_strcut($String,0,$startpos);
 		$longword=mb_strcut($String,$startpos,$i-$startpos-1);
 		$postfix=mb_strcut($String,$i-1);
@@ -123,7 +123,7 @@ function softbreaklongwords($String, $Maxlen = 78, $breakStr = '<wbr>', $skiptag
 
 	if($wordlen>$Maxlen) {
 	    if(!$long) {
-		// found the start of a long word, mark start 
+		// found the start of a long word, mark start
 		// echo "found start at $startpos, $wordlen>$Maxlen\n";
 		$long=1;
 	    }

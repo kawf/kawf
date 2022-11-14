@@ -310,7 +310,7 @@ table.basic th { background-color: #d0dce0; }
 }
 
 /* View All Images */
-.view-all-images-image img { display: block; margin: 5px; } 
+.view-all-images-image img { display: block; margin: 5px; }
 
 /* Night Mode */
 html.night-mode, body.night-mode { background: #1a1a1d !important; color: #888 !important; }

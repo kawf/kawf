@@ -201,7 +201,7 @@ function print_header()
 }
 
 function print_user($uu, $stats, $bgcolor="#F7F7F7")
-{  
+{
     global $user;
     echo "<tr bgcolor=\"$bgcolor\">\n";
     echo "<td><a href=\"/account/". $uu->aid .".phtml\">".$uu->aid."</a></td>\n";

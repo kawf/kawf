@@ -216,7 +216,7 @@ if (isset($_POST['postcookie'])) {
     if(!empty($msg['video']))
       $error["video"] = true;
   }
- 
+
   render_message($tpl, $msg, $user);
 
   if (isset($_POST['OffTopic']))
@@ -233,7 +233,7 @@ if (isset($_POST['postcookie'])) {
   /* Guaranteed no picture */
   $tpl->set_var("image", "");
 
-  /* allow pmid to come from _POST or _GET, either as pid or pmid, 
+  /* allow pmid to come from _POST or _GET, either as pid or pmid,
      and populate hidden inputs in form with tid and pmid */
   if (isset($_REQUEST['pid']) || isset($_REQUEST['pmid'])) {
     /* Grab the actual message */
@@ -258,7 +258,7 @@ if (isset($_POST['postcookie'])) {
     /*
     else
       $msg['subject'] = "Re: " . $pmsg['subject'];
-    */   
+    */
   }
 }
 
@@ -274,7 +274,7 @@ if (isset($error)) {
   }
 } else
   $tpl->set_var("error", "");
-    
+
 if (!isset($accepted) || isset($preview)) {
   require_once("postform.inc");
   render_postform($tpl, "post", $user, $msg, isset($imgpreview));
@@ -299,7 +299,7 @@ if (!isset($accepted) || isset($preview)) {
   if ($track) {
     $iid = mid_to_iid($thread['mid']);
     if (!isset($iid)) throw new RuntimeException("no iid for thread mid " . $thread['mid']);
-      
+
     $sql = "select subject from f_messages$iid where mid = ?";
     $row = db_query_first($sql, array($thread['mid']));
 
