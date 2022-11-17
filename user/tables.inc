@@ -46,7 +46,10 @@ $create_sticky_trigger = "
   for each row
   begin
     if new.flags like '%%STICKY%%' then
-      insert into f_sticky%d(tid, mid) values (new.tid, new.mid);
+      if new.flags <> old.flags then
+        insert into f_sticky%d(tid) values (new.tid)
+        on duplicate key update tid=tid;
+      end if;
     else
       delete from f_sticky%d where tid = new.tid;
   end if;
@@ -57,7 +60,7 @@ $create_sticky_table = "
   create table if not exists f_sticky%d (
     sid int NOT NULL PRIMARY KEY AUTO_INCREMENT COMMENT 'Primary Key',
     tid int not null,
-    mid int not null
+    unique (tid)
   )";
 
 # Unused

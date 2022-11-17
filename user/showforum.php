@@ -227,7 +227,7 @@ $threadtable = count($indexes) - 1;
     correct offset for thread selection to avoid skipping threads*/
 if ($curpage > 1) {
   foreach ($indexes as $index) {
-    $sql = "select count(distinct mid) FROM f_sticky" . $index['iid'];
+    $sql = "select count(distinct tid) FROM f_sticky" . $index['iid'];
     $row = db_query_first($sql, array());
     $stickythreads = $row[0];
   }
@@ -282,11 +282,12 @@ while ($numshown < $threadsperpage) {
     $sql .= ") order by $ttable.tid desc";
 
     /*  Limit to the maximum number of threads per page
-        correct offsets for sticky thread shown on first page */
+        correct offsets for sticky thread shown on first page
+        all sticky threads will be shown on the first page*/
     if ($curpage == 1) {
-      $sql .= " limit " . (int)($skipthreads) . "," . (int)($threadsperpage - $numshown - $stickythreads);
+      $sql .= " limit " . (int)($skipthreads) . "," . max((int)($threadsperpage - $numshown - $stickythreads),0);
     } else {
-      $sql .= " limit " . (int)($skipthreads - $stickythreads) . "," . (int)($threadsperpage - $numshown);
+      $sql .= " limit " . max((int)($skipthreads - $stickythreads), 0) . "," . (int)($threadsperpage - $numshown);
     }
 
     $sth = db_query($sql, $sql_args);
@@ -345,7 +346,7 @@ if (!process_tthreads(true /* just count */))
 if (!$tthreadsshown)
   $tpl->set_var("update_all", "");
 
-if (!$numshown)
+if (!$numshown && !$stickythreads && !($stickythreads > $displayedthreads))
   $tpl->set_var($table_block, "<span style=\"font-size: larger;\">No messages in this forum</span><br>");
 
 /*
