@@ -30,17 +30,17 @@ class ReviseStickyTriggers extends DatabaseMigration {
         "end ";
       db_exec($sqlTriggerCreation);
 
-      echo "Updating schema on sticky table $stickytbl\n";
-      $sqlAlterStickyTable = "ALTER TABLE " .$stickytbl . " " .
-        "DROP COLUMN mid," .
-        "ADD CONSTRAINT tid_UNIQUE UNIQUE (tid);";
-      db_exec($sqlAlterStickyTable);
-
-      echo "Cleaning douplicates from sticky table $stickytbl\n";
-      $sqlCleanStickyTable = "DELETE t1 FROM . " .$stickytbl . " t1 " .
+      echo "Cleaning duplicates from sticky table $stickytbl\n";
+      $sqlCleanStickyTable = "DELETE t1 FROM " . $stickytbl . " t1 " .
         "INNER JOIN " .$stickytbl . " t2 " .
         "WHERE t1.sid < t2.sid AND t1.tid = t2.tid;";
       db_exec($sqlCleanStickyTable);
+
+      echo "Updating schema on sticky table $stickytbl\n";
+      $sqlAlterStickyTable = "ALTER TABLE " . $stickytbl . " " .
+        "DROP mid," .
+        "ADD CONSTRAINT tid_UNIQUE UNIQUE (tid);";
+      db_exec($sqlAlterStickyTable);
     }
   }
 }
