@@ -169,6 +169,8 @@ if (isset($_POST['postcookie'])) {
 
   if (empty($msg['subject']) && strlen($msg['subject']) == 0) {
     $error["subject_req"] = true;
+    /* Issue #73 - Don't allow empty subjects */
+    $msg['subject'] = '...';
   } elseif (isset($parent) && $msg['subject'] == "Re: " . $parent['subject'] &&
     empty($msg['message']) && strlen($msg['message']) == 0 &&
     empty($msg['url'])) {
