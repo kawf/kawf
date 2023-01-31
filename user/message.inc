@@ -343,7 +343,7 @@ function process_message($user, &$msg)
        time local to PHP server */
     $msg['date'] = gen_date($user, $msg['unixtime']);
 
-    /* Workaround for issue $38 - db may still contain non-utf8 */
+    /* Workaround for issue #38 - db may still contain non-utf8 */
     $msg['subject'] = @remoronize($msg['subject']);
     $msg['subject'] = @utf8ize($msg['subject']);
     $msg['name'] = @utf8ize($msg['name']);
@@ -352,6 +352,10 @@ function process_message($user, &$msg)
 	$msg['message'] = utf8ize($msg['message']);
 	//$msg['message'] = debug_hexdump($msg['message']);
     }
+
+    /* Workaround for issue #73 - handle empty subjects */
+    if (empty($msg['subject']))
+	$msg['subject'] = "...";
 
     $keys = array();
 
