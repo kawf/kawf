@@ -17,16 +17,7 @@ class ForumUser {
 
   var $shortname, $password, $cookie, $gmsgfilter;
 
-  public $timezone;
-  public $style;
-  public $preferences;
-  public $signature;
-  public $threadsperpage;
-  public $posts;
-  public $pref;
-  public $tokentime;
-  public $capable;
-  public $tzoff;
+  var $timezone, $style, $preferences, $signature, $threadsperpage, $posts, $pref, $tokentime, $capable, $tzoff;
 
   function __construct($aid = null, $req = true)
   {
