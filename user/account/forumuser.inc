@@ -24,6 +24,8 @@ class ForumUser {
   public $posts;
   public $pref;
   public $tokentime;
+  public $capable;
+  public $tzoff;
 
   function __construct($aid = null, $req = true)
   {
