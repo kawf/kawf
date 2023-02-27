@@ -16,6 +16,15 @@ class ForumUser {
 
   var $shortname, $password, $cookie, $gmsgfilter;
 
+  public $timezone;
+  public $style;
+  public $preferences;
+  public $signature;
+  public $threadsperpage;
+  public $posts;
+  public $pref;
+  public $tokentime;
+
   function __construct($aid = null, $req = true)
   {
     if (isset($aid)) $this->find_by_aid((int)$aid, $req);

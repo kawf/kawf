@@ -50,6 +50,8 @@ class phpSniff_core
 	var $_browser_search_regex = '([a-z]+)([0-9]*)([\.0-9]*)(up)?';
 	var $_language_search_regex = '([a-z-]{2,})';
 	
+    public $_browser_regex;
+
     /**
      *  init
      *  this method starts the madness

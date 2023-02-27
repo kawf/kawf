@@ -3,6 +3,11 @@
 class PDODuplicateKey extends RuntimeException {}
 
 class SQLAuth {
+    public $hostname;
+    public $database;
+    public $username;
+    public $password;
+
     public function __construct($host, $db, $user, $pass) {
 	$this->hostname=$host;
 	$this->database=$db;
