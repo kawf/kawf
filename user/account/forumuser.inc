@@ -11,6 +11,7 @@ require_once("strip.inc");
 require_once("timezone.inc");
 
 /* This is the standard ForumUser class */
+#[AllowDynamicProperties] /* temp workaround for Issue #77 */
 class ForumUser {
   var $aid, $name, $email, $status, $createdate, $createip;
 
