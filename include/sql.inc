@@ -1,6 +1,8 @@
 <?php
 
-class PDODuplicateKey extends RuntimeException {}
+class PDODuplicateKey extends RuntimeException {
+    var $errorInfo;
+}
 
 class SQLAuth {
     var $hostname, $database, $username, $password;
