@@ -28,6 +28,10 @@
  */
 class Horde_Text_Diff_Engine_Native
 {
+    var $xv, $yv;
+    var $xind, $yind;
+    var $xchanged, $ychanged;
+
     public function diff($from_lines, $to_lines)
     {
         array_walk($from_lines, array('Horde_Text_Diff', 'trimNewlines'));
