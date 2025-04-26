@@ -118,7 +118,7 @@ else
 // Get the signature directly from the user object
 $signature_raw = $user->signature;
 
-// --- Removed Encoding Workaround --- 
+// --- Removed Encoding Workaround ---
 
 // Use the raw signature (assuming DB connection now provides correct UTF-8)
 $signature_htmlspecialchars = htmlspecialchars($signature_raw, ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');

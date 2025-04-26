@@ -3,24 +3,23 @@
 require_once("thread.inc");
 require_once("pagenav.inc.php");
 require_once("page-yatt.inc.php");
+require_once("header-template.inc");
 
-if (!$user->valid()) header("Location: /login.phtml?url=$url");
+if (!$user->valid()) {
+    $current_url = urlencode($script_name . $path_info . ($query_string ? "?$query_string" : ""));
+    header("Location: /login.phtml?page=$current_url");
+    exit;
+}
 
-$hdr = new Template($template_dir, "comment");
-$hdr->set_file(array(
-  "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
-));
+$content_tpl = new YATT($template_dir, 'showtracking.yatt');
 
-$hdr->set_var("FORUM_NAME", $forum['name']);
-$hdr->set_var("FORUM_SHORTNAME", $forum['shortname']);
+$forum_header_html = render_forum_header_yatt($forum, $template_dir);
+$content_tpl->set("FORUM_HEADER_HTML", $forum_header_html);
 
-$yatt = new YATT($template_dir, 'showtracking.yatt');
-$yatt->set("forum_header", $hdr->parse("FORUM_HEADER", "forum_header"));
-
-$yatt->set("user_token", $user->token());
-$yatt->set("page", $tpl->get_var("PAGE"));
-$yatt->set("forum", $forum);
-$yatt->set("time", time());
+$content_tpl->set("user_token", $user->token());
+$content_tpl->set("page", $tpl->get_var("PAGE"));
+$content_tpl->set("forum", $forum);
+$content_tpl->set("time", time());
 
 if (!isset($curpage))
   $curpage = 1;
@@ -32,24 +31,26 @@ $out = process_tthreads();
 $numpages = ceil($out['numshown']/$tpp);
 
 if ($numpages && $curpage>$numpages) {
-  err_not_found("Page out of range");
+  error_log("Page out of range in showtracking.php: $curpage");
+  print generate_page("Tracked Threads Error", "Error: Page out of range.");
   exit;
 }
 
-$yatt->set('shown', $out['numshown']);
-$yatt->set('numpages', $numpages);
+$content_tpl->set('shown', $out['numshown']);
+$content_tpl->set('numpages', $numpages);
 
 /* calc start/end thread points */
 $start = $tpp * ($curpage-1);
 $end = $tpp * $curpage;
 
 $fmt = "/" . $forum['shortname'] . "/tracking/%d.phtml";
-$yatt->set("pages", gen_pagenav($fmt, $curpage, $numpages));
+$content_tpl->set("pages", gen_pagenav($fmt, $curpage, $numpages));
 
 if (isset($user->pref['SimpleHTML'])) $block = "simple";
 else $block = "normal";
 
-$new = false;
+$rows_html = '';
+$new_threads_found = false;
 
 if ($out['numshown']>0) {
   $count = 0;
@@ -59,9 +60,21 @@ if ($out['numshown']>0) {
   foreach ($out['threads'] as $t) {
     if (!$t['sticky']) continue;
     if ($count>=$start && $count<$end) {
-      if (parse_row($yatt, $block, "srow" . ($i&1), $t['thread'], !$t['new']))
-	$i++;
+      $thread = $t['thread'];
+      $collapse = isset($user->pref['Collapsed']) && !$t['new'];
+      $messagestr = gen_thread($thread, $collapse);
+      if ($messagestr) {
+        $threadlinks = gen_threadlinks($thread, $collapse);
+        $class = "srow" . ($i&1);
+        if ($block == 'normal') {
+          $rows_html .= '<tr class="' . $class . '"><td>' . $messagestr . '</td><td class="threadlinks">' . $threadlinks . '</td></tr>';
+        } else {
+          $rows_html .= $messagestr;
+        }
+        $i++;
+      }
     }
+    if ($t['new']) $new_threads_found = true;
     $count++;
   }
 
@@ -69,11 +82,22 @@ if ($out['numshown']>0) {
   $i=0;
   foreach ($out['threads'] as $t) {
     if (!$t['new']) continue;
-    $new = true;
+    $new_threads_found = true;
     if ($t['sticky']) continue;
     if ($count>=$start && $count<$end) {
-      if (parse_row($yatt, $block, "trow" . ($i&1), $t['thread']))
-	$i++;
+      $thread = $t['thread'];
+      $collapse = false;
+      $messagestr = gen_thread($thread, $collapse);
+      if ($messagestr) {
+        $threadlinks = gen_threadlinks($thread, $collapse);
+        $class = "trow" . ($i&1);
+        if ($block == 'normal') {
+          $rows_html .= '<tr class="' . $class . '"><td>' . $messagestr . '</td><td class="threadlinks">' . $threadlinks . '</td></tr>';
+        } else {
+          $rows_html .= $messagestr;
+        }
+        $i++;
+      }
     }
     $count++;
   }
@@ -83,38 +107,43 @@ if ($out['numshown']>0) {
   foreach ($out['threads'] as $t) {
     if ($t['new'] || $t['sticky']) continue;
     if ($count>=$start && $count<$end) {
-      parse_row($yatt, $block, "row" . ($i&1), $t['thread']);
-	$i++;
+      $thread = $t['thread'];
+      $collapse = isset($user->pref['Collapsed']);
+      $messagestr = gen_thread($thread, $collapse);
+      if ($messagestr) {
+        $threadlinks = gen_threadlinks($thread, $collapse);
+        $class = "row" . ($i&1);
+        if ($block == 'normal') {
+          $rows_html .= '<tr class="' . $class . '"><td>' . $messagestr . '</td><td class="threadlinks">' . $threadlinks . '</td></tr>';
+        } else {
+          $rows_html .= $messagestr;
+        }
+        $i++;
+      }
     }
     $count++;
   }
 } else {
-  $yatt->set('messages', "<span style=\"font-size: larger;\">No tracked messages in this forum</span><br>");
-  $yatt->parse($block.".row");
+  $content_tpl->set('messages', "<span style=\"font-size: larger;\">No tracked messages in this forum</span><br>");
+  $content_tpl->parse($block.".row");
 }
 
-$yatt->parse($block);
+$content_tpl->set('ROWS_HTML', $rows_html);
 
-if ($new) {
-  $yatt->parse("header.update_all");
-  $yatt->parse("footer.update_all");
+if ($new_threads_found) {
+  $content_tpl->parse("showtracking_content.header.update_all");
 }
 
-$yatt->parse("header");
-$yatt->parse("footer");
+$content_tpl->parse("showtracking_content.header");
+$content_tpl->parse("showtracking_content." . $block);
+$content_tpl->parse("showtracking_content.footer");
 
-print generate_page("Your tracked threads in " . $forum['name'],
-  $yatt->output());
+$content_tpl->parse("showtracking_content");
 
-function parse_row($yatt, $block, $class, $thread, $collapse=false)
-{
-  $messages = gen_thread($thread, $collapse);
-  if (!$messages) return false;
-  $yatt->set('class', $class);
-  $yatt->set('messages', $messages);
-  $yatt->set('threadlinks', gen_threadlinks($thread, $collapse));
-  $yatt->parse("$block.row");
-  return true;
+$content_html = $content_tpl->output();
+
+if ($errors = $content_tpl->get_errors()) {
+    error_log("YATT errors in showtracking.php: " . print_r($errors, true));
 }
-// vim: sw=2
-?>
+
+print generate_page("Your tracked threads in " . $forum['name'], $content_html);

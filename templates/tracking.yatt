@@ -1,86 +1,69 @@
 %begin [tracking_content]
 
-%[#] Normal display mode block
-%begin [normal]
-  %begin [hr]
-  <hr width="100%" size="1">
-  %end [hr]
-  <table class="forumheader">
-  <tr>
-  %[#] %[FORUM_HEADER] replaced with a dedicated block 
-  %begin [forum_header_content]
-    <td class="forumbanner">
-      <a href="/%[FORUM_SHORTNAME]/"><img alt="%[FORUM_NAME]" src="/pics/forum/generic.gif"></a>
-    </td>
-  %end [forum_header_content]
-  </tr>
-  </table>
-  <br>
+  %[#] Outer container: Either the 'forums' block or 'no_threads' block will be parsed by PHP
 
-  <table class="tools">
-  <tr>
-   <td class="left">
-      <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a>
-    | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;page=%[PAGE]" target="_blank">Search</a>
-    | <a href="/%[FORUM_SHORTNAME]"><b>Go to %[FORUM_NAME]</b></a>
-    </td>
-    <td class="right">
-      <a href="/%[FORUM_SHORTNAME]/tracking.phtml"><b>Tracked threads</b></a>
-  %begin [update_all]
-    | <a href="/%[FORUM_SHORTNAME]/markuptodate.phtml?tid=all&amp;page=%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a>
-  %end [update_all]
-    </td>
-  </tr>
-  </table>
+  %begin [forums]
+    %begin [hr]
+      <hr width="100%" size="1">
+    %end [hr]
 
-  <table class="threads">
-  %begin [row]
-  <tr class="%[CLASS]">
-    <td>
-  %[MESSAGES]
-    </td>
-    <td class="threadlinks">
-  %[THREADLINKS]
-    </td>
-  </tr>
-  %end [row]
-  </table>
-%end [normal]
+    %[#] Forum header HTML is set as a variable by PHP]
+    %[forum_header_html]
+    <br>
 
-%[#] Simple display mode block
-%begin [simple]
-  <table class="forumheader">
-  <tr>
-  %[#] %[FORUM_HEADER] replaced with a dedicated block
-  %begin [forum_header_content]
-    <td class="forumbanner">
-      <a href="/%[FORUM_SHORTNAME]/"><img alt="%[FORUM_NAME]" src="/pics/forum/generic.gif"></a>
-    </td>
-  %end [forum_header_content]
-  </tr>
-  </table>
-  <br>
+    %[#] Normal Mode block - Parsed by PHP if not simple mode]
+    %begin [normal]
+      <table class="tools">
+      <tr>
+       <td class="left">
+          <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a>
+        | <a href="/search/?forum=%[forum_shortname]&amp;page=%[PAGE]" target="_blank">Search</a>
+        | <a href="/%[forum_shortname]"><b>Go to %[forum_name]</b></a>
+        </td>
+        <td class="right">
+          <a href="/%[forum_shortname]/tracking.phtml"><b>Tracked threads</b></a>
+          %begin [update_all]
+            | <a href="/%[forum_shortname]/markuptodate.phtml?tid=all&amp;page=%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a>
+          %end [update_all]
+        </td>
+      </tr>
+      </table>
 
-  %begin [update_all]
-  <table class="tools"><tr>
-  <td class="right"><a href="/%[FORUM_SHORTNAME]/markuptodate.phtml?tid=all&amp;page=%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a></td>
-  </tr></table>
-  %end [update_all]
+      <table class="threads">
+        %begin [row]
+        <tr class="%[thread_css_class]">
+          <td>%[thread_message_html]</td>
+          <td class="threadlinks">%[thread_links_html]</td>
+        </tr>
+        %end [row]
+      </table>
+    %end [normal]
 
-  %begin [row]
-  %[MESSAGES]
-  %end [row]
-%end [simple]
+    %[#] Simple Mode block - Parsed by PHP if simple mode]
+    %begin [simple]
+      %begin [update_all]
+        <table class="tools"><tr>
+        <td class="right"><a href="/%[forum_shortname]/markuptodate.phtml?tid=all&amp;page=%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a></td>
+        </tr></table>
+      %end [update_all]
 
-%[#] Block shown if no threads are tracked
-%begin [no_threads]
-  <span style="font-size: larger;">No updated threads</span><br>
-%end [no_threads]
+      %begin [row]
+        %[thread_message_html]
+      %end [row]
+    %end [simple]
+  %end [forums]
 
-%[#] Common footer tools? (Original template had these outside the simple/normal blocks)]
-<div class="tools">
-    <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a>
-  | <a href="/search/?page=%[PAGE]" target="_blank">Search</a>
-</div>
+  %[#] Block shown if no threads are tracked - Parsed by PHP if num_shown is 0]
+  %begin [no_threads]
+    <span style="font-size: larger;">No updated threads</span><br>
+  %end [no_threads]
+
+  %[#] Common footer tools - Always shown? Assume parsed by PHP outside the main conditional]
+  %begin [footer_tools]
+    <div class="tools">
+        <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a>
+      | <a href="/search/?page=%[PAGE]" target="_blank">Search</a>
+    </div>
+  %end [footer_tools]
 
 %end [tracking_content]

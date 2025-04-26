@@ -1,0 +1,97 @@
+%begin [post_form_content]
+%[POSTFORM_DEBUG]
+%begin [disabled]
+%begin [nonewthreads]
+Posting new threads has been disabled on this forum.<br>
+%end [nonewthreads]
+%begin [noreplies]
+Posting replies has been disabled on this forum.<br>
+%end [noreplies]
+%begin [locked]
+This thread is locked. No replies are allowed.<br>
+%end [locked]
+%end [disabled]
+%begin [enabled]
+%begin [noacct]
+<p>You must be registered and logged in to post. Please select an option:</p>
+<ul>
+    <li><a href="/register.phtml">Register a new account</a></li>
+    <li><a href="/login.phtml?FORWARD=%[FORWARD]">Log in to an existing account</a></li>
+</ul>
+%end [noacct]
+%begin [acct]
+<form class="postform" action="/%[FORUM_SHORTNAME]/%[ACTION].phtml" method="post" enctype="multipart/form-data">
+<table>
+<tr>
+  <th>User:</th>
+  <td>
+    <b>%[USER_NAME]</b>&nbsp;&nbsp;&nbsp;<a href="/preferences.phtml?page=%[PAGE]">Preferences</a>
+  | <a href="/tips/?page=%[PAGE]"><b>Posting Tips</b></a>
+  </td>
+</tr>
+<tr>
+  <th>Subject:</th>
+  <td class="input">
+    <input class="text" type="text" name="subject" value="%[SUBJECT]" size="68" maxlength="100" spellcheck="true">
+  </td>
+</tr>
+<tr>
+  <th class="top">Message:</th>
+  <td class="input"><textarea class="text" wrap="soft" name="message" rows="10" cols="80">%[MESSAGE]</textarea></td>
+</tr>
+<tr>
+  <th>Link URL:</th>
+  <td class="input"><input class="text" type="text" name="url" value="%[URLLINK]" size="80" maxlength="250"></td>
+</tr>
+<tr>
+  <th>Link Text:</th>
+  <td class="input"><input class="text" type="text" name="urltext" value="%[URLTEXT]" size="80" maxlength="250" spellcheck="true"></td>
+</tr>
+<tr>
+  <th>Image URL:</th>
+  <td class="input"><input class="text" type="text" name="imageurl" value="%[IMAGEURL]" size="80" maxlength="250"></td>
+</tr>
+%begin [imageupload]
+  <tr>
+    <th>Image Upload:</th>
+    <td class="button">
+    <input class="text" type="file" name="imagefile" onchange="if (this.files && this.files[0] && this.files[0].size > (%[MAXIMAGEFILEBYTES])) { alert('Image upload cannot exceed ' + (parseInt((%[MAXIMAGEFILEBYTES] / 1024 / 1024) * 100) / 100) + 'Mb'); this.value = ''; }">
+    </td>
+  </tr>
+%end [imageupload]
+<tr>
+  <th>Video URL:</th>
+  <td class="input"><input class="text" type="text" name="video" value="%[VIDEO]" size="80" maxlength="250"></td>
+</tr>
+<tr>
+  <th class="top">Post Message:</th>
+  <td class="button">
+  <input type="submit" name="preview" value="Preview Message">
+  <input type="submit" name="post" value="%[SUBMITTEXT]"><br>
+  <div class="checkbox">
+  %begin [offtopic]
+    <input type="checkbox" name="OffTopic"%[OFFTOPIC_CHECKED]>
+    <label for="checkbox">Mark as offtopic?</label><br>
+  %end [offtopic]
+  <input type="checkbox" name="ExposeEmail"%[EXPOSEEMAIL_CHECKED]>
+  <label for="checkbox">Show email address in post?</label><br>
+  <input type="checkbox" name="EmailFollowup"%[EMAILFOLLOWUP_CHECKED]>
+  <label for="checkbox">Send email on followup replies?</label><br>
+  <input type="checkbox" name="TrackThread"%[TRACKTHREAD_CHECKED]>
+  <label for="checkbox">Track thread?</label>
+  </div>
+  </td>
+</tr>
+<tr>
+  <th>Logout:</th>
+  <td>
+    <a href="/logout.phtml?page=%[PAGE]&amp;token=%[token]">Logout this session</a> | %[#] TODO: Fix URL/PAGE variable?
+    <a href="/logout.phtml?all&amp;page=%[PAGE]&amp;token=%[token]">Logout ALL SESSIONS</a> %[#] TODO: Fix URL/PAGE variable?
+  </td>
+</tr>
+</table>
+%[HIDDEN]
+</form>
+%end [acct]
+%end [enabled]
+%end [post_form_content]

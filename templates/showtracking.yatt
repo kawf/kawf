@@ -1,8 +1,9 @@
+%begin [showtracking_content]
 %begin [header]
 <!--  <h3>Your tracked threads in %[forum(name)]</h3> -->
 <table class="forumheader">
 <tr>
-%[forum_header]
+%[FORUM_HEADER_HTML]
 </tr>
 </table>
 
@@ -32,23 +33,12 @@
 
 %begin [normal]
 <table class="threads">
-%begin [row]
-<tr class="%[class]">
-  <td>
-%[messages]
-  </td>
-  <td class="threadlinks">
-%[threadlinks]
-  </td>
-</tr>
-%end [row]
+%[ROWS_HTML]
 </table>
 %end [normal]
 
 %begin [simple]
-%begin [row]
-%[messages]
-%end [row]
+%[ROWS_HTML]
 %end [simple]
 
 %begin [footer]
@@ -64,3 +54,4 @@
 </table>
 %end [footer]
 %[#] vim: sw=2
+%end [showtracking_content]

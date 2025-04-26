@@ -1,0 +1,81 @@
+%begin [showforum_content]
+
+%begin [header]
+<table class="forumheader">
+<tr>
+%[FORUM_HEADER_HTML] %[#] Use the pre-rendered header from PHP]
+</tr>
+</table>
+
+<table class="tools">
+<tr>
+  <td class="left">
+    <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a>
+  | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;page=%[PAGE]" target="_blank">Search</a>
+  | <a href="#post"><b>Post New Thread</b></a>
+  %[#] View All Images/Night Mode links appear static in tpl, keep them here for now
+  | <a href="#" id="view-all-images">View All Images</a>
+  | <a href="#" id="night-mode">Night Mode: <span id="night-mode-status">Off</span></a>
+  </td>
+  <td class="right">
+%begin [tracked_threads]
+    <a href="/%[FORUM_SHORTNAME]/tracking.phtml"><b>Tracked threads</b></a>
+%end [tracked_threads]
+%begin [update_all]
+  | <a href="/%[FORUM_SHORTNAME]/markuptodate.phtml?tid=all&amp;page=%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a>
+%end [update_all]
+  </td>
+</tr>
+<tr class="bottom">
+  <td class="left"><b>Page:</b> %[PAGES]</td>
+  <td class="right">%[NUMTHREADS] threads in %[NUMPAGES] pages</td>
+</tr>
+</table>
+
+%begin [restore_gmsgs]
+<div class="tools">
+  %[RESTORE_GMSGS_LINK]
+</div>
+%end [restore_gmsgs]
+
+%end [header]
+
+
+%begin [normal]
+<table class="threads">
+%begin [normal_row]
+<tr class="%[CLASS]">
+  <td>
+%[MESSAGES]
+  </td>
+  <td class="threadlinks">
+%[THREADLINKS]
+  </td>
+</tr>
+%end [normal_row]
+</table>
+%end [normal]
+
+%begin [simple]
+%begin [simple_row]
+%[MESSAGES]
+%end [simple_row]
+%end [simple]
+
+%begin [footer]
+<table class="tools">
+<tr>
+  <td class="left"><b>Page:</b> %[PAGES]</td>
+  <td class="right">%[NUMTHREADS] threads in %[NUMPAGES] pages</td>
+</tr>
+</table>
+%end [footer]
+
+%begin [post_form]
+<div class="forumpost">
+<a id="post"><img src="/pics/post.gif" alt="post message"></a>
+%[FORM_HTML] %[#] Use the pre-rendered form from PHP]
+</div>
+%end [post_form]
+
+%end [showforum_content]

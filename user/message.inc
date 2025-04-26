@@ -123,7 +123,7 @@ function _message_render_extras($tpl, $msg, $viewer, $owner)
       }
     }
   }
-  
+
   if (isset($p2f_address)) {
     if (array_key_exists($forum['shortname'], $p2f_address) && $p2f_address[$forum['shortname']]) {
       $tpl->set_var('P2F', $p2f_address[$forum['shortname']]);
