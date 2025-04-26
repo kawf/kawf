@@ -29,7 +29,8 @@ function _db_connect($sql_auth) {
     $pass = $sql_auth->password;
     // This is MySQL specific.  The correct way to deal with timezones would
     // be to run everything in UTC and do any adjustments in the code.
-    $DBH = new PDO("mysql:host=$host;dbname=$db", $user, $pass, array(
+    // Add charset=utf8mb4 to DSN to ensure UTF-8 connection
+    $DBH = new PDO("mysql:host=$host;dbname=$db;charset=utf8mb4", $user, $pass, array(
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         PDO::MYSQL_ATTR_INIT_COMMAND => "set session time_zone='+0:00'"
     ));

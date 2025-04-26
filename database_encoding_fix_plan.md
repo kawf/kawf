@@ -10,6 +10,12 @@
 *   Fixing the connection (`charset=utf8mb4`) allows **new** data to be saved correctly, but **historically corrupted data remains** in the database.
 *   This issue likely affects **any text field** where UTF-8 characters were saved via the old connection.
 
+**Related PHP Code Changes:**
+*   **`utf8ize()` function removed:** The call to `utf8ize()` within `stripcrap()` (in `include/strip.inc`) has been removed.
+    *   **Reason:** This function was a workaround for the legacy connection encoding issues. Its internal check (`is_valid_utf8()`) appeared to incorrectly flag valid modern UTF-8 sequences (like 4-byte emojis) as invalid. It then attempted a faulty conversion (`mb_convert_encoding` from `ISO-8859-1`) which corrupted the valid input data before it could be saved.
+    *   Since the database connection now correctly uses `utf8mb4`, this workaround is unnecessary and was actively causing data corruption for valid UTF-8 input. Removing it allows correct handling of submitted UTF-8 data.
+*   **`remoronize()` function:** This function (also in `strip.inc`) attempts to fix legacy character issues (like smart quotes) using non-multibyte-safe `str_replace`. It remains in `stripcrap()` for now but should be reviewed later for necessity and potential UTF-8 safety issues.
+
 **Steps:**
 
 1.  **Backup:** Perform a full database backup before attempting any schema changes or data repair.

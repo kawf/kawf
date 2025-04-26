@@ -475,7 +475,7 @@ class AccountUser extends ForumUser {
   /* Change the users name */
   function name($name)
   {
-    $name = utf8ize($name);
+    //$name = utf8ize($name);
 
     /* The shortname is a simple way to make sure people don't use names */
     /*  that are too similar */

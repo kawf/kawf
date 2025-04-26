@@ -130,7 +130,7 @@ function stripcrap($string, $tags=null)
     $tags = $no_tags;
 
   $string = demoronize($string);
-  $string = utf8ize($string);
+  // $string = utf8ize($string); // Removed call to problematic function
   $string = striptag($string, $tags);
   $string = trim($string);
 

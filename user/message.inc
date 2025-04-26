@@ -345,11 +345,11 @@ function process_message($user, &$msg)
 
     /* Workaround for issue #38 - db may still contain non-utf8 */
     $msg['subject'] = @remoronize($msg['subject']);
-    $msg['subject'] = @utf8ize($msg['subject']);
-    $msg['name'] = @utf8ize($msg['name']);
+    //$msg['subject'] = @utf8ize($msg['subject']);
+    //$msg['name'] = @utf8ize($msg['name']);
     if (isset($msg['message'])) {
 	$msg['message'] = remoronize($msg['message']);
-	$msg['message'] = utf8ize($msg['message']);
+	//$msg['message'] = utf8ize($msg['message']);
 	//$msg['message'] = debug_hexdump($msg['message']);
     }
 
@@ -388,10 +388,11 @@ function process_message($user, &$msg)
 
 	    if (in_array('name = ?', $keys) && isset($msg['aid'])) {
 		$user = new AccountUser($msg['aid']);
-		if (isset($user) && $user->name!=utf8ize($user->name)) {
+		//if (isset($user) && $user->name!=utf8ize($user->name)) {
+		if (isset($user)) {
 		    if ($utf8_autofix_log)
 			error_log("Bad aid ".$user->aid." name '" .$user->name."'");
-		    if ($utf8_autofix_account) $user->name(utf8ize($user->name));
+		    //if ($utf8_autofix_account) $user->name(utf8ize($user->name));
 		}
 	    }
 	}
