@@ -1,0 +1,5 @@
+%begin [comment_test]
+Visible Before.
+%[#] This is a comment line and should not appear.
+Visible After.
+%end [comment_test]

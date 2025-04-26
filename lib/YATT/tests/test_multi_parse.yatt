@@ -1,0 +1,9 @@
+%begin [container]
+  %begin [block_a]
+    Content Block A (%[VAR_A])
+  %end [block_a]
+  Separator
+  %begin [block_b]
+    Content Block B (%[VAR_B])
+  %end [block_b]
+%end [container]

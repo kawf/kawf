@@ -1,0 +1,7 @@
+%begin [outer_block]
+%begin [inner_block]
+      <a href="inner:%[INNER_VAR]">Inner Block Link</a> |
+%end [inner_block]
+<!-- Separator -->
+      <a href="#outer">Outer Block Link</a>
+%end [outer_block]

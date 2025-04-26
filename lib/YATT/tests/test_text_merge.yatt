@@ -1,0 +1,9 @@
+%begin [text_root]
+Line 1
+Line 2
+%begin [sub_block]
+Sub Block
+%end [sub_block]
+Line 3
+Line 4
+%end [text_root]
