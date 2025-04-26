@@ -172,13 +172,13 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
   $message_tpl->set(array(
     "MSG_SUBJECT" => htmlspecialchars($msg['subject']), // Escape subject
     "MSG_DATE" => $msg['date'], // Assumes gen_date is safe
-    "MSG_MID" => $msg['mid'],
-    "MSG_AID" => $msg['aid']
+    "MSG_MID" => isset($msg['mid']) ? $msg['mid'] : '', // Check if mid exists
+    "MSG_AID" => isset($msg['aid']) ? $msg['aid'] : '' // Check if aid exists
     // MSG_TID is not used in message.yatt, removed
   ));
 
   // Handle Parent Message Block
-  if ($msg['pmid'] != 0) {
+  if (isset($msg['pmid']) && $msg['pmid'] != 0) { // Check if pmid exists first
     $pmsg = fetch_message($viewer, $msg['pmid'], 'mid,subject,name,date' ); // Fetch parent msg details
     if ($pmsg) { // Check if fetch was successful
         $message_tpl->set("PMSG_MID", $pmsg['mid']);

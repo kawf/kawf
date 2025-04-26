@@ -135,8 +135,11 @@ function postmessage($user, $fid, &$msg, $request)
 
 
     $tstamp = NULL;
-    if (!isset($msg['pmid'])) {
-      /* Grab a new tid, this should work reliably */
+    // Must use empty() here. A new thread submits pmid=0 (as string "0" via POST).
+    // !isset($msg['pmid']) would be false for "0", incorrectly treating it as a reply.
+    // empty() correctly evaluates "0" as true, triggering new thread logic.
+    if (empty($msg['pmid'])) { // Correct check: true for pmid=0, pmid=null, pmid=''
+      /* This is a new thread, Grab a new tid */
       do {
         $row = db_query_first("select max(id) + 1 from f_unique where fid = ? and type = 'Thread'", array($fid));
         $msg['tid'] = $row ? $row[0] : NULL;

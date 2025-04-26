@@ -164,5 +164,36 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
 
 ## Current Step & Next Action (Current Session)
 
-*   **Previous:** Migrated `user/showmessage.php`, `user/showthread.php`, and associated includes (`message.inc`, `listthread.inc`, `filter.inc`). Tested OK.
-*   **Current:** User to commit changes. Then proceed with migrating `user/post.php`.
+*   **Previous:** User committed changes after showthread/showmessage migration and YATT plan creation.
+*   **Current:** Proceed with migrating `user/post.php`.
+
+## Migration: `user/post.php`
+
+This script handles both displaying the form for posting new messages/replies and processing the submitted form data.
+
+**Refactoring Steps:**
+
+1.  Converted the original `templates/post.tpl` to `templates/post.yatt`, defining relevant blocks (`post_content`, `header`, `disabled`, `error`, `preview`, `duplicate`, `form`, `accept`).
+2.  Refactored `user/post.php` significantly:
+    *   Replaced old template instantiation and parsing with YATT object creation and `set`/`parse` calls.
+    *   Moved form rendering logic into a dedicated function `render_postform()` within `user/postform.inc`.
+    *   Moved core message processing and database insertion/update logic into a dedicated function `postmessage()` within `user/postmessage.inc`.
+    *   Consolidated and cleaned up `require_once` statements at the top of `user/post.php`.
+
+**Issues Encountered & Resolutions:**
+
+*   **Preview Button Text:**
+    *   Initially showed "Update Message" after preview due to `mid` being passed unintentionally. Fixed by `unset($nmsg['mid'])` before calling `render_postform` in the preview state (`user/post.php`).
+    *   Later showed "Post Followup" for new threads due to using `!isset($msg['pmid'])` in `render_postform`. Fixed by changing the check to `empty($msg['pmid'])` in `user/postform.inc`. A comment was added explaining this.
+*   **Fatal Errors During Posting:**
+    *   `find_msg_duplicates()`: This function call was added erroneously during refactoring and never existed in the original codebase. The call block was removed from `user/post.php`.
+    *   `post_message()`: The call used an underscore, while the actual function defined in `user/postmessage.inc` was `postmessage` (no underscore). The call in `user/post.php` was corrected.
+    *   `ArgumentCountError` for `postmessage()`: The call was missing the required `$request` (`$_POST`) argument. The call in `user/post.php` was corrected to include all four arguments (`$user`, `$fid`, `$msg`, `$_POST`).
+*   **New Thread Association:** New threads were initially associated with `tid=0` because the `postmessage()` function used `!isset($msg['pmid'])` to detect new threads, which failed when `pmid=0` was submitted. This was corrected by changing the condition to `if (empty($msg['pmid']))` in `user/postmessage.inc`. A comment was added explaining this necessity.
+*   **Success Page Link:** The "Go to Your Message" link pointed to `mid=1` because `$msg['mid']` was being overwritten by the boolean return value of `postmessage()`. Removed the incorrect assignment (`$msg['mid'] = $mid;`) in `user/post.php`.
+*   **Duplicate Notification Page:** The page displayed only a sparse warning. Updated the `duplicate` block in `templates/post.yatt` to include the message preview and navigation links (similar to the `accept` block) and added an informational header "Content updated to:" for clarity.
+*   **Include Management:** Consolidated multiple `require_once` blocks, removed redundant includes, and corrected paths/presence based on testing (e.g., ensuring `user/postmessage.inc` was included, restoring the `user/` prefix for `image.inc`).
+
+**Current Status:**
+
+`user/post.php` and its associated template/includes appear fully migrated and functional, handling posting, previewing, replies, new threads, duplicate detection, and error display correctly using the YATT system.

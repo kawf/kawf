@@ -1,0 +1,119 @@
+%begin [post_content]
+%[DEBUG]
+%begin [header]
+<table class="forumheader">
+<tr>
+%[FORUM_HEADER_HTML] %[#] Assume pre-rendered header from PHP
+</tr>
+</table>
+%end [header]
+
+%begin [disabled]
+  %[#] Displayed if posting is disabled
+  %begin [nonewthreads]
+  <h2>Posting new threads on this forum has been temporarily disabled.</h2>
+  %end [nonewthreads]
+  %begin [noreplies]
+  <h2>Posting replies on this forum has been temporarily disabled</h2>
+  %end [noreplies]
+  %begin [locked]
+  <p>This thread is locked, no replies allowed</p>
+  %end [locked]
+%end [disabled]
+
+%begin [error]
+  %[#] Container for various error messages
+  <div class="error">
+  %begin [image]
+  <p><i><b>Picture Verification:</b>
+  If you see your picture below then please scroll down and hit Post Message to
+  complete your posting. If no picture appears then your link was set incorrectly
+  or your image is not valid a JPG or GIF file. Correct the image type or URL
+  link to the picture in the box below and hit Preview Message to re-verify that
+  your picture will be visible.</i></p>
+  %end [image]
+  %begin [video]
+  <p><i><b>Video Verification:</b>
+  If you see your video below then please scroll down and hit Post Message to
+  complete your posting. If no video appears then your link was not a valid
+  YouTube video, or your browser does not support the video codec or HTML5.
+  Correct the image type or URL link to the picture in the box below and hit
+  Preview Message to re-verify that your video will be visible. See also <a
+  href="/tips/?page=" target="_blank">Posting Tips</a> for more information on
+  what kinds of video are supported.</i></p>
+  %end [video]
+  %begin [subject_req]
+  <p>Subject is required!</p>
+  %end [subject_req]
+  %begin [subject_change]
+  <p>No change to subject or message, is this what you wanted?</p>
+  %end [subject_change]
+  %begin [subject_too_long]
+  <p>Subject line too long! Truncated to 100 characters</p>
+  %end [subject_too_long]
+  %begin [urltext_too_long]
+  <p>URL text too long! Truncated</p>
+  %end [urltext_too_long]
+  %begin [url_too_long]
+  <p>URL too long! Truncated</p>
+  %end [url_too_long]
+  %begin [imageurl_too_long]
+  <p>Image URL too long! Truncated</p>
+  %end [imageurl_too_long]
+  %begin [image_upload_failed]
+  <p>Image upload failed, try reducing file size</p>
+  %end [image_upload_failed]
+  %begin [video_too_long]
+  <p>Video URL too long! Truncated</p>
+  %end [video_too_long]
+  </div>
+%end [error]
+
+%begin [preview]
+  %[#] Displayed when previewing a message
+  <div class="info">Message Preview</div>
+  <div class="tools"><a href="/%[FORUM_SHORTNAME]/">Cancel post and go back to the forum</a></div>
+  <div class="preview">
+  %[PREVIEW] %[#] Rendered message preview HTML
+  </div>
+%end [preview]
+
+%begin [duplicate]
+  %[#] Displayed on duplicate post detection
+  <div class="warning">Duplicate message detected, overwriting</div>
+  %[#] Add navigation links and preview similar to accept block
+  <div class="tools">
+      <a href="/%[FORUM_SHORTNAME]/msgs/%[MSG_MID].phtml">Go to Your Message</a>
+    | <a href="/%[FORUM_SHORTNAME]/">Go back to the forum</a>
+  </div>
+  %[#] Add header to clarify preview content
+  <div class="info">Content updated to:</div>
+  <div class="preview">
+  %[PREVIEW] %[#] Rendered message preview HTML (showing content after overwrite)
+  </div>
+  <p>
+%end [duplicate]
+
+%begin [form]
+  %[#] Contains the actual post form rendered by postform.inc
+  %[FORM_HTML]
+%end [form]
+
+%begin [accept]
+  %[#] Displayed on successful post
+  %begin [refresh_page]
+  <!-- meta http-equiv="Refresh" content="10;url=%[PAGE]" -->
+  %end [refresh_page]
+
+  <div class="info">Message Added</div>
+  <div class="tools">
+      <a href="/%[FORUM_SHORTNAME]/msgs/%[MSG_MID].phtml">Go to Your Message</a>
+    | <a href="/%[FORUM_SHORTNAME]/">Go back to the forum</a>
+  </div>
+  <div class="preview">
+  %[PREVIEW] %[#] Rendered message preview HTML (shown again on success)
+  </div>
+  <p>
+%end [accept]
+
+%end [post_content]
