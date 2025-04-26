@@ -134,7 +134,7 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
 
 1.  **Phase 0:** Analysis, Baseline Capture (save full HTML output from `master` for key pages/states).
 2.  **Phase 1:** Migrate simple pages (minimal loops/`set_block`). **(Completed)**
-3.  **Phase 2:** Migrate pages with loops (`parse(..., true)`) and conditionals (`set_block`). **(Starting Now)**
+3.  **Phase 2:** Migrate pages with loops (`parse(..., true)`) and conditionals (`set_block`). **(In Progress)**
 4.  **Phase 3:** Migrate complex/mixed-usage pages (`user/showtracking.php`).
 5.  **Phase 4:** Migrate pages using inline PHP/PHTML.
 6.  **Phase 5:** Cleanup (remove `template.inc`, old `.tpl` files, `generate_page()`).
@@ -156,6 +156,7 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
 *   **Handle Escaping Difference:** Manually escape data in PHP *before* `$content_tpl->set()` if the old `Template` escaping was required (not encountered yet).
 *   **YATT Library:** No changes to `YATT.class.php` itself should be needed.
 *   **`unknowns`:** Accept YATT's default behavior (remove undefined vars + log error), rather than replicating `Template`'s "comment" behavior.
+*   **`user/tracking.php` Notes:** The migration handled the dynamic forum header loading by replicating the structure of `templates/forum/generic.tpl` within `templates/tracking.yatt`. A separate branch exists with more complex, forum-specific header templates (`templates/forum/*.tpl`) which will require revisiting this implementation later.
 
 ## Current Progress
 
@@ -172,13 +173,18 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
         *   Email: nyet@nyet.org
         *   Password: [redacted]
 
-2.  **Pending Verification (Deferred):**
+2.  **Phase 2 In Progress:**
+    *   **`user/preferences.php`**: Migrated (associated with database encoding fix). Tested. OK.
+    *   **`user/tracking.php`**: Migrated. Basic rendering tested OK. Forum header handled via `generic.tpl` logic embedded in YATT (see note above).
+
+3.  **Pending Verification (Deferred):**
     *   **`create.php`**: Form submission logic (success/failure), error message details, Terms of Use handling.
     *   **`finish.php`**: Action processing logic for different `type` values (NewAccount, ChangeEmail, ForgotPassword success/error paths).
 
-3.  **Next Steps:**
-    *   Start Phase 2 migrations: Target `user/preferences.php`.
+4.  **Next Steps:**
+    *   Continue Phase 2 migrations: Target `user/showforum.php` next.
     *   Later: Come back to perform Pending Verification tests.
+    *   Later: Revisit `user/tracking.php` forum header implementation when addressing the branch with forum-specific headers.
     *   Later: Establish more formal testing framework if needed.
 
 ## Tool Status
@@ -187,4 +193,4 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
 
 ## Current Step & Next Action (Current Session)
 
-*   Proceed with migrating `user/preferences.php`.
+*   Proceed with migrating `user/showforum.php`.

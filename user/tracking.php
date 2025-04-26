@@ -8,35 +8,34 @@ require_once("filter.inc");
 require_once("thread.inc");
 require_once("page-yatt.inc.php");
 
+// Instantiate YATT for the content template
+$content_tpl = new YATT($template_dir, 'tracking.yatt');
+
+/* Old Template setup - removed
 $tpl->set_file("tracking", "tracking.tpl");
+*/
 
+// Determine display mode (normal or simple)
 if (isset($user->pref['SimpleHTML'])) {
-  $tpl->set_block("tracking", "normal");
-  $tpl->set_block("tracking", "simple", "_block");
+  // Original set_block logic removed
   $table_block = "simple";
-
-  $tpl->set_var("normal", "");
 } else {
-  $tpl->set_block("tracking", "simple");
-  $tpl->set_block("tracking", "normal", "_block");
+  // Original set_block logic removed
   $table_block = "normal";
-
-  $tpl->set_var("simple", "");
 }
 
-$tpl->set_block($table_block, "hr", "_hr");
-$tpl->set_block($table_block, "row", "_row");
-$tpl->set_block($table_block, "update_all", "_update_all");
-$tpl->set_var("USER_TOKEN", $user->token());
+/* Original set_block calls for nested blocks removed */
 
-/* UGLY hack, kludge, etc to workaround nasty ordering problem */
-$_page = $tpl->get_var("PAGE");
-unset($tpl->varkeys["PAGE"]);
-unset($tpl->varvals["PAGE"]);
-$tpl->set_var("PAGE", $_page);
+$content_tpl->set("USER_TOKEN", $user->token());
+
+/* UGLY hack - Preserved for now, apply to content_tpl */
+$_page = isset($_REQUEST['page']) ? $_REQUEST['page'] : ''; // Get page safely
+// unset($tpl->varkeys["PAGE"]); // No equivalent needed for YATT
+// unset($tpl->varvals["PAGE"]);
+$content_tpl->set("PAGE", $_page);
 
 $time = time();
-$tpl->set_var("TIME", $time);
+$content_tpl->set("TIME", $time);
 
 $sql = "select * from f_forums order by fid";
 $sth = db_query($sql);
@@ -45,8 +44,8 @@ $numshown = 0;
 $first = true;
 
 while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
-  $tpl->set_var("FORUM_NAME", $forum['name']);
-  $tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
+  $content_tpl->set("FORUM_NAME", $forum['name']);
+  $content_tpl->set("FORUM_SHORTNAME", $forum['shortname']);
 
   /* rebuild caches per forum */
   $indexes = build_indexes($forum['fid']);
@@ -54,65 +53,96 @@ while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
 
   $forumcount = $forumupdated = 0;
 
-  $tpl->set_var("_row", "");
-  $tpl->set_var("_hr", "");
-  if (count($tthreads_by_tid)) foreach ($tthreads_by_tid as $tthread) {
-    $iid = tid_to_iid($tthread['tid']);
-    /* tstamp is LOCALTIME of SQL server, unixtime is seconds since epoch */
-    $thread = db_query_first("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$iid where tid = ?", array($tthread['tid']));
-    if (!$thread)
-      continue;
+  // Reset loop-specific content before iterating threads for this forum
+  // This replaces the old `$tpl->set_var("_row", "");` approach
 
-    $messagestr = gen_thread($thread, true /* always collapse */);
+  if (count($tthreads_by_tid)) {
+    foreach ($tthreads_by_tid as $tthread) {
+      $iid = tid_to_iid($tthread['tid']);
+      $thread = db_query_first("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$iid where tid = ?", array($tthread['tid']));
+      if (!$thread) continue;
 
-    if (!isset($messagestr))
-      continue;
+      $messagestr = gen_thread($thread, true /* always collapse */);
+      if (!isset($messagestr)) continue;
 
-    if (is_thread_bumped($thread)) {
-      $tpl->set_var("CLASS", "trow" . ($forumcount % 2));
-      $forumupdated++;
-    } else
-      $tpl->set_var("CLASS", "row" . ($forumcount % 2));
+      if (is_thread_bumped($thread)) {
+        $content_tpl->set("CLASS", "trow" . ($forumcount % 2));
+        $forumupdated++;
+      } else {
+        $content_tpl->set("CLASS", "row" . ($forumcount % 2));
+      }
 
-    $threadlinks = gen_threadlinks($thread, true /* always collapse */);
-    $tpl->set_var("MESSAGES", $messagestr);
-    $tpl->set_var("THREADLINKS", $threadlinks);
+      $threadlinks = gen_threadlinks($thread, true /* always collapse */);
+      $content_tpl->set("MESSAGES", $messagestr); // Assuming these functions return safe HTML
+      $content_tpl->set("THREADLINKS", $threadlinks);
 
-    $tpl->parse("_row", "row", true);
+      // Parse the row block for the current mode
+      $content_tpl->parse($table_block . '.row');
+      // Old logic: $tpl->parse("_row", "row", true);
 
-    $forumcount++;
-    $numshown++;
+      $forumcount++;
+      $numshown++;
+    } // end foreach thread
   }
 
-  if ($forumcount>0)
+  // Parse forum-level blocks if threads were found for this forum
+  if ($forumcount > 0) {
+    // Parse update_all block if needed
+    if ($forumupdated) {
+      $content_tpl->parse($table_block . '.update_all');
+      // Old logic: $tpl->parse("_update_all", "update_all");
+    } else {
+      // Old logic: $tpl->set_var("_update_all", ""); -> No equivalent needed
+    }
 
-  if ($forumupdated)
-    $tpl->parse("_update_all", "update_all");
-  else
-    $tpl->set_var("_update_all", "");
-
-  if ($forumcount) {
-    if (!$first) $tpl->parse("_hr", "hr", true);
+    // Parse HR separator if needed
+    if (!$first) {
+      $content_tpl->parse($table_block . '.hr'); // Assuming hr is only needed in normal mode
+      // Old logic: $tpl->parse("_hr", "hr", true);
+    }
     $first = false;
-    /* HACK: ugly */
-    unset($tpl->varkeys['forum_header']);
-    unset($tpl->varvals['forum_header']);
 
-    $tpl->set_file("forum_header",
-	array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"));
+    /* Handle dynamic forum header - HOW? */
+    // Original code reloaded $tpl with forum specific header
+    // $tpl->set_file("forum_header", array(...)); $tpl->parse("FORUM_HEADER", "forum_header");
+    // Simplification: Assume header content is fetched/generated and set
+    // We need to determine how $forum_header_content is obtained
+    // For now, set placeholder:
+    // $forum_header_content = "<td>Forum Header Placeholder for " . $forum['name'] . "</td>"; // FIXME
+    // $content_tpl->set("FORUM_HEADER", $forum_header_content); // Removed, replaced by parsing block below
 
-    $tpl->parse("FORUM_HEADER", "forum_header");
+    // Parse the specific forum header block first
+    $content_tpl->parse($table_block . '.forum_header_content');
 
-    $tpl->parse("_block", $table_block, true);
+    // Parse the main block for this forum section (normal or simple)
+    $content_tpl->parse($table_block);
+    // Old logic: $tpl->parse("_block", $table_block, true);
   }
-}
+} // end while forum
 $sth->closeCursor();
 
-if (!$numshown)
-  $tpl->set_var("_block", "<span style=\"font-size: larger;\">No updated threads</span><br>");
+// Handle case where no threads were shown at all
+if (!$numshown) {
+  $content_tpl->parse('tracking_content.no_threads');
+  // Old logic: $tpl->set_var("_block", "...");
+}
 
+/* Removed set_var("token") - USER_TOKEN set earlier
 $tpl->set_var("token", $user->token());
+*/
 
-print generate_page('Your Tracked Threads', $tpl->parse("CONTENT", "tracking"));
+// Always parse the main content block wrapper
+$content_tpl->parse('tracking_content');
+// Get the final HTML for the content area
+$content_html = $content_tpl->output();
+
+// Optional: Check for YATT errors from content parsing
+if ($content_errors = $content_tpl->get_errors()) {
+  error_log("YATT errors in tracking.yatt: " . print_r($content_errors, true));
+}
+
+// Call the existing generate_page function
+print generate_page('Your Tracked Threads', $content_html);
+
 // vim: sw=2
 ?>

@@ -1,0 +1,86 @@
+%begin [tracking_content]
+
+%[#] Normal display mode block
+%begin [normal]
+  %begin [hr]
+  <hr width="100%" size="1">
+  %end [hr]
+  <table class="forumheader">
+  <tr>
+  %[#] %[FORUM_HEADER] replaced with a dedicated block 
+  %begin [forum_header_content]
+    <td class="forumbanner">
+      <a href="/%[FORUM_SHORTNAME]/"><img alt="%[FORUM_NAME]" src="/pics/forum/generic.gif"></a>
+    </td>
+  %end [forum_header_content]
+  </tr>
+  </table>
+  <br>
+
+  <table class="tools">
+  <tr>
+   <td class="left">
+      <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a>
+    | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;page=%[PAGE]" target="_blank">Search</a>
+    | <a href="/%[FORUM_SHORTNAME]"><b>Go to %[FORUM_NAME]</b></a>
+    </td>
+    <td class="right">
+      <a href="/%[FORUM_SHORTNAME]/tracking.phtml"><b>Tracked threads</b></a>
+  %begin [update_all]
+    | <a href="/%[FORUM_SHORTNAME]/markuptodate.phtml?tid=all&amp;page=%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a>
+  %end [update_all]
+    </td>
+  </tr>
+  </table>
+
+  <table class="threads">
+  %begin [row]
+  <tr class="%[CLASS]">
+    <td>
+  %[MESSAGES]
+    </td>
+    <td class="threadlinks">
+  %[THREADLINKS]
+    </td>
+  </tr>
+  %end [row]
+  </table>
+%end [normal]
+
+%[#] Simple display mode block
+%begin [simple]
+  <table class="forumheader">
+  <tr>
+  %[#] %[FORUM_HEADER] replaced with a dedicated block
+  %begin [forum_header_content]
+    <td class="forumbanner">
+      <a href="/%[FORUM_SHORTNAME]/"><img alt="%[FORUM_NAME]" src="/pics/forum/generic.gif"></a>
+    </td>
+  %end [forum_header_content]
+  </tr>
+  </table>
+  <br>
+
+  %begin [update_all]
+  <table class="tools"><tr>
+  <td class="right"><a href="/%[FORUM_SHORTNAME]/markuptodate.phtml?tid=all&amp;page=%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a></td>
+  </tr></table>
+  %end [update_all]
+
+  %begin [row]
+  %[MESSAGES]
+  %end [row]
+%end [simple]
+
+%[#] Block shown if no threads are tracked
+%begin [no_threads]
+  <span style="font-size: larger;">No updated threads</span><br>
+%end [no_threads]
+
+%[#] Common footer tools? (Original template had these outside the simple/normal blocks)]
+<div class="tools">
+    <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a>
+  | <a href="/search/?page=%[PAGE]" target="_blank">Search</a>
+</div>
+
+%end [tracking_content]
