@@ -133,92 +133,58 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
 ## Migration Plan (Phased Approach)
 
 1.  **Phase 0:** Analysis, Baseline Capture (save full HTML output from `master` for key pages/states).
-2.  **Phase 1:** Migrate simple pages (minimal loops/`set_block`).
-3.  **Phase 2:** Migrate pages with loops (`parse(..., true)`) and conditionals (`set_block`).
+2.  **Phase 1:** Migrate simple pages (minimal loops/`set_block`). **(Completed)**
+3.  **Phase 2:** Migrate pages with loops (`parse(..., true)`) and conditionals (`set_block`). **(Starting Now)**
 4.  **Phase 3:** Migrate complex/mixed-usage pages (`user/showtracking.php`).
 5.  **Phase 4:** Migrate pages using inline PHP/PHTML.
 6.  **Phase 5:** Cleanup (remove `template.inc`, old `.tpl` files, `generate_page()`).
 
-## Migration Strategy Details
+## Migration Strategy Details & Learnings
 
 *   **Templates:** Convert `.tpl` files used by `Template` to `.yatt` files.
     *   Syntax: `{VAR}` -> `%[VAR]`, `<!-- BEGIN/END -->` -> `%begin/end []`.
     *   Structure: Define blocks statically (including nested blocks for `set_block` logic).
-*   **PHP Refactoring:**
-    *   Integrate fully with outer `$page` YATT object from `page-yatt.inc.php`.
+*   **PHP Refactoring (Current Pattern):**
+    *   Keep `require_once("page-yatt.inc.php")`.
     *   Create a *new* YATT instance (`$content_tpl`) for the page-specific `.yatt` template.
-    *   Replace `new Template()`, `set_file`, `set_block`, `set_var`, `parse` calls.
-    *   Use `$content_tpl->set(...)` for variables. **Handle escaping difference:** Manually escape data in PHP *before* `set()` if the old `Template` escaping was required.
-    *   Use PHP `if/else` logic to call `$content_tpl->parse('path.to.block')` for conditional sections (replaces `set_block` logic).
-    *   Use PHP `foreach/while` loops calling `$content_tpl->parse('path.to.row.block')` inside (replaces `parse(..., append=true)`).
-    *   Get final content HTML via `$content_html = $content_tpl->output();`. Check `$content_tpl->get_errors()`.
-    *   Pass final content and title to the outer wrapper: `$page->set('page_content', $content_html); $page->set('page_title', ...);`.
-    *   Remove calls to `generate_page()`.
+    *   Replace `Template` method calls (`set_file`, `set_block`, `set_var`) with YATT equivalents (`new YATT`, `$content_tpl->set`) or remove if obsolete (`set_block`).
+    *   **Preserve original logic structure** as much as possible for cleaner diffs.
+    *   Add YATT parsing logic (`$content_tpl->parse(...)`) within the correct conditional branches based on original state variables (`$error`, `$success`, etc.).
+    *   Generate final page content: `$content_html = $content_tpl->output();`.
+    *   **Keep final call** `print generate_page('Page Title', $content_html);` for now.
+    *   Check YATT errors: `if ($content_errors = $content_tpl->get_errors()) { error_log(...) }`.
+*   **Handle Escaping Difference:** Manually escape data in PHP *before* `$content_tpl->set()` if the old `Template` escaping was required (not encountered yet).
 *   **YATT Library:** No changes to `YATT.class.php` itself should be needed.
 *   **`unknowns`:** Accept YATT's default behavior (remove undefined vars + log error), rather than replicating `Template`'s "comment" behavior.
 
 ## Current Progress
 
-1. **Completed:**
-   - Migrated `user/account/login.php` and its template
-   - Migrated `user/account/forgotpassword.php` and its template
-   - Migrated `user/account/acctedit.php` and its template
-   - Established patterns for block parsing and variable handling
-   - Implemented error checking via `get_errors()`
-   - Tested login and forgot password flows:
-     - Login page loads and renders correctly
-     - Login form submits and sets cookie
-     - Forgot password link works
-     - Forgot password form handles both known and unknown emails
-   - Tested account edit functionality:
-     - Form loads correctly
-     - Name changes work
-     - Password changes work
-     - Email changes work
-   - Added `.gitattributes` to enforce Unix line endings
-   - Fixed line ending issues in YATT templates
-   - Test credentials:
-     - Email: nyet@nyet.org
-     - Password: [redacted]
+1.  **Phase 1 Completed:**
+    *   **`user/account/login.php`**: Migrated. Tested login flow (initial load, submit, cookie). OK.
+    *   **`user/account/forgotpassword.php`**: Migrated. Tested flows (initial load, known/unknown email submit). OK.
+    *   **`user/account/acctedit.php`**: Migrated. Tested flows (load, name/pw/email change). OK.
+    *   **`user/account/create.php`**: Migrated. **Rendering/basic errors tested OK.**
+    *   **`user/account/finish.php`**: Migrated. **Rendering/basic errors tested OK.**
+    *   Established migration pattern (see above).
+    *   Added `.gitattributes` to enforce Unix line endings.
+    *   Fixed line ending issues in YATT templates.
+    *   Test credentials:
+        *   Email: nyet@nyet.org
+        *   Password: [redacted]
 
-2. **In Progress:**
-   - Testing and verifying migrated pages
-   - Documenting common patterns and best practices
-   - Planning next phase of migrations
+2.  **Pending Verification (Deferred):**
+    *   **`create.php`**: Form submission logic (success/failure), error message details, Terms of Use handling.
+    *   **`finish.php`**: Action processing logic for different `type` values (NewAccount, ChangeEmail, ForgotPassword success/error paths).
 
-3. **Next Steps:**
-   - Continue with Phase 1 migrations:
-     - `create.php` (account creation)
-     - `finish.php` (account setup completion)
-   - Establish testing framework for migrated pages
-   - Document any edge cases or special handling needed
+3.  **Next Steps:**
+    *   Start Phase 2 migrations: Target `user/preferences.php`.
+    *   Later: Come back to perform Pending Verification tests.
+    *   Later: Establish more formal testing framework if needed.
 
-## Tool Status (Previous Session)
+## Tool Status
 
-*   The `edit_file` tool was **not available** in the previous SSH remote session. File modifications required providing code for manual copy-paste.
+*   The `edit_file` tool **is available** and functional in this session.
 
 ## Current Step & Next Action (Current Session)
 
-1. **In Progress:** Migrating `user/account/create.php`
-   * Created new YATT template `templates/account/create.yatt`
-   * Refactored PHP file to use YATT templating
-   * Key changes:
-     - Replaced Template class with YATT instance
-     - Converted template syntax ({VAR} -> %[VAR], <!-- BEGIN/END --> -> %begin/%end)
-     - Removed generate_page() in favor of $page->set()
-     - Added error checking via get_errors()
-
-2. **Next Steps:**
-   * Apply the provided code changes
-   * Run test cases:
-     1. Initial page load
-     2. Form display
-     3. Error handling
-   * Compare output with baseline files in tests/baseline/
-   * Check PHP error logs for any YATT errors
-   * Report results of comparison and any issues found
-
-3. **Pending Verification:**
-   * Form submission handling
-   * Error message display
-   * Terms of Use agreement handling
+*   Proceed with migrating `user/preferences.php`.

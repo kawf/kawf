@@ -7,14 +7,19 @@ require_once("timezone.inc");
 require_once("nl2brPre.inc");
 require_once("page-yatt.inc.php");
 
+// Instantiate YATT for the content template
+$content_tpl = new YATT($template_dir, 'preferences.yatt');
+
+/* Old Template setup removed
 $tpl->set_file("preferences", "preferences.tpl");
 
 $tpl->set_block("preferences", "error");
 $tpl->set_block("preferences", "signature");
 $tpl->set_block("preferences", "timezone", "_timezone");
+*/
 
 if (isset($domain) && strlen($domain))
-  $tpl->set_var("DOMAIN", $domain);
+  $content_tpl->set("DOMAIN", $domain); // Use content_tpl
 
 $success = "";
 $error = "";
@@ -31,12 +36,12 @@ function option_changed($name, $message)
 
 function do_option($name)
 {
-  global $tpl, $user;
+  global $content_tpl, $user; // Use content_tpl
 
   if (isset($user->pref[$name]))
-    $tpl->set_var(strtoupper($name), ' checked');
+    $content_tpl->set(strtoupper($name), ' checked'); // Use content_tpl
   else
-    $tpl->set_var(strtoupper($name), '');
+    $content_tpl->set(strtoupper($name), ''); // Use content_tpl
 }
 
 if (isset($_POST['submit'])) {
@@ -106,33 +111,53 @@ else
 
 $text .= 'To change your password or update your preferences, please fill out the information below and click "Update".';
 if (empty($error))
-  $tpl->set_var("error", "");
+  $content_tpl->set("error", "");
 else
-  $tpl->set_var("ERROR", $error);
+  $content_tpl->set("ERROR", $error);
 
-if (empty($user->signature))
-  $tpl->set_var("signature", "");
+// Get the signature directly from the user object
+$signature_raw = $user->signature;
 
-$tpl->set_var("SIGNATURE_COOKED", nl2brPre::out($user->signature));
-$tpl->set_var("SIGNATURE", htmlspecialchars($user->signature, ENT_SUBSTITUTE));
-$tpl->set_var("THREADSPERPAGE", $user->threadsperpage);
-$tpl->set_var("TEXT", $text);
-$tpl->set_var("PAGE", htmlspecialchars($_REQUEST['page'], ENT_QUOTES));
-$tpl->set_var("USER_TOKEN", $user->token());
+// --- Removed Encoding Workaround --- 
+
+// Use the raw signature (assuming DB connection now provides correct UTF-8)
+$signature_htmlspecialchars = htmlspecialchars($signature_raw, ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
+$signature_cooked = nl2brPre::out($signature_raw); // Use raw signature here too
+
+// Set main variables for the template
+$content_tpl->set("SIGNATURE_COOKED", $signature_cooked);
+$content_tpl->set("SIGNATURE", $signature_htmlspecialchars);
+$content_tpl->set("THREADSPERPAGE", $user->threadsperpage);
+$content_tpl->set("TEXT", $text);
+$page_val = isset($_REQUEST['page']) ? htmlspecialchars($_REQUEST['page'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : '';
+$content_tpl->set("PAGE", $page_val);
+$content_tpl->set("USER_TOKEN", $user->token());
 
 foreach($tz_to_name as $tz) {
   $selected = "";
   if($user->timezone == $tz) $selected = " selected=\"selected\"";
-  $tpl->set_var("TIMEZONE", $tz);
-  $tpl->set_var("TIMEZONE_SELECTED", $selected);
-  $tpl->parse("_timezone", "timezone", true);
+  $content_tpl->set("TIMEZONE", $tz);
+  $content_tpl->set("TIMEZONE_SELECTED", $selected);
+  $content_tpl->parse('preferences_content.timezone'); // Parse the block directly
 }
 
 /* todo: translate date_default_timezone_get() into something we know */
 if(isset($user->timezone))
-    $tpl->set_var(str_replace("/","_",$user->timezone), " selected=\"selected\"");
+    $content_tpl->set(str_replace("/","_",$user->timezone), " selected=\"selected\"");
 else
-    $tpl->set_var("US_Pacific", " selected=\"selected\"");
+    $content_tpl->set("US_Pacific", " selected=\"selected\"");
 
-print generate_page('Preferences',$tpl->parse("CONTENT", "preferences"));
+// Always parse the main content block wrapper
+$content_tpl->parse('preferences_content');
+// Get the final HTML for the content area
+$content_html = $content_tpl->output();
+
+// Optional: Check for YATT errors from content parsing
+if ($content_errors = $content_tpl->get_errors()) {
+  error_log("YATT errors in preferences.yatt: " . print_r($content_errors, true));
+}
+
+// Call the existing generate_page function with the YATT-generated content
+print generate_page('Preferences',$content_html);
+
 ?>

@@ -1,0 +1,13 @@
+%[#] YATT template for account creation email body
+%[#] Headers like From, To, Subject will be set in PHP
+%begin [email_body]
+Thank you for creating an account with us. To finish creating your
+account, please visit this URL:
+
+http://forums.%[DOMAIN]/finish.phtml?cookie=%[COOKIE]
+
+This email was requested from %[REMOTE_ADDR]
+
+--
+%[DOMAIN] staff
+%end [email_body]

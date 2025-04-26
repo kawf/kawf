@@ -2,18 +2,8 @@
 
 require_once("page-yatt.inc.php");
 
-$tpl->set_file("finish", "account/finish.tpl");
-
-$tpl->set_block("finish", "form");
-$tpl->set_block("finish", "error");
-$tpl->set_block("error", "unknown");
-$tpl->set_block("error", "invalid_aid");
-$tpl->set_block("error", "activate_failed");
-$tpl->set_block("error", "dup_email");
-$tpl->set_block("finish", "success");
-$tpl->set_block("success", "create");
-$tpl->set_block("success", "email");
-$tpl->set_block("success", "forgot_password");
+// Instantiate YATT for the content template
+$content_tpl = new YATT($template_dir, 'account/finish.yatt');
 
 $errors = array(
   "unknown",
@@ -37,7 +27,7 @@ $pending = db_query_first("select * from u_pending where cookie = ?", array($coo
 if (!$pending) {
   if (isset($cookie) && !empty($cookie)) {
     $error = "unknown";
-    $tpl->set_var("COOKIE", $cookie);
+    $content_tpl->set("COOKIE", $cookie);
   } else
     err_not_found('No cookie');
 } else {
@@ -58,11 +48,7 @@ if (!$pending) {
       } else
         $success = "create";
 
-      /* HACK: Workaround lame template engine */
-      $_domain = $tpl->get_var("DOMAIN");
-      unset($tpl->varkeys["DOMAIN"]);
-      unset($tpl->varvals["DOMAIN"]);
-      $tpl->set_var("DOMAIN", $_domain);
+      $content_tpl->set("DOMAIN", isset($domain) ? $domain : '');
       $user->setcookie();
       break;
     case "ChangeEmail":
@@ -70,10 +56,10 @@ if (!$pending) {
       $user->email($pending['data']);
       if (!$user->update()) {
         $error = "dup_email";
-	$tpl->set_var("EMAIL", $pending['data']);
+        $content_tpl->set("EMAIL", $pending['data']);
       } else {
-	$tpl->set_var("OLD_EMAIL", $old_email);
-	$tpl->set_var("EMAIL", $user->email);
+        $content_tpl->set("OLD_EMAIL", $old_email);
+        $content_tpl->set("EMAIL", $user->email);
         $success = "email";
       }
 
@@ -94,24 +80,28 @@ if (!$pending) {
       $success = "forgot_password";
     }
   }
-
-  $tpl->set_var("form", "");
 }
 
+$content_html = '';
 if (isset($error)) {
-  foreach ($errors as $code)
-    if ($error != $code)
-      $tpl->set_var($code, "");
-} else
-  $tpl->set_var("error", "");
+  $content_tpl->parse('finish_content.error');
+  $content_tpl->parse('finish_content.error.' . $error);
+} elseif (isset($success)) {
+  $content_tpl->parse('finish_content.success');
+  $content_tpl->parse('finish_content.success.' . $success);
+} else {
+  if (!isset($_REQUEST['cookie']) || empty($_REQUEST['cookie'])) {
+    $content_tpl->parse('finish_content.form');
+  }
+}
 
-if (isset($success)) {
-  foreach ($successes as $code)
-    if ($success != $code)
-      $tpl->set_var($code, "");
-} else
-  $tpl->set_var("success", "");
+$content_tpl->parse('finish_content');
+$content_html = $content_tpl->output();
 
-print generate_page('Finish Account Creation', $tpl->parse("content", "finish"));
+if ($content_errors = $content_tpl->get_errors()) {
+  error_log("YATT errors in finish.yatt: " . print_r($content_errors, true));
+}
+
+print generate_page('Finish Account Creation', $content_html);
 
 ?>
