@@ -1,0 +1,39 @@
+%begin [showthread_content]
+
+%begin [header]
+<table class="forumheader">
+<tr>
+%[FORUM_HEADER_HTML] %[#] Assume pre-rendered header from PHP
+</tr>
+</table>
+
+<table class="tools">
+  <tr>
+    <td> <!-- Added TD for layout -->
+      <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a> <!-- Changed Forum link to Tips -->
+      | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;page=%[PAGE]" target="_blank">Search</a>
+      | <a href="../"><b>Return to %[FORUM_NAME]</b></a>
+    </td>
+  </tr>
+</table>
+%end [header]
+
+%begin [messages]
+<div class="showthread">
+%[MESSAGES] %[#] Concatenated messages from list_thread(print_message(...))
+</div>
+%end [messages]
+
+%begin [footer]
+<table class="tools">
+  <tr>
+    <td> <!-- Added TD for layout -->
+      <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a> <!-- Changed Forum link to Tips -->
+      | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;page=%[PAGE]" target="_blank">Search</a>
+      | <a href="../"><b>Return to %[FORUM_NAME]</b></a>
+    </td>
+  </tr>
+</table>
+%end [footer]
+
+%end [showthread_content]

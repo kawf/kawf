@@ -25,120 +25,6 @@ function message_set_block($tpl)
   $tpl->set_block("message", "signature");
 }
 
-function _message_unset_block_extras($tpl)
-{
-  $tpl->set_block("owner", "");
-  $tpl->set_var(array(
-    "p2freply" => "",
-    "reply" => "",
-    "owner" => "",
-    "admin" => "",
-    "forum_mod" => "",
-    "moderator" => "",
-    "advertiser" => "",
-    "parent" => "",	/* must be handled manually */
-    "changes" => "",
-  ));
-}
-
-function _message_render_extras($tpl, $msg, $viewer, $owner)
-{
-  global $forum, $thread;
-  global $p2f_address;
-  /* moderator/locker tools (based on viewer) */
-  $moderator = $viewer->admin() || $viewer->capable($forum['fid'], 'Moderate');
-  $locker = $viewer->admin() || $viewer->capable($forum['fid'], 'Lock');
-
-  if (!empty($msg['flags'])) {
-    $flagexp = explode(",", $msg['flags']);
-    //while (list(,$flag) = each($flagexp))
-    foreach($flagexp as $flag)
-      $flags[$flag] = true;
-  }
-
-  if ($viewer->admin()) {
-    $tpl->set_var("USER_TOKEN", $viewer->token());
-  } else {
-    $tpl->set_var("admin", "");
-  }
-  if ($moderator) {
-    $tpl->set_var("MSG_IP", $msg['ip']);
-    /* unfortunately, may be blank, if poster did not set ExposeEmail */
-    $tpl->set_var("MSG_EMAIL", array_key_exists('email', $msg)?$msg['email']:'');
-    $msg['changes'] = trim($msg['changes']);
-    if(strlen($msg['changes'])>0) {
-	$changes = preg_replace("/&/", "&amp;", $msg['changes']);
-	$changes = preg_replace("/</", "&lt;", $changes);
-	$changes = preg_replace("/>/", "&gt;", $changes);
-	$tpl->set_var("MSG_CHANGES", nl2br($changes));
-    } else {
-	$tpl->set_var("changes", "");
-    }
-  } else {
-    $tpl->set_var("changes", "");
-    $tpl->set_var("forum_mod", "");
-  }
-
-  /* for moderator tag (based on message owner) */
-  if (!$owner->capable($forum['fid'], 'Moderate'))
-    $tpl->set_var("moderator", "");
-
-  /* for advertiser tag (based on message owner) */
-  if (!$owner->capable($forum['fid'], 'Advertise'))
-    $tpl->set_var("advertiser", "");
-
-  /* handle stupid tool links. templating system sucks; we have to
-     explicitly unset EVERY block we do not use */
-
-  /* note that the order of Edit Delete/Undelete/Locked/Reply is crucial
-     so we can deterministically place the | bars such that every combination
-     looks right. Edit/Delete/Undelete all have | after in message.tpl */
-
-  $own = false;
-  $locked = false;
-  $delete = false;
-  $undelete = false;
-  $reply = false;
-
-  if (!$viewer->valid() || (isset($thread['flag']['Locked']) && !$locker)) {
-    /* viewer not logged in, or does not have lock permissions and
-       thread is locked */
-    $reply = false;
-    $own = false;				/* NO LINKS */
-  } else if ($msg['aid'] != $viewer->aid) {
-    /* message does not belong to viewer */
-    $reply = true;				/* Reply */
-  } else {
-    $own=true;
-    if (isset($flags['StateLocked'])) {
-      $locked = true;				/* (Edit |) Locked */
-      if ($msg['state'] == 'OffTopic' || $msg['state'] == 'Active')
-        $delete = true;				/* (Edit |) (Delete |) Locked */
-    } else {
-      $reply = true;
-      if ($msg['state'] != 'Deleted') {
-        $delete = true;				/* (Edit |) (Delete |) Reply */
-      } else {
-        $undelete = true;			/* (Edit |) (Undelete |) Reply */
-      }
-    }
-  }
-
-  if (isset($p2f_address)) {
-    if (array_key_exists($forum['shortname'], $p2f_address) && $p2f_address[$forum['shortname']]) {
-      $tpl->set_var('P2F', $p2f_address[$forum['shortname']]);
-    } else {
-      $tpl->set_var('p2freply', "");
-    }
-  }
-
-  blank_extra($tpl, "owner", $own);
-  blank_extra($tpl, "statelocked", $locked);
-  blank_extra($tpl, "delete", $delete);
-  blank_extra($tpl, "undelete", $undelete);
-  blank_extra($tpl, "reply", $reply);
-}
-
 function blank_extra($tpl, $tag, $bool)
 {
   if (!$bool)
@@ -206,22 +92,24 @@ function postprocess($msg, $noembed=false)
 }
 
 /* pre is a hack for stacking used by showthread.php */
-function render_message($tpl, $msg, $viewer, $owner=null)
+function render_message($template_dir, $msg, $viewer, $owner=null)
 {
   global $Debug, $forum;
+
+  // Instantiate YATT for this message
+  $message_tpl = new YATT($template_dir, 'message.yatt');
+
+  // Set variables that are always needed
+  $message_tpl->set('FORUM_SHORTNAME', $forum['shortname']);
+  $message_tpl->set('PAGE', isset($_REQUEST['page']) ? $_REQUEST['page'] : '');
+  $message_tpl->set('USER_TOKEN', $viewer->token()); // Use viewer's token
+
   $moderator = $viewer->admin() || $viewer->capable($forum['fid'], 'Moderate');
 
-  /*---------------------------------------------------------------------*/
-  /* Bug 2771354 */
-  /* Unfortunately, ExposeEmail is indicated by a *non-empty* msg field!
-     This means that even a moderator cannot what email the user had at the
-     time of posting this message! */
+  /* Bug 2771354 workaround for email display */
   $expose_email = !empty($msg['email']);
-
-  /* for now, just hack in the current email for moderators to see */
   if (!$expose_email && isset($owner))
       $msg['email'] = stripcrap($owner->email);
-  /*---------------------------------------------------------------------*/
 
   $extras=true;
   if (!isset($owner)) {
@@ -238,62 +126,141 @@ function render_message($tpl, $msg, $viewer, $owner=null)
     $debug.="viewer=".$viewer->aid."\n";
     $debug.="owner=".$owner->aid."\n";
     $debug = str_replace("--","- -", $debug);
-    $tpl->set_var("MSG_DEBUG", "<!-- $debug -->");
+    $message_tpl->set("MSG_DEBUG", "<!-- $debug -->");
   } else {
-    $tpl->set_var("MSG_DEBUG", "");
+    $message_tpl->set("MSG_DEBUG", "");
   }
 
+  $flags = []; // Initialize flags array
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
-    //while (list(,$flag) = each($flagexp))
     foreach($flagexp as $flag)
       $flags[$flag] = true;
   }
 
   /* Show CURRENT email information of user */
   $ghash = md5(strtolower(trim($owner->email)));
-  $tpl->set_var("MSG_NAMEHASH", $ghash);
+  $message_tpl->set("MSG_NAMEHASH", $ghash);
   if ($moderator || ($viewer->valid() && $expose_email)) {
-    /* Lame spamification */
-    $name = $msg['name'];
-    $email = preg_replace("/@/", "&#64;", stripcrap($owner->email));
+    $name = htmlspecialchars($msg['name']); // Escape name
+    $email = preg_replace("/@/", "&#64;", htmlspecialchars(stripcrap($owner->email))); // Escape email
     $hidden = $expose_email?"":" (hidden)";
-    $tpl->set_var("MSG_NAMEEMAIL",
+    $message_tpl->set("MSG_NAMEEMAIL",
       "<a href=\"mailto:$email\" title=\"e-mail $email$hidden\">$name</a>");
   } else {
-    $tpl->set_var("MSG_NAMEEMAIL", $msg['name']);
+    $message_tpl->set("MSG_NAMEEMAIL", htmlspecialchars($msg['name'])); // Escape name
   }
 
-  $message = postprocess($msg);
+  $message_body = postprocess($msg); // Assumes postprocess returns safe HTML
 
-  if (!empty($message)) {
-    $tpl->set_var("MSG_MESSAGE", $message);
-  } else {
-    $tpl->set_var("msg", "");
+  if (!empty($message_body)) {
+    $message_tpl->set("MSG_MESSAGE", $message_body);
+    $message_tpl->parse('message_block.msg'); // Parse the message body block
   }
+  // else: msg block is simply not parsed
 
+  // Handle Signature
   if ($viewer->valid() && isset($flags['NewStyle']) && !isset($viewer->pref['HideSignatures']) && isset($owner->signature)) {
     if (!empty($owner->signature)) {
-      $tpl->set_var("MSG_SIGNATURE", nl2brPre::out($owner->signature));
-    } else {
-      $tpl->set_var("signature", "");
+      $message_tpl->set("MSG_SIGNATURE", nl2brPre::out($owner->signature)); // Assumes nl2brPre::out is safe
+      $message_tpl->parse('message_block.signature'); // Parse signature block
     }
-  } else {
-    $tpl->set_var("signature", "");
   }
+  // else: signature block is not parsed
 
-  $tpl->set_var(array(
-    "MSG_SUBJECT" => $msg['subject'],
-    "MSG_DATE" => $msg['date'],
-    "MSG_MID" => array_key_exists('mid', $msg)?$msg['mid']:'',
-    "MSG_AID" => array_key_exists('aid', $msg)?$msg['aid']:'',
-    "MSG_TID" => array_key_exists('tid', $msg)?$msg['tid']:'',
+  // Set basic message vars
+  $message_tpl->set(array(
+    "MSG_SUBJECT" => htmlspecialchars($msg['subject']), // Escape subject
+    "MSG_DATE" => $msg['date'], // Assumes gen_date is safe
+    "MSG_MID" => $msg['mid'],
+    "MSG_AID" => $msg['aid']
+    // MSG_TID is not used in message.yatt, removed
   ));
 
+  // Handle Parent Message Block
+  if ($msg['pmid'] != 0) {
+    $pmsg = fetch_message($viewer, $msg['pmid'], 'mid,subject,name,date' ); // Fetch parent msg details
+    if ($pmsg) { // Check if fetch was successful
+        $message_tpl->set("PMSG_MID", $pmsg['mid']);
+        $message_tpl->set("PMSG_SUBJECT", htmlspecialchars($pmsg['subject'])); // Escape subject
+        $message_tpl->set("PMSG_NAME", htmlspecialchars($pmsg['name'])); // Escape name
+        $message_tpl->set("PMSG_DATE", gen_date($viewer, strtotime($pmsg['date']))); // Reformat date using viewer's prefs
+        $message_tpl->parse('message_block.parent');
+    }
+  }
+
+  // Handle extra blocks (moderator info, tools)
   if ($extras)
-    _message_render_extras($tpl, $msg, $viewer, $owner);
-  else
-    _message_unset_block_extras($tpl);
+    _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $moderator);
+  // else: extra blocks are just not parsed, no need for _message_unset_block_extras
+
+  // Parse the main container block
+  $message_tpl->parse('message_block');
+
+  // Return the rendered HTML
+  return $message_tpl->output();
+}
+
+// Helper function refactored for YATT
+function _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $moderator)
+{
+  global $forum; // Need forum for permissions check
+
+  // Moderator Info Block
+  if ($moderator) {
+    $message_tpl->set('MSG_IP', htmlspecialchars($msg['ip']));
+    $message_tpl->set('MSG_EMAIL', htmlspecialchars($msg['email']));
+    // Admin sub-block
+    if ($viewer->admin()) {
+      $message_tpl->parse('message_block.forum_mod.admin');
+    }
+    $message_tpl->parse('message_block.forum_mod');
+  }
+
+  // Advertiser/Moderator status flags
+  if (isset($owner->status) && $owner->status == 'Advertiser') {
+      $message_tpl->parse('message_block.advertiser');
+  }
+  if ($owner->capable($forum['fid'], 'Moderate')) {
+      $message_tpl->parse('message_block.moderator');
+  }
+
+  // Owner Tools Block
+  $can_edit = $viewer->aid == $owner->aid || $moderator;
+  $can_delete = $viewer->aid == $owner->aid || $viewer->capable($forum['fid'], 'Delete');
+  $state_locked = isset($flags['StateLocked']);
+
+  if ($can_edit || $can_delete) {
+    // Delete/Undelete sub-blocks (inside owner block)
+    if ($can_delete && !$state_locked) {
+        if ($msg['state'] == 'Deleted') {
+            $message_tpl->parse('message_block.owner.undelete');
+        } else {
+            $message_tpl->parse('message_block.owner.delete');
+        }
+    }
+    // State Locked sub-block (inside owner block)
+    if ($state_locked && $can_edit) { // Show lock only if user could otherwise edit/delete
+        $message_tpl->parse('message_block.owner.statelocked');
+    }
+    $message_tpl->parse('message_block.owner');
+  }
+
+  // Reply Block (and P2F sub-block)
+  if ($viewer->valid() && !isset($flags['Anonymous'])) { // Logic for showing reply link
+      // P2F sub-block
+      if(isset($forum['p2f'])) {
+          $message_tpl->set('P2F', $forum['p2f']);
+          $message_tpl->parse('message_block.reply.p2freply');
+      }
+      $message_tpl->parse('message_block.reply');
+  }
+
+  // Changes Block
+  if (isset($msg['changes']) && !empty($msg['changes'])) {
+      $message_tpl->set('MSG_CHANGES', nl2brPre::out($msg['changes'])); // Assumes nl2brPre::out is safe
+      $message_tpl->parse('message_block.changes');
+  }
 }
 
 /* prepend message with imageurl */

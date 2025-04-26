@@ -8,6 +8,7 @@ require_once("strip.inc");
 require_once("message.inc");
 require_once("postform.inc");
 require_once("page-yatt.inc.php");
+require_once("header-template.inc");
 
 if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
   $user->req();
@@ -17,66 +18,40 @@ if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
   }
 }
 
-$tpl->set_file(array(
-  "showmessage" => "showmessage.tpl",
-  "message" => "message.tpl",
-  "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
-));
+$content_tpl = new YATT($template_dir, 'showmessage.yatt');
 
-message_set_block($tpl);
+$content_tpl->set("FORUM_NAME", $forum['name']);
+$content_tpl->set("FORUM_SHORTNAME", $forum['shortname']);
+$_page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
+$content_tpl->set("PAGE", $_page);
 
-$tpl->set_var("FORUM_NAME", $forum['name']);
-$tpl->set_var("FORUM_SHORTNAME", $forum['shortname']);
+$forum_header_html = render_forum_header_yatt($forum, $template_dir);
+$content_tpl->set("FORUM_HEADER_HTML", $forum_header_html);
 
-$tpl->parse("FORUM_HEADER", "forum_header");
-
-/* Grab the actual message */
 $msg = fetch_message($user, $mid);
+
+$content_tpl->set("MSG_TID", $msg['tid']);
+$content_tpl->set("MSG_MID", $msg['mid']);
 
 $iid = mid_to_iid($mid);
 $sql = "update f_messages$iid  set views = views + 1 where mid = ?";
 db_exec($sql, array($mid));
 
+$flags = [];
 if (!empty($msg['flags'])) {
   $flagexp = explode(",", $msg['flags']);
-  //while (list(,$flag) = each($flagexp))
   foreach($flagexp as $flag)
     $flags[$flag] = true;
 }
 
 $uuser = new ForumUser($msg['aid']);
 
-/* Grab some information about the parent (if there is one) */
-if ($msg['pmid'] != 0)
-  $pmsg = fetch_message($user, $msg['pmid'], 'mid,subject,name' );
-
 mark_thread_read($forum['fid'], $msg, $user);
 
-/* generate message subjects in the thread this message is a part of */
 $thread = get_thread($msg['tid']);
 
-/* UGLY hack, kludge, etc to workaround nasty ordering problem */
-$_page = $tpl->get_var("PAGE");
-unset($tpl->varkeys["PAGE"]);
-unset($tpl->varvals["PAGE"]);
-$tpl->set_var("PAGE", $_page);
-
-$_domain = $tpl->get_var("DOMAIN");
-unset($tpl->varkeys["DOMAIN"]);
-unset($tpl->varvals["DOMAIN"]);
-$tpl->set_var("DOMAIN", $_domain);
-
-if (isset($pmsg)) {
-  $tpl->set_var(array(
-    "PMSG_MID" => $pmsg['mid'],
-    "PMSG_SUBJECT" => $pmsg['subject'],
-    "PMSG_NAME" => $pmsg['name'],
-    "PMSG_DATE" => $pmsg['date'],
-  ));
-} else
-  $tpl->set_var("parent", "");
-
-render_message($tpl, $msg, $user, $uuser);	/* viewer, message owner */
+$message_html = render_message($template_dir, $msg, $user, $uuser);
+$content_tpl->set("MESSAGE", $message_html);
 
 $vmid = $msg['mid'];
 
@@ -96,32 +71,46 @@ $threadmsg .= "</ul>\n";
 
 $threadlinks = gen_threadlinks($thread);
 
+$class = "row0";
 if (isset($thread['flag']['Sticky']))
-  $tpl->set_var("CLASS", "srow0");
+  $class = "srow0";
 else if (is_thread_bumped($thread))
-  $tpl->set_var("CLASS", "trow0");
-else
-  $tpl->set_var("CLASS", "row0");
-$tpl->set_var("THREAD", $threadmsg);
-$tpl->set_var("THREADLINKS", $threadlinks);
+  $class = "trow0";
+$content_tpl->set("CLASS", $class);
+$content_tpl->set("THREAD", $threadmsg);
+$content_tpl->set("THREADLINKS", $threadlinks);
 
-/* create a new message based on current for postform */
 $nmsg['msg'] = $nmsg['subject'] = $nmsg['urltext'] = $nmsg['video'] = "";
-$nmsg['aid'] = $msg['aid'];
-$nmsg['pmid'] = $msg['mid']; 	/* new pmid is current message */
+$nmsg['aid'] = $user->aid;
+$nmsg['pmid'] = $msg['mid'];
 $nmsg['tid'] = $msg['tid'];
 $nmsg['ip'] = $remote_addr;
 
-if (preg_match("/^Re:/i", $msg['subject'], $sregs))
-  $nmsg['subject'] = $msg['subject'];
-/*
-else
-  $nmsg['subject'] = "Re: " . $msg['subject'];
-*/
+if ($msg['pmid'] != 0 && !isset($pmsg)) {
+  $pmsg = fetch_message($user, $msg['pmid'], 'mid,subject,name,date');
+}
 
-render_postform($tpl, "post", $user, $nmsg);
+if (isset($msg['subject']) && !preg_match("/^Re:/i", $msg['subject'])) {
+    $nmsg['subject'] = "Re: " . $msg['subject'];
+} else if (isset($msg['subject'])) {
+    $nmsg['subject'] = $msg['subject'];
+}
 
-$tpl->parse("MESSAGE", "message");
+$form_html = render_postform($template_dir, "post", $user, $nmsg);
+$content_tpl->set("FORM_HTML", $form_html);
+
+$content_tpl->parse('showmessage_content.header');
+$content_tpl->parse('showmessage_content.main_message');
+$content_tpl->parse('showmessage_content.thread_context');
+$content_tpl->parse('showmessage_content.post_form');
+$content_tpl->parse('showmessage_content.footer');
+$content_tpl->parse('showmessage_content');
+
+$content_html = $content_tpl->output();
+
+if ($errors = $content_tpl->get_errors()) {
+    error_log("YATT errors in showmessage.php: " . print_r($errors, true));
+}
 
 $meta_robots = false;
 if($robots_meta_tag) {
@@ -130,5 +119,6 @@ if($robots_meta_tag) {
     $meta_robots = 'follow,index';
   }
 }
-print generate_page($msg['subject'], $tpl->parse("CONTENT", "showmessage"), false, $meta_robots);
+
+print generate_page($msg['subject'], $content_html, false, $meta_robots);
 ?>

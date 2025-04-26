@@ -7,11 +7,11 @@
       <hr width="100%" size="1">
     %end [hr]
 
-    %[#] Forum header HTML is set as a variable by PHP]
+    %[#] Forum header HTML is set as a variable by PHP
     %[forum_header_html]
     <br>
 
-    %[#] Normal Mode block - Parsed by PHP if not simple mode]
+    %[#] Normal Mode block - Parsed by PHP if not simple mode
     %begin [normal]
       <table class="tools">
       <tr>
@@ -39,7 +39,7 @@
       </table>
     %end [normal]
 
-    %[#] Simple Mode block - Parsed by PHP if simple mode]
+    %[#] Simple Mode block - Parsed by PHP if simple mode
     %begin [simple]
       %begin [update_all]
         <table class="tools"><tr>
@@ -53,12 +53,12 @@
     %end [simple]
   %end [forums]
 
-  %[#] Block shown if no threads are tracked - Parsed by PHP if num_shown is 0]
+  %[#] Block shown if no threads are tracked - Parsed by PHP if num_shown is 0
   %begin [no_threads]
     <span style="font-size: larger;">No updated threads</span><br>
   %end [no_threads]
 
-  %[#] Common footer tools - Always shown? Assume parsed by PHP outside the main conditional]
+  %[#] Common footer tools - Always shown? Assume parsed by PHP outside the main conditional
   %begin [footer_tools]
     <div class="tools">
         <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a>

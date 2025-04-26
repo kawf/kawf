@@ -32,9 +32,9 @@ Migrate the PHP application entirely from the custom `Template` class (`include/
    - **YATT:** Uses `%[VAR_NAME]` syntax
    - YATT requires variables to be set before parsing blocks that use them
 
-4. **Conditional Logic:**
-   - **YATT:** **Does NOT support conditional syntax like `%if` within the template file itself.**
-   - **YATT:** Conditional rendering is achieved by defining named blocks (`%begin [name]...%end [name]`) in the `.yatt` file and then **selectively calling `$yatt->parse('block_name')` from the PHP script** based on the desired conditions.
+4. **Conditional Logic & Comments:**
+   - **YATT Conditional Logic:** **Does NOT support conditional syntax like `%if` within the template file itself.** Conditional rendering is achieved by defining named blocks (`%begin [name]...%end [name]`) in the `.yatt` file and then **selectively calling `$yatt->parse('block_name')` from the PHP script** based on the desired conditions.
+   - **YATT Comment Syntax:** The correct format for comments within YATT templates is **`%[#] Comment Text Here`**. Note the literal `[#]` after the percent sign and lack of trailing `]` at the very end of the line. These are distinct from standard HTML comments (`<!-- ... -->`).
 
 5. **Page Structure:**
    - **Template:** Standalone templates
@@ -141,26 +141,28 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
 2.  **Phase 2 In Progress:**
     *   **`user/preferences.php`**: Migrated (associated with database encoding fix). Tested. OK.
     *   **`user/tracking.php`**: Migrated. Tested OK (Normal/Simple modes, links, conditionals). Forum header handled via `generic.tpl` logic embedded in YATT (see note above).
-    *   **`user/showforum.php`**: **Provisionally Migrated.**
-        *   Converted main structure and blocks to YATT.
-        *   Refactored thread rendering loops to use `parse()` instead of string concatenation.
-        *   **Pagination Logic:** Refactored to fix errors related to sticky threads on page > 1. Adopted a performance-optimized approach (estimating non-sticky visible threads per table index) which is significantly faster than a perfectly accurate query, but relies on the `threads()` helper function potentially having slight mismatches with the main query's WHERE clause in edge cases (user-specific visibility, deleted/mod/ot states). Considered likely more correct than original buggy logic.
+    *   **`user/showforum.php`**: **Provisionally Migrated.** (See Pending Verification below).
+    *   **`user/showmessage.php`**: Migrated. Tested OK.
+    *   **`user/showthread.php`**: Migrated. Tested OK.
+        *   Also required refactoring `render_message` in `message.inc` to use YATT and return HTML.
+        *   Required fixing recursion/memory/type errors in `listthread.inc` and `filter.inc`.
+        *   Call to `filter_messages` commented out in `showthread.php` as potentially redundant.
 
 3.  **Pending Verification (Deferred):**
     *   **`create.php`**: Form submission logic (success/failure), error message details, Terms of Use handling.
     *   **`finish.php`**: Action processing logic for different `type` values (NewAccount, ChangeEmail, ForgotPassword success/error paths).
     *   **`user/showforum.php` Pagination Edge Cases (Page > 1):**
-        *   **Admin vs. User Visibility:** Compare pagination consistency for pages containing deleted threads when logged in as admin vs. regular user.
-        *   **Show Prefs Toggling:** Verify pagination remains consistent when toggling `ShowModerated` / `ShowOffTopic` for pages containing such threads.
-        *   **Own Posts Visibility:** Check pages containing user's own posts mixed with other states (e.g., off-topic) to ensure they are counted correctly.
+        *   Admin vs. User Visibility: Compare pagination consistency for pages containing deleted threads when logged in as admin vs. regular user.
+        *   Show Prefs Toggling: Verify pagination remains consistent when toggling `ShowModerated` / `ShowOffTopic` for pages containing such threads.
+        *   Own Posts Visibility: Check pages containing user's own posts mixed with other states (e.g., off-topic) to ensure they are counted correctly.
 
 4.  **Next Steps:**
-    *   Continue Phase 2 migrations: Target `user/showmessage.php` next? (Or another complex file).
+    *   Continue Phase 2 migrations: Target `user/post.php` next.
     *   Later: Come back to perform Pending Verification tests.
     *   Later: Revisit `user/tracking.php` forum header implementation when addressing the branch with forum-specific headers.
     *   Later: Establish more formal testing framework if needed.
 
 ## Current Step & Next Action (Current Session)
 
-*   **Previous:** Provisionally migrated `user/showforum.php`, including pagination refactor.
-*   **Current:** Determine next file for migration in Phase 2.
+*   **Previous:** Migrated `user/showmessage.php`, `user/showthread.php`, and associated includes (`message.inc`, `listthread.inc`, `filter.inc`). Tested OK.
+*   **Current:** User to commit changes. Then proceed with migrating `user/post.php`.

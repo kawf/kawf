@@ -3,7 +3,7 @@
 %begin [header]
 <table class="forumheader">
 <tr>
-%[FORUM_HEADER_HTML] %[#] Use the pre-rendered header from PHP]
+%[FORUM_HEADER_HTML] %[#] Use the pre-rendered header from PHP
 </tr>
 </table>
 
@@ -74,7 +74,7 @@
 %begin [post_form]
 <div class="forumpost">
 <a id="post"><img src="/pics/post.gif" alt="post message"></a>
-%[FORM_HTML] %[#] Use the pre-rendered form from PHP]
+%[FORM_HTML] %[#] Use the pre-rendered form from PHP
 </div>
 %end [post_form]
 
