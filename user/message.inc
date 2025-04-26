@@ -204,7 +204,7 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
 // Helper function refactored for YATT
 function _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $moderator)
 {
-  global $forum; // Need forum for permissions check
+  global $forum, $p2f_address; // Need forum for permissions check
 
   // Moderator Info Block
   if ($moderator) {
@@ -247,17 +247,19 @@ function _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $mo
   }
 
   // Reply Block (and P2F sub-block)
-  if ($viewer->valid() && !isset($flags['Anonymous'])) { // Logic for showing reply link
-      // P2F sub-block
-      if(isset($forum['p2f'])) {
-          $message_tpl->set('P2F', $forum['p2f']);
+  $show_reply_link = ($viewer->valid() && !isset($flags['Anonymous']));
+  if ($show_reply_link) {
+      // Check the global p2f_address config directly for the current forum
+      if (isset($p2f_address) && is_array($p2f_address) && !empty($p2f_address[$forum['shortname']])) {
+          $message_tpl->set('P2F', $p2f_address[$forum['shortname']]); // Set var needed by p2freply block
+          // Parse the inner p2freply block if P2F is configured
           $message_tpl->parse('message_block.reply.p2freply');
       }
       $message_tpl->parse('message_block.reply');
   }
 
   // Changes Block
-  if (isset($msg['changes']) && !empty($msg['changes'])) {
+  if ($moderator && !empty($msg['changes'])) { // Or: if (isset($msg['changes']) && !empty($msg['changes'])) { ... depends on HEAD state
       $message_tpl->set('MSG_CHANGES', nl2brPre::out($msg['changes'])); // Assumes nl2brPre::out is safe
       $message_tpl->parse('message_block.changes');
   }
