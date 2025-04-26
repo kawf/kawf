@@ -11,19 +11,18 @@ $user->find_by_aid((int)$aid);
 
 $user->req();
 
-$tpl->set_file("edit", "account/edit.tpl");
+// Create new YATT instance for content template
+$content_tpl = new YATT($template_dir, "account/edit.yatt");
 
-$tpl->set_block("edit", "error");
-$tpl->set_block("edit", "name");
-$tpl->set_block("edit", "email");
-$tpl->set_block("edit", "password");
+// Parse header
+$content_tpl->parse('header');
 
 unset($update_email);
 
 $error = "";
 
 /* $_page set by main.php from _REQUEST */
-$tpl->set_var("PAGE", isset($_page)?$_page:'');
+$content_tpl->set('PAGE', isset($_page)?$_page:'');
 
 if (isset($_POST['name']))
   $name = $_POST['name'];
@@ -80,13 +79,6 @@ if (isset($_POST['submit'])) {
     else
       $user->password($password1);
   }
-} else {
-  $tpl->set_var(array(
-    "error" => "",
-    "name" => "",
-    "email" => "",
-    "password" => "",
-  ));
 }
 
 if (empty($error)) {
@@ -101,8 +93,12 @@ if (empty($error)) {
       $error .= "The name '$name' is taken\n";
     else if (!$user->shortname)
       $error .= "The name '$name' is too similar to a name already taken\n";
-  } else
-    $tpl->set_var("NAME", $name);
+  } else {
+    if (!empty($name)) {
+      $content_tpl->set('NAME', $name);
+      $content_tpl->parse('name');
+    }
+  }
 }
 
 if (isset($update_email) && empty($error)) {
@@ -118,27 +114,33 @@ if (empty($error)) {
     exit;
   }
 
-  if (!isset($user->update['name']))
-    $tpl->set_var("name", "");
-  if (!isset($user->update['password']))
-    $tpl->set_var("password", "");
-  if (!isset($update_email))
-    $tpl->set_var("email", "");
-  else
-    $tpl->set_var(array(
-      "TID" => $email_tid,
-      "NEWEMAIL" => $update_email,
-    ));
+  if (isset($user->update['password'])) {
+    $content_tpl->parse('password');
+  }
 
-  $tpl->set_var("error", "");
+  if (isset($update_email)) {
+    $content_tpl->set('TID', $email_tid);
+    $content_tpl->set('NEWEMAIL', $update_email);
+    $content_tpl->parse('email');
+  }
 } else {
-  $tpl->set_var("name", "");
-  $tpl->set_var("email", "");
-  $tpl->set_var("password", "");
-  $tpl->set_var("ERROR", nl2br($error));
+  $content_tpl->set('ERROR', nl2br($error));
+  $content_tpl->parse('error');
 }
-$tpl->set_var("token", $user->token());
 
-print generate_page('Edit Account', $tpl->parse("content", "edit"));
+$content_tpl->set('token', $user->token());
+
+// Parse form
+$content_tpl->parse('form');
+
+// Check for any YATT errors
+if ($errors = $content_tpl->get_errors()) {
+  error_log("YATT errors in acctedit.php: " . implode(", ", $errors));
+}
+
+// Get final content and pass to page wrapper
+$content_html = $content_tpl->output();
+
+print generate_page('Edit Account', $content_html);
 
 ?>

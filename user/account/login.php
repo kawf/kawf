@@ -10,23 +10,20 @@ if (isset($_POST['forgotpassword'])) {
   exit;
 }
 
+// Create new YATT instance for content template
+$content_tpl = new YATT($template_dir, "account/login.yatt");
+
+// Parse header
+$content_tpl->parse('header');
+
 /* See if TOU is available. */
 $tou_available = false;
-if(is_file($template_dir . "/account/tou.tpl")) $tou_available = true;
-
-$template_files = array(
-  "login" => "account/login.tpl",
-);
-if($tou_available) $template_files["tou"] = "account/tou.tpl";
-
-$tpl->set_file($template_files);
-$tpl->set_block("login", "message");
-$tpl->set_block("login", "tou_agreement");
+if(is_file($template_dir . "/account/tou.yatt")) $tou_available = true;
 
 if($tou_available) {
-  $tpl->parse("TOU", "tou");
-} else {
-  $tpl->set_var("tou_agreement", "");
+  $tou_tpl = new YATT($template_dir, "account/tou.yatt");
+  $content_tpl->set('TOU', $tou_tpl->output());
+  $content_tpl->parse('tou_agreement');
 }
 
 if (isset($_REQUEST['page']))
@@ -38,12 +35,12 @@ if (isset($_REQUEST['url']))
 if (!isset($page))
   $page = "/";
 
-$tpl->set_var("PAGE", isset($page)?$page:'');
+$content_tpl->set('PAGE', isset($page)?$page:'');
 
 if (isset($_POST['login']) && isset($_POST['email'])) {
   $email = $_POST['email'];
   $password = $_POST['password'];
-  $tpl->set_var("EMAIL", $email);
+  $content_tpl->set('EMAIL', $email);
 
   $user = new AccountUser;
   $user->find_by_email($email);
@@ -57,12 +54,26 @@ if (isset($_POST['login']) && isset($_POST['email'])) {
     exit;
   }
 } else
-  $tpl->set_var("EMAIL", "");
+  $content_tpl->set('EMAIL', "");
 
-if (isset($message) && !empty($message))
-  $tpl->set_var("MESSAGE", $message);
-else
-  $tpl->set_var("message", "");
+if (isset($message) && !empty($message)) {
+  $content_tpl->set('MESSAGE', $message);
+  $content_tpl->parse('message');
+}
 
-print generate_page('Login',$tpl->parse("content", "login"));
+// Parse form
+$content_tpl->parse('form');
+
+// Parse footer
+$content_tpl->parse('footer');
+
+// Check for any YATT errors
+if ($errors = $content_tpl->get_errors()) {
+  error_log("YATT errors in login.php: " . implode(", ", $errors));
+}
+
+// Get final content and pass to page wrapper
+$content_html = $content_tpl->output();
+
+print generate_page('Login', $content_html);
 ?>

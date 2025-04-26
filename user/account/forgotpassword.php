@@ -1,49 +1,55 @@
 <?php
 require_once("page-yatt.inc.php");
 
-$tpl->set_file(array(
-  "forgotpassword" => "account/forgotpassword.tpl",
-  "forgotpassword_mail" => "mail/forgotpassword.tpl",
-));
+// Create new YATT instance for content template
+$content_tpl = new YATT($template_dir, "account/forgotpassword.yatt");
 
-$tpl->set_block("forgotpassword", "form");
-$tpl->set_block("forgotpassword", "success");
-$tpl->set_block("forgotpassword", "unknown");
+if (isset($_REQUEST['page'])) {
+    $page = $_REQUEST['page'];
+}
 
-if (isset($_REQUEST['page']))
-  $page = $_REQUEST['page'];
+if (!isset($page)) {
+    $page = "/";
+}
 
-if (!isset($page))
-  $page = "/";
-
-/* FIXME: Dumb workaround */
-unset($tpl->varkeys["PAGE"]);
-unset($tpl->varvals["PAGE"]);
-$tpl->set_var("PAGE", isset($_page)?$_page:'');
+$content_tpl->set('PAGE', $page);
 
 /* forgotpassword might get a POST with submit/email, or
    a simple GET with email */
 if (isset($_REQUEST['email'])) {
-  $email = $_REQUEST['email'];
-  $tpl->set_var("EMAIL", $email);
+    $email = $_REQUEST['email'];
+    $content_tpl->set('EMAIL', $email);
 
-  $user = new AccountUser;
-  $user->find_by_email($email);
-  if (!$user->valid())
-    $tpl->set_var("success", "");
-  else {
-    $user->forgotpassword();
+    $user = new AccountUser;
+    $user->find_by_email($email);
 
-    $user->update();
+    if (!$user->valid()) {
+        // Show unknown email message
+        $content_tpl->parse('unknown');
+        $content_tpl->parse('form');
+    } else {
+        $user->forgotpassword();
+        $user->update();
 
-    $tpl->set_var("unknown", "");
-    $tpl->set_var("form", "");
-  }
+        // Show success message
+        $content_tpl->parse('success');
+    }
 } else {
-  $tpl->set_var("EMAIL", "");
-  $tpl->set_var("unknown", "");
-  $tpl->set_var("success", "");
+    $content_tpl->set('EMAIL', '');
+    // Show initial form
+    $content_tpl->parse('form');
 }
 
-print generate_page('Forgot Password',$tpl->parse("content", "forgotpassword"));
+// Parse the header
+$content_tpl->parse('header');
+
+// Check for any YATT errors
+if ($errors = $content_tpl->get_errors()) {
+    error_log("YATT errors in forgotpassword.php: " . implode(", ", $errors));
+}
+
+// Get final content and pass to page wrapper
+$content_html = $content_tpl->output();
+
+print generate_page('Forgot Password', $content_html);
 ?>
