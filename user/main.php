@@ -34,6 +34,13 @@ require_once("timezone.inc");
 require_once("acl_ip_ban.inc");
 require_once("acl_ip_ban_list.inc");
 
+// remove when yatt is integrated, as this is where we create the tpl global
+require_once("template.inc");
+
+// Define generate_page function name early for potential use in err_not_found()
+// TODO: Revisit this - ideally, error handling integrates better with page generation setup.
+$generate_page_func = 'generate_page';
+
 db_connect();
 
 $tpl = new Template($template_dir, "comment");
@@ -325,7 +332,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
   /* Now show that page */
   $curpage = $regs[2];
   require_once("showtracking.php");
-} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/msgs\/([0-9]+)\.(phtml|txt)$/", $script_name.$path_info, $regs)) {
+} elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/msgs\/([0-9]+)\.(phtml|txt)$/", $script_name.$path_info, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
@@ -358,7 +365,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
   } else
     err_not_found("Unknown message " . $mid . " in forum " . $forum['shortname']. "\n$sql");
   if(isset($sth)) $sth->closeCursor();
-} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/threads\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
+} elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/threads\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 

@@ -2,7 +2,8 @@
 
 error_reporting(E_ALL & ~E_NOTICE);
 /* We use the templates for everything */
-require_once("template.inc");
+// require_once("template.inc"); // REMOVED - No longer used here
+require_once(__DIR__ . '/../lib/YATT/YATT.class.php'); // ADDED - Ensure YATT class is available
 
 function safe_server_var($key)
 {
@@ -62,33 +63,44 @@ function dump_env()
 function err_not_found($description = "")
 {
   global $_SERVER;
-  global $template_dir, $srcroot;
+  global $template_dir, $srcroot, $generate_page_func, $default_skin;
   global $server_name, $server_port;
-  global $request_uri, $request_path;
-  global $script_name, $path_info;
+  global $request_uri;
 
   Header("HTTP/1.0 404 Not found");
 
-  /* dump_env(); */
+  $error_tpl = new YATT($template_dir, '404.yatt');
 
-  if (!isset($template_dir))
-    $tpl = new Template($srcroot . "/php/templates", "comment");
-  else
-    $tpl = new Template($template_dir, "comment");
+  // Prepare description (keeping dump_env for now)
+  $full_description = $description . "\n". dump_env();
 
-  $tpl->set_file("errnotfound", "404.tpl");
-
-  $tpl->set_var(array(
-    "DESCRIPTION" => $description . "\n". dump_env(),
-    "URI" => htmlspecialchars($request_uri, ENT_QUOTES),
-    "SERVER_SOFTWARE" => $_SERVER['SERVER_SOFTWARE'],
-    "SERVER_NAME" => $server_name,
-    "SERVER_PORT" => $server_port,
+  // Set base variables
+  $error_tpl->set(array(
+    // "DESCRIPTION" => $full_description, // Set conditionally below
+    "URI" => htmlspecialchars($request_uri ?? 'Unknown URI', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+    "SERVER_SOFTWARE" => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown Server',
+    "SERVER_NAME" => $server_name ?? 'Unknown Host',
+    "SERVER_PORT" => $server_port ?? 'Unknown Port',
+    "DEFAULT_SKIN" => $default_skin ?? 'modern',
   ));
 
-  $tpl->pparse("content", "errnotfound");
+  // Conditionally set DESCRIPTION and parse its block
+  $trimmed_description = trim($full_description);
+  if (!empty($trimmed_description)) {
+      $error_tpl->set("DESCRIPTION", $trimmed_description);
+      $error_tpl->parse("error_content.description_details");
+  }
 
-  //phpinfo(INFO_VARIABLES);
+  // Parse the main content block
+  $error_tpl->parse("error_content");
+  $content_html = $error_tpl->output("error_content");
+
+  if (function_exists($generate_page_func)) {
+    print call_user_func($generate_page_func, '404 Not Found', $content_html);
+  } else {
+    print $content_html;
+  }
+
   exit;
 }
 
