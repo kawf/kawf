@@ -40,46 +40,21 @@ if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
 // Instantiate YATT
 $content_tpl = new YATT($template_dir, 'showforum.yatt');
 
-/* Old Template setup - removed
-$tpl->set_file(array(
-  "showforum" => "showforum.tpl",
-  "forum_header" => array("forum/" . $forum['shortname'] . ".tpl","forum/generic.tpl"),
-));
-
-$tpl->set_block("showforum", "restore_gmsgs");
-$tpl->set_block("showforum", "tracked_threads");
-$tpl->set_block("showforum", "update_all");
-$tpl->set_block("showforum", "simple");
-$tpl->set_block("showforum", "normal");
-*/
-
 // Determine display mode
 if (isset($user->pref['SimpleHTML'])) {
   $table_block = "simple";
-  // $tpl->set_var("normal", ""); // Removed
 } else {
   $table_block = "normal";
-  // $tpl->set_var("simple", ""); // Removed
 }
-
-// $tpl->set_block($table_block, "row", "_row"); // Removed
 
 // Set common variables
 $content_tpl->set("USER_TOKEN", $user->token());
-
-/* UGLY hack removed - Set PAGE based on $curpage where needed */
-// $_page = $tpl->get_var("PAGE");
-// unset($tpl->varkeys["PAGE"]);
-// unset($tpl->varvals["PAGE"]);
-// $tpl->set_var("PAGE", $_page);
-
 $content_tpl->set("FORUM_NAME", $forum['name']);
 $content_tpl->set("FORUM_SHORTNAME", $forum['shortname']);
 
 // Render and set dynamic forum header
 $forum_header_html = render_forum_header_yatt($forum, $template_dir);
 $content_tpl->set("FORUM_HEADER_HTML", $forum_header_html);
-// $tpl->parse("FORUM_HEADER", "forum_header"); // Removed
 
 // Populate tracked threads data needed for is_thread_bumped()
 global $tthreads, $tthreads_by_tid; // Ensure these are global for helper functions

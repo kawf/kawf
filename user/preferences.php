@@ -10,14 +10,6 @@ require_once("page-yatt.inc.php");
 // Instantiate YATT for the content template
 $content_tpl = new YATT($template_dir, 'preferences.yatt');
 
-/* Old Template setup removed
-$tpl->set_file("preferences", "preferences.tpl");
-
-$tpl->set_block("preferences", "error");
-$tpl->set_block("preferences", "signature");
-$tpl->set_block("preferences", "timezone", "_timezone");
-*/
-
 if (isset($domain) && strlen($domain))
   $content_tpl->set("DOMAIN", $domain); // Use content_tpl
 

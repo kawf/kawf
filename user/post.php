@@ -35,12 +35,6 @@ require_once("page-yatt.inc.php");
 // Instantiate YATT
 $content_tpl = new YATT($template_dir, 'post.yatt');
 
-/* Removed old Template setup
-$tpl->set_file(array(...));
-$tpl->set_block("post", ...); // etc.
-message_set_block($tpl);
-*/
-
 // Set common vars
 $content_tpl->set("FORUM_NAME", $forum['name']);
 $content_tpl->set("FORUM_SHORTNAME", $forum['shortname']);

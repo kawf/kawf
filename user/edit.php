@@ -27,16 +27,6 @@ if (!is_numeric($mid) || !isset($forum)) {
 // Instantiate YATT for the main content
 $content_tpl = new YATT($template_dir, 'edit.yatt');
 
-/* Old Template setup removed
-$tpl->set_file(array(
-  "edit" => "edit.tpl",
-  "message" => "message.tpl",
-  "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
-));
-$tpl->set_block(...);
-message_set_block($tpl);
-*/
-
 // Debug Info (using $content_tpl)
 if ($Debug) {
   $debug = "<!--\n_REQUEST:\n";
