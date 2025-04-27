@@ -34,37 +34,25 @@ require_once("timezone.inc");
 require_once("acl_ip_ban.inc");
 require_once("acl_ip_ban_list.inc");
 
-// remove when yatt is integrated, as this is where we create the tpl global
-require_once("template.inc");
-
 // Define generate_page function name early for potential use in err_not_found()
 // TODO: Revisit this - ideally, error handling integrates better with page generation setup.
 $generate_page_func = 'generate_page';
 
-db_connect();
+// Set the temporary global $page_context for printsubject.inc
+// This replicates the value previously stored in $tpl->set_var("PAGE").
+// It holds the current script_name + path_info and is used by printsubject.inc
+// (via append_tools) to construct correct page=... query parameters for action links.
+// TODO: Replace this global with a value from kawfGlobals or similar context object.
+global $page_context;
+$page_context = $script_name . $path_info;
 
-$tpl = new Template($template_dir, "comment");
+db_connect();
 
 /* $_page saved off for others here for use in resused template that recurse,
    or for the set_var order sensitivity for vars within blocks */
 if (array_key_exists('page', $_REQUEST)) {
    $_page = $_REQUEST['page'];
 }
-
-$tpl->set_var("PAGE", $script_name . $path_info);
-if (isset($http_host) && !empty($http_host))
-  $_url = $http_host;
-else {
-  $_url = $server_name;
-
-  if ($server_port != 80)
-    $_url .= ":" . $server_port;
-}
-$tpl->set_var("URL", $_url . $script_name . $path_info);
-
-/* Still needed for account templates */
-if (isset($domain) && strlen($domain))
-  $tpl->set_var("DOMAIN", $domain);
 
 $scripts = array(
   "" => "index.php",
@@ -289,7 +277,7 @@ function find_thread_index($tid)
   return null;
 }
 
-/* Parse out the directory/filename */
+// Parse out the directory/filename
 if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
   if (!isset($scripts[$regs[2]])) {
     if (find_forum($regs[2])) {
@@ -297,9 +285,9 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
       exit;
     } else
       err_not_found("Unknown script \"" . $regs[2] . "\" in \"$script_name.$path_info\"");
+  } else {
+    include_once($scripts[$regs[2]]);
   }
-
-  include_once($scripts[$regs[2]]);
 } elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
   if (isset($query_string) && !empty($query_string))
     Header("Location: msgs/" . $regs[2] . ".phtml?" . $query_string);
@@ -325,7 +313,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
   /* Now show that page */
   $curpage = $regs[2];
   require_once("showforum.php");
-} else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/tracking\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
+} elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/tracking\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
   if (!find_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
@@ -388,6 +376,4 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
 
 /* FIXME: This kills performance */
 // update_visits();
-
-// vim: sw=2
 ?>

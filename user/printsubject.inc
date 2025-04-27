@@ -3,7 +3,8 @@ require_once("message.inc");
 
 function print_subject($thread, $msg, $replies = -1, $collapse = false)
 {
-  global $vmid, $user, $tthreads_by_tid, $forum, $tpl;
+  global $vmid, $user, $tthreads_by_tid, $forum;
+  global $page_context;
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
@@ -100,7 +101,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
   else if ($msg['state'] != "Active" && $msg['state'] != "OffTopic")
     $string .= " (" . $msg['state'] . ")";
 
-  $page = $tpl->get_var("PAGE");
+  $page = $page_context;
 
   return append_tools($user, $string, $forum, $thread, $msg, $page);
 }

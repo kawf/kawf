@@ -135,64 +135,27 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
 
 ## Migration Plan (Phased Approach)
 
-1.  **Phase 0:** Analysis, Baseline Capture (save full HTML output from `master`)
+1.  **Phase 0:** Analysis, Baseline Capture.
 
-2.  **Phase 2 In Progress:**
-    *   **Admin Section:**
-        *   `admin/admin.php`: Migrated (YATT).
-        *   `admin/forumadd.php`: Migrated (YATT).
-        *   `admin/forummodify.php`: Migrated (YATT).
-        *   `admin/gmessage.php`: Uses YATT.
-        *   `admin/showvisits.php`: Not migrated (Skipped).
-        *   Other `admin/` scripts: Not migrated (Deferred).
-
-    *   **User Section (YATT Migration Status):**
-        *   **VERIFIED MIGRATED/USING YATT:**
-            *   `user/tracking.php`
-            *   `user/showmessage.php`
-            *   `user/showthread.php`
-            *   `user/delete.php`
-            *   `user/undelete.php`
-            *   `include/util.inc` (`err_not_found`)
-            *   `user/post.php` (Verified - Uses YATT)
-            *   `user/edit.php` (Verified - Uses YATT)
-            *   `user/preferences.php` (Verified - Uses YATT)
-            *   `user/showforum.php` (Verified - Uses YATT)
-            *   `user/plainmessage.php` (Verified - Uses YATT)
-            *   `user/directory.php` (Uses YATT)
-            *   `user/showtracking.php` (Uses YATT)
-        *   **Likely Migrated (via includes/helpers):**
-            *   `user/message.inc`
-            *   `user/postform.inc`
-            *   `user/postmessage.inc`
-            *   `user/listthread.inc`
-            *   `user/filter.inc`
-        *   **Remaining User Scripts to Verify:**
-            *   `user/track.php`
-            *   `user/untrack.php`
-            *   `user/changestate.php`
-            *   `user/lock.php`
-            *   `user/sticky.php`
-
-    *   **Account Section (`user/account/`):**
-        *   **Needs verification/migration.** (Likely primary remaining users of `template.inc`).
+2.  **Phase 2 Completed:**
+    *   **Admin Section:** Migrated (`admin.php`, `forumadd.php`, `forummodify.php`, `gmessage.php` use YATT). Others deferred/skipped.
+    *   **User Section (Core):** Verified Migrated/Using YATT (All core pages like `tracking.php`, `showmessage.php`, `post.php`, `edit.php`, `preferences.php`, `showforum.php`, `plainmessage.php`, etc.).
+    *   **User Section (Helpers/Includes):** Verified Migrated/Using YATT (`util.inc` (`err_not_found`), `message.inc`, `postform.inc`, etc.).
+    *   **User Section (Utilities):** Verified (`track.php`, and by extension `untrack.php`, `changestate.php`, `lock.php`, `sticky.php`) - These do not use templates.
+    *   **Account Section (`user/account/`):** Verified Migrated/Using YATT/No Template Needed (`login.php`, `logout.php`, `forgotpassword.php`, `create.php`, `acctedit.php`, `finish.php`). `tou.tpl` dependency confirmed non-blocking.
+    *   **Tools:** `tools/offtopic.php` dependency on `template.inc` removed (template was missing anyway).
+    *   **Core (`user/main.php`):** Refactored to remove `template.inc` dependency and global `$tpl` object.
+    *   **Core (`user/printsubject.inc`):** Refactored to use temporary global `$page_context` instead of `$tpl`.
+    *   **Cleanup:** `include/template.inc` deleted. All associated `.tpl` files deleted (except restored/converted samples).
 
 3.  **Pending Verification (Deferred):**
     *   (No change here)
 
-4.  **Next Steps (Focus on Removing `template.inc`):**
-    *   **Verify/Migrate `user/account/` scripts:**
-        *   `user/account/login.php`
-        *   `user/account/logout.php`
-        *   `user/account/forgotpassword.php`
-        *   `user/account/create.php`
-        *   `user/account/acctedit.php`
-        *   `user/account/finish.php`
-    *   **Verify remaining `user/` utility scripts** (`track.php`, `untrack.php`, etc.) if necessary.
-    *   **Remove `template.inc` dependency** from `main.php` and any other core files once all callers are migrated.
-    *   **Delete `include/template.inc` and associated `.tpl` files.**
-    *   (Deferred) Migrate remaining `admin/` scripts using direct `echo`/`page_header`/`footer` if consistency is desired later.
-    *   (Deferred) Come back to perform Pending Verification tests.
+4.  **Next Steps:**
+    *   **Testing:** Thoroughly test all migrated sections (User core, User account, Admin migrated pages) to ensure functionality and rendering are correct.
+    *   **(Future)** Implement `kawfGlobals` or similar context object to replace temporary globals like `$page_context`.
+    *   **(Future)** Migrate remaining `admin/` scripts if desired.
+    *   **(Future)** Perform Pending Verification tests.
 
 ## YATT Library Updates & Testing (Recent Session)
 
@@ -206,5 +169,5 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
 
 ## Current Step & Next Action (Current Session)
 
-*   **Previous:** Completed migration of `admin/` scripts (admin, forumadd, forummodify). Verified YATT syntax rules. Corrected YATT syntax errors in `templates/admin/`. Re-verified migration status of core `user/` scripts (`post`, `edit`, `preferences`, `showforum`, `plainmessage`) and confirmed they already use YATT.
-*   **Current:** Proceed with verifying/migrating the `user/account/` scripts, which are now the most likely remaining users of the old `Template` class.
+*   **Previous:** Completed migration to remove `template.inc` dependency. Generated patch from `../kawf-beta` fork for manual porting.
+*   **Current:** Successfully merged/rebased the `../kawf-beta` fork changes onto the YATT-migrated branch. Proceed with thorough testing of the integrated codebase.

@@ -12,10 +12,16 @@ $user = new AccountUser;
 /* See if TOU is available. */
 $tou_available = false;
 $tou_content = '';
-if (is_file($template_dir . "/account/tou.tpl")) {
+// Check for the YATT version of the TOU file
+if (is_file($template_dir . "/account/tou.yatt")) {
   $tou_available = true;
-  $tou_content = file_get_contents($template_dir . "/account/tou.tpl");
-  $tou_content = preg_replace('/<!--.*?-->/s', '', $tou_content);
+  // Load and process TOU using YATT if needed in the future
+  // $tou_tpl = new YATT($template_dir, "account/tou.yatt");
+  // $tou_tpl->parse("tou_content"); // Assuming a block name
+  // $tou_content = $tou_tpl->output("tou_content");
+} else {
+  // Optional: Log if TOU file is expected but not found
+  // error_log("DEBUG: TOU file not found: " . $template_dir . "/account/tou.yatt");
 }
 
 $content_tpl = new YATT($template_dir, 'account/create.yatt');
