@@ -24,7 +24,7 @@ Migrate the PHP application entirely from the custom `Template` class (`include/
 
 2. **Template Structure:**
    - **Template:** Uses HTML comments for block definitions
-   - **YATT:** Uses `%begin [block_name]` and `%end [block_name]` syntax
+   - **YATT:** Uses `%begin [block_name]` and `%end [block_name]` syntax on their own lines.
    - YATT blocks can be nested.
 
 3. **Variable Handling:**
@@ -34,14 +34,13 @@ Migrate the PHP application entirely from the custom `Template` class (`include/
 
 4. **Conditional Logic & Comments:**
    - **YATT Conditional Logic:** **Does NOT support conditional syntax like `%if` within the template file itself.** Conditional rendering is achieved by defining named blocks (`%begin [name]...%end [name]`) in the `.yatt` file and then **selectively calling `$yatt->parse('block_name')` from the PHP script** based on the desired conditions.
-   - **YATT Comment Syntax:** The correct format for comments within YATT templates is **`%[#] Comment Text Here`**. Note the literal `[#]` after the percent sign and lack of trailing `]` at the very end of the line. These are distinct from standard HTML comments (`<!-- ... -->`).
+   - **YATT Comment Syntax:** The correct format for comments within YATT templates is **`%[#] Comment Text Here`** (must be on its own line). These are distinct from standard HTML comments (`<!-- ... -->`).
 
 5. **Page Structure:**
    - **Template:** Standalone templates
-   - **YATT:** Uses an outer `page.yatt` wrapper for all pages
-   - Future consideration: Migrate from current `page-yatt.inc.php` to pure YATT
+   - **YATT:** Uses an outer `page.yatt` wrapper for all pages via `generate_page()` (defined in `page-yatt.inc.php`).
 
-5. **Parse Order:**
+6. **Parse Order:**
    - **Template:** No specific order required
    - **YATT:** Technically no order requirement, but following a top-to-bottom parse order is recommended as an idiom because:
      - Makes code more readable and maintainable
@@ -143,10 +142,33 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
     *   **`user/tracking.php`**: Migrated. Tested OK (Normal/Simple modes, links, conditionals). Forum header handled via `generic.tpl` logic embedded in YATT (see note above).
     *   **`user/showforum.php`**: **Provisionally Migrated.** (See Pending Verification below).
     *   **`user/showmessage.php`**: Migrated. Tested OK.
+        *   Included migrating P2F link logic within `_message_render_extras` in `user/message.inc` to use YATT parsing and global `$p2f_address` config.
     *   **`user/showthread.php`**: Migrated. Tested OK.
         *   Also required refactoring `render_message` in `message.inc` to use YATT and return HTML.
         *   Required fixing recursion/memory/type errors in `listthread.inc` and `filter.inc`.
         *   Call to `filter_messages` commented out in `showthread.php` as potentially redundant.
+    *   **`user/post.php`**: Migrated. Tested OK.
+        *   Handled posting, previewing, replies, new threads, duplicate detection, and errors using YATT.
+        *   Refactored form rendering into `render_postform()` (`user/postform.inc`).
+        *   Refactored message saving into `postmessage()` (`user/postmessage.inc`).
+    *   **`user/edit.php`**: Migrated. Tested OK.
+        *   Resolved `TypeError` with `Horde_Text_Diff` by ensuring arrays of lines are passed.
+        *   Restored original diff calculation method (aggregating fields with labels).
+        *   Restored audit trail to `changes` column update.
+        *   Restored `f_updates` query and call to `msg_state_changed()`.
+        *   Restored call to `image_url_hack_insert()`.
+    *   **`user/delete.php`**: Migrated. Tested OK.
+        *   Confirmation page now uses YATT.
+        *   Redirects to `changestate.phtml` for actual deletion.
+    *   **`user/undelete.php`**: Migrated. Tested OK.
+        *   Confirmation page now uses YATT.
+        *   Redirects to `changestate.phtml` for actual state change.
+    *   **`include/util.inc` (`err_not_found`)**: Migrated. Tested OK.
+        *   Function now uses YATT and `templates/404.yatt`.
+        *   Integrates with `generate_page()` for consistent site layout.
+        *   Required adding `require_once('lib/YATT/YATT.class.php')` to `util.inc`.
+        *   Required adding `require_once('template.inc')` back to `main.php` temporarily.
+        *   Required defining `$generate_page_func` early in `main.php` temporarily.
 
 3.  **Pending Verification (Deferred):**
     *   **`create.php`**: Form submission logic (success/failure), error message details, Terms of Use handling.
@@ -157,43 +179,25 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
         *   Own Posts Visibility: Check pages containing user's own posts mixed with other states (e.g., off-topic) to ensure they are counted correctly.
 
 4.  **Next Steps:**
-    *   Continue Phase 2 migrations: Target `user/post.php` next.
+    *   Continue Phase 2 migrations: Target remaining `user/` scripts (e.g., `track.php`, `untrack.php`, `changestate.php`, `lock.php`, `sticky.php`, `directory.php`, etc.).
+    *   Migrate `user/account/` scripts.
+    *   Migrate `admin/` scripts (may require different approach due to inline PHP).
+    *   Eventually remove `template.inc` dependency from `main.php` and other core files.
     *   Later: Come back to perform Pending Verification tests.
     *   Later: Revisit `user/tracking.php` forum header implementation when addressing the branch with forum-specific headers.
     *   Later: Establish more formal testing framework if needed.
 
+## YATT Library Updates & Testing (Recent Session)
+
+*   **Bug Fix:** Modified `YATT::load` to enforce strict line-by-line parsing for directives (`%begin`/`%end`), resolving issues where directives were sometimes treated as literal text.
+*   **Bug Fix:** Modified `YATT::load` to correctly merge consecutive text lines into single nodes in the parse tree, restoring behavior closer to original intent and resolving potential layout issues.
+*   **Testing Improvements:**
+    *   Refactored `test_immediate_nesting.php` to use generic names and less verbose output.
+    *   Added `test_multi_parse.php` to verify accumulation of parsed blocks before output.
+    *   Added `test_text_merge.php` to verify correct text node handling.
+    *   Added `test_comments.php` to verify comment processing.
+
 ## Current Step & Next Action (Current Session)
 
-*   **Previous:** User committed changes after showthread/showmessage migration and YATT plan creation.
-*   **Current:** Proceed with migrating `user/post.php`.
-
-## Migration: `user/post.php`
-
-This script handles both displaying the form for posting new messages/replies and processing the submitted form data.
-
-**Refactoring Steps:**
-
-1.  Converted the original `templates/post.tpl` to `templates/post.yatt`, defining relevant blocks (`post_content`, `header`, `disabled`, `error`, `preview`, `duplicate`, `form`, `accept`).
-2.  Refactored `user/post.php` significantly:
-    *   Replaced old template instantiation and parsing with YATT object creation and `set`/`parse` calls.
-    *   Moved form rendering logic into a dedicated function `render_postform()` within `user/postform.inc`.
-    *   Moved core message processing and database insertion/update logic into a dedicated function `postmessage()` within `user/postmessage.inc`.
-    *   Consolidated and cleaned up `require_once` statements at the top of `user/post.php`.
-
-**Issues Encountered & Resolutions:**
-
-*   **Preview Button Text:**
-    *   Initially showed "Update Message" after preview due to `mid` being passed unintentionally. Fixed by `unset($nmsg['mid'])` before calling `render_postform` in the preview state (`user/post.php`).
-    *   Later showed "Post Followup" for new threads due to using `!isset($msg['pmid'])` in `render_postform`. Fixed by changing the check to `empty($msg['pmid'])` in `user/postform.inc`. A comment was added explaining this.
-*   **Fatal Errors During Posting:**
-    *   `find_msg_duplicates()`: This function call was added erroneously during refactoring and never existed in the original codebase. The call block was removed from `user/post.php`.
-    *   `post_message()`: The call used an underscore, while the actual function defined in `user/postmessage.inc` was `postmessage` (no underscore). The call in `user/post.php` was corrected.
-    *   `ArgumentCountError` for `postmessage()`: The call was missing the required `$request` (`$_POST`) argument. The call in `user/post.php` was corrected to include all four arguments (`$user`, `$fid`, `$msg`, `$_POST`).
-*   **New Thread Association:** New threads were initially associated with `tid=0` because the `postmessage()` function used `!isset($msg['pmid'])` to detect new threads, which failed when `pmid=0` was submitted. This was corrected by changing the condition to `if (empty($msg['pmid']))` in `user/postmessage.inc`. A comment was added explaining this necessity.
-*   **Success Page Link:** The "Go to Your Message" link pointed to `mid=1` because `$msg['mid']` was being overwritten by the boolean return value of `postmessage()`. Removed the incorrect assignment (`$msg['mid'] = $mid;`) in `user/post.php`.
-*   **Duplicate Notification Page:** The page displayed only a sparse warning. Updated the `duplicate` block in `templates/post.yatt` to include the message preview and navigation links (similar to the `accept` block) and added an informational header "Content updated to:" for clarity.
-*   **Include Management:** Consolidated multiple `require_once` blocks, removed redundant includes, and corrected paths/presence based on testing (e.g., ensuring `user/postmessage.inc` was included, restoring the `user/` prefix for `image.inc`).
-
-**Current Status:**
-
-`user/post.php` and its associated template/includes appear fully migrated and functional, handling posting, previewing, replies, new threads, duplicate detection, and error display correctly using the YATT system.
+*   **Previous:** Completed migration of `edit.php`, `delete.php`, `undelete.php`, and the 404 handler.
+*   **Current:** Proceed with migrating the next `user/` script, e.g., `track.php` or `untrack.php`.
