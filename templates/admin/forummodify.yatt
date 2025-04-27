@@ -1,0 +1,69 @@
+%[#] templates/admin/forummodify_content.yatt
+%[#] Content block for the forum modification form
+
+%begin [forummodify_content]
+
+<form method="post" action="%[SCRIPT_NAME]">
+<input type="hidden" name="fid" value="%[fid]">
+
+<table>
+ <tr>
+  %[#] Restore valign="top" for preferred alignment
+  <td valign="top">
+   <table>
+    <tr>
+     <td>Long Name:</td><td><input type="text" name="name" value="%[name]"></td>
+    </tr>
+    <tr>
+     <td>Short Name:</td><td><input type="text" name="shortname" value="%[shortname]"></td>
+    </tr>
+    <tr><td>Active:</td><td>%[active]</td></tr>
+    <tr><td>Deleted:</td><td>%[deleted]</td></tr>
+    <tr><td>Offtopic:</td><td>%[offtopic]</td></tr>
+    <tr><td>Moderated:</td><td>%[moderated]</td></tr>
+   </table>
+  </td>
+  %[#] Restore valign="top" for preferred alignment
+  <td valign="top">
+   <table>
+    <tr>
+     <td>Read Messages:</td>
+     <td><input type="checkbox" name="read"%[read_checked_attr]></td>
+    </tr>
+    <tr>
+     <td>Posting new threads:</td>
+     <td><input type="checkbox" name="postthread"%[postthread_checked_attr]></td>
+    </tr>
+    <tr>
+     <td>Posting new replies:</td>
+     <td><input type="checkbox" name="postreply"%[postreply_checked_attr]></td>
+    </tr>
+    <tr>
+     <td>Edit Posts:</td>
+     <td valign="top"><input type="checkbox" name="postedit"%[postedit_checked_attr]><small>(includes deleting)</small></td>
+    </tr>
+    <tr>
+     <td>Off-Topic Posts:</td>
+     <td valign="top"><input type="checkbox" name="offtopic"%[offtopic_checked_attr]><small>(includes deleting)</small></td>
+    </tr>
+    <tr>
+     <td>Searchable:</td>
+     <td valign="top"><input type="checkbox" name="searchable"%[searchable_checked_attr]></td>
+    </tr>
+    <tr>
+     <td>Require login to read:</td>
+     <td valign="top"><input type="checkbox" name="logintoread"%[logintoread_checked_attr]></td>
+    </tr>
+    <tr>
+     <td>Externally searchable robots meta tag:</td>
+     <td valign="top"><input type="checkbox" name="externallysearchable"%[externallysearchable_checked_attr]></td>
+    </tr>
+   </table>
+  </td>
+ </tr>
+</table>
+
+<center><input type="submit" name="submit" value="Update"></center>
+</form>
+
+%end [forummodify_content]

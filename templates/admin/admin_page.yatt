@@ -1,0 +1,43 @@
+%begin [admin_page]
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
+<title>%[PAGE_TITLE]</title>
+%[#] TODO: Add cache buster like main site? Currently hardcoded path.
+<link rel=StyleSheet href="/css/admin.css" type="text/css">
+</head>
+
+<body>
+<table class="outer">
+  <tr>
+    <td>
+      <table class="inner">
+        <tr>
+          <th colspan="2" class="heading">%[PAGE_TITLE]</th>
+        </tr>
+        <tr>
+          <td colspan="2">
+            %[#] Main content for the specific admin page goes here
+            %[PAGE_CONTENT]
+          </td>
+        </tr>
+        <tr class="footing">
+          <th>
+            %begin [logout_link]
+            <a href="logout.phtml?token=%[USER_TOKEN]">Logout</a>
+            %end [logout_link]
+          </th>
+          <th class="right">
+            %begin [back_link]
+            <a href="/admin/">Back to admin page</a>
+            %end [back_link]
+          </th>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
+%end [admin_page]

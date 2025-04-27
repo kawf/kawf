@@ -211,7 +211,7 @@ function process_request($tpl, $arg)
     }
 }
 
-$tpl = new YATT($template_dir.'/admin', 'gmessage.yatt');
+$tpl = new YATT($template_dir, 'admin/gmessage.yatt');
 
 process_request($tpl,$_REQUEST);
 generate_table($tpl);

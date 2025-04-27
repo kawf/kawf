@@ -1,34 +1,33 @@
 <?php
+// admin/forumadd.php - YATT Migrated
 
 $user->req("ForumAdmin");
 
-include_once("user/tables.inc");
+require_once("user/tables.inc"); // For $create_* table SQL
+require_once('lib/YATT/YATT.class.php'); // Use include path
 
-/* If submit is set, shove the data into the database (well, after some */
-/* error checking) */
+// --- POST Handler ---
 if (isset($_POST['submit'])) {
-  if (isset($_POST['read']))
-    $options[] = "Read";
-  if (isset($_POST['postthread']))
-    $options[] = "PostThread";
-  if (isset($_POST['postreply']))
-    $options[] = "PostReply";
-  if (isset($_POST['postedit']))
-    $options[] = "PostEdit";
-  if (isset($_POST['offtopic']))
-    $options[] = "OffTopic";
-  if (isset($_POST['searchable']))
-    $options[] = "Searchable";
+  $options = []; // Use array
+  if (isset($_POST['read']))       $options[] = "Read";
+  if (isset($_POST['postthread'])) $options[] = "PostThread";
+  if (isset($_POST['postreply']))  $options[] = "PostReply";
+  if (isset($_POST['postedit']))   $options[] = "PostEdit";
+  if (isset($_POST['offtopic']))   $options[] = "OffTopic";
+  if (isset($_POST['searchable'])) $options[] = "Searchable";
 
-  if (isset($options))
-    $options = implode(",", $options);
-  else
-    $options = "";
+  $options_str = implode(",", $options);
 
-  db_exec("insert into f_forums " .
-		"( name, shortname, options ) " .
-		"values ( ?, ?, ? )",
-		array($_POST['name'], $_POST['shortname'], $options));
+  // Basic validation (could be more robust)
+  $name = trim($_POST['name'] ?? '');
+  $shortname = trim($_POST['shortname'] ?? '');
+  if (empty($name) || empty($shortname)) {
+      // TODO: Implement proper error handling display via template
+      die("Error: Long Name and Short Name are required.");
+  }
+
+  db_exec("insert into f_forums ( name, shortname, options ) values ( ?, ?, ? )",
+          array($name, $shortname, $options_str));
   $fid = db_last_insert_id();
 
   db_exec("insert into f_indexes ( fid, minmid, maxmid, mintid, maxtid, active, moderated, deleted, offtopic) values ( ?, 1, 0, 1, 0, 0, 0, 0, 0 )", array($fid));
@@ -37,60 +36,55 @@ if (isset($_POST['submit'])) {
   db_exec("insert into f_unique ( fid, type, id ) values ( ?, 'Message', 0 )", array($fid));
   db_exec("insert into f_unique ( fid, type, id ) values ( ?, 'Thread', 0 )", array($fid));
 
+  // Check if table definitions are loaded
+  if (!isset($create_message_table) || !isset($create_thread_table) || !isset($create_sticky_table) || !isset($create_sticky_trigger)) {
+      // TODO: Handle error - definitions missing
+      die("Error: Table definitions not found. Cannot create forum tables.");
+  }
   db_exec(sprintf($create_message_table, $iid));
   db_exec(sprintf($create_thread_table, $iid));
   db_exec(sprintf($create_sticky_table, $iid));
   db_exec(sprintf($create_sticky_trigger, $iid, $iid, $iid, $iid));
 
-  Header("Location: index.phtml?message=" . urlencode("Forum Added"));
+  // Redirect on success
+  Header("Location: index.phtml?message=" . urlencode("Forum Added: $name ($shortname)"));
   exit;
 }
 
-page_header("Add Forum");
-#page_show_nav("1.2");
-?>
+// --- GET Request (Display Form) ---
 
-<form method="post" action="<?php echo basename($_SERVER['PHP_SELF']);?>">
-<table>
- <tr>
-  <td>Long Name:</td>
-  <td><input type="text" name="name" value=""></td>
- </tr>
- <tr>
-  <td>Short Name:</td>
-  <td><input type="text" name="shortname" value=""></td>
- </tr>
- <td>
-  <td>Read Messages:</td>
-  <td><input type="checkbox" name="read"></td>
- </tr>
- <td>
-  <td>Posting new threads:</td>
-  <td><input type="checkbox" name="postthread"></td>
- </tr>
- <td>
-  <td>Posting new replies:</td>
-  <td><input type="checkbox" name="postreply"></td>
- </tr>
- <td>
-  <td>Edit Posts:<br><small>(includes deleting)</small></td>
-  <td valign="top"><input type="checkbox" name="postedit"></td>
- </tr>
- <td>
-  <td>Off-Topic Posts:</td>
-  <td valign="top"><input type="checkbox" name="offtopic"></td>
- </tr>
- <td>
-  <td>Searchable:</td>
-  <td valign="top"><input type="checkbox" name="searchable"></td>
- </tr>
- <tr>
-  <td></td>
-  <td><input type="submit" name="submit" value="Add"></td>
- </tr>
-</table>
-</form>
+// Render Content using YATT
+$content_tpl = new YATT($template_dir, 'admin/forumadd.yatt');
+$content_tpl->set("FORM_ACTION", basename($_SERVER['PHP_SELF']));
+$content_tpl->parse("forumadd_content");
+$page_content_html = $content_tpl->output("forumadd_content");
 
-<?php
-page_footer();
+// Check for content errors
+if ($content_errors = $content_tpl->get_errors()) {
+    error_log("YATT errors in forumadd.yatt: " . print_r($content_errors, true));
+}
+
+// Render Page using YATT wrapper
+$page_tpl = new YATT($template_dir, 'admin/admin_page.yatt');
+$page_title = "Add Forum";
+
+$page_tpl->set("PAGE_TITLE", $page_title);
+$page_tpl->set("PAGE_CONTENT", $page_content_html);
+
+// Set footer variables/blocks
+if (isset($user)) {
+    $page_tpl->set("USER_TOKEN", $user->token());
+    $page_tpl->parse("admin_page.logout_link");
+}
+$page_tpl->parse("admin_page.back_link");
+
+// Parse and print the final page
+$page_tpl->parse("admin_page");
+print $page_tpl->output("admin_page");
+
+// Check for page errors
+if ($page_errors = $page_tpl->get_errors()) {
+    error_log("YATT errors in admin_page.yatt: " . print_r($page_errors, true));
+}
+
 ?>

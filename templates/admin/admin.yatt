@@ -1,0 +1,48 @@
+%begin [admin_content]
+
+%begin [search_results_header]
+<h2>Searching for %[SEARCH_TYPE] like "%[SEARCH_TERM]"</h2><br>
+%[NUM_ACCOUNTS] matching accounts<br>
+%end [search_results_header]
+%begin [total_header]
+%[NUM_ACCOUNTS] total accounts<br>
+%end [total_header]
+
+%begin [pagination_top]
+Page: %[PAGES_HTML]<br>
+%end [pagination_top]
+
+<br>
+<form action="admin.phtml" method="get">
+Search Email: <input type="text" name="email">
+<input type="submit">
+</form>
+<br>
+
+<form action="admin.phtml" method="get">
+Search Name: <input type="text" name="name">
+<input type="submit">
+</form>
+<br>
+
+<table class="contents">
+  <tr><th>aid</th><th>name</th><th>email</th><th>status</th></tr>
+%begin [user_row]
+  <tr class="row%[ROW_NUM]">
+    <td><a href="/account/%[AID].phtml">%[AID]</a></td>
+    <td>%[NAME]</td>
+    <td>%[EMAIL]</td>
+    <td>%[STATUS]</td>
+  </tr>
+%end [user_row]
+%begin [no_users_row]
+  <tr><td colspan="4">No users found.</td></tr>
+%end [no_users_row]
+</table>
+<br>
+
+%begin [pagination_bottom]
+Page: %[PAGES_HTML]<br>
+%end [pagination_bottom]
+
+%end [admin_content]

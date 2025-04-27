@@ -138,54 +138,61 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
 1.  **Phase 0:** Analysis, Baseline Capture (save full HTML output from `master`)
 
 2.  **Phase 2 In Progress:**
-    *   **`user/preferences.php`**: Migrated (associated with database encoding fix). Tested. OK.
-    *   **`user/tracking.php`**: Migrated. Tested OK (Normal/Simple modes, links, conditionals). Forum header handled via `generic.tpl` logic embedded in YATT (see note above).
-    *   **`user/showforum.php`**: **Provisionally Migrated.** (See Pending Verification below).
-    *   **`user/showmessage.php`**: Migrated. Tested OK.
-        *   Included migrating P2F link logic within `_message_render_extras` in `user/message.inc` to use YATT parsing and global `$p2f_address` config.
-    *   **`user/showthread.php`**: Migrated. Tested OK.
-        *   Also required refactoring `render_message` in `message.inc` to use YATT and return HTML.
-        *   Required fixing recursion/memory/type errors in `listthread.inc` and `filter.inc`.
-        *   Call to `filter_messages` commented out in `showthread.php` as potentially redundant.
-    *   **`user/post.php`**: Migrated. Tested OK.
-        *   Handled posting, previewing, replies, new threads, duplicate detection, and errors using YATT.
-        *   Refactored form rendering into `render_postform()` (`user/postform.inc`).
-        *   Refactored message saving into `postmessage()` (`user/postmessage.inc`).
-    *   **`user/edit.php`**: Migrated. Tested OK.
-        *   Resolved `TypeError` with `Horde_Text_Diff` by ensuring arrays of lines are passed.
-        *   Restored original diff calculation method (aggregating fields with labels).
-        *   Restored audit trail to `changes` column update.
-        *   Restored `f_updates` query and call to `msg_state_changed()`.
-        *   Restored call to `image_url_hack_insert()`.
-    *   **`user/delete.php`**: Migrated. Tested OK.
-        *   Confirmation page now uses YATT.
-        *   Redirects to `changestate.phtml` for actual deletion.
-    *   **`user/undelete.php`**: Migrated. Tested OK.
-        *   Confirmation page now uses YATT.
-        *   Redirects to `changestate.phtml` for actual state change.
-    *   **`include/util.inc` (`err_not_found`)**: Migrated. Tested OK.
-        *   Function now uses YATT and `templates/404.yatt`.
-        *   Integrates with `generate_page()` for consistent site layout.
-        *   Required adding `require_once('lib/YATT/YATT.class.php')` to `util.inc`.
-        *   Required adding `require_once('template.inc')` back to `main.php` temporarily.
-        *   Required defining `$generate_page_func` early in `main.php` temporarily.
+    *   **Admin Section:**
+        *   `admin/admin.php`: Migrated (YATT).
+        *   `admin/forumadd.php`: Migrated (YATT).
+        *   `admin/forummodify.php`: Migrated (YATT).
+        *   `admin/gmessage.php`: Uses YATT.
+        *   `admin/showvisits.php`: Not migrated (Skipped).
+        *   Other `admin/` scripts: Not migrated (Deferred).
+
+    *   **User Section (YATT Migration Status):**
+        *   **VERIFIED MIGRATED/USING YATT:**
+            *   `user/tracking.php`
+            *   `user/showmessage.php`
+            *   `user/showthread.php`
+            *   `user/delete.php`
+            *   `user/undelete.php`
+            *   `include/util.inc` (`err_not_found`)
+            *   `user/post.php` (Verified - Uses YATT)
+            *   `user/edit.php` (Verified - Uses YATT)
+            *   `user/preferences.php` (Verified - Uses YATT)
+            *   `user/showforum.php` (Verified - Uses YATT)
+            *   `user/plainmessage.php` (Verified - Uses YATT)
+            *   `user/directory.php` (Uses YATT)
+            *   `user/showtracking.php` (Uses YATT)
+        *   **Likely Migrated (via includes/helpers):**
+            *   `user/message.inc`
+            *   `user/postform.inc`
+            *   `user/postmessage.inc`
+            *   `user/listthread.inc`
+            *   `user/filter.inc`
+        *   **Remaining User Scripts to Verify:**
+            *   `user/track.php`
+            *   `user/untrack.php`
+            *   `user/changestate.php`
+            *   `user/lock.php`
+            *   `user/sticky.php`
+
+    *   **Account Section (`user/account/`):**
+        *   **Needs verification/migration.** (Likely primary remaining users of `template.inc`).
 
 3.  **Pending Verification (Deferred):**
-    *   **`create.php`**: Form submission logic (success/failure), error message details, Terms of Use handling.
-    *   **`finish.php`**: Action processing logic for different `type` values (NewAccount, ChangeEmail, ForgotPassword success/error paths).
-    *   **`user/showforum.php` Pagination Edge Cases (Page > 1):**
-        *   Admin vs. User Visibility: Compare pagination consistency for pages containing deleted threads when logged in as admin vs. regular user.
-        *   Show Prefs Toggling: Verify pagination remains consistent when toggling `ShowModerated` / `ShowOffTopic` for pages containing such threads.
-        *   Own Posts Visibility: Check pages containing user's own posts mixed with other states (e.g., off-topic) to ensure they are counted correctly.
+    *   (No change here)
 
-4.  **Next Steps:**
-    *   Continue Phase 2 migrations: Target remaining `user/` scripts (e.g., `track.php`, `untrack.php`, `changestate.php`, `lock.php`, `sticky.php`, `directory.php`, etc.).
-    *   Migrate `user/account/` scripts.
-    *   Migrate `admin/` scripts (may require different approach due to inline PHP).
-    *   Eventually remove `template.inc` dependency from `main.php` and other core files.
-    *   Later: Come back to perform Pending Verification tests.
-    *   Later: Revisit `user/tracking.php` forum header implementation when addressing the branch with forum-specific headers.
-    *   Later: Establish more formal testing framework if needed.
+4.  **Next Steps (Focus on Removing `template.inc`):**
+    *   **Verify/Migrate `user/account/` scripts:**
+        *   `user/account/login.php`
+        *   `user/account/logout.php`
+        *   `user/account/forgotpassword.php`
+        *   `user/account/create.php`
+        *   `user/account/acctedit.php`
+        *   `user/account/finish.php`
+    *   **Verify remaining `user/` utility scripts** (`track.php`, `untrack.php`, etc.) if necessary.
+    *   **Remove `template.inc` dependency** from `main.php` and any other core files once all callers are migrated.
+    *   **Delete `include/template.inc` and associated `.tpl` files.**
+    *   (Deferred) Migrate remaining `admin/` scripts using direct `echo`/`page_header`/`footer` if consistency is desired later.
+    *   (Deferred) Come back to perform Pending Verification tests.
 
 ## YATT Library Updates & Testing (Recent Session)
 
@@ -199,5 +206,5 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
 
 ## Current Step & Next Action (Current Session)
 
-*   **Previous:** Completed migration of `edit.php`, `delete.php`, `undelete.php`, and the 404 handler.
-*   **Current:** Proceed with migrating the next `user/` script, e.g., `track.php` or `untrack.php`.
+*   **Previous:** Completed migration of `admin/` scripts (admin, forumadd, forummodify). Verified YATT syntax rules. Corrected YATT syntax errors in `templates/admin/`. Re-verified migration status of core `user/` scripts (`post`, `edit`, `preferences`, `showforum`, `plainmessage`) and confirmed they already use YATT.
+*   **Current:** Proceed with verifying/migrating the `user/account/` scripts, which are now the most likely remaining users of the old `Template` class.

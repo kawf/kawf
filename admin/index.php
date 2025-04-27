@@ -34,14 +34,23 @@ $sth = db_query("select * from f_forums,f_indexes where f_forums.fid=f_indexes.f
 <?php
 for ($count = 0; $forum = $sth->fetch(); $count++) {
   $i = ($count & 1);
+  // Apply stripslashes() and htmlspecialchars() to display data safely
+  $fid_display = htmlspecialchars($forum['fid']);
+  $name_display = htmlspecialchars(stripslashes($forum['name']));
+  $shortname_display = htmlspecialchars(stripslashes($forum['shortname'])); // Apply to shortname too just in case
+  $active_display = htmlspecialchars($forum['active']);
+  $moderated_display = htmlspecialchars($forum['moderated']);
+  $deleted_display = htmlspecialchars($forum['deleted']);
+  $offtopic_display = htmlspecialchars($forum['offtopic']);
+
   echo "<tr class=\"row$i\">\n";
-  echo "<td><a href=\"forumshow.phtml?fid=" . $forum['fid'] . "\">" . $forum['fid'] . "</a></td>\n";
-  echo "<td><a href=\"forummodify.phtml?fid=" . $forum['fid'] . "\">" . $forum['name'] . "</a></td>\n";
-  echo "<td>" . $forum['shortname'] . "</td>\n";
-  echo "<td>" . $forum['active'] . "</td>\n";
-  echo "<td>" . $forum['moderated'] . "</td>\n";
-  echo "<td>" . $forum['deleted'] . "</td>\n";
-  echo "<td>" . $forum['offtopic'] . "</td>\n";
+  echo "<td><a href=\"forumshow.phtml?fid=" . $fid_display . "\">" . $fid_display . "</a></td>\n";
+  echo "<td><a href=\"forummodify.phtml?fid=" . $fid_display . "\">" . $name_display . "</a></td>\n";
+  echo "<td>" . $shortname_display . "</td>\n";
+  echo "<td>" . $active_display . "</td>\n";
+  echo "<td>" . $moderated_display . "</td>\n";
+  echo "<td>" . $deleted_display . "</td>\n";
+  echo "<td>" . $offtopic_display . "</td>\n";
   echo "</tr>\n";
 }
 $sth->closeCursor();
