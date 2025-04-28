@@ -16,7 +16,7 @@
 %end [forum_mod]
       Posted by: <b>%[MSG_NAMEEMAIL]</b>
       (<a href="/account/%[MSG_AID].phtml?page=%[PAGE]">%[MSG_AID]</a>)
-      on %[MSG_DATE]
+      on %[MSG_DATE] %[VIEWER_AID]
 %begin [advertiser]
       | <b>Advertiser</b>
 %end [advertiser]

@@ -1,6 +1,7 @@
 <?php
 require_once("nl2brPre.inc");
 require_once("embed-media.inc.php");
+require_once("Skip32.inc.php");
 
 function message_set_block($tpl)
 {
@@ -94,7 +95,7 @@ function postprocess($msg, $noembed=false)
 /* pre is a hack for stacking used by showthread.php */
 function render_message($template_dir, $msg, $viewer, $owner=null)
 {
-  global $Debug, $forum;
+  global $Debug, $forum, $viewer_aid_key;
 
   // Instantiate YATT for this message
   $message_tpl = new YATT($template_dir, 'message.yatt');
@@ -103,6 +104,9 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
   $message_tpl->set('FORUM_SHORTNAME', $forum['shortname']);
   $message_tpl->set('PAGE', isset($_REQUEST['page']) ? $_REQUEST['page'] : '');
   $message_tpl->set('USER_TOKEN', $viewer->token()); // Use viewer's token
+
+  // Add encrypted viewer ID
+  $message_tpl->set("VIEWER_AID", isset($viewer) ? dechex(Skip32::encrypt($viewer_aid_key, $viewer->aid)) : '');
 
   $moderator = $viewer->admin() || $viewer->capable($forum['fid'], 'Moderate');
 

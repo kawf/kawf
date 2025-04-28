@@ -17,6 +17,10 @@ $cookie_host = ".kawf.org";
 $imgur_client_id = "";
 $imgur_client_secret = "";
 
+/* Skip32 key for encrypting viewer AIDs */
+// set here or in config-local.inc
+//$viewer_aid_key = "0123456789abcdef0123";
+
 /* allow user to override default in a separate file (prevents merge problems
    when using source control */
 if (is_file(dirname(__FILE__) . "/config-local.inc") )
