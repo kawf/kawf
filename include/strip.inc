@@ -255,23 +255,28 @@ $subject_tags = array(
 );
 
 $standard_tags = array(
-  "a" => array(array("href=", true, 'validate_url', "target=", false, 'validate_target'), "/a"),
-  "img" => array(array("src=", true, 'validate_url', "border=", false, 'validate_number', "alt=", false, 'validate_null')),
-  "video" => array(array("src=", true, 'validate_url', "controls=", false, 'validate_controls'), "/video"),
-  "font" => array(array("color=", true, 'validate_null'), "/font"),	// deprecated
-  "span" => array(array("style=", true, 'validate_null'), "/span"),
   "b" => array(array(), "/b"),
-  "strong" => array(array(), "/strong"),
   "i" => array(array(), "/i"),
-  "em" => array(array(), "/em"),
   "u" => array(array(), "/u"),
-  "tt" => array(array(), "/tt"),
-  "big" => array(array(), "/big"),
-  "small" => array(array(), "/small"),
+  "a" => array(array("href", "target"), "/a"),
+  "img" => array(array("src", "alt", "width", "height"), "/img"),
+  "br" => array(array(), ""),
+  "p" => array(array(), "/p"),
   "pre" => array(array(), "/pre"),
+  "code" => array(array(), "/code"),
+  "blockquote" => array(array(), "/blockquote"),
+  "ul" => array(array(), "/ul"),
+  "ol" => array(array(), "/ol"),
+  "li" => array(array(), "/li"),
+  "em" => array(array(), "/em"),
+  "strong" => array(array(), "/strong"),
+  "tt" => array(array(), "/tt"),
+  "cite" => array(array(), "/cite"),
   "sub" => array(array(), "/sub"),
   "sup" => array(array(), "/sup"),
   "center" => array(array(), "/center"),
+  "embed" => array(array("src", "type", "width", "height"), "/embed"),
+  "object" => array(array("data", "type", "width", "height"), "/object"),
 );
 
 $no_tags = array(
