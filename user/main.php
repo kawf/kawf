@@ -47,6 +47,7 @@ global $page_context;
 $page_context = $script_name . $path_info;
 
 db_connect();
+//db_exec("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
 
 /* $_page saved off for others here for use in resused template that recurse,
    or for the set_var order sensitivity for vars within blocks */
