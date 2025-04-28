@@ -2,6 +2,7 @@
 require_once("nl2brPre.inc");
 require_once("embed-media.inc.php");
 require_once("Skip32.inc.php");
+require_once("textwrap.inc");
 
 function message_set_block($tpl)
 {
@@ -72,8 +73,11 @@ function postprocess($msg, $noembed=false)
     else $out .= "$indent<div class=\"media\">\n".embed_video($url)."\n$indent</div>\n";
   }
 
-  if (!empty($msg['message']))
-    $out .= nl2brPre::out($msg['message'])."\n";
+  if (!empty($msg['message'])) {
+    // Apply text wrapping to message content
+    $message = softbreaklongwords($msg['message'], 78);
+    $out .= nl2brPre::out($message)."\n";
+  }
 
   if (!empty($msg['url']) && validate_url($msg['url'])) {
     $url = escapequotes($msg['url']);
@@ -174,7 +178,7 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
 
   // Set basic message vars
   $message_tpl->set(array(
-    "MSG_SUBJECT" => htmlspecialchars($msg['subject']), // Escape subject
+    "MSG_SUBJECT" => softbreaklongwords(htmlspecialchars($msg['subject']), 40), // Escape and wrap subject
     "MSG_DATE" => $msg['date'], // Assumes gen_date is safe
     "MSG_MID" => isset($msg['mid']) ? $msg['mid'] : '', // Check if mid exists
     "MSG_AID" => isset($msg['aid']) ? $msg['aid'] : '' // Check if aid exists
