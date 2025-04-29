@@ -62,17 +62,25 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
     $debug .= "imgpreview = $imgpreview\n";
     $debug .= "_REQUEST:\n";
     foreach ($_REQUEST as $k => $v) {
-      if (!is_numeric($k) && is_scalar($v))
-	$debug.=" $k => $v\n";
+      if (!is_numeric($k)) {
+        if(is_scalar($v))
+          $debug.=" $k => $v\n";
+        else {
+          trigger_error("$k's v is not a scalar");
+          if (is_array($v)) foreach ($v as $kk => $vv)
+            trigger_error("$kk => $vv");
+          $_REQUEST[$k]="I like cock";
+        }
+      }
     }
 
     if ($Debug) {
       if (isset($msg)) {
-	$debug .= "msg:\n";
-	foreach ($msg as $k => $v) {
-	  if (!is_numeric($k) && is_scalar($v))
-	    $debug.=" $k => $v\n";
-	}
+        $debug .= "msg:\n";
+        foreach ($msg as $k => $v) {
+          if (!is_numeric($k) && is_scalar($v))
+            $debug.=" $k => $v\n";
+        }
       }
       $debug = str_replace("--","- -", $debug);
       $form_tpl->set("POSTFORM_DEBUG", "<!-- $debug -->");
