@@ -347,3 +347,12 @@ div.changes.night-mode { background: #2c0d0d !important; }
 .preferences tr.night-mode { color: #242426 !important; }
 td.signaturepreview.night-mode { background-color: #1a1a1d !important; border: 5px solid #242426 !important; }
 textarea.night-mode { background: #1A1A1D !important; border: 1px solid #131315 !important; margin: 1px !important; color: #CCC; }
+
+/* divider */
+hr {
+    border-width: 0px; height: 0.5px;
+    color: #888; background-color: #888;
+}
+
+/* forum notices addon */
+.forumnotices { width: 99%; vertical-align: top; text-align: right; }

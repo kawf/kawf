@@ -27,8 +27,33 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
 	$page->set('debug_contents', "<pre>\n" . get_debug_log() . "</pre>\n");
 	$page->parse('page.debug_log');
     }
-    if (!$skip_header)
-      $page->parse('page.header');
+
+    if (!$skip_header) {
+    // Set forum navigation
+        $nav = get_forum_navigation();
+
+        // Add forums by category
+        $first_category = true;
+        foreach ($nav as $category => $forums) {
+            if (!empty($forums)) {
+                if (!$first_category) {
+                    $page->set('shortname', '');
+                    $page->set('name', ' ─ ');
+                    $page->parse('page.header.forums.category');
+                }
+                foreach ($forums as $shortname => $name) {
+                    $page->set('shortname', $shortname);
+                    $page->set('name', $name);
+                    $page->parse('page.header.forums.category');
+                }
+                $first_category = false;
+            }
+        }
+
+        $page->parse('page.header.forums');
+        $page->parse('page.header');
+    }
+
     $page->parse('page');
 
     return trim($page->output());

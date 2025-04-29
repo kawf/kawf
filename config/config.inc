@@ -25,4 +25,20 @@ $imgur_client_secret = "";
    when using source control */
 if (is_file(dirname(__FILE__) . "/config-local.inc") )
     include_once dirname(__FILE__) . "/config-local.inc";
+
+/*
+// Example forum navigation configuration
+// Copy to config-local.inc and customize
+$forum_navigation = array(
+    'main' => array(
+        'general' => 'General Discussion',
+        'tech' => 'Technical Support',
+        'photos' => 'Photo Gallery',
+        'classifieds' => 'Classifieds',
+    ),
+    'offtopic' => array(
+        'offtopic' => 'Off Topic',
+    ),
+);
+*/
 ?>

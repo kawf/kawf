@@ -202,4 +202,45 @@ function get_debug_log()
     global $DEBUG_LOG;
     return $DEBUG_LOG;
 }
+
+function get_forum_navigation()
+{
+    global $forum_navigation;
+
+    if (!isset($forum_navigation)) {
+        // Generate from DB if not specified
+        $nav = array('main' => array(), 'offtopic' => array());
+        $sth = db_query("SELECT shortname, name, options FROM f_forums ORDER BY name");
+        while ($row = $sth->fetch()) {
+            $options = explode(',', $row['options']);
+            // The logic here may be counterintuitive. The "offtopic" flag means "support marking threads as offtopic".
+            // This means that forums that are "offtopic" focussed do NOT allow this, thus making them offtopic.
+            $name = $row['name'];
+            if (in_array('OffTopic', $options)) {
+                $nav['main'][$row['shortname']] = $name;
+            } else {
+                $nav['offtopic'][$row['shortname']] = $name;
+            }
+        }
+        return $nav;
+    }
+
+    // If $forum_navigation is set in config, we need to fetch the full names from DB
+    $sth = db_query("SELECT shortname, name FROM f_forums");
+    $forum_names = array();
+    while ($row = $sth->fetch()) {
+        $forum_names[$row['shortname']] = $row['name'];
+    }
+
+    // Create a new navigation array with the correct structure
+    $nav = array('main' => array(), 'offtopic' => array());
+    foreach ($forum_navigation as $category => $shortnames) {
+        foreach ($shortnames as $index => $shortname) {
+            if (isset($forum_names[$shortname])) {
+                $nav[$category][$shortname] = $forum_names[$shortname];
+            }
+        }
+    }
+    return $nav;
+}
 ?>
