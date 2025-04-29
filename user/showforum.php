@@ -5,6 +5,7 @@ require_once("pagenav.inc.php");
 require_once("page-yatt.inc.php");
 require_once("header-template.inc"); // For forum header rendering
 require_once("postform.inc"); // Likely needed for the post form
+require_once("notices.inc"); // For forum notices
 
 // Function to generate the link for restoring hidden global messages
 // Placed here temporarily as the original definition location is unknown.
@@ -51,6 +52,10 @@ if (isset($user->pref['SimpleHTML'])) {
 $content_tpl->set("USER_TOKEN", $user->token());
 $content_tpl->set("FORUM_NAME", $forum['name']);
 $content_tpl->set("FORUM_SHORTNAME", $forum['shortname']);
+
+// Get notices HTML
+$notices_html = get_notices_html($forum, $user->aid);
+$content_tpl->set("FORUM_NOTICES", $notices_html);
 
 // Render and set dynamic forum header
 $forum_header_html = render_forum_header_yatt($forum, $template_dir);

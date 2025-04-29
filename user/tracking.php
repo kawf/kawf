@@ -74,6 +74,7 @@ while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
   // Add forum data to the main array if it has tracked threads
   if ($forumcount > 0) {
       $forum_header_html = render_forum_header_yatt($forum, $template_dir);
+      $notices_html = get_notices_html($forum, $user->aid);
 
       $forums_data[] = [
           'name' => $forum['name'],
@@ -82,6 +83,7 @@ while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
           'show_update_all' => ($forumupdated > 0),
           'show_hr' => !$first,
           'forum_header_html' => $forum_header_html, // Pass pre-rendered header
+          'forum_notices' => $notices_html, // Add notices HTML
           'has_threads' => true // Flag indicating this forum section should be rendered
       ];
       $first = false; // HR should be shown before the *next* forum
@@ -106,6 +108,7 @@ if ($numshown == 0) {
     $content_tpl->set('forum_name', $forum_item['name']);
     $content_tpl->set('forum_shortname', $forum_item['shortname']);
     $content_tpl->set('forum_header_html', $forum_item['forum_header_html']);
+    $content_tpl->set('FORUM_NOTICES', $forum_item['forum_notices']); // Set notices for this forum
 
     // Conditionally parse HR separator
     if ($forum_item['show_hr']) {
