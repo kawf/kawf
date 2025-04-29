@@ -41,4 +41,13 @@ $forum_navigation = array(
     ),
 );
 */
+
+/*
+// Sponsor configuration example:
+// Copy to config-local.inc and customize
+$config_sponsor = array(
+    'text' => 'Circle of Trust',
+    'url' => 'http://kawf.sourceforge.net/'
+);
+*/
 ?>

@@ -212,7 +212,7 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
 // Helper function refactored for YATT
 function _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $moderator)
 {
-  global $forum, $p2f_address; // Need forum for permissions check
+  global $forum, $p2f_address, $config_sponsor; // Need forum for permissions check
 
   // Moderator Info Block
   if ($moderator) {
@@ -231,6 +231,11 @@ function _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $mo
   }
   if ($owner->capable($forum['fid'], 'Moderate')) {
       $message_tpl->parse('message_block.moderator');
+  }
+  if ($owner->capable($forum['fid'], 'Sponsor') && isset($config_sponsor)) {
+      $message_tpl->set('SPONSOR_TEXT', $config_sponsor['text']);
+      $message_tpl->set('SPONSOR_URL', $config_sponsor['url']);
+      $message_tpl->parse('message_block.sponsor');
   }
 
   // Owner Tools Block

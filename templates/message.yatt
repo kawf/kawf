@@ -23,6 +23,9 @@
 %begin [moderator]
       | <b>Moderator</b>
 %end [moderator]
+%begin [sponsor]
+      | <b><a href="%[SPONSOR_URL]">%[SPONSOR_TEXT]</a></b>
+%end [sponsor]
       <br>
 %begin [parent]
       In Reply to: <a href="%[PMSG_MID].phtml">%[PMSG_SUBJECT]</a> posted by <b>%[PMSG_NAME]</b> on %[PMSG_DATE]<br>
