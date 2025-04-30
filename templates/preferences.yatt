@@ -7,7 +7,7 @@
 </div>
 %end [error]
 
-<form action="preferences.phtml?page=%[PAGE]" method="post">
+<form action="preferences.phtml?%[PAGE]" method="post">
 
 <table class="preferences">
   <tr>
@@ -69,7 +69,7 @@ Timezone
     <input type="submit" name="submit" value="Update">
     </td>
     <td>
-    <a href="%[PAGE]"><b>Click here to return to the %[DOMAIN] Discussion Forums</b></a>
+    <a href="%[PAGE_VALUE]"><b>Click here to return to the %[DOMAIN] Discussion Forums</b></a>
     </td>
   </tr>
 </table>
