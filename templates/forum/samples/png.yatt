@@ -1,6 +1,6 @@
 %[#] Forum Header template using a specific PNG banner
-%begin [forum_header_content]
+%begin [forum_header]
   <td class="forumbanner">
     <a href="/%[FORUM_SHORTNAME]/"><img style="border: 0;" alt="%[FORUM_NAME]" src="/pics/forum/%[FORUM_SHORTNAME].png"></a>
   </td>
-%end [forum_header_content]
+%end [forum_header]

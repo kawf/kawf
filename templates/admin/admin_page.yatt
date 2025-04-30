@@ -28,7 +28,7 @@
             <a href="logout.phtml?token=%[USER_TOKEN]">Logout</a>
             %end [logout_link]
           </th>
-          <th class="right">
+          <th class="toolsright">
             %begin [back_link]
             <a href="/admin/">Back to admin page</a>
             %end [back_link]

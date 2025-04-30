@@ -1,12 +1,5 @@
-%begin [showthread_content]
-
 %begin [header]
-<table class="forumheader">
-<tr>
-%[FORUM_HEADER_HTML] %[#] Assume pre-rendered header from PHP
-</tr>
-</table>
-
+<!-- showthread.yatt -->
 <table class="tools">
   <tr>
     <td> <!-- Added TD for layout -->
@@ -19,8 +12,8 @@
 %end [header]
 
 %begin [messages]
-<div class="showthread">
-%[MESSAGES] %[#] Concatenated messages from list_thread(print_message(...))
+<div class="showmessage">
+  %[MESSAGES]
 </div>
 %end [messages]
 
@@ -35,5 +28,4 @@
   </tr>
 </table>
 %end [footer]
-
-%end [showthread_content]
+%[#] vim: sw=2

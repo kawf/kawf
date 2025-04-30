@@ -15,12 +15,12 @@
     %begin [normal]
       <table class="tools">
       <tr>
-       <td class="left">
+       <td class="toolsleft">
           <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a>
         | <a href="/search/?forum=%[forum_shortname]&amp;page=%[PAGE]" target="_blank">Search</a>
         | <a href="/%[forum_shortname]"><b>Go to %[forum_name]</b></a>
         </td>
-        <td class="right">
+        <td class="toolsright">
           <a href="/%[forum_shortname]/tracking.phtml"><b>Tracked threads</b></a>
           %begin [update_all]
             | <a href="/%[forum_shortname]/markuptodate.phtml?tid=all&amp;page=%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a>
@@ -43,7 +43,7 @@
     %begin [simple]
       %begin [update_all]
         <table class="tools"><tr>
-        <td class="right"><a href="/%[forum_shortname]/markuptodate.phtml?tid=all&amp;page=%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a></td>
+        <td class="toolsright"><a href="/%[forum_shortname]/markuptodate.phtml?tid=all&amp;page=%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a></td>
         </tr></table>
       %end [update_all]
 

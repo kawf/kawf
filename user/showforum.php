@@ -3,7 +3,6 @@
 require_once("thread.inc");
 require_once("pagenav.inc.php");
 require_once("page-yatt.inc.php");
-require_once("header-template.inc"); // For forum header rendering
 require_once("postform.inc"); // Likely needed for the post form
 require_once("notices.inc"); // For forum notices
 
@@ -39,7 +38,7 @@ if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
 }
 
 // Instantiate YATT
-$content_tpl = new YATT($template_dir, 'showforum.yatt');
+$content_tpl = new_yatt('showforum.yatt', $forum);
 
 // Determine display mode
 if (isset($user->pref['SimpleHTML'])) {
@@ -56,10 +55,6 @@ $content_tpl->set("FORUM_SHORTNAME", $forum['shortname']);
 // Get notices HTML
 $notices_html = get_notices_html($forum, $user->aid);
 $content_tpl->set("FORUM_NOTICES", $notices_html);
-
-// Render and set dynamic forum header
-$forum_header_html = render_forum_header_yatt($forum, $template_dir);
-$content_tpl->set("FORUM_HEADER_HTML", $forum_header_html);
 
 // Populate tracked threads data needed for is_thread_bumped()
 global $tthreads, $tthreads_by_tid; // Ensure these are global for helper functions
@@ -111,7 +106,7 @@ $content_tpl->set("NUMPAGES", $numpages);
 $content_tpl->set("TIME", time());
 
 // Define the correct row block path based on mode
-$row_block_path = 'showforum_content.' . $table_block . '.' . $table_block . '_row'; // e.g., showforum_content.normal.normal_row
+$row_block_path = $table_block . '.row'; // e.g., normal.row
 
 // --- Thread Rendering Logic (update set_var and parse calls) ---
 $numshown = 0;
@@ -390,10 +385,10 @@ while ($numshown < $threadsperpage) {
 
 // Parse conditional blocks based on state
 if ($user->valid()) {
-  $content_tpl->parse('showforum_content.header.tracked_threads');
+  $content_tpl->parse('header.tracked_threads');
 }
 if ($tthreadsshown > 0) {
-  $content_tpl->parse('showforum_content.header.update_all');
+  $content_tpl->parse('header.update_all');
 }
 
 // Generate and set the post form HTML
@@ -405,19 +400,16 @@ $content_tpl->set('FORM_HTML', $form_html);
 $restore_link = gen_global_messages_restore_link($script_name . $path_info);
 if (!empty($restore_link)) {
     $content_tpl->set("RESTORE_GMSGS_LINK", $restore_link);
-    $content_tpl->parse('showforum_content.header.restore_gmsgs');
+    $content_tpl->parse('header.restore_gmsgs');
 }
 
-// Parse the table container block (normal or simple) relative to the main block
-$content_tpl->parse('showforum_content.' . $table_block);
+// Parse the table container block (normal or simple)
+$content_tpl->parse($table_block);
 
-// --- Need to parse header, footer, post_form explicitly ---
-$content_tpl->parse('showforum_content.header');
-$content_tpl->parse('showforum_content.footer');
-$content_tpl->parse('showforum_content.post_form');
-
-// Parse the main container block - Deprecated by parsing explicitly above?
-// $content_tpl->parse('showforum_content');
+// Parse header, footer, post_form explicitly
+$content_tpl->parse('header');
+$content_tpl->parse('footer');
+$content_tpl->parse('post_form');
 
 // Get final HTML
 $content_html = $content_tpl->output();

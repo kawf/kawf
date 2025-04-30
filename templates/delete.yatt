@@ -1,13 +1,5 @@
 %begin [delete_content]
 
-%begin [header]
-<table class="forumheader">
-<tr>
-%[FORUM_HEADER_HTML] %[#] Assume pre-rendered header from PHP (using header-template.yatt)
-</tr>
-</table>
-%end [header]
-
 %begin [disabled]
 <h2>Deleting posts on this forum has been temporarily disabled, please try again later</h2>
 %end [disabled]

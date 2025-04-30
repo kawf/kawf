@@ -8,7 +8,6 @@ require_once("strip.inc");
 require_once("message.inc");
 require_once("postform.inc");
 require_once("page-yatt.inc.php");
-require_once("header-template.inc");
 
 if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
   $user->req();
@@ -18,15 +17,11 @@ if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
   }
 }
 
-$content_tpl = new YATT($template_dir, 'showmessage.yatt');
+// Create new YATT instance for content template
+$content_tpl = new_yatt('showmessage.yatt', $forum);
 
-$content_tpl->set("FORUM_NAME", $forum['name']);
-$content_tpl->set("FORUM_SHORTNAME", $forum['shortname']);
 $_page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
 $content_tpl->set("PAGE", $_page);
-
-$forum_header_html = render_forum_header_yatt($forum, $template_dir);
-$content_tpl->set("FORUM_HEADER_HTML", $forum_header_html);
 
 $msg = fetch_message($user, $mid);
 
@@ -57,9 +52,9 @@ $vmid = $msg['mid'];
 
 list($messages, $tree, $path) = get_thread_messages($thread, $vmid);
 
-$threadmsg = "<ul class=\"thread\">\n";
+$threadmsg = "";
 if(isset($messages)) {
-    $threadmsg .= list_thread('print_subject', $messages, $tree, reset($tree), $thread, $path);
+    $threadmsg = gen_thread($thread);
 } else {
     /* FIXME: Issue #24 */
     //$threadmsg .= "Thread missing, creating new thread";
@@ -67,7 +62,6 @@ if(isset($messages)) {
     //$sql = "insert into $ttable ( tid, mid, tstamp, flags ) values ( ?, ?, ?, '' )";
     //db_exec($sql, array($msg['tid'], $vmid, $msg['date']));
 }
-$threadmsg .= "</ul>\n";
 
 $threadlinks = gen_threadlinks($thread);
 
@@ -99,12 +93,14 @@ if (isset($msg['subject']) && !preg_match("/^Re:/i", $msg['subject'])) {
 $form_html = render_postform($template_dir, "post", $user, $nmsg);
 $content_tpl->set("FORM_HTML", $form_html);
 
-$content_tpl->parse('showmessage_content.header');
-$content_tpl->parse('showmessage_content.main_message');
-$content_tpl->parse('showmessage_content.thread_context');
-$content_tpl->parse('showmessage_content.post_form');
-$content_tpl->parse('showmessage_content.footer');
-$content_tpl->parse('showmessage_content');
+$content_tpl->set('threadlinks', $threadlinks);
+$content_tpl->set('class', $class);
+$content_tpl->parse("header");
+$content_tpl->parse("main_message");
+$content_tpl->parse("thread_context");
+$content_tpl->parse("post_form");
+
+$content_tpl->parse("footer");
 
 $content_html = $content_tpl->output();
 

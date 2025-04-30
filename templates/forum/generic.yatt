@@ -1,6 +1,6 @@
-%begin [forum_header_content]
-<td class="forumbanner">
-  <a href="/%[FORUM_SHORTNAME]/"><img alt="%[FORUM_NAME]" src="/pics/forum/generic.gif"></a>
-</td>
-<td class="forumnotices">%[FORUM_NOTICES]</td>
-%end [forum_header_content]
+%begin [forum_header]
+  <td class="forumbanner">
+    <a href="/%[FORUM_SHORTNAME]/"><img alt="%[FORUM_NAME]" src="/pics/forum/generic.gif"></a>
+  </td>
+  <td class="forumnotices">%[FORUM_NOTICES]</td>
+%end [forum_header]

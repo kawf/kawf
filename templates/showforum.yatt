@@ -1,15 +1,8 @@
-%begin [showforum_content]
-
 %begin [header]
-<table class="forumheader">
-<tr>
-%[FORUM_HEADER_HTML] %[#] Use the pre-rendered header from PHP
-</tr>
-</table>
-
+<!-- showforum.yatt -->
 <table class="tools">
 <tr>
-  <td class="left">
+  <td class="toolsleft">
     <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a>
   | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;page=%[PAGE]" target="_blank">Search</a>
   | <a href="#post"><b>Post New Thread</b></a>
@@ -17,7 +10,7 @@
   | <a href="#" id="view-all-images">View All Images</a>
   | <a href="#" id="night-mode">Night Mode: <span id="night-mode-status">Off</span></a>
   </td>
-  <td class="right">
+  <td class="toolsright">
 %begin [tracked_threads]
     <a href="/%[FORUM_SHORTNAME]/tracking.phtml"><b>Tracked threads</b></a>
 %end [tracked_threads]
@@ -27,8 +20,8 @@
   </td>
 </tr>
 <tr class="bottom">
-  <td class="left"><b>Page:</b> %[PAGES]</td>
-  <td class="right">%[NUMTHREADS] threads in %[NUMPAGES] pages</td>
+  <td class="toolsleft"><b>Page:</b> %[PAGES]</td>
+  <td class="toolsright">%[NUMTHREADS] threads in %[NUMPAGES] pages</td>
 </tr>
 </table>
 
@@ -37,13 +30,11 @@
   %[RESTORE_GMSGS_LINK]
 </div>
 %end [restore_gmsgs]
-
 %end [header]
-
 
 %begin [normal]
 <table class="threads">
-%begin [normal_row]
+%begin [row]
 <tr class="%[CLASS]">
   <td>
 %[MESSAGES]
@@ -52,21 +43,21 @@
 %[THREADLINKS]
   </td>
 </tr>
-%end [normal_row]
+%end [row]
 </table>
 %end [normal]
 
 %begin [simple]
-%begin [simple_row]
+%begin [row]
 %[MESSAGES]
-%end [simple_row]
+%end [row]
 %end [simple]
 
 %begin [footer]
 <table class="tools">
 <tr>
-  <td class="left"><b>Page:</b> %[PAGES]</td>
-  <td class="right">%[NUMTHREADS] threads in %[NUMPAGES] pages</td>
+  <td class="toolsleft"><b>Page:</b> %[PAGES]</td>
+  <td class="toolsright">%[NUMTHREADS] threads in %[NUMPAGES] pages</td>
 </tr>
 </table>
 %end [footer]
@@ -78,4 +69,4 @@
 </div>
 %end [post_form]
 
-%end [showforum_content]
+%[#] vim: sw=2

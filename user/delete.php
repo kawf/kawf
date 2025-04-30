@@ -2,7 +2,6 @@
 require_once("page-yatt.inc.php");
 require_once("strip.inc");
 require_once("message.inc");
-require_once("header-template.inc"); // For header rendering
 
 $user->req();
 $stoken = $user->token();
@@ -30,7 +29,7 @@ if (!is_numeric($mid) || !isset($forum)) {
 }
 
 // --- Template Setup ---
-$content_tpl = new YATT($template_dir, 'delete.yatt');
+$content_tpl = new_yatt('delete.yatt', $forum);
 
 // --- Fetch Message & Permission Checks ---
 $iid = mid_to_iid($mid);
@@ -54,13 +53,6 @@ if (!isset($forum['option']['PostEdit'])) {
   print generate_page('Delete Message Denied', $content_tpl->output('delete_content'));
   exit;
 }
-
-// --- Prepare Content for Template ---
-
-// Render and set forum header
-$forum_header_html = render_forum_header_yatt($forum, $template_dir);
-$content_tpl->set("FORUM_HEADER_HTML", $forum_header_html);
-$content_tpl->parse("delete_content.header");
 
 // Render message preview
 $preview_html = render_message($template_dir, $msg, $user);

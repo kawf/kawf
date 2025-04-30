@@ -19,12 +19,12 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
 {
     global $thread, $forum, $script_name, $path_info;
     // global $tthreads_by_tid; // Not used directly here?
-    global $_page;	// hack - used for return page link
+    global $page_context;	// hack - used for return page link
     global $Debug;
 
     // Instantiate YATT for the form template
     try {
-        $form_tpl = new YATT($template_dir, 'postform.yatt');
+        $form_tpl = new_yatt('postform.yatt', $forum);
     } catch (Exception $e) {
         error_log("Failed to instantiate YATT for postform.yatt: " . $e->getMessage());
         return "<p class=\"error\">Error loading post form template.</p>";

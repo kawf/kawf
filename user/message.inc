@@ -102,7 +102,7 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
   global $Debug, $forum, $viewer_aid_key;
 
   // Instantiate YATT for this message
-  $message_tpl = new YATT($template_dir, 'message.yatt');
+  $message_tpl = new_yatt('message.yatt', $forum);
 
   // Set variables that are always needed
   $message_tpl->set('FORUM_SHORTNAME', $forum['shortname']);

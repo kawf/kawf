@@ -1,11 +1,12 @@
 <?php
 require_once("lib/YATT/YATT.class.php");
+require_once("notices.inc");
 
 function generate_page($title, $contents, $skip_header=false, $meta_robots=false)
 {
-    global $template_dir, $domain, $Debug;
+    global $template_dir, $domain, $Debug, $forum;
 
-    $page = new YATT($template_dir, 'page.yatt');
+    $page = new_yatt('page.yatt');
     $page->set('domain', $domain);
     $page->set('css_href', css_href());
     $page->set('skin_css_href', skin_css_href());
@@ -23,10 +24,6 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
     }
     $page->set('title', $title);
     $page->set('contents', $contents);
-    if ($Debug) {
-	$page->set('debug_contents', "<pre>\n" . get_debug_log() . "</pre>\n");
-	$page->parse('page.debug_log');
-    }
 
     if (!$skip_header) {
     // Set forum navigation
@@ -52,6 +49,44 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
 
         $page->parse('page.header.forums');
         $page->parse('page.header');
+
+        // Handle forum header if we're in a forum context
+        if (isset($forum)) {
+            // Try to load forum-specific template first
+            $forum_specific = 'forum/' . $forum['shortname'] . '.yatt';
+            if (file_exists($template_dir . '/' . $forum_specific)) {
+                $forum_template = new_yatt($forum_specific, $forum);
+            } else {
+                $forum_template = new_yatt('forum/generic.yatt', $forum);
+            }
+
+            // Parse the forum header content
+            $forum_template->parse('forum_header');
+
+            // Get the header content
+            $header_content = $forum_template->output();
+
+            // Set the header content in the main page template
+            $page->set('forum_header_content', $header_content);
+
+            // Parse the forum header block
+            $page->parse('page.forum_header');
+
+            // Check for YATT errors
+            if ($errors = $forum_template->get_errors()) {
+                debug_log("YATT errors in forum template: " . print_r($errors, true) . "\n");
+            }
+        }
+    }
+
+    // Check for YATT errors
+    if ($errors = $page->get_errors()) {
+        debug_log("YATT errors in page template: " . print_r($errors, true));
+    }
+
+    if ($Debug && get_debug_log() != "") {
+	$page->set('debug_contents', "<pre>\n" . get_debug_log() . "</pre>\n");
+	$page->parse('page.debug_log');
     }
 
     $page->parse('page');

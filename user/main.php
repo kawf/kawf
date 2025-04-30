@@ -34,10 +34,6 @@ require_once("timezone.inc");
 require_once("acl_ip_ban.inc");
 require_once("acl_ip_ban_list.inc");
 
-// Define generate_page function name early for potential use in err_not_found()
-// TODO: Revisit this - ideally, error handling integrates better with page generation setup.
-$generate_page_func = 'generate_page';
-
 // Set the temporary global $page_context for printsubject.inc
 // This replicates the value previously stored in $tpl->set_var("PAGE").
 // It holds the current script_name + path_info and is used by printsubject.inc

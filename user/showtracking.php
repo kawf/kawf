@@ -3,7 +3,6 @@
 require_once("thread.inc");
 require_once("pagenav.inc.php");
 require_once("page-yatt.inc.php");
-require_once("header-template.inc");
 
 if (!$user->valid()) {
     $current_url = urlencode($script_name . $path_info . ($query_string ? "?$query_string" : ""));
@@ -11,14 +10,10 @@ if (!$user->valid()) {
     exit;
 }
 
-$content_tpl = new YATT($template_dir, 'showtracking.yatt');
-
-$forum_header_html = render_forum_header_yatt($forum, $template_dir);
-$content_tpl->set("FORUM_HEADER_HTML", $forum_header_html);
+$content_tpl = new_yatt('showtracking.yatt', $forum);
 
 $content_tpl->set("user_token", $user->token());
-$content_tpl->set("page", $tpl->get_var("PAGE"));
-$content_tpl->set("forum", $forum);
+$content_tpl->set("page", $page_context);
 $content_tpl->set("time", time());
 
 if (!isset($curpage))
@@ -66,11 +61,10 @@ if ($out['numshown']>0) {
       if ($messagestr) {
         $threadlinks = gen_threadlinks($thread, $collapse);
         $class = "srow" . ($i&1);
-        if ($block == 'normal') {
-          $rows_html .= '<tr class="' . $class . '"><td>' . $messagestr . '</td><td class="threadlinks">' . $threadlinks . '</td></tr>';
-        } else {
-          $rows_html .= $messagestr;
-        }
+        $content_tpl->set('messages', $messagestr);
+        $content_tpl->set('threadlinks', $threadlinks);
+        $content_tpl->set('class', $class);
+        $content_tpl->parse($block.".row");
         $i++;
       }
     }
@@ -91,11 +85,10 @@ if ($out['numshown']>0) {
       if ($messagestr) {
         $threadlinks = gen_threadlinks($thread, $collapse);
         $class = "trow" . ($i&1);
-        if ($block == 'normal') {
-          $rows_html .= '<tr class="' . $class . '"><td>' . $messagestr . '</td><td class="threadlinks">' . $threadlinks . '</td></tr>';
-        } else {
-          $rows_html .= $messagestr;
-        }
+        $content_tpl->set('messages', $messagestr);
+        $content_tpl->set('threadlinks', $threadlinks);
+        $content_tpl->set('class', $class);
+        $content_tpl->parse($block.".row");
         $i++;
       }
     }
@@ -113,11 +106,10 @@ if ($out['numshown']>0) {
       if ($messagestr) {
         $threadlinks = gen_threadlinks($thread, $collapse);
         $class = "row" . ($i&1);
-        if ($block == 'normal') {
-          $rows_html .= '<tr class="' . $class . '"><td>' . $messagestr . '</td><td class="threadlinks">' . $threadlinks . '</td></tr>';
-        } else {
-          $rows_html .= $messagestr;
-        }
+        $content_tpl->set('messages', $messagestr);
+        $content_tpl->set('threadlinks', $threadlinks);
+        $content_tpl->set('class', $class);
+        $content_tpl->parse($block.".row");
         $i++;
       }
     }
@@ -125,20 +117,15 @@ if ($out['numshown']>0) {
   }
 } else {
   $content_tpl->set('messages', "<span style=\"font-size: larger;\">No tracked messages in this forum</span><br>");
-  $content_tpl->parse($block.".row");
 }
-
-$content_tpl->set('ROWS_HTML', $rows_html);
 
 if ($new_threads_found) {
-  $content_tpl->parse("showtracking_content.header.update_all");
+  $content_tpl->parse("header.update_all");
 }
 
-$content_tpl->parse("showtracking_content.header");
-$content_tpl->parse("showtracking_content." . $block);
-$content_tpl->parse("showtracking_content.footer");
-
-$content_tpl->parse("showtracking_content");
+$content_tpl->parse("header");
+$content_tpl->parse($block);
+$content_tpl->parse("footer");
 
 $content_html = $content_tpl->output();
 

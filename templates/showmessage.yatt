@@ -1,13 +1,5 @@
-%begin [showmessage_content]
-
-%[#] Header Section
 %begin [header]
-<table class="forumheader">
-<tr>
-%[FORUM_HEADER_HTML] %[#] Assume pre-rendered header from PHP
-</tr>
-</table>
-
+<!-- showmessage.yatt -->
 <table class="tools">
 <tr>
   <td class="toolsleft">
@@ -22,35 +14,32 @@
 </table>
 %end [header]
 
-%[#] Main Content Area
+
+%begin [main_message]
 <div class="showmessage">
-
-  %begin [main_message]
   %[MESSAGE] %[#] Main message content from PHP
-  %end [main_message]
+</div>
+%end [main_message]
 
-  %begin [thread_context]
-  <a id="thread"><b>Thread:</b></a><br>
-  <table class="threads">
-  <tr class="%[CLASS]">
+%begin [thread_context]
+<a id="thread"><b>Thread:</b></a><br>
+<table class="threads">
+<tr class="%[CLASS]">
   <td>
   %[THREAD] %[#] Thread context rendered by gen_thread
   </td>
   <td class="threadlinks">
   %[THREADLINKS] %[#] Thread links rendered by gen_threadlinks
   </td>
-  </tr>
-  </table>
-  %end [thread_context]
+</tr>
+</table>
+%end [thread_context]
 
-  %begin [post_form]
-  <a id="post"><img src="/pics/followup.gif" alt="post follow up"></a>
-  %[FORM_HTML] %[#] Reply form rendered by postform.inc
-  %end [post_form]
+%begin [post_form]
+<a id="post"><img src="/pics/followup.gif" alt="post follow up"></a>
+%[FORM_HTML] %[#] Reply form rendered by postform.inc
+%end [post_form]
 
-</div>
-
-%[#] Footer Section
 %begin [footer]
 <table class="tools">
 <tr>
@@ -62,5 +51,4 @@
 </tr>
 </table>
 %end [footer]
-
-%end [showmessage_content]
+%[#] vim: sw=2

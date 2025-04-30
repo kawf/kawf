@@ -5,7 +5,6 @@ require_once("filter.inc");
 require_once("thread.inc");
 require_once("message.inc");
 require_once("page-yatt.inc.php");
-require_once("header-template.inc"); // For forum header
 
 if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
   $user->req();
@@ -16,7 +15,7 @@ if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
 }
 
 // Instantiate YATT for the main content
-$content_tpl = new YATT($template_dir, 'showthread.yatt');
+$content_tpl = new_yatt('showthread.yatt', $forum);
 
 /* Removed old Template setup
 $tpl->set_file(array(
@@ -26,15 +25,8 @@ $tpl->set_file(array(
 */
 
 // Set basic variables needed by header/footer
-$content_tpl->set("FORUM_NAME", $forum['name']);
-$content_tpl->set("FORUM_SHORTNAME", $forum['shortname']);
 $_page = isset($_REQUEST['page']) ? $_REQUEST['page'] : ''; // Get page safely
 $content_tpl->set("PAGE", $_page);
-
-// Render and set forum header
-$forum_header_html = render_forum_header_yatt($forum, $template_dir);
-$content_tpl->set("FORUM_HEADER_HTML", $forum_header_html);
-// $tpl->parse("FORUM_HEADER", "forum_header"); // Removed
 
 /* $tid set by main.php for showthread.php */
 $thread = get_thread($tid);
@@ -47,56 +39,10 @@ if (is_thread_bumped($thread)) {
   db_exec($sql, array($tid, $user->aid));
 }
 
-// Initialize messages array
-$messages = [];
-$tree = [];
-
-/* look for my message and later */
-for ($index = find_msg_index($thread['mid']); isset($indexes[$index]); $index++) {
-  $iid = $indexes[$index]['iid'];
-  /* TZ: unixtime is seconds since epoch */
-  $sql = "select " .
-    "mid, tid, pid, aid, state, UNIX_TIMESTAMP(date) as unixtime, ip, subject, " .
-    "message, url, urltext, video, flags, name, email, views, changes " .
-    "from f_messages$iid where tid = ? order by mid";
-  $sth = db_query($sql, array($tid));
-  while ($msg = $sth->fetch()) {
-    /* modifies message */
-    process_message($user, $msg);
-    $messages[] = $msg;
-  }
-  $sth->closeCursor();
-}
-
-/* Filter out moderated or deleted messages, if necessary */
-foreach($messages as $key => $message) {
-  $tree[$message['mid']][] = $key;
-  // Build tree based on pmid (parent message id)
-  if (isset($message['pmid'])) {
-      $tree[$message['pmid']][] = $key;
-  }
-}
-
-// Find the initial set of siblings to filter (root messages, typically pmid=0)
-$initial_siblings = [];
-if (isset($tree[0]) && is_array($tree[0])) {
-    $initial_siblings = $tree[0];
-} else {
-    // Attempt to handle cases where root might not be pmid 0 or tree is odd
-    // This might need more robust logic depending on data possibilities
-    error_log("Could not find root siblings with pmid 0 for thread $tid. Filtering may be incomplete.");
-    // As a fallback, maybe try filtering *all* top-level keys present in $messages?
-    // $initial_siblings = array_keys($messages); // Might be too broad
-}
-
-// Only proceed with filtering if we have messages and initial siblings
-if (!empty($messages) && !empty($initial_siblings)) {
-    // >>> Hypothesis: filter_messages might be redundant or cause recursion issues.
-    // >>> Commenting out this call to rely on list_thread's internal visibility logic.
-    // filter_messages($messages, $tree, $initial_siblings);
-} else {
-    // No messages or couldn't determine starting siblings, skip filtering
-    if (empty($messages)) error_log("No messages found to filter for thread $tid");
+// Get messages and tree structure
+list($messages, $tree, $path) = get_thread_messages($thread);
+if (!isset($messages) || empty($messages)) {
+    err_not_found("No messages found in thread $tid");
 }
 
 /* NOTE: print_message function definition is now inside this file */
@@ -129,32 +75,25 @@ function print_message($thread, $msg)
     $message_html_with_link = $message_html; // Fallback to original HTML
   }
 
-  // Return the modified HTML
-  return $message_html_with_link;
+  // Wrap the message in the proper messageblock structure
+  $wrapped_html = "<div class=\"messageblock\">\n" . $message_html_with_link . "\n</div> <!-- messageblock -->\n";
+
+  // Return the wrapped HTML
+  return $wrapped_html;
 }
 
-// Generate the concatenated message HTML string
-$messagestr = '';
-// Pass the correct initial siblings array to list_thread
-if (!empty($messages) && !empty($initial_siblings)) {
-    $messagestr = list_thread('print_message', $messages, $tree, $initial_siblings, $thread);
-} else if (!empty($messages)) {
-    // Attempt basic list if tree root finding failed but messages exist?
-    // This might produce flat output.
-    error_log("Falling back to basic message list for thread $tid due to tree/root issue");
-    foreach ($messages as $msg_item) {
-        $messagestr .= print_message($thread, $msg_item);
-    }
-} // Else $messagestr remains empty if no messages
+// Generate the message HTML using list_thread
+$messagestr = list_thread('print_message', $messages, $tree, reset($tree), $thread);
 
 // Set the generated HTML string into the YATT template
 $content_tpl->set("MESSAGES", $messagestr);
+$content_tpl->set("CLASS", ""); // Default class for the row
+$content_tpl->set("THREADLINKS", ""); // Default thread links
 
-// Parse the YATT blocks
-$content_tpl->parse('showthread_content.header');
-$content_tpl->parse('showthread_content.messages');
-$content_tpl->parse('showthread_content.footer');
-$content_tpl->parse('showthread_content'); // Parse the main container
+// Parse header and footer
+$content_tpl->parse('header');
+$content_tpl->parse('messages');
+$content_tpl->parse('footer');
 
 // Get final HTML
 $content_html = $content_tpl->output();

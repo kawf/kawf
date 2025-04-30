@@ -14,7 +14,6 @@ require_once("thread.inc");       // For get_thread
 require_once("message.inc");      // For fetch_message, render_message, preprocess etc.
 require_once("postform.inc");     // For render_postform
 require_once("page-yatt.inc.php"); // For YATT class and generate_page
-require_once("header-template.inc"); // For render_forum_header_yatt
 
 $mid = isset($_REQUEST['mid']) ? $_REQUEST['mid'] : null;
 
@@ -25,7 +24,7 @@ if (!is_numeric($mid) || !isset($forum)) {
 }
 
 // Instantiate YATT for the main content
-$content_tpl = new YATT($template_dir, 'edit.yatt');
+$content_tpl = new_yatt('edit.yatt', $forum);
 
 // Debug Info (using $content_tpl)
 if ($Debug) {
@@ -41,16 +40,9 @@ if ($Debug) {
 }
 
 // Set common variables
-$content_tpl->set("FORUM_NAME", $forum['name']);
-$content_tpl->set("FORUM_SHORTNAME", $forum['shortname']);
 $page_val = isset($_REQUEST['page']) ? htmlspecialchars($_REQUEST['page'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : '';
 $content_tpl->set("PAGE", $page_val); // For form return links
 $content_tpl->set("MSG_MID", $mid); // For accept page link
-
-// Render and set forum header
-$forum_header_html = render_forum_header_yatt($forum, $template_dir);
-$content_tpl->set("FORUM_HEADER_HTML", $forum_header_html);
-$content_tpl->parse("edit_content.header"); // Parse header early
 
 // Fetch original message
 $nmsg = $msg = fetch_message($user, $mid); // $nmsg will hold the potentially modified version

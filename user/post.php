@@ -7,7 +7,6 @@ require_once("postform.inc");       // For render_postform
 require_once("postmessage.inc");    // For postmessage
 require_once("mailfrom.inc");       // For email_followup, db_exec
 require_once("page-yatt.inc.php");  // For YATT class, generate_page
-require_once("header-template.inc"); // For render_forum_header_yatt
 
 $user->req(); // This now relies on user.inc being loaded before this script
 
@@ -33,18 +32,11 @@ require_once("page-yatt.inc.php");
 */
 
 // Instantiate YATT
-$content_tpl = new YATT($template_dir, 'post.yatt');
+$content_tpl = new_yatt('post.yatt', $forum);
 
 // Set common vars
-$content_tpl->set("FORUM_NAME", $forum['name']);
-$content_tpl->set("FORUM_SHORTNAME", $forum['shortname']);
 $_page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
 $content_tpl->set("PAGE", $_page);
-
-// Render forum header
-$forum_header_html = render_forum_header_yatt($forum, $template_dir);
-$content_tpl->set("FORUM_HEADER_HTML", $forum_header_html);
-$content_tpl->parse("post_content.header"); // Parse header early
 
 // Permission Checks
 $can_post_thread = isset($forum['option']['PostThread']) || $user->capable($forum['fid'], 'Delete');

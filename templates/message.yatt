@@ -1,4 +1,6 @@
 %begin [message_block]
+<!-- message.yatt -->
+<div class="messageblock">
 %[#] Main container for a single message display
 %[MSG_DEBUG]
 <table class="messageheader">
@@ -72,4 +74,6 @@
 %[MSG_CHANGES]
   </div>
 %end [changes]
-%end [message_block] %[#] vim: sw=2
+</div>
+%end [message_block]
+%[#] vim: sw=2

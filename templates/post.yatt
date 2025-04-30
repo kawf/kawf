@@ -1,12 +1,5 @@
 %begin [post_content]
 %[DEBUG]
-%begin [header]
-<table class="forumheader">
-<tr>
-%[FORUM_HEADER_HTML] %[#] Assume pre-rendered header from PHP
-</tr>
-</table>
-%end [header]
 
 %begin [disabled]
   %[#] Displayed if posting is disabled

@@ -63,7 +63,7 @@ function dump_env()
 function err_not_found($description = "")
 {
   global $_SERVER;
-  global $template_dir, $srcroot, $generate_page_func, $default_skin;
+  global $template_dir, $srcroot, $default_skin;
   global $server_name, $server_port;
   global $request_uri;
 
@@ -95,12 +95,7 @@ function err_not_found($description = "")
   $error_tpl->parse("error_content");
   $content_html = $error_tpl->output("error_content");
 
-  if (function_exists($generate_page_func)) {
-    print call_user_func($generate_page_func, '404 Not Found', $content_html);
-  } else {
-    print $content_html;
-  }
-
+  print generate_page('404 Not Found', $content_html);
   exit;
 }
 
@@ -242,5 +237,16 @@ function get_forum_navigation()
         }
     }
     return $nav;
+}
+
+function new_yatt($template, $forum = null) {
+    global $template_dir;
+    $yatt = new YATT($template_dir, $template);
+    if ($forum) {
+        $yatt->set('FORUM_NAME', htmlspecialchars($forum['name'], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $yatt->set('FORUM_SHORTNAME', htmlspecialchars($forum['shortname'], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+        $yatt->set('FORUM_NOTICES', isset($forum['notices']) ? $forum['notices'] : '');
+    }
+    return $yatt;
 }
 ?>

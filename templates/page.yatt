@@ -18,11 +18,26 @@
 </head>
 
 <body>
+%begin [debug_log]
+<div class="debug">
+<!-- DEBUG_LOG -->
+%[debug_contents]
+</div>
+%end [debug_log]
+
 %begin [header]
 <div class="header">
 %include [header.yatt]
 </div>
 %end [header]
+
+%begin [forum_header]
+<table class="forumheader">
+<tr>
+%[forum_header_content]
+</tr>
+</table>
+%end [forum_header]
 
 <div class="contents">
 %[contents]
@@ -31,13 +46,6 @@
 <div class="footer">
 %include [footer.yatt]
 </div>
-
-%begin [debug_log]
-<div class="debug">
-<!-- DEBUG_LOG -->
-%[debug_contents]
-</div>
-%end [debug_log]
 
 </body>
 </html>

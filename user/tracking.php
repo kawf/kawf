@@ -7,10 +7,10 @@ require_once("listthread.inc");
 require_once("filter.inc");
 require_once("thread.inc");
 require_once("page-yatt.inc.php");
-require_once("header-template.inc"); // Use renamed helper file
 
 // Instantiate YATT for the content template
-$content_tpl = new YATT($template_dir, 'tracking.yatt');
+// Note: No forum context needed as this page shows tracked threads across all forums
+$content_tpl = new_yatt('tracking.yatt');
 
 // Base variables available everywhere
 $content_tpl->set("USER_TOKEN", $user->token());
@@ -73,7 +73,6 @@ while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
 
   // Add forum data to the main array if it has tracked threads
   if ($forumcount > 0) {
-      $forum_header_html = render_forum_header_yatt($forum, $template_dir);
       $notices_html = get_notices_html($forum, $user->aid);
 
       $forums_data[] = [
@@ -82,7 +81,6 @@ while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
           'threads' => $threads_data,
           'show_update_all' => ($forumupdated > 0),
           'show_hr' => !$first,
-          'forum_header_html' => $forum_header_html, // Pass pre-rendered header
           'forum_notices' => $notices_html, // Add notices HTML
           'has_threads' => true // Flag indicating this forum section should be rendered
       ];
@@ -107,7 +105,6 @@ if ($numshown == 0) {
     // Set variables for the current forum iteration
     $content_tpl->set('forum_name', $forum_item['name']);
     $content_tpl->set('forum_shortname', $forum_item['shortname']);
-    $content_tpl->set('forum_header_html', $forum_item['forum_header_html']);
     $content_tpl->set('FORUM_NOTICES', $forum_item['forum_notices']); // Set notices for this forum
 
     // Conditionally parse HR separator

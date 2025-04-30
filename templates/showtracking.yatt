@@ -1,30 +1,22 @@
-%begin [showtracking_content]
 %begin [header]
-<!--  <h3>Your tracked threads in %[forum(name)]</h3> -->
-<table class="forumheader">
-<tr>
-%[FORUM_HEADER_HTML]
-</tr>
-</table>
-
 <table class="tools">
 <tr>
-  <td class="left">
+  <td class="toolsleft">
     <a href="/tips/?page=%[page]" target="_blank">Tips</a>
-  | <a href="/search/?forum=%[forum(shortname)]&amp;page=%[page]" target="_blank">Search</a>
-  | <a href="/%[forum(shortname)]"><b>Back to %[forum(name)]</b></a>
+  | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;page=%[page]" target="_blank">Search</a>
+  | <a href="/%[FORUM_SHORTNAME]/"><b>Back to %[FORUM_NAME]</b></a>
   </td>
-  <td class="right">
+  <td class="toolsright">
 %begin [update_all]
-    <a href="/%[forum(shortname)]/markuptodate.phtml?tid=all&amp;page=%[page]&amp;token=%[user_token]&amp;time=%[time]">Update all</a>
+    <a href="/%[FORUM_SHORTNAME]/markuptodate.phtml?tid=all&amp;page=%[page]&amp;token=%[user_token]&amp;time=%[time]">Update all</a>
 %end [update_all]
   </td>
 </tr>
 <tr>
-  <td class="left">
+  <td class="toolsleft">
     <b>Page:</b> %[pages]
   </td>
-  <td class="right">
+  <td class="toolsright">
     %[shown] tracked threads in %[numpages] pages
   </td>
 </tr>
@@ -33,25 +25,35 @@
 
 %begin [normal]
 <table class="threads">
-%[ROWS_HTML]
+%begin [row]
+<tr class="%[class]">
+  <td>
+%[messages]
+  </td>
+  <td class="threadlinks">
+%[threadlinks]
+  </td>
+</tr>
+%end [row]
 </table>
 %end [normal]
 
 %begin [simple]
-%[ROWS_HTML]
+%begin [row]
+%[messages]
+%end [row]
 %end [simple]
 
 %begin [footer]
 <table class="tools">
 <tr>
-  <td class="left">
+  <td class="toolsleft">
     <b>Page:</b> %[pages]
   </td>
-  <td class="right">
+  <td class="toolsright">
     %[shown] tracked threads in %[numpages] pages
   </td>
 </tr>
 </table>
 %end [footer]
 %[#] vim: sw=2
-%end [showtracking_content]
