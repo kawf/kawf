@@ -6,17 +6,18 @@ require_once("message.inc");
 $user->req();
 $stoken = $user->token();
 
-$_page = $_REQUEST['page'] ?? '';
+// Get page context for redirects and form
+$page = get_page_context(false);
 $mid = $_REQUEST['mid'] ?? null;
 
 // --- Form Handling (Redirects) ---
 if (isset($_POST['no'])) {
-  header("Location: " . $_page);
+  header("Location: $page");
   exit;
 }
 if (isset($_POST['yes'])) {
-  // Redirect to changestate to perform actual undelete (set state to Active)
-  header("Location: changestate.phtml?state=Active&mid=$mid&page=" . urlencode($_page) . "&token=$stoken");
+  // use page=$page because we do not want fallback which is what get_page_context(false) does
+  header("Location: changestate.phtml?state=Active&mid=$mid&page=$page&token=$stoken");
   exit;
 }
 
@@ -60,7 +61,7 @@ $content_tpl->set("PREVIEW", $preview_html);
 
 // Set variables needed by the confirmation form
 $content_tpl->set("MSG_MID", $mid);
-$content_tpl->set("PAGE", htmlspecialchars($_page, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+$content_tpl->set("PAGE_VALUE", htmlspecialchars($page, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
 
 // --- Parse Final Blocks ---
 $content_tpl->parse("undelete_content.confirmation");

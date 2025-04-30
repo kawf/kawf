@@ -40,8 +40,7 @@ if ($Debug) {
 }
 
 // Set common variables
-$page_val = isset($_REQUEST['page']) ? htmlspecialchars($_REQUEST['page'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : '';
-$content_tpl->set("PAGE", $page_val); // For form return links
+$content_tpl->set("PAGE", format_page_param());
 $content_tpl->set("MSG_MID", $mid); // For accept page link
 
 // Fetch original message

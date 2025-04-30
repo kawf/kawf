@@ -34,22 +34,8 @@ require_once("timezone.inc");
 require_once("acl_ip_ban.inc");
 require_once("acl_ip_ban_list.inc");
 
-// Set the temporary global $page_context for printsubject.inc
-// This replicates the value previously stored in $tpl->set_var("PAGE").
-// It holds the current script_name + path_info and is used by printsubject.inc
-// (via append_tools) to construct correct page=... query parameters for action links.
-// TODO: Replace this global with a value from kawfGlobals or similar context object.
-global $page_context;
-$page_context = $script_name . $path_info;
-
 db_connect();
 //db_exec("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");
-
-/* $_page saved off for others here for use in resused template that recurse,
-   or for the set_var order sensitivity for vars within blocks */
-if (array_key_exists('page', $_REQUEST)) {
-   $_page = $_REQUEST['page'];
-}
 
 $scripts = array(
   "" => "index.php",

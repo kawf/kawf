@@ -2,166 +2,177 @@
 
 ## Current State
 
-The codebase currently uses two global variables for page context:
-- `$page_context`: Set in main.php as `$script_name . $path_info`
-- `$_page`: Set in main.php from `$_REQUEST['page']`
+The codebase uses several standardized patterns for page context:
+- `PAGE_VALUE`: Raw page context value for use in forms
+- `PAGE`: Formatted URL parameter string (with `page=` prefix) for links
+- Direct `$page` variable: Used for Location headers and some direct URL handling
 
-### Current Usage Patterns
+### Standardized Usage Patterns
 
-1. Form Submissions:
+1. Form Hidden Fields:
 ```php
-// In postform.inc
-$current_page_for_form = isset($_page) ? $_page : ($script_name . $path_info);
-$hidden .= hidden("page", $current_page_for_form);
-$form_tpl->set("PAGE", $current_page_for_form);
+// In templates
+<input type="hidden" name="page" value="%[PAGE_VALUE]">
+
+// In PHP files
+$form_tpl->set("PAGE_VALUE", get_page_context());
 ```
 
-2. Action Links:
+2. Navigation Links:
 ```php
-// In printsubject.inc
-$page = $page_context;
-return append_tools($user, $string, $forum, $thread, $msg, $page);
+// In templates
+<a href="somepage.phtml?%[PAGE]">Link Text</a>
+
+// In PHP files
+$content_tpl->set("PAGE", format_page_param());
 ```
 
-3. Redirects:
+3. Redirects (Location Headers):
 ```php
-// In various action files
-header("Location: " . $_page);
-```
+// Simple redirects
+$page = get_page_context(false);  // No fallback for Location headers
+header("Location: $page");
 
-### Current Issues
-
-1. Inconsistent variable usage (`$page_context` vs `$_page`)
-2. Global variables make testing and maintenance difficult
-3. No centralized handling of page context
-4. Mix of URL parameters and template variables
-5. No clear fallback strategy
-
-## Migration Plan
-
-### 1. Add New Functions to util.inc
-
-```php
-function get_page_context() {
-    return $_REQUEST['page'] ?? '';
+// Conditional redirects
+if (isset($_REQUEST['page'])) {
+    header("Location: " . get_page_context(false));
+} else {
+    header("Location: /");  // Explicit fallback
 }
 
-function set_page_context($context) {
-    return "page=" . urlencode($context);
-}
-
-function get_return_url() {
-    $context = get_page_context();
-    return $context ? set_page_context($context) : '';
-}
+// Multi-parameter redirects
+header("Location: somepage.phtml?state=Active&mid=$mid&page=$page&token=$stoken");
+// Note: Still using $page directly in URL construction - needs review
 ```
 
-### 2. Migration Steps
+4. Hardcoded Hrefs:
+```php
+// In templates
+<a href="somepage.phtml?page=%[PAGE_VALUE]">Link Text</a>
+// or
+<a href="somepage.phtml?%[PAGE]">Link Text</a>
+```
 
-1. Replace Global Variables:
-   - Remove `$page_context` global
-   - Remove `$_page` global
-   - Update all references to use new functions
+### Core Functions
 
-2. Update Form Handling:
-   - Replace form hidden field generation
-   - Update template variable setting
-   - Maintain backward compatibility
+1. `get_page_context($use_fallback = true)`: Returns the raw page context value
+   - Used for form hidden fields
+   - Used for template variables that need the raw value
+   - Optional fallback to current URL if no page parameter is present
+   - Should use `false` for Location headers to prevent unwanted fallbacks
 
-3. Update Action Links:
-   - Modify `append_tools()` to use new functions
-   - Update all action URLs
-   - Keep existing URL structure
+2. `format_page_param()`: Returns the formatted URL parameter string
+   - Used for generating URL parameters in links and forms
+   - Adds "page=" prefix and URL encodes the value
+   - Returns empty string if no page context exists
+   - Should NOT be used for Location headers
 
-4. Update Redirects:
-   - Replace direct `$_page` usage
-   - Use new functions for redirect URLs
-   - Maintain existing behavior
+### Important Notes
 
-### 3. Files to Modify
+1. Location Headers:
+   - Should use `get_page_context(false)` to prevent fallbacks
+   - Critical for maintaining user navigation state
+   - Multi-parameter URLs still need review for proper page parameter handling
+
+2. Form Values:
+   - Use `get_page_context()` with fallback for forms
+   - Fallback behavior is appropriate for form submissions
+
+3. Link Parameters:
+   - Use `format_page_param()` for generating URL parameters
+   - Should not be used for Location headers
+
+4. Hardcoded Hrefs:
+   - Need to decide between PAGE and PAGE_VALUE based on context
+   - May need standardization
+
+### Files Updated
 
 ```
 user/
-├── main.php                    # Remove globals
-├── postform.inc               # Update form handling
-├── printsubject.inc           # Update link generation
-├── showforum.php              # Update page context usage
-├── showthread.php             # Update page context usage
-├── showmessage.php            # Update page context usage
-├── tracking.php               # Update page context usage
-├── post.php                   # Update form handling
-├── edit.php                   # Update form handling
-├── preferences.php            # Update form handling
-├── delete.php                 # Update redirects
-├── undelete.php               # Update redirects
-├── lock.php                   # Update redirects
-├── unlock.php                 # Update redirects
-├── track.php                  # Update redirects
-├── untrack.php                # Update redirects
-├── sticky.php                 # Update redirects
-├── markuptodate.php           # Update redirects
+├── postform.inc               # Updated to use both PAGE_VALUE and PAGE
+├── delete.php                 # Updated to use get_page_context(false) for Location
+├── undelete.php              # Updated to use get_page_context(false) for Location
+├── preferences.php           # Updated to use both variables
+├── showmessage.php           # Updated to use both variables
+├── printsubject.inc          # Updated to use format_page_param() for links
+├── lock.php                  # Updated to use get_page_context(false) for Location
+├── unlock.php                # Updated to use get_page_context(false) for Location
+├── track.php                 # Updated to use get_page_context(false) for Location
+├── sticky.php                # Updated to use get_page_context(false) for Location
+├── markuptodate.php          # Updated to use get_page_context(false) for Location
+├── gmessage.php              # Updated to use get_page_context(false) for Location
 └── account/
-    ├── login.php              # Update form handling
-    ├── create.php             # Update form handling
-    ├── forgotpassword.php     # Update form handling
-    └── acctedit.php           # Update form handling
+    ├── login.php             # Updated to use PAGE_VALUE
+    ├── logout.php            # Updated to use get_page_context(false) for Location
+    └── forgotpassword.php    # Updated to use PAGE_VALUE
 ```
 
-### 4. Testing Strategy
+### Templates Updated
 
-1. Unit Tests:
-   - Test new functions in isolation
-   - Verify URL generation
-   - Check fallback behavior
+```
+templates/
+├── postform.yatt             # Updated to use PAGE for links
+├── delete.yatt              # Updated to use PAGE_VALUE for form
+├── undelete.yatt            # Updated to use PAGE_VALUE for form
+├── preferences.yatt         # Updated to use PAGE for links
+├── showmessage.yatt         # Updated to use both variables
+└── account/
+    ├── login.yatt           # Updated to use PAGE_VALUE for form
+    ├── create.yatt          # Updated to use PAGE_VALUE for form
+    └── forgotpassword.yatt  # Updated to use PAGE_VALUE for form
+```
 
-2. Integration Tests:
-   - Test form submissions
-   - Test action links
-   - Test redirects
-   - Verify template rendering
+### Benefits
 
-3. Manual Testing:
-   - Test all form submissions
-   - Test all action links
-   - Test all redirects
-   - Verify browser history behavior
+1. Clear distinction between different page context use cases
+2. Consistent behavior across codebase
+3. Easier testing and maintenance
+4. No unwanted fallbacks in critical paths
+5. Maintained backward compatibility
 
-### 5. Rollback Plan
+### Testing Strategy
 
-1. Keep old code commented out initially
-2. Add feature flags if needed
-3. Maintain backward compatibility
-4. Document all changes
+1. Form Submissions:
+   - Test all forms with hidden page fields
+   - Verify correct page context is maintained
+   - Check behavior when no page parameter
 
-## Benefits
+2. Navigation Links:
+   - Test all links using PAGE variable
+   - Verify correct URL formatting
+   - Check proper URL encoding
 
-1. Centralized page context handling
-2. Removed global variables
-3. Consistent behavior across codebase
-4. Easier testing and maintenance
-5. Clear fallback strategy
-6. Maintained backward compatibility
+3. Redirects:
+   - Test all Location headers
+   - Verify correct page value is used
+   - Verify no unwanted fallbacks
+   - Test multi-parameter redirects
 
-## Risks
+### Future Improvements
 
-1. Complex migration due to widespread usage
-2. Potential for missed edge cases
-3. Need to maintain backward compatibility
-4. Template system dependencies
+1. Review multi-parameter redirects for proper page parameter handling
+2. Consider creating dedicated function for Location headers
+3. Reconsider fallback behavior in get_page_context()
+4. Standardize hardcoded href usage
+5. Add unit tests for page context functions
+6. Add logging for debugging page context issues
+7. Consider session-based approach for complex flows
+8. Add caching if needed
+9. Improve error handling
+10. Consider URL structure improvements
 
-## Timeline
+### Migration Status
 
-1. Add new functions to util.inc
-2. Update one file at a time
-3. Test each change
-4. Deploy incrementally
-5. Monitor for issues
-6. Remove old code
-
-## Future Improvements
-
-1. Consider session-based approach
-2. Add caching if needed
-3. Improve error handling
-4. Add logging
-5. Consider URL structure improvements
+- [x] Add new functions to util.inc
+- [x] Update form handling
+- [x] Update navigation links
+- [x] Update simple redirects
+- [x] Update conditional redirects
+- [ ] Review multi-parameter redirects
+- [ ] Add unit tests
+- [ ] Add logging
+- [ ] Update documentation
+- [ ] Monitor for issues
+- [ ] Standardize hardcoded href usage
+- [ ] Reconsider fallback behavior

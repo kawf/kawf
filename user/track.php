@@ -6,11 +6,16 @@ if (!isset($forum)) {
   exit;
 }
 
-$page = $_REQUEST['page'];
 $tid = $_REQUEST['tid'];
 $time = $_REQUEST['time'];
+$page = get_page_context(false);
 
-if (!$user->valid() || !is_numeric($tid)) {
+if (!$user->valid()) {
+  header("Location: $page");
+  exit;
+}
+
+if (!is_numeric($tid)) {
   header("Location: $page");
   exit;
 }
@@ -29,6 +34,6 @@ if (!is_numeric($time))
 
 track_thread($forum['fid'], $tid, '', $time);
 
-Header("Location: $page");
+header("Location: $page");
 // vim: sw=2
 ?>

@@ -25,8 +25,8 @@ This thread is locked. No replies are allowed.<br>
 <tr>
   <th>User:</th>
   <td>
-    <b>%[USER_NAME]</b>&nbsp;&nbsp;&nbsp;<a href="/preferences.phtml?page=%[PAGE]">Preferences</a>
-  | <a href="/tips/?page=%[PAGE]"><b>Posting Tips</b></a>
+    <b>%[USER_NAME]</b>&nbsp;&nbsp;&nbsp;<a href="/preferences.phtml?%[PAGE]">Preferences</a>
+  | <a href="/tips/?%[PAGE]"><b>Posting Tips</b></a>
   </td>
 </tr>
 <tr>
@@ -85,8 +85,8 @@ This thread is locked. No replies are allowed.<br>
 <tr>
   <th>Logout:</th>
   <td>
-    <a href="/logout.phtml?page=%[PAGE]&amp;token=%[token]">Logout this session</a> | %[#] TODO: Fix URL/PAGE variable?
-    <a href="/logout.phtml?all&amp;page=%[PAGE]&amp;token=%[token]">Logout ALL SESSIONS</a> %[#] TODO: Fix URL/PAGE variable?
+    <a href="/logout.phtml?%[PAGE]&amp;token=%[token]">Logout this session</a> | %[#] TODO: Fix URL/PAGE variable?
+    <a href="/logout.phtml?all&amp;%[PAGE]&amp;token=%[token]">Logout ALL SESSIONS</a> %[#] TODO: Fix URL/PAGE variable?
   </td>
 </tr>
 </table>

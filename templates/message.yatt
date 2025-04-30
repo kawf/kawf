@@ -12,12 +12,12 @@
 %begin [forum_mod]
       Source: %[MSG_IP] %[MSG_EMAIL]
 %begin [admin]
-      (<a href="/admin/su.phtml?token=%[USER_TOKEN]&amp;aid=%[MSG_AID]&amp;page=%[PAGE]" title="Become AID %[MSG_AID] (USE WITH CAUTION)">su</a>)
+      (<a href="/admin/su.phtml?token=%[USER_TOKEN]&amp;aid=%[MSG_AID]&amp;%[PAGE]" title="Become AID %[MSG_AID] (USE WITH CAUTION)">su</a>)
 %end [admin]
       <br>
 %end [forum_mod]
       Posted by: <b>%[MSG_NAMEEMAIL]</b>
-      (<a href="/account/%[MSG_AID].phtml?page=%[PAGE]">%[MSG_AID]</a>)
+      (<a href="/account/%[MSG_AID].phtml?%[PAGE]">%[MSG_AID]</a>)
       on %[MSG_DATE] %[VIEWER_AID]
 %begin [advertiser]
       | <b>Advertiser</b>
@@ -37,12 +37,12 @@
       <div class="toolsright">
       <img class="gravatar" src="https://www.gravatar.com/avatar/%[MSG_NAMEHASH].jpg?s=32&d=blank" alt="gravatar"><br>
 %begin [owner]
-      <a href="/%[FORUM_SHORTNAME]/edit.phtml?mid=%[MSG_MID]&amp;page=%[PAGE]">Edit</a> |
+      <a href="/%[FORUM_SHORTNAME]/edit.phtml?mid=%[MSG_MID]&amp;%[PAGE]">Edit</a> |
 %begin [delete]
-      <a href="/%[FORUM_SHORTNAME]/delete.phtml?mid=%[MSG_MID]&amp;page=%[PAGE]">Delete</a> |
+      <a href="/%[FORUM_SHORTNAME]/delete.phtml?mid=%[MSG_MID]&amp;%[PAGE]">Delete</a> |
 %end [delete]
 %begin [undelete]
-      <a href="/%[FORUM_SHORTNAME]/undelete.phtml?mid=%[MSG_MID]&amp;page=%[PAGE]">Undelete</a> |
+      <a href="/%[FORUM_SHORTNAME]/undelete.phtml?mid=%[MSG_MID]&amp;%[PAGE]">Undelete</a> |
 %end [undelete]
 %begin [statelocked]
       <b>Status locked</b>

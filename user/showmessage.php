@@ -20,8 +20,9 @@ if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
 // Create new YATT instance for content template
 $content_tpl = new_yatt('showmessage.yatt', $forum);
 
-$_page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
-$content_tpl->set("PAGE", $_page);
+$content_tpl->set("USER_TOKEN", $user->token());
+$content_tpl->set("PAGE", format_page_param());
+$content_tpl->set("TIME", time());
 
 $msg = fetch_message($user, $mid);
 
@@ -45,8 +46,8 @@ mark_thread_read($forum['fid'], $msg, $user);
 
 $thread = get_thread($msg['tid']);
 
-$message_html = render_message($template_dir, $msg, $user, $uuser);
-$content_tpl->set("MESSAGE", $message_html);
+$message = render_message($template_dir, $msg, $user, $uuser);
+$content_tpl->set("MESSAGE", $message);
 
 $vmid = $msg['mid'];
 

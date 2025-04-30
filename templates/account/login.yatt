@@ -4,7 +4,7 @@
 
 %begin [form]
 <form action="login.phtml" method="post" name="form">
-  <input type="hidden" name="page" value="%[PAGE]">
+  <input type="hidden" name="page" value="%[PAGE_VALUE]">
 
   <h2>Login</h2><p>
 

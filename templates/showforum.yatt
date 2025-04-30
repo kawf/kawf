@@ -3,8 +3,8 @@
 <table class="tools">
 <tr>
   <td class="toolsleft">
-    <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a>
-  | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;page=%[PAGE]" target="_blank">Search</a>
+    <a href="/tips/?%[PAGE]" target="_blank">Tips</a>
+  | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;%[PAGE]" target="_blank">Search</a>
   | <a href="#post"><b>Post New Thread</b></a>
   %[#] View All Images/Night Mode links appear static in tpl, keep them here for now
   | <a href="#" id="view-all-images">View All Images</a>
@@ -15,7 +15,7 @@
     <a href="/%[FORUM_SHORTNAME]/tracking.phtml"><b>Tracked threads</b></a>
 %end [tracked_threads]
 %begin [update_all]
-  | <a href="/%[FORUM_SHORTNAME]/markuptodate.phtml?tid=all&amp;page=%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a>
+  | <a href="/%[FORUM_SHORTNAME]/markuptodate.phtml?tid=all&amp;%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a>
 %end [update_all]
   </td>
 </tr>

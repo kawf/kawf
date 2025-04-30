@@ -2,13 +2,13 @@
 <table class="tools">
 <tr>
   <td class="toolsleft">
-    <a href="/tips/?page=%[page]" target="_blank">Tips</a>
-  | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;page=%[page]" target="_blank">Search</a>
+    <a href="/tips/?%[page]" target="_blank">Tips</a>
+  | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;%[page]" target="_blank">Search</a>
   | <a href="/%[FORUM_SHORTNAME]/"><b>Back to %[FORUM_NAME]</b></a>
   </td>
   <td class="toolsright">
 %begin [update_all]
-    <a href="/%[FORUM_SHORTNAME]/markuptodate.phtml?tid=all&amp;page=%[page]&amp;token=%[user_token]&amp;time=%[time]">Update all</a>
+    <a href="/%[FORUM_SHORTNAME]/markuptodate.phtml?tid=all&amp;%[page]&amp;token=%[user_token]&amp;time=%[time]">Update all</a>
 %end [update_all]
   </td>
 </tr>

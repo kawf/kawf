@@ -16,14 +16,14 @@
       <table class="tools">
       <tr>
        <td class="toolsleft">
-          <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a>
-        | <a href="/search/?forum=%[forum_shortname]&amp;page=%[PAGE]" target="_blank">Search</a>
+          <a href="/tips/?%[PAGE]" target="_blank">Tips</a>
+        | <a href="/search/?forum=%[forum_shortname]&amp;%[PAGE]" target="_blank">Search</a>
         | <a href="/%[forum_shortname]"><b>Go to %[forum_name]</b></a>
         </td>
         <td class="toolsright">
           <a href="/%[forum_shortname]/tracking.phtml"><b>Tracked threads</b></a>
           %begin [update_all]
-            | <a href="/%[forum_shortname]/markuptodate.phtml?tid=all&amp;page=%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a>
+            | <a href="/%[forum_shortname]/markuptodate.phtml?tid=all&amp;%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a>
           %end [update_all]
         </td>
       </tr>
@@ -43,7 +43,7 @@
     %begin [simple]
       %begin [update_all]
         <table class="tools"><tr>
-        <td class="toolsright"><a href="/%[forum_shortname]/markuptodate.phtml?tid=all&amp;page=%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a></td>
+        <td class="toolsright"><a href="/%[forum_shortname]/markuptodate.phtml?tid=all&amp;%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a></td>
         </tr></table>
       %end [update_all]
 
@@ -61,8 +61,8 @@
   %[#] Common footer tools - Always shown? Assume parsed by PHP outside the main conditional
   %begin [footer_tools]
     <div class="tools">
-        <a href="/tips/?page=%[PAGE]" target="_blank">Tips</a>
-      | <a href="/search/?page=%[PAGE]" target="_blank">Search</a>
+        <a href="/tips/?%[PAGE]" target="_blank">Tips</a>
+      | <a href="/search/?%[PAGE]" target="_blank">Search</a>
     </div>
   %end [footer_tools]
 

@@ -106,7 +106,7 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
 
   // Set variables that are always needed
   $message_tpl->set('FORUM_SHORTNAME', $forum['shortname']);
-  $message_tpl->set('PAGE', isset($_REQUEST['page']) ? $_REQUEST['page'] : '');
+  $message_tpl->set('PAGE', format_page_param());
   $message_tpl->set('USER_TOKEN', $viewer->token()); // Use viewer's token
 
   // Add encrypted viewer ID

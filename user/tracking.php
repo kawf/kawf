@@ -14,8 +14,7 @@ $content_tpl = new_yatt('tracking.yatt');
 
 // Base variables available everywhere
 $content_tpl->set("USER_TOKEN", $user->token());
-$_page = isset($_REQUEST['page']) ? $_REQUEST['page'] : ''; // Get page safely
-$content_tpl->set("PAGE", $_page);
+$content_tpl->set("PAGE", format_page_param());
 $content_tpl->set("TIME", time());
 
 // Determine display mode (normal or simple)

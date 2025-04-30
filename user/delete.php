@@ -6,25 +6,23 @@ require_once("message.inc");
 $user->req();
 $stoken = $user->token();
 
-$_page = $_REQUEST['page'] ?? '';
+// Get page context for redirects and form
+$page = get_page_context(false);
 $mid = $_REQUEST['mid'] ?? null;
 
 // --- Form Handling (Redirects) ---
 if (isset($_POST['no'])) {
-  header("Location: " . $_page); // Redirect back
+  header("Location: $page");
   exit;
 }
 if (isset($_POST['yes'])) {
-  // Redirect to changestate to perform actual delete
-  header("Location: changestate.phtml?state=Deleted&mid=$mid&page=" . urlencode($_page) . "&token=$stoken");
+  header("Location: changestate.phtml?state=Deleted&mid=$mid" . format_page_param() . "&token=$stoken");
   exit;
 }
 
 // --- Basic Validation ---
 if (!is_numeric($mid) || !isset($forum)) {
-  // Use err_not_found for consistency if possible, though this might be too early?
-  // For now, keep simple redirect.
-  header("Location: http://$server_name$script_name$path_info/"); // Should be /?
+  header("Location: http://$server_name$script_name$path_info/");
   exit;
 }
 
@@ -60,7 +58,7 @@ $content_tpl->set("PREVIEW", $preview_html);
 
 // Set variables needed by the confirmation form
 $content_tpl->set("MSG_MID", $mid);
-$content_tpl->set("PAGE", htmlspecialchars($_page, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+$content_tpl->set("PAGE_VALUE", htmlspecialchars($page, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
 
 // --- Parse Final Blocks ---
 $content_tpl->parse("delete_content.confirmation");

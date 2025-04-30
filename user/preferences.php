@@ -121,8 +121,9 @@ $content_tpl->set("SIGNATURE_COOKED", $signature_cooked);
 $content_tpl->set("SIGNATURE", $signature_htmlspecialchars);
 $content_tpl->set("THREADSPERPAGE", $user->threadsperpage);
 $content_tpl->set("TEXT", $text);
-$page_val = isset($_REQUEST['page']) ? htmlspecialchars($_REQUEST['page'], ENT_QUOTES | ENT_HTML5, 'UTF-8') : '';
-$content_tpl->set("PAGE", $page_val);
+// Get the page parameter in the correct format
+$content_tpl->set("PAGE", format_page_param());
+$content_tpl->set("PAGE_VALUE", get_page_context());
 $content_tpl->set("USER_TOKEN", $user->token());
 
 foreach($tz_to_name as $tz) {

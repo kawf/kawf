@@ -127,7 +127,7 @@ if ($curpage == 1) {
           // Construct the proper return page URL
           $return_page = $script_name; // Use $script_name from main context
           if (!empty($path_info)) $return_page .= $path_info; // Add path_info if present
-          $gpage = "page=" . urlencode($return_page);
+          $gpage = "page=" . urlencode($return_page); // Use raw return_page value
           $gtoken = "token=" . $user->token();
           // Build message HTML (unchanged logic)
           $messages = "<a href=\"" . htmlspecialchars($gmsg['url']) . "\" target=\"_top\">" . htmlspecialchars($gmsg['subject']) . "</a>";

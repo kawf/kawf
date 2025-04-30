@@ -4,7 +4,6 @@ require_once("message.inc");
 function print_subject($thread, $msg, $replies = -1, $collapse = false)
 {
   global $vmid, $user, $tthreads_by_tid, $forum;
-  global $page_context;
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
@@ -101,52 +100,52 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
   else if ($msg['state'] != "Active" && $msg['state'] != "OffTopic")
     $string .= " (" . $msg['state'] . ")";
 
-  $page = $page_context;
-
-  return append_tools($user, $string, $forum, $thread, $msg, $page);
+  return append_tools($user, $string, $forum, $thread, $msg);
 }
 
-function append_tools($user, $string, $forum, $thread, $msg, $page)
+function append_tools($user, $string, $forum, $thread, $msg)
 {
   $stoken = $user->token();
+  $page = format_page_param();
+
   switch ($msg['state']) {
   case "":
     if ($user->capable($forum['fid'], 'OffTopic'))
-      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&amp;token=$stoken&amp;state=Active&amp;mid=" . $msg['mid'] . "\">am</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?$page&amp;token=$stoken&amp;state=Active&amp;mid=" . $msg['mid'] . "\">am</a>";
     break;
   case "Moderated":
     if ($user->capable($forum['fid'], 'Moderate'))
-      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&amp;token=$stoken&amp;state=Active&amp;mid=" . $msg['mid'] . "\" title=\"Un-moderate\">um</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?$page&amp;token=$stoken&amp;state=Active&amp;mid=" . $msg['mid'] . "\" title=\"Un-moderate\">um</a>";
     if ($user->capable($forum['fid'], 'Delete'))
-      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&amp;token=$stoken&amp;state=Deleted&amp;mid=" . $msg['mid'] . "\" title=\"Moderate\">dm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?$page&amp;token=$stoken&amp;state=Deleted&amp;mid=" . $msg['mid'] . "\" title=\"Moderate\">dm</a>";
     break;
   case "OffTopic":
     if ($user->capable($forum['fid'], 'OffTopic'))
-      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&amp;token=$stoken&amp;state=Active&amp;mid=" . $msg['mid'] . "\" title=\"Mark on-topic\">uo</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?$page&amp;token=$stoken&amp;state=Active&amp;mid=" . $msg['mid'] . "\" title=\"Mark on-topic\">uo</a>";
     if ($user->capable($forum['fid'], 'Delete'))
-      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&amp;token=$stoken&amp;state=Deleted&amp;mid=" . $msg['mid'] . "\" title=\"Delete\">dm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?$page&amp;token=$stoken&amp;state=Deleted&amp;mid=" . $msg['mid'] . "\" title=\"Delete\">dm</a>";
     break;
   case "Deleted":
     if ($user->capable($forum['fid'], 'Delete'))
-      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&amp;token=$stoken&amp;state=Active&amp;mid=" . $msg['mid'] . "\" title=\"Undelete\">ud</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?$page&amp;token=$stoken&amp;state=Active&amp;mid=" . $msg['mid'] . "\" title=\"Undelete\">ud</a>";
     break;
   case "Active":
     if ($user->capable($forum['fid'], 'OffTopic'))
-      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&amp;token=$stoken&amp;state=OffTopic&amp;mid=" . $msg['mid'] . "\" title=\"Mark offtopic\">om</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?$page&amp;token=$stoken&amp;state=OffTopic&amp;mid=" . $msg['mid'] . "\" title=\"Mark offtopic\">om</a>";
     if ($user->capable($forum['fid'], 'Delete'))
-      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?page=$page&amp;token=$stoken&amp;state=Deleted&amp;mid=" . $msg['mid'] . "\" title=\"Delete\">dm</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/changestate.phtml?$page&amp;token=$stoken&amp;state=Deleted&amp;mid=" . $msg['mid'] . "\" title=\"Delete\">dm</a>";
     break;
   }
 
   if ($user->capable($forum['fid'], 'Lock') && !$msg['pmid']) {
     if (isset($thread['flag']['Locked']))
-      $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?tid=" . $msg['tid'] . "&amp;page=$page&amp;token=$stoken\" title=\"Unlock\">ul</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/unlock.phtml?tid=" . $msg['tid'] . "&amp;$page&amp;token=$stoken\" title=\"Unlock\">ul</a>";
     else
-      $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?tid=" . $msg['tid'] . "&amp;page=$page&amp;token=$stoken\" title=\"Lock\">lt</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/lock.phtml?tid=" . $msg['tid'] . "&amp;$page&amp;token=$stoken\" title=\"Lock\">lt</a>";
     if (isset($thread['flag']['Sticky']))
-      $string .= " <a href=\"/" . $forum['shortname'] . "/sticky.phtml?tid=" . $msg['tid'] . "&amp;stick=0&amp;page=$page&amp;token=$stoken\" title=\"Unstick thread\">us</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/sticky.phtml?tid=" . $msg['tid'] . "&amp;stick=0&amp;$page&amp;token=$stoken\" title=\"Unstick thread\">us</a>";
     else
-      $string .= " <a href=\"/" . $forum['shortname'] . "/sticky.phtml?tid=" . $msg['tid'] . "&amp;stick=1&amp;page=$page&amp;token=$stoken\" title=\"Sticky thread\">st</a>";
+      $string .= " <a href=\"/" . $forum['shortname'] . "/sticky.phtml?tid=" . $msg['tid'] . "&amp;stick=1&amp;$page&amp;token=$stoken\" title=\"Sticky thread\">st</a>";
   }
 
   // if (!$msg['pmid']) $string .= sprintf(" %s (%d)", gen_date($user, $thread['unixtime']), $thread['unixtime']);

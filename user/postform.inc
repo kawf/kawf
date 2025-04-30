@@ -19,7 +19,6 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
 {
     global $thread, $forum, $script_name, $path_info;
     // global $tthreads_by_tid; // Not used directly here?
-    global $page_context;	// hack - used for return page link
     global $Debug;
 
     // Instantiate YATT for the form template
@@ -56,6 +55,10 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
     $form_tpl->set('show_locked_msg', $show_locked_msg);
     $form_tpl->set('show_noreplies_msg', $show_noreplies_msg);
     $form_tpl->set('show_nonewthreads_msg', $show_nonewthreads_msg);
+
+    // Set page context variables - needed in both enabled and disabled states
+    $form_tpl->set("PAGE_VALUE", get_page_context());
+    $form_tpl->set("PAGE", format_page_param());
 
     // --- Debug Info (Optional) ---
     $debug = "\naction = $action\n";
@@ -97,8 +100,8 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
         else $postcookie = $_REQUEST['postcookie'];
         $hidden = hidden("postcookie", $postcookie);
         $hidden .= hidden("forumname", $forum['shortname']);
-        $current_page_for_form = isset($_page) ? $_page : ($script_name . $path_info);
-        $hidden .= hidden("page", $current_page_for_form);
+        // Use get_page_context() for form hidden fields
+        $hidden .= hidden("page", get_page_context());
         if ($imgpreview) $hidden .= hidden("imgpreview", 'true');
         if (isset($msg['mid'])) {
              $hidden .= hidden("mid", $msg['mid']);
@@ -125,7 +128,10 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
         // Set User Details & Context
         $form_tpl->set("USER_NAME", $user->name);
         $form_tpl->set("USER_EMAIL", $user->email);
-        $form_tpl->set("PAGE", $current_page_for_form); // Set PAGE for links within form
+        // Use get_page_context() for form fields that need raw value
+        $form_tpl->set("PAGE_VALUE", get_page_context());
+        // Use format_page_param() for navigation links that need page=value format
+        $form_tpl->set("PAGE", format_page_param());
         $form_tpl->set("FORUM_SHORTNAME", $forum['shortname']); // Needed for form action
         $form_tpl->set("ACTION", $action);
         $form_tpl->set("token", $user->token());
@@ -168,8 +174,6 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
     } else {
          // Not enabled or not logged in - $is_acct_active remains false
          $is_acct_active = false;
-         // Set PAGE needed for login/create links
-         $form_tpl->set("PAGE", isset($_page) ? $_page : ($script_name . $path_info));
     }
 
     $form_tpl->set('is_acct_active', $is_acct_active);

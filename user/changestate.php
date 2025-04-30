@@ -4,7 +4,7 @@ require_once("message.inc");
 require_once("mailfrom.inc");
 require_once("textwrap.inc");
 
-$page = $_REQUEST['page'];
+$page = get_page_context(false);
 $state = $_REQUEST['state'];
 $mid = $_REQUEST['mid'];
 

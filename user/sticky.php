@@ -4,7 +4,7 @@ if (!isset($forum)) {
   exit;
 }
 
-$page = $_REQUEST['page'];
+$page = get_page_context(false);
 $tid = $_REQUEST['tid'];
 
 if (!$user->valid()) {

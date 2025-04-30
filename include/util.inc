@@ -249,4 +249,23 @@ function new_yatt($template, $forum = null) {
     }
     return $yatt;
 }
+
+/**
+ * Get the current page context from request parameters and format it as a URL parameter
+ * @return string The formatted URL parameter string (e.g. "page=value")
+ */
+function format_page_param() {
+    $context = get_page_context();
+    return $context ? "page=" . urlencode($context) : '';
+}
+
+/**
+ * Get the current page context from request parameters without the page= prefix
+ * @param bool $use_fallback Whether to fall back to current URL if no page parameter exists
+ * @return string The page context value, URL encoded for safe use in forms and URLs
+ */
+function get_page_context($use_fallback = true) {
+    global $script_name, $path_info;
+    return $_REQUEST['page'] ?? ($use_fallback ? ($script_name . $path_info) : '');
+}
 ?>

@@ -25,8 +25,9 @@ $tpl->set_file(array(
 */
 
 // Set basic variables needed by header/footer
-$_page = isset($_REQUEST['page']) ? $_REQUEST['page'] : ''; // Get page safely
-$content_tpl->set("PAGE", $_page);
+$content_tpl->set("MESSAGES", $messages);
+$content_tpl->set("PAGE", format_page_param());
+$content_tpl->set("TIME", time());
 
 /* $tid set by main.php for showthread.php */
 $thread = get_thread($tid);

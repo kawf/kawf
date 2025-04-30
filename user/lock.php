@@ -4,11 +4,10 @@ if (!isset($forum)) {
   exit;
 }
 
-$page = $_REQUEST['page'];
 $tid = $_REQUEST['tid'];
 
 if (!$user->valid()) {
-  header("Location: $page");
+  header("Location: " . get_page_context(false));
   exit;
 }
 
@@ -44,5 +43,5 @@ db_exec("update f_messages$iid set " .
         "where mid = ?",
         array($user->name, $user->aid, $thread['mid']));
 
-header("Location: $page");
+header("Location: " . get_page_context(false));
 ?>

@@ -5,15 +5,14 @@ require_once("pagenav.inc.php");
 require_once("page-yatt.inc.php");
 
 if (!$user->valid()) {
-    $current_url = urlencode($script_name . $path_info . ($query_string ? "?$query_string" : ""));
-    header("Location: /login.phtml?page=$current_url");
+    header("Location: /login.phtml?" . format_page_param());
     exit;
 }
 
 $content_tpl = new_yatt('showtracking.yatt', $forum);
 
 $content_tpl->set("user_token", $user->token());
-$content_tpl->set("page", $page_context);
+$content_tpl->set("page", get_page_context());
 $content_tpl->set("time", time());
 
 if (!isset($curpage))

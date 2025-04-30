@@ -55,7 +55,7 @@ if (isset($_REQUEST['hide'])) {
 }
 
 if (isset($_REQUEST['page'])) {
-    header("Location: " . $_REQUEST['page']);
+    header("Location: " . get_page_context(false));
 } elseif (strlen($gmsg['url'])>0) {
     header("Location: " . $gmsg['url']);
 } else {

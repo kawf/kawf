@@ -6,11 +6,10 @@ if (!isset($forum)) {
   exit;
 }
 
-$page = $_REQUEST['page'];
 $tid = $_REQUEST['tid'];
 
 if (!$user->valid() || !is_numeric($tid)) {
-  header("Location: $page");
+  header("Location: " . get_page_context(false));
   exit;
 }
 
@@ -25,6 +24,6 @@ if (!$user->is_valid_token($_REQUEST['token']))
 
 untrack_thread($forum['fid'], $tid);
 
-Header("Location: $page");
+header("Location: " . get_page_context(false));
 // vim: sw=2
 ?>

@@ -21,8 +21,10 @@ unset($update_email);
 
 $error = "";
 
-/* $_page set by main.php from _REQUEST */
-$content_tpl->set('PAGE', isset($_page)?$_page:'');
+/* Get page context using new function */
+// Use get_page_context() to get the raw page value for the template
+// This value will be used in the hidden form field to return to the correct page after account edit
+$content_tpl->set('PAGE', get_page_context());
 
 if (isset($_POST['name']))
   $name = $_POST['name'];

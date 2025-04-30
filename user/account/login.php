@@ -26,16 +26,14 @@ if($tou_available) {
   $content_tpl->parse('tou_agreement');
 }
 
-if (isset($_REQUEST['page']))
-  $page = $_REQUEST['page'];
+// Get page context for the form's hidden field
+$content_tpl->set('PAGE', get_page_context());
 
-if (isset($_REQUEST['url']))
-  $page = "http://" . $_REQUEST['url'];
-
-if (!isset($page))
-  $page = "/";
-
-$content_tpl->set('PAGE', isset($page)?$page:'');
+// Handle direct URL redirect if present
+if (isset($_REQUEST['url'])) {
+  header("Location: http://" . $_REQUEST['url']);
+  exit;
+}
 
 if (isset($_POST['login']) && isset($_POST['email'])) {
   $email = $_POST['email'];
@@ -50,7 +48,8 @@ if (isset($_POST['login']) && isset($_POST['email'])) {
     $message = "You must agree to the Terms Of Use\n";
   } else {
     $user->setcookie();
-    header("Location: $page");
+    // Redirect back to the page they came from
+    header("Location: " . get_page_context(false));
     exit;
   }
 } else

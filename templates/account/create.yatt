@@ -20,7 +20,7 @@
 <p>%[TOU]</p>
 <input type="checkbox" name="tou_agree" value="1">I agree to the Terms Of Use
 %end [tou_agreement]
-<input type="hidden" name="page" value="%[PAGE]">
+<input type="hidden" name="page" value="%[PAGE_VALUE]">
 </form>
 
 <p>Use your browser's BACK button to return to the Login screen.</p>

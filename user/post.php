@@ -17,8 +17,11 @@ if ($user->status != 'Active') {
 
 /* Check the data to make sure they entered stuff */
 if (!isset($forum)) {
-  /* Hmm, how did this happen? Redirect them back to the main page */
-  Header("Location: http://$server_name$script_name$path_info/"); // Use configured scheme/host?
+  if (isset($_REQUEST['page'])) {
+    header("Location: " . get_page_context(false));
+  } else {
+    header("Location: /");
+  }
   exit;
 }
 
@@ -35,8 +38,7 @@ require_once("page-yatt.inc.php");
 $content_tpl = new_yatt('post.yatt', $forum);
 
 // Set common vars
-$_page = isset($_REQUEST['page']) ? $_REQUEST['page'] : '';
-$content_tpl->set("PAGE", $_page);
+$content_tpl->set("PAGE", format_page_param());
 
 // Permission Checks
 $can_post_thread = isset($forum['option']['PostThread']) || $user->capable($forum['fid'], 'Delete');

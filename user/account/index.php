@@ -57,7 +57,7 @@ if(array_key_exists('noob', $_GET)) {
   }
 
   if($user->admin()) {
-    if ($_GET['page']) $page = "page=".$_GET['page'];
+    $page = format_page_param();
     if ($_GET['verbose']) $verbose = $_GET['verbose'];
     else $verbose=0;
 
@@ -159,7 +159,7 @@ if(array_key_exists('noob', $_GET)) {
   }
 
   if(isset($_GET['page']))
-    echo "<p><a href=\"" . htmlspecialchars($_GET['page']) . "\">Return to forums</a></p>\n";
+    echo "<p><a href=\"" . htmlspecialchars(get_page_context()) . "\">Return to forums</a></p>\n";
 
 function get_stats($uu)
 {
