@@ -93,5 +93,27 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
 
     return trim($page->output());
 }
+
+// Set up the YATT-based error renderer
+set_error_page_renderer(function($error_data) {
+    global $template_dir;
+    $error_tpl = new YATT($template_dir, '404.yatt');
+
+    // Set template variables
+    $error_tpl->set(array(
+        "DESCRIPTION" => $error_data['description'],
+        "URI" => $error_data['uri'],
+        "SERVER_SOFTWARE" => $error_data['server_info']['software'],
+        "SERVER_NAME" => $error_data['server_info']['name'],
+        "SERVER_PORT" => $error_data['server_info']['port']
+    ));
+
+    // Parse and return the rendered page
+    $error_tpl->parse("error_content");
+    $content_html = $error_tpl->output("error_content");
+
+    return generate_page($error_data['title'], $content_html);
+});
+
 // vim: sw=2
 ?>

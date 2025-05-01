@@ -1,9 +1,9 @@
 <?php
 
-error_reporting(E_ALL & ~E_NOTICE);
+require_once("error.inc.php");
+
 /* We use the templates for everything */
 // require_once("template.inc"); // REMOVED - No longer used here
-require_once(__DIR__ . '/../lib/YATT/YATT.class.php'); // ADDED - Ensure YATT class is available
 
 function safe_server_var($key)
 {
@@ -38,65 +38,6 @@ function url_origin( $s, $use_forwarded_host = false )
 function full_url( $s, $use_forwarded_host = false )
 {
     return url_origin( $s, $use_forwarded_host ) . $s['REQUEST_URI'];
-}
-
-function dump_env()
-{
-    global $server_name, $server_port, $remote_addr;
-    global $http_host;
-    global $request_uri, $request_path;
-    global $script_name, $path_info, $query_string;
-
-    $ret="url = '".full_url($_SERVER)."'\n";
-    $ret.="server_name = '$server_name'\n";
-    $ret.="server_port = '$server_port'\n";
-    $ret.="remote_addr = '$remote_addr'\n";
-    $ret.="http_host = '$http_host'\n";
-    $ret.="request_uri = '$request_uri'\n";
-    $ret.="request_path = '$request_path'\n";
-    $ret.="script_name = '$script_name'\n";
-    $ret.="path_info = '$path_info'\n";
-    $ret.="query_string = '$query_string'\n";
-    return $ret;
-}
-
-function err_not_found($description = "")
-{
-  global $_SERVER;
-  global $template_dir, $srcroot, $default_skin;
-  global $server_name, $server_port;
-  global $request_uri;
-
-  Header("HTTP/1.0 404 Not found");
-
-  $error_tpl = new YATT($template_dir, '404.yatt');
-
-  // Prepare description (keeping dump_env for now)
-  $full_description = $description . "\n". dump_env();
-
-  // Set base variables
-  $error_tpl->set(array(
-    // "DESCRIPTION" => $full_description, // Set conditionally below
-    "URI" => htmlspecialchars($request_uri ?? 'Unknown URI', ENT_QUOTES | ENT_HTML5, 'UTF-8'),
-    "SERVER_SOFTWARE" => $_SERVER['SERVER_SOFTWARE'] ?? 'Unknown Server',
-    "SERVER_NAME" => $server_name ?? 'Unknown Host',
-    "SERVER_PORT" => $server_port ?? 'Unknown Port',
-    "DEFAULT_SKIN" => $default_skin ?? 'modern',
-  ));
-
-  // Conditionally set DESCRIPTION and parse its block
-  $trimmed_description = trim($full_description);
-  if (!empty($trimmed_description)) {
-      $error_tpl->set("DESCRIPTION", $trimmed_description);
-      $error_tpl->parse("error_content.description_details");
-  }
-
-  // Parse the main content block
-  $error_tpl->parse("error_content");
-  $content_html = $error_tpl->output("error_content");
-
-  print generate_page('404 Not Found', $content_html);
-  exit;
 }
 
 function getmicrotime()
@@ -184,18 +125,6 @@ function time_ago($since_secs)
 		return "just now";
 
 	return $ago . " second" . ($ago == 1 ? "" : "s") . " ago";
-}
-
-function debug_log($msg)
-{
-    global $DEBUG_LOG;
-    $DEBUG_LOG .= $msg;
-}
-
-function get_debug_log()
-{
-    global $DEBUG_LOG;
-    return $DEBUG_LOG;
 }
 
 function get_forum_navigation()

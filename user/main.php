@@ -327,6 +327,8 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
       $sql .= " and ( " . implode(" or ", $qual) . " )";
 
     $sth = db_query($sql, $args);
+  } else {
+    $sql = "no iid found for mid $mid";
   }
 
   if (isset($sth) && $sth->fetch()) {
@@ -335,7 +337,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
     else
 	require_once("plainmessage.php");
   } else
-    err_not_found("Unknown message " . $mid . " in forum " . $forum['shortname']. "\n$sql");
+    err_not_found("Unknown message " . $mid . " in forum " . $forum['shortname']. ": " . $sql);
   if(isset($sth)) $sth->closeCursor();
 } elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/threads\/([0-9]+)\.phtml$/", $script_name.$path_info, $regs)) {
   if (!find_forum($regs[1]))
