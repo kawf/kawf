@@ -156,50 +156,59 @@ function build_tthreads($fid)
 
   /* build tthreads_by_tid thread tracking cache */
   if ($user->valid()) {
-    /* TZ: unixtime is seconds since epoch */
-    $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = ? and aid = ? order by tid desc";
-    $sth = db_query($sql, array($fid, $user->aid));
+    try {
+      /* TZ: unixtime is seconds since epoch */
+      $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = ? and aid = ? order by tid desc";
+      $sth = db_query($sql, array($fid, $user->aid));
 
-    while ($tthread = $sth->fetch()) {
-      $tid = $tthread['tid'];
+      while ($tthread = $sth->fetch()) {
+        $tid = $tthread['tid'];
 
-      if ($tid<=0) continue;
+        if ($tid<=0) {
+          error_log("Invalid tid in f_tracking: fid=$fid aid={$user->aid} tid=$tid");
+          continue;
+        }
 
-      /* HACK: f_tracking is missing a uniq key. Ditch dupe entries */
-      /* Hopefully won't happen if migration 20100314063313 is applied */
-      if (isset($tthreads_by_tid[$tid])) {
-	if ($tthread['unixtime'] > $tthreads_by_tid[$tid]['unixtime']) {
-	  // echo "dup tracking entry for tid $tid, overwriting<br>\n";
-	  /* Crap. This one is newer than existing entry. Rebuild all of
-	   * $tthreads w/o any entries with this tid */
-	  $new = array();
-	  foreach ($tthreads as $t) {
-	    if ($t['tid']!=$tthread['tid']) $new[]=$tthread;
-	  }
-	  $tthreads[] = $new;
-	} else {
-	  // echo "dup tracking entry for tid $tid, ignoring<br>\n";
-	  /* Throw it away. Don't add it to $tthreads_by_tid or $tthread */
-	  continue;
-	}
+        /* HACK: f_tracking is missing a uniq key. Ditch dupe entries */
+        /* Hopefully won't happen if migration 20100314063313 is applied */
+        if (isset($tthreads_by_tid[$tid])) {
+          if ($tthread['unixtime'] > $tthreads_by_tid[$tid]['unixtime']) {
+            error_log("Duplicate tracking entry for tid $tid, overwriting with newer entry");
+            /* Crap. This one is newer than existing entry. Rebuild all of
+             * $tthreads w/o any entries with this tid */
+            $new = array();
+            foreach ($tthreads as $t) {
+              if ($t['tid']!=$tthread['tid']) $new[]=$tthread;
+            }
+            $tthreads[] = $new;
+          } else {
+            error_log("Duplicate tracking entry for tid $tid, ignoring older entry");
+            /* Throw it away. Don't add it to $tthreads_by_tid or $tthread */
+            continue;
+          }
+        }
+
+        /* Throw away threads that we can't see */
+        if (filter_thread($tid)) {
+          error_log("Filtered out thread $tid for user {$user->aid}");
+          continue;
+        }
+
+        /* explode 'f_tracking' options set column */
+        if (!empty($tthread['options'])) {
+          $options = explode(',', $tthread['options']);
+          foreach ($options as $v) {
+            $tthread['option'][$v]=true;
+          }
+        }
+
+        $tthreads_by_tid[$tid] = $tthread;
+        $tthreads[] = $tthread;
       }
-
-      /* Throw away threads that we can't see */
-      if (filter_thread($tid))
-	continue;
-
-      /* explode 'f_tracking' options set column */
-      if (!empty($tthread['options'])) {
-	$options = explode(',', $tthread['options']);
-	foreach ($options as $v) {
-	  $tthread['option'][$v]=true;
-	}
-      }
-
-      $tthreads_by_tid[$tid] = $tthread;
-      $tthreads[] = $tthread;
+      $sth->closeCursor();
+    } catch (Exception $e) {
+      error_log("Error building tracking cache: " . $e->getMessage());
     }
-    $sth->closeCursor();
   }
   return array($tthreads, $tthreads_by_tid);
 }

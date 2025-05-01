@@ -185,8 +185,7 @@ function process_tthreads($just_count = false)
 function log_backtrace($bt)
 {
   foreach ($bt as $r) {
-    $out = sprintf("%s in %s at line %d", $r['file'], $r['function'],
-      $r['line']);
+    $out = sprintf("%s in %s at line %d", $r['file'], $r['function'], $r['line']);
     error_log("  $out");
   }
 }
