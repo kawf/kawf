@@ -400,25 +400,67 @@ function fetch_message($user, $mid, $what = '*')
     return image_url_hack_extract($msg);
 }
 
-function gen_date($user, $unixtime = null)
+function format_tracking_debug($data = array()) {
+  global $thread;
+  $parts = array();
+
+  // Don't always include server time
+  //$parts[] = sprintf("[NOW UTC:%s]", date('Y-m-d H:i:s', time()));
+
+  // Add timestamps
+  if (isset($data['unixtime'])) {
+    $parts[] = sprintf("[UTC:%s]", date('Y-m-d H:i:s', $data['unixtime']));
+  }
+
+  // Calculate track_unixtime if not provided
+  if (!isset($data['track_unixtime']) && isset($thread) && isset($thread['tid'])) {
+    global $tthreads_by_tid;
+    $tid = $thread['tid'];
+    if (isset($tthreads_by_tid[$tid])) {
+      $data['track_unixtime'] = $tthreads_by_tid[$tid]['unixtime'];
+    }
+  }
+
+  // Add tracking timestamp if available
+  if (isset($data['track_unixtime'])) {
+    $parts[] = sprintf("[user:%s]", date('Y-m-d H:i:s', $data['track_unixtime']));
+    // Add bumped status with human readable time difference
+    $elapsed = $data['track_unixtime'] - $data['unixtime'];
+    $parts[] = sprintf("[%s %s]",
+      ($data['unixtime'] > $data['track_unixtime'])?'new':'tracked',
+      time_elapsed($elapsed));
+  }
+
+  // Don't always include timezone debugging info
+  //$parts[] = sprintf("[tz:%+d]", $data['tzoff']/60/60);
+
+  return ' ' . implode(' ', $parts);
+}
+
+function gen_date($user, $unixtime = null, $track_unixtime = null)
 {
     global $debug_f_tracking;
 
     /* TZ: tzoff is difference between PHP server and viewer, not SQL server and viewer */
     $tzoff = isset($user->tzoff)?$user->tzoff:0;
 
-    $err="";
     if (!isset($unixtime)) $unixtime=time();
-    else if ($unixtime>time())
-      $err=" error";
+    else if ($unixtime>time()) {
+      // Log timestamp error but don't modify display
+      error_log("gen_date: timestamp in future: " . date('Y-m-d H:i:s', $unixtime));
+    }
 
     /* msg['date'] is time local to user... date() would normally be
        time local to PHP server */
-    //$ret = strftime("%Y-%m-%d %H:%M:%S", $unixtime - $tzoff); // FIXME Deprecated
-    $ret = date('Y-m-d H:i:s', $unixtime - $tzoff);
-    if ($debug_f_tracking)
-      $ret .= sprintf("(%d, %d, off=%d)", time(), $unixtime, $tzoff/60/60).$err;
-    return $ret;
+    if (!$debug_f_tracking)
+      return date('Y-m-d H:i:s', $unixtime - $tzoff);
+
+
+    return format_tracking_debug(array(
+        'unixtime' => $unixtime,
+        'track_unixtime' => $track_unixtime,
+        'tzoff' => $tzoff
+    ));
 }
 
 function msg_state_changed($fid, $msg, $newstate)

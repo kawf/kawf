@@ -3,7 +3,7 @@ require_once("message.inc");
 
 function print_subject($thread, $msg, $replies = -1, $collapse = false)
 {
-  global $vmid, $user, $tthreads_by_tid, $forum;
+  global $vmid, $user, $tthreads_by_tid, $forum, $debug_f_tracking;
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
@@ -99,6 +99,11 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
     $string .= " (<span class=\"red\"><b>Deleted</b></span>)";
   else if ($msg['state'] != "Active" && $msg['state'] != "OffTopic")
     $string .= " (" . $msg['state'] . ")";
+
+  // Add timestamp to subject when debug tracking is enabled
+  if ($debug_f_tracking) {
+    $string .= ": " . gen_date($user, $msg['unixtime']);
+  }
 
   return append_tools($user, $string, $forum, $thread, $msg);
 }

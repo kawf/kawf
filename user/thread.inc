@@ -122,8 +122,9 @@ function gen_threadlinks($thread, $collapse = false)
 	"&amp;page=" . $script_name . $path_info .
 	"&amp;token=" . $user->token() .
 	"\" class=\"ut\" title=\"Untrack thread\">ut</a>";
-      if ($debug_f_tracking)
-	$tl .= sprintf("<br> %s", gen_date($user, $tthread['unixtime']));
+      if ($debug_f_tracking) {
+        $tl .= sprintf("<br> %s", gen_date($user, $thread['unixtime'], $tthread['unixtime']));
+      }
     } else {
       $tl = " <a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] .
 	"&amp;page=" . $script_name . $path_info .
