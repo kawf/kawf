@@ -1,7 +1,7 @@
 <?php
 require_once("page-yatt.inc.php");
-require_once("strip.inc");
-require_once("message.inc");
+require_once("strip.inc.php");
+require_once("message.inc.php");
 
 $user->req();
 $stoken = $user->token();

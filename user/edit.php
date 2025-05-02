@@ -8,11 +8,11 @@ if ($user->status != 'Active') {
 }
 
 // Required includes
-require_once("strip.inc");
-require_once("diff.inc");         // For calculating diffs
-require_once("thread.inc");       // For get_thread
-require_once("message.inc");      // For fetch_message, render_message, preprocess etc.
-require_once("postform.inc");     // For render_postform
+require_once("strip.inc.php");
+require_once("diff.inc.php");         // For calculating diffs
+require_once("thread.inc.php");       // For get_thread
+require_once("message.inc.php");      // For fetch_message, render_message, preprocess etc.
+require_once("postform.inc.php");     // For render_postform
 require_once("page-yatt.inc.php"); // For YATT class and generate_page
 
 $mid = isset($_REQUEST['mid']) ? $_REQUEST['mid'] : null;

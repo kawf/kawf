@@ -1,5 +1,5 @@
 <?php
-require_once('thread.inc');
+require_once('thread.inc.php');
 
 if (!isset($forum)) {
   echo "Invalid forum\n";

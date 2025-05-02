@@ -3,7 +3,7 @@
 require_once("error.inc.php");
 
 /* We use the templates for everything */
-// require_once("template.inc"); // REMOVED - No longer used here
+// require_once("template.inc.php"); // REMOVED - No longer used here
 
 function safe_server_var($key)
 {

@@ -2,9 +2,9 @@
 <?php
 $kawf_base = realpath(dirname(__FILE__) . "/..");
 require_once($kawf_base . "/config/config.inc");
-require_once($kawf_base . "/include/sql.inc");
-require_once($kawf_base . "/user/tables.inc");
-require_once($kawf_base . "/db/include/migration.inc");
+require_once($kawf_base . "/include/sql.inc.php");
+require_once($kawf_base . "/user/tables.inc.php");
+require_once($kawf_base . "/db/include/migration.inc.php");
 
 $migrationsdirpath = $kawf_base . "/db/migrations";
 $databaseMigration = new DatabaseMigration();

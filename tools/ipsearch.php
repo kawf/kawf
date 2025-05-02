@@ -3,7 +3,7 @@
 $kawf_base = realpath(dirname(__FILE__) . "/..");
 require_once($kawf_base . "/config/setup.inc");
 require_once($kawf_base . "/config/config.inc");
-require_once($kawf_base . "/include/sql.inc");
+require_once($kawf_base . "/include/sql.inc.php");
 
 if ($_SERVER['argc']<2) {
     printf("usage: %s ip [ ip .. ]\n", $_SERVER['argv'][0]);

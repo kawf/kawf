@@ -26,13 +26,13 @@ $_GET['config']="";
 $_POST['config']="";
 
 include_once("$config.inc");
-require_once("sql.inc");
-require_once("util.inc");
-require_once("filter.inc");
-require_once("forumuser.inc");
-require_once("timezone.inc");
-require_once("acl_ip_ban.inc");
-require_once("acl_ip_ban_list.inc");
+require_once("sql.inc.php");
+require_once("util.inc.php");
+require_once("filter.inc.php");
+require_once("forumuser.inc.php");
+require_once("timezone.inc.php");
+require_once("acl_ip_ban.inc.php");
+require_once("acl_ip_ban_list.inc.php");
 
 db_connect();
 //db_exec("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");

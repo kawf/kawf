@@ -17,9 +17,9 @@ $_GET['config']="";
 $_POST['config']="";
 
 include_once("$config.inc");
-require_once("sql.inc");
-require_once("util.inc");
-require_once("adminuser.inc");
+require_once("sql.inc.php");
+require_once("util.inc.php");
+require_once("adminuser.inc.php");
 
 require_once("page.inc.php");
 

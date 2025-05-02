@@ -1,5 +1,5 @@
 <?php
-include 'noob.inc';
+include 'noob.inc.php';
 
 $user= new ForumUser;
 

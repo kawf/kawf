@@ -2,9 +2,9 @@
 
 $user->req();
 
-require_once("strip.inc");
-require_once("timezone.inc");
-require_once("nl2brPre.inc");
+require_once("strip.inc.php");
+require_once("timezone.inc.php");
+require_once("nl2brPre.inc.php");
 require_once("page-yatt.inc.php");
 
 // Instantiate YATT for the content template

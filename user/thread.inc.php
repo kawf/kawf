@@ -1,7 +1,7 @@
 <?php
 
-require_once("filter.inc");
-require_once("listthread.inc");
+require_once("filter.inc.php");
+require_once("listthread.inc.php");
 
 function get_thread_messages($thread, $vmid = 0)
 {

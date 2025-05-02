@@ -1,7 +1,7 @@
 <?php
 
-require_once("strip.inc");
-require_once("validate.inc");
+require_once("strip.inc.php");
+require_once("validate.inc.php");
 require_once("page-yatt.inc.php");
 
 $aid = $user->aid;

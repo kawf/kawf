@@ -2,7 +2,7 @@
 <?php
 $kawf_base = realpath(dirname(__FILE__) . "/..");
 require_once($kawf_base . "/config/config.inc");
-require_once($kawf_base . "/include/sql.inc");
+require_once($kawf_base . "/include/sql.inc.php");
 
 db_connect();
 

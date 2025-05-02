@@ -1,6 +1,6 @@
 <?php
 
-require_once("sql.inc");
+require_once("sql.inc.php");
 
 function get_notices_html($forum, $aid)
 {

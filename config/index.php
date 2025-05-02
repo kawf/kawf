@@ -1,6 +1,6 @@
 <?php
 require_once('setup.inc');
-require_once("$srcroot/include/util.inc");
+require_once("$srcroot/include/util.inc.php");
 
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 

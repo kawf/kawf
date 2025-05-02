@@ -1,8 +1,8 @@
 <?php
 require_once('tools.inc.php');
-require_once("sql.inc");
-require_once("util.inc");
-require_once("user/tables.inc");
+require_once("sql.inc.php");
+require_once("util.inc.php");
+require_once("user/tables.inc.php");
 
 db_connect();
 

@@ -1,7 +1,7 @@
 <?php
 
 $kawf_base = realpath(dirname(__FILE__) . "/../..");
-require_once($kawf_base . "/include/strip.inc");
+require_once($kawf_base . "/include/strip.inc.php");
 
 class StripTest extends PHPUnit_Framework_TestCase {
   public function testEntityDecode() {

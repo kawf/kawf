@@ -1,14 +1,14 @@
 <?php
 
-require_once("util.inc");	/* for getmicrotime() */
+require_once("util.inc.php");	/* for getmicrotime() */
 /* Seed the random number generator */
 mt_srand(getmicrotime());
 
-require_once("sql.inc");
-require_once("validate.inc");
-require_once("mailfrom.inc");
-require_once("strip.inc");
-require_once("timezone.inc");
+require_once("sql.inc.php");
+require_once("validate.inc.php");
+require_once("mailfrom.inc.php");
+require_once("strip.inc.php");
+require_once("timezone.inc.php");
 
 /* This is the standard ForumUser class */
 #[AllowDynamicProperties] /* temp workaround for Issue #77 */

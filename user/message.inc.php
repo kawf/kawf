@@ -1,8 +1,8 @@
 <?php
-require_once("nl2brPre.inc");
+require_once("nl2brPre.inc.php");
 require_once("embed-media.inc.php");
 require_once("Skip32.inc.php");
-require_once("textwrap.inc");
+require_once("textwrap.inc.php");
 
 function message_set_block($tpl)
 {
@@ -309,8 +309,8 @@ function image_url_hack_extract($msg)
 /* MODIFIES MESSAGE */
 /* Called by
    showthread.php - thread summary
-   message.inc:process_message() - message display
-   thread.inc:get_thread_message() - "All messages" thread display
+   message.inc.php:process_message() - message display
+   thread.inc.php:get_thread_message() - "All messages" thread display
  */
 function process_message($user, &$msg)
 {

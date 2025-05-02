@@ -1,14 +1,14 @@
 <?php
 
-require_once("strip.inc");          // For stripcrap
-require_once("thread.inc");         // For get_thread
-require_once("message.inc");        // For preprocess, render_message, mid_to_iid, db_query_first etc.
-require_once("postform.inc");       // For render_postform
-require_once("postmessage.inc");    // For postmessage
-require_once("mailfrom.inc");       // For email_followup, db_exec
+require_once("strip.inc.php");          // For stripcrap
+require_once("thread.inc.php");         // For get_thread
+require_once("message.inc.php");        // For preprocess, render_message, mid_to_iid, db_query_first etc.
+require_once("postform.inc.php");       // For render_postform
+require_once("postmessage.inc.php");    // For postmessage
+require_once("mailfrom.inc.php");       // For email_followup, db_exec
 require_once("page-yatt.inc.php");  // For YATT class, generate_page
 
-$user->req(); // This now relies on user.inc being loaded before this script
+$user->req(); // This now relies on user.inc.php being loaded before this script
 
 if ($user->status != 'Active') {
   echo "Your account isn't validated\n";
@@ -27,10 +27,10 @@ if (!isset($forum)) {
 
 // REMOVED SECOND INCLUDE BLOCK
 /*
-require_once("textwrap.inc");
-require_once("strip.inc");
-require_once("thread.inc");
-require_once("message.inc");
+require_once("textwrap.inc.php");
+require_once("strip.inc.php");
+require_once("thread.inc.php");
+require_once("message.inc.php");
 require_once("page-yatt.inc.php");
 */
 
@@ -208,7 +208,7 @@ if (isset($_POST['postcookie'])) {
       $status = isset($_POST['OffTopic']) ? "OffTopic" : "Active";
       $msg['state'] = $status;
 
-      // We are now calling the refactored postmessage() from postmessage.inc (Corrected name)
+      // We are now calling the refactored postmessage() from postmessage.inc.php (Corrected name)
       $is_new_message = postmessage($user, $forum['fid'], $msg, $_POST);
       // $msg array now contains the correct mid and tid set by postmessage() regardless of return value
 

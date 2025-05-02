@@ -15,9 +15,9 @@ $_GET['config']="";
 $_POST['config']="";
 
 include_once("$config.inc");
-require_once("sql.inc");
-require_once("util.inc");
-require_once("forumuser.inc");
+require_once("sql.inc.php");
+require_once("util.inc.php");
+require_once("forumuser.inc.php");
 
 db_connect();
 //db_exec("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED");

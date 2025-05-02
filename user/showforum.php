@@ -1,10 +1,10 @@
 <?php
 
-require_once("thread.inc");
+require_once("thread.inc.php");
 require_once("pagenav.inc.php");
 require_once("page-yatt.inc.php");
-require_once("postform.inc"); // Likely needed for the post form
-require_once("notices.inc"); // For forum notices
+require_once("postform.inc.php"); // Likely needed for the post form
+require_once("notices.inc.php"); // For forum notices
 
 // Function to generate the link for restoring hidden global messages
 // Placed here temporarily as the original definition location is unknown.

@@ -1,6 +1,6 @@
 <?php
 
-require_once("strip.inc");
+require_once("strip.inc.php");
 
 /*
    hack to pull out header information that is hardcoded into the .tpl

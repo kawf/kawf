@@ -1,6 +1,6 @@
 <?php
 
-include_once("strip.inc");
+include_once("strip.inc.php");
 require_once("page-yatt.inc.php");
 
 /* Delete the logged in user */

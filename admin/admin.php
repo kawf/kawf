@@ -3,7 +3,7 @@
 
 require_once("pagenav.inc.php");
 require_once('lib/YATT/YATT.class.php'); // Use include path
-require_once('util.inc'); // Use include path
+require_once('util.inc.php'); // Use include path
 
 $user->req("ForumAdmin");
 

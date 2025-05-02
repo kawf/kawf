@@ -1,7 +1,7 @@
 <?php
 
 $kawf_base = realpath(dirname(__FILE__) . "/../..");
-require_once($kawf_base . "/include/nl2brPre.inc");
+require_once($kawf_base . "/include/nl2brPre.inc.php");
 
 class Nl2BrPreTest extends PHPUnit_Framework_TestCase {
   public function testNl2BrPre() {

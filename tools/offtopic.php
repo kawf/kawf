@@ -11,11 +11,11 @@ if (!empty($old_include_path))
 ini_set("include_path", $include_path);
 
 include_once("$config.inc");
-require_once("sql.inc");
-// require_once("template.inc"); // REMOVED
-require_once("user.inc");
-require_once("textwrap.inc");
-require_once("mailfrom.inc");
+require_once("sql.inc.php");
+// require_once("template.inc.php"); // REMOVED
+require_once("user.inc.php");
+require_once("textwrap.inc.php");
+require_once("mailfrom.inc.php");
 
 // REMOVED Template instantiation and set_file
 // $tpl = new Template($template_dir, "comment");

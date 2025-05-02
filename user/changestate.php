@@ -1,8 +1,8 @@
 <?php
 
-require_once("message.inc");
-require_once("mailfrom.inc");
-require_once("textwrap.inc");
+require_once("message.inc.php");
+require_once("mailfrom.inc.php");
+require_once("textwrap.inc.php");
 
 $state = $_REQUEST['state'];
 $mid = $_REQUEST['mid'];

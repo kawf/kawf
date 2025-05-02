@@ -1,6 +1,6 @@
 <?php
 
-require_once("printsubject.inc");
+require_once("printsubject.inc.php");
 
 /* Recursive listing of a thread */
 function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = array(), $dontshow = false)

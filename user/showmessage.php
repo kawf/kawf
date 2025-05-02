@@ -1,12 +1,12 @@
 <?php
 
-require_once("printsubject.inc");
-require_once("listthread.inc");
-require_once("thread.inc");
-require_once("filter.inc");
-require_once("strip.inc");
-require_once("message.inc");
-require_once("postform.inc");
+require_once("printsubject.inc.php");
+require_once("listthread.inc.php");
+require_once("thread.inc.php");
+require_once("filter.inc.php");
+require_once("strip.inc.php");
+require_once("message.inc.php");
+require_once("postform.inc.php");
 require_once("page-yatt.inc.php");
 
 if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {

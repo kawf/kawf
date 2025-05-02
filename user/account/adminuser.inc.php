@@ -1,6 +1,6 @@
 <?php
 
-require_once("forumuser.inc");
+require_once("forumuser.inc.php");
 
 /* This is the AdminUser class */
 class AdminUser extends AccountUser {

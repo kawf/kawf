@@ -4,7 +4,7 @@
 $kawf_base = realpath(dirname(__FILE__) . "/..");
 include_once($kawf_base . "/config/config.inc");
 include_once($kawf_base . "/config/setup.inc");
-include_once($kawf_base . "/include/sql.inc");
+include_once($kawf_base . "/include/sql.inc.php");
 
 $opts = getopt('y:');
 if(!array_key_exists('y', $opts) or !($year = (int)$opts['y'])) {

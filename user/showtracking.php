@@ -1,6 +1,6 @@
 <?php
 
-require_once("thread.inc");
+require_once("thread.inc.php");
 require_once("pagenav.inc.php");
 require_once("page-yatt.inc.php");
 

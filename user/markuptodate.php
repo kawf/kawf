@@ -21,7 +21,7 @@ else
 $time = date("YmdHis", $time);
 
 if ($tid == "all") {
-  require_once("thread.inc");	/* for is_thread_bumped() */
+  require_once("thread.inc.php");	/* for is_thread_bumped() */
   foreach ($tthreads as $tthread) {
     $iid = tid_to_iid($tthread['tid']);
     if (!isset($iid))

@@ -1,6 +1,6 @@
 <?php
 require_once("lib/YATT/YATT.class.php");
-require_once("notices.inc");
+require_once("notices.inc.php");
 
 function generate_page($title, $contents, $skip_header=false, $meta_robots=false)
 {

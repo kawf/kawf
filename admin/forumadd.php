@@ -3,7 +3,7 @@
 
 $user->req("ForumAdmin");
 
-require_once("user/tables.inc"); // For $create_* table SQL
+require_once("user/tables.inc.php"); // For $create_* table SQL
 require_once('lib/YATT/YATT.class.php'); // Use include path
 
 // --- POST Handler ---

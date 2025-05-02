@@ -1,5 +1,5 @@
 <?php
-require_once("message.inc");
+require_once("message.inc.php");
 
 function print_subject($thread, $msg, $replies = -1, $collapse = false)
 {
