@@ -36,8 +36,8 @@ if (!isset($thread))
 
 /* Mark the thread as read if need be */
 if (is_thread_bumped($thread)) {
-  $sql = "update f_tracking set tstamp = NOW() where tid = ? and aid = ?";
-  db_exec($sql, array($tid, $user->aid));
+  $sql = "update f_tracking set tstamp = NOW() where fid = ? and tid = ? and aid = ?";
+  db_exec($sql, array($forum['fid'], $tid, $user->aid));
 }
 
 // Get messages and tree structure

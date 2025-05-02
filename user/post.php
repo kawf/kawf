@@ -91,7 +91,6 @@ $error = []; // Holds validation error flags
 $preview = false;
 $imgpreview = false;
 $accepted = false;
-$duplicate = false;
 $rendered_preview_html = ''; // Store rendered preview
 
 // --- Main Logic: Handle POST or GET ---
@@ -220,23 +219,14 @@ if (isset($_POST['postcookie'])) {
 
       if ($is_new_message) {
           // --- New Message Posted Successfully ---
-          $duplicate = false; // Flag if needed elsewhere
-          // Update tracking table if requested
-          if (isset($_POST['TrackThread'])) {
-            $sql = "REPLACE f_tracking set aid=?, fid=?, tid=?, tstamp=NOW()";
-            db_exec($sql, array($user->aid, $forum['fid'], $msg['tid']));
-          }
           // Handle Email Followups
           if (isset($_POST['EmailFollowup'])) {
               email_followup($msg, $forum);
           }
-          // Parse accept block
           $content_tpl->parse("post_content.accept");
       } else {
           // --- Duplicate Message Detected ---
           // postmessage() should have updated the existing message with new content
-          $duplicate = true; // Flag if needed elsewhere
-          // Don't update tracking or send emails for a duplicate detection
           $content_tpl->parse("post_content.duplicate");
       }
   }
