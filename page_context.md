@@ -9,7 +9,6 @@ The codebase uses several standardized patterns for page context:
 
 Recent Standardizations:
 - Location headers now use `get_page_context(false)` directly
-- ⚠️ TODO: Implement `get_base_url()` for consistent path construction
 - Special case in undelete.php: Uses raw page value to prevent fallback behavior
 
 ### Standardized Usage Patterns
@@ -125,15 +124,14 @@ templates/
 - Maintained compatibility
 
 ### Known Issues
-1. **Location Headers:**
-   - Inconsistent page context usage across files
-   - Direct $page variable usage without proper initialization
-   - Mixed usage of get_page_context(false) and raw $page
-   - Inconsistent multi-parameter URL construction
+1. **URL Validation:**
+   - Need to add validation for page context values
+   - Consider adding URL sanitization
+   - Review security implications of page context values
 
 ### Migration Status
 - [x] Core functions added
 - [x] Basic usage updated
-- [ ] Review multi-parameter redirects
+- [x] Review multi-parameter redirects
 - [ ] Add URL validation
 - [ ] Standardize hardcoded paths

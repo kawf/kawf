@@ -8,7 +8,7 @@
 2. **Page Context Refactoring Goal:**
    Replace the current global page context system with a centralized, maintainable solution that eliminates global variables and provides consistent context handling across the application.
 
-## Current State Analysis
+## Historical YATT State Analysis
 
 *   **YATT:** Partially used, provides outer page structure (`page-yatt.inc.php`).
 *   **`Template` Class:** (`include/template.inc`) Used extensively, especially in `user/` and `user/account/` directories.
@@ -17,7 +17,6 @@
     *   `set_var(name, value)`: Escapes `{`, `$`, `\` characters in `value` automatically.
     *   `parse(target, handle, append=true)`: Used for building repeated content (loops).
     *   `unknowns="comment"`: Typical setting, replaces undefined `{VAR}` with HTML comments.
-*   **Inline PHP:** Some pages use `<?php echo ... ?>` or `<?= ... ?>` directly in PHP/PHTML files (especially in `admin/`).
 
 ## Key Differences Between Template and YATT
 
@@ -52,6 +51,10 @@
      - Helps prevent variable dependency issues
      - Makes debugging easier
      - Matches the visual structure of the template
+
+## Current YATT State Analysis
+
+*   **Inline PHP:** Some pages may still use `<?php echo ... ?>` or `<?= ... ?>` directly in PHP/PHTML files (especially in `admin/`).
 
 ## Routing System
 
@@ -139,7 +142,7 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
 
 ## Migration Plan (Phased Approach)
 
-1.  **Phase 0:** Analysis, Baseline Capture. ✅ COMPLETED
+1.  **Phase 1:** Analysis, Baseline Capture. ✅ COMPLETED
 
 2.  **Phase 2 Completed:** ✅
     *   **Admin Section:** Migrated (`admin.php`, `forumadd.php`, `forummodify.php`, `gmessage.php` use YATT). Others deferred/skipped.
@@ -151,62 +154,36 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
     *   **Core (`user/main.php`):** Refactored to remove `template.inc` dependency and global `$tpl` object.
     *   **Core (`user/printsubject.inc`):** Refactored to use temporary global `$page_context` instead of `$tpl`.
     *   **Cleanup:** `include/template.inc` deleted. All associated `.tpl` files deleted (except restored/converted samples).
-
-3.  **Current Phase - Page Context Migration:**
     *   **Analysis Complete:** Identified global variables `$page_context` and `$_page` usage patterns
     *   **Initial Changes:**
         - Added new context functions to `util.inc`
         - Created test cases for context usage
         - Documented current patterns
-    *   **In Progress:**
-        - Updating form handling in `postform.inc`
-        - Modifying action links in `printsubject.inc`
-        - Testing changes with curl and cookies
-    *   **Next Steps:**
-        - Complete form handling updates
-        - Update remaining action files
-        - Add error handling
-        - Run test suite
 
-4.  **Pending Implementation:**
-    *   **Forum Header Assets:**
-        - Migrate kawf-beta forum header images
-        - Update image paths in templates
-        - Verify image loading
-        - Test responsive behavior
-    *   **Custom Forum Templates:**
-        - Port kawf-beta custom forum templates
-        - Update template inheritance
-        - Verify template variables
-        - Test custom styling
-    *   **Integration:**
-        - Merge with page context changes
-        - Update asset handling
-        - Verify template loading
-        - Test combined changes
-
-5.  **Future Phase - kawfGlobals Implementation:**
+3.  **Current Phase: Clean Up**
+    *   **Rename `.inc` include files to `.inc.php`**
+        - `git mv` all of them
+        - Fix all references
     *   **From Issue #40:** Replace globals in `include/utils.inc` with `user/kawfGlobals.class.php` object
-    *   **Implementation Plan:**
-        - Create `kawfGlobals` class structure
-        - Migrate global variables from `utils.inc`
-        - Update all references to use new class
-        - Add proper encapsulation and access methods
-    *   **Benefits:**
-        - Better code organization
-        - Improved testability
-        - Reduced global state
-        - Clearer data flow
-    *   **Integration:**
-        - Coordinate with page context changes
-        - Update template system usage
-        - Modify asset handling
-        - Update testing framework
+        *   **Implementation Plan:**
+            - Create `kawfGlobals` class structure
+            - Migrate global variables from `utils.inc`
+            - Update all references to use new class
+            - Add proper encapsulation and access methods
+        *   **Benefits:**
+            - Better code organization
+            - Improved testability
+            - Reduced global state
+            - Clearer data flow
+        *   **Integration:**
+            - Coordinate with page context changes
+            - Update template system usage
+            - Modify asset handling
+            - Update testing framework
 
-6.  **Pending Verification (Deferred):**
+4.  **Pending Verification (Deferred):**
     *   Remaining admin scripts migration (if desired)
     *   Final integration testing
-    *   Performance validation
 
 ## YATT Library Updates & Testing (Recent Session)
 
@@ -218,133 +195,17 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
     *   Added `test_text_merge.php` to verify correct text node handling.
     *   Added `test_comments.php` to verify comment processing.
 
-## Current Step & Next Action (Current Session)
-
-*   **Previous:**
-    - Completed migration to remove `template.inc` dependency
-    - Generated patch from `../kawf-beta` fork for manual porting
-    - Successfully merged/rebased the `../kawf-beta` fork changes
-    - Identified page context issues in HTML structure
-    - Identified missing forum header assets and custom templates
-    - Referenced issue #40 for kawfGlobals implementation
-
-*   **Current:**
-    - Working on page context migration
-    - Testing HTML structure changes
-    - Verifying form submissions and redirects
-    - Documenting changes and progress
-    - Planning forum header assets migration
-    - Analyzing custom forum templates
-    - Planning kawfGlobals implementation
-
-*   **Next:**
-    - Complete page context migration
-    - Update remaining templates
-    - Add error handling
-    - Run final test suite
-    - Implement forum header assets
-    - Port custom forum templates
-    - Begin kawfGlobals implementation
-
-## Page Context Migration Progress
-
-### Completed Tasks
-1. **Analysis:**
-   - Identified global variables usage
-   - Documented current patterns
-   - Created test cases
-   - Set up monitoring
-
-2. **Initial Implementation:**
-   - Added context functions to `util.inc`
-   - Created test framework
-   - Documented changes
-   - Set up error logging
-
-3. **Testing Infrastructure:**
-   - Set up curl testing
-   - Created cookie handling
-   - Documented test procedures
-   - Added error logging
-
-### In Progress
-1. **Core Changes:**
-   - Updating form handling
-   - Modifying action links
-   - Testing changes
-   - Documenting progress
-
-2. **Template Updates:**
-   - Reviewing template changes
-   - Testing HTML structure
-   - Verifying form submissions
-   - Checking redirects
-
-### Next Steps
-1. **Implementation:**
-   - Complete form handling
-   - Update action files
-   - Add error handling
-   - Run test suite
-
-2. **Testing:**
-   - Verify all features
-   - Check for regressions
-   - Validate user experience
-   - Document results
-
-3. **Deployment:**
-   - Prepare deployment plan
-   - Set up monitoring
-   - Create rollback plan
-   - Schedule deployment
-
 ### Known Issues
-1. **HTML Structure:**
-   - Differences in div nesting
-   - Form placement issues
-   - Template variable handling
-   - Block structure changes
+1. **Testing:**
+   - URL validation coverage
 
-2. **Testing:**
-   - Cookie handling complexity
-   - Session persistence
-   - Form submission verification
-   - Redirect validation
+2. **Page Context Escaping:**
+   - ⚠️ TODO: Review usage of htmlspecialchars() with page context values
+   - Current documentation suggests always using htmlspecialchars()
+   - But most code doesn't use it with get_page_context()
+   - Need to investigate security implications
+   - May need to update documentation or add escaping
 
-3. **Assets and Templates:**
-   - Missing forum header images
-   - Custom forum templates not ported
-   - Image path inconsistencies
-   - Template inheritance issues
-
-4. **Global State:**
-   - Excessive use of global variables
-   - Inconsistent state management
-   - Difficult testing
-   - Poor encapsulation
-
-### Solutions in Progress
-1. **HTML Structure:**
-   - Reviewing template changes
-   - Testing block structure
-   - Verifying form placement
-   - Documenting differences
-
-2. **Testing:**
-   - Improving cookie handling
-   - Enhancing session testing
-   - Adding form validation
-   - Creating test cases
-
-3. **Assets and Templates:**
-   - Planning asset migration
-   - Analyzing template differences
-   - Updating image paths
-   - Testing template inheritance
-
-4. **Global State:**
-   - Planning kawfGlobals implementation
-   - Analyzing global usage patterns
-   - Designing class structure
-   - Preparing migration strategy
+3. **Location Headers:**
+   - Need to investigate security implications
+   - May need to update documentation or add escaping
