@@ -281,7 +281,8 @@ function find_thread_index($tid)
 if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $script_name.$path_info, $regs)) {
   if (!isset($scripts[$regs[2]])) {
     if (find_forum($regs[2])) {
-      Header("Location: http://$_url$script_name$path_info/");
+      // got forum but need trailing slash
+      Header("Location: $script_name$path_info/");
       exit;
     } else
       err_not_found("Unknown script \"" . $regs[2] . "\" in \"$script_name.$path_info\"");
