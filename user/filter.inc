@@ -25,6 +25,7 @@ function filter_message($msg, $path = array())
    */
 
   /* Message is owned by viewer, never filter */
+  /* TODO: If we wanted to sandbox users, this is where we can do it: if msg->aid matches a sandboxed user, return false */
   if ($msg['aid'] == $user->aid) return false;
 
   /* Message is in the path to this leaf, we need it */
