@@ -110,9 +110,17 @@ function js_href($filename="main.js", $cache_buster=true)
         return "$js_href_dir/$filename";
 }
 
-function time_ago($since_secs)
+function time_elapsed($diff)
 {
-	$ago = time() - $since_secs;
+    if ($diff > 0) {
+        $s = " ago";
+        $ago = $diff;
+    } else if ($diff < 0) {
+        $s = " from now";
+        $ago = -$diff;
+    } else {
+        return "just now";
+    }
 
 	$years = floor($ago / 60 / 60 / 24 / 365);
 	$ago -= ($years * 60 * 60 * 24 * 365);
@@ -133,21 +141,26 @@ function time_ago($since_secs)
 	$ago -= ($mins * 60);
 
 	if ($years)
-		return $years . " year" . ($years == 1 ? "" : "s") . " ago";
+		return $years . " year" . ($years == 1 ? "" : "s") . $s;
 	if ($months)
-		return $months . " month" . ($months == 1 ? "" : "s") . " ago";
+		return $months . " month" . ($months == 1 ? "" : "s") . $s;
 	if ($weeks)
-		return $weeks . " week" . ($weeks == 1 ? "" : "s") . " ago";
+		return $weeks . " week" . ($weeks == 1 ? "" : "s") . $s;
 	if ($days)
-		return $days . " day" . ($days == 1 ? "" : "s") . " ago";
+		return $days . " day" . ($days == 1 ? "" : "s") . $s;
 	if ($hours)
-		return $hours . " hour" . ($hours == 1 ? "" : "s") . " ago";
+		return $hours . " hour" . ($hours == 1 ? "" : "s") . $s;
 	if ($mins)
-		return $mins . " minute" . ($mins == 1 ? "" : "s") . " ago";
-	if ($ago <= 1)
+		return $mins . " minute" . ($mins == 1 ? "" : "s") . $s;
+	if ($ago <= 0)
 		return "just now";
 
-	return $ago . " second" . ($ago == 1 ? "" : "s") . " ago";
+	return $ago . " second" . ($ago == 1 ? "" : "s") . $s;
+}
+
+function time_ago($when)
+{
+    return time_elapsed(time()-$when);
 }
 
 function get_forum_navigation()
