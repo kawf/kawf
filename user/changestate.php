@@ -4,14 +4,13 @@ require_once("message.inc");
 require_once("mailfrom.inc");
 require_once("textwrap.inc");
 
-$page = get_page_context(false);
 $state = $_REQUEST['state'];
 $mid = $_REQUEST['mid'];
 
 $user->req();
 
-if (empty($page)) {
-  echo "No page $page\n";
+if (empty(get_page_context(false))) {
+  echo "No page context\n";
   exit;
 }
 
@@ -32,7 +31,7 @@ $msg = db_query_first("select mid, aid, pid, state, subject, flags from f_messag
 
 /* don't do anything if no change */
 if ($msg['state'] == $state)
-  header("Location: $page");
+  header("Location: " . get_page_context(false));
 
 /* FIXME: translate pid -> pmid */
 if (!isset($msg['pmid']) && isset($msg['pid']))
@@ -105,6 +104,6 @@ db_exec("update f_messages$iid set " .
 
 msg_state_changed($forum['fid'], $msg, $state);
 
-header("Location: $page");
+header("Location: " . get_page_context(false));
 // vim: sw=2
 ?>

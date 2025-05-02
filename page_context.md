@@ -7,6 +7,11 @@ The codebase uses several standardized patterns for page context:
 - `PAGE`: Formatted URL parameter string (with `page=` prefix) for links
 - Direct `$page` variable: Used for Location headers and some direct URL handling
 
+Recent Standardizations:
+- Location headers now use `get_page_context(false)` directly
+- ⚠️ TODO: Implement `get_base_url()` for consistent path construction
+- Special case in undelete.php: Uses raw page value to prevent fallback behavior
+
 ### Standardized Usage Patterns
 
 1. Form Hidden Fields:
@@ -30,27 +35,13 @@ $content_tpl->set("PAGE", format_page_param());
 3. Redirects (Location Headers):
 ```php
 // Simple redirects
-$page = get_page_context(false);  // No fallback for Location headers
-header("Location: $page");
+header("Location: " . get_page_context(false));  // No fallback for Location headers
 
-// Conditional redirects
-if (isset($_REQUEST['page'])) {
-    header("Location: " . get_page_context(false));
-} else {
-    header("Location: /");  // Explicit fallback
-}
+// Multi-parameter redirects (Standard)
+header("Location: somepage.phtml?state=Active&mid=$mid&" . format_page_param() . "&token=$stoken");
 
-// Multi-parameter redirects
-header("Location: somepage.phtml?state=Active&mid=$mid&page=$page&token=$stoken");
-// Note: Still using $page directly in URL construction - needs review
-```
-
-4. Hardcoded Hrefs:
-```php
-// In templates
-<a href="somepage.phtml?page=%[PAGE_VALUE]">Link Text</a>
-// or
-<a href="somepage.phtml?%[PAGE]">Link Text</a>
+// Multi-parameter redirects (Special Case - No Fallback)
+header("Location: changestate.phtml?state=Active&mid=$mid&page=$page&token=$stoken");
 ```
 
 ### Core Functions
@@ -60,119 +51,89 @@ header("Location: somepage.phtml?state=Active&mid=$mid&page=$page&token=$stoken"
    - Used for template variables that need the raw value
    - Optional fallback to current URL if no page parameter is present
    - Should use `false` for Location headers to prevent unwanted fallbacks
+   - Special case: Some multi-parameter URLs need raw value to prevent fallback
 
 2. `format_page_param()`: Returns the formatted URL parameter string
    - Used for generating URL parameters in links and forms
    - Adds "page=" prefix and URL encodes the value
    - Returns empty string if no page context exists
    - Should NOT be used for Location headers
+   - Used in multi-parameter URLs when fallback is acceptable
 
 ### Important Notes
 
 1. Location Headers:
    - Should use `get_page_context(false)` to prevent fallbacks
    - Critical for maintaining user navigation state
-   - Multi-parameter URLs still need review for proper page parameter handling
+   - Multi-parameter URLs need special consideration:
+     - Use `format_page_param()` when fallback is acceptable
+     - Use raw page value when fallback must be prevented
 
 2. Form Values:
    - Use `get_page_context()` with fallback for forms
    - Fallback behavior is appropriate for form submissions
+   - TODO: Review if htmlspecialchars() is needed with page context values
+   - Current codebase generally doesn't use htmlspecialchars() with get_page_context()
 
 3. Link Parameters:
    - Use `format_page_param()` for generating URL parameters
    - Should not be used for Location headers
-
-4. Hardcoded Hrefs:
-   - Need to decide between PAGE and PAGE_VALUE based on context
-   - May need standardization
+   - Consider fallback behavior requirements
 
 ### Files Updated
 
 ```
 user/
-├── postform.inc               # Updated to use both PAGE_VALUE and PAGE
-├── delete.php                 # Updated to use get_page_context(false) for Location
-├── undelete.php              # Updated to use get_page_context(false) for Location
-├── preferences.php           # Updated to use both variables
-├── showmessage.php           # Updated to use both variables
-├── printsubject.inc          # Updated to use format_page_param() for links
-├── lock.php                  # Updated to use get_page_context(false) for Location
-├── unlock.php                # Updated to use get_page_context(false) for Location
-├── track.php                 # Updated to use get_page_context(false) for Location
-├── sticky.php                # Updated to use get_page_context(false) for Location
-├── markuptodate.php          # Updated to use get_page_context(false) for Location
-├── gmessage.php              # Updated to use get_page_context(false) for Location
+├── postform.inc               ✅ Updated to use both PAGE_VALUE and PAGE
+├── delete.php                 ✅ Updated to use get_page_context(false) for Location
+├── undelete.php              ✅ Updated to use get_page_context(false) for Location
+│                              ⚠️ Special case: Uses raw page value for changestate
+├── preferences.php           ✅ Updated to use both variables
+├── showmessage.php           ✅ Updated to use both variables
+├── printsubject.inc          ✅ Updated to use format_page_param() for links
+├── lock.php                  ✅ Updated to use get_page_context(false) for Location
+├── unlock.php                ✅ Updated to use get_page_context(false) for Location
+├── track.php                 ✅ Updated to use get_page_context(false) for Location
+├── sticky.php                ✅ Updated to use get_page_context(false) for Location
+├── markuptodate.php          ✅ Updated to use get_page_context(false) for Location
+├── gmessage.php              ✅ Updated to use get_page_context(false) for Location
 └── account/
-    ├── login.php             # Updated to use PAGE_VALUE
-    ├── logout.php            # Updated to use get_page_context(false) for Location
-    └── forgotpassword.php    # Updated to use PAGE_VALUE
+    ├── login.php             ✅ Updated to use PAGE_VALUE
+    ├── logout.php            ✅ Updated to use get_page_context(false) for Location
+    └── forgotpassword.php    ✅ Updated to use PAGE_VALUE
 ```
 
 ### Templates Updated
 
 ```
 templates/
-├── postform.yatt             # Updated to use PAGE for links
-├── delete.yatt              # Updated to use PAGE_VALUE for form
-├── undelete.yatt            # Updated to use PAGE_VALUE for form
-├── preferences.yatt         # Updated to use PAGE for links
-├── showmessage.yatt         # Updated to use both variables
+├── postform.yatt             ✅ Updated to use PAGE for links
+├── delete.yatt              ✅ Updated to use PAGE_VALUE for form
+├── undelete.yatt            ✅ Updated to use PAGE_VALUE for form
+├── preferences.yatt         ✅ Updated to use PAGE for links
+├── showmessage.yatt         ✅ Updated to use both variables
 └── account/
-    ├── login.yatt           # Updated to use PAGE_VALUE for form
-    ├── create.yatt          # Updated to use PAGE_VALUE for form
-    └── forgotpassword.yatt  # Updated to use PAGE_VALUE for form
+    ├── login.yatt           ✅ Updated to use PAGE_VALUE for form
+    ├── create.yatt          ✅ Updated to use PAGE_VALUE for form
+    └── forgotpassword.yatt  ✅ Updated to use PAGE_VALUE for form
 ```
 
 ### Benefits
+- Clear distinction between use cases
+- Consistent behavior
+- Improved security
+- Maintained compatibility
 
-1. Clear distinction between different page context use cases
-2. Consistent behavior across codebase
-3. Easier testing and maintenance
-4. No unwanted fallbacks in critical paths
-5. Maintained backward compatibility
-
-### Testing Strategy
-
-1. Form Submissions:
-   - Test all forms with hidden page fields
-   - Verify correct page context is maintained
-   - Check behavior when no page parameter
-
-2. Navigation Links:
-   - Test all links using PAGE variable
-   - Verify correct URL formatting
-   - Check proper URL encoding
-
-3. Redirects:
-   - Test all Location headers
-   - Verify correct page value is used
-   - Verify no unwanted fallbacks
-   - Test multi-parameter redirects
-
-### Future Improvements
-
-1. Review multi-parameter redirects for proper page parameter handling
-2. Consider creating dedicated function for Location headers
-3. Reconsider fallback behavior in get_page_context()
-4. Standardize hardcoded href usage
-5. Add unit tests for page context functions
-6. Add logging for debugging page context issues
-7. Consider session-based approach for complex flows
-8. Add caching if needed
-9. Improve error handling
-10. Consider URL structure improvements
+### Known Issues
+1. **Location Headers:**
+   - Inconsistent page context usage across files
+   - Direct $page variable usage without proper initialization
+   - Mixed usage of get_page_context(false) and raw $page
+   - Inconsistent multi-parameter URL construction
 
 ### Migration Status
-
-- [x] Add new functions to util.inc
-- [x] Update form handling
-- [x] Update navigation links
-- [x] Update simple redirects
-- [x] Update conditional redirects
+- [x] Core functions added
+- [x] Basic usage updated
 - [ ] Review multi-parameter redirects
-- [ ] Add unit tests
-- [ ] Add logging
-- [ ] Update documentation
-- [ ] Monitor for issues
-- [ ] Standardize hardcoded href usage
-- [ ] Reconsider fallback behavior
+- [ ] Add URL validation
+- [ ] Standardize hardcoded paths

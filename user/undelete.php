@@ -12,7 +12,7 @@ $mid = $_REQUEST['mid'] ?? null;
 
 // --- Form Handling (Redirects) ---
 if (isset($_POST['no'])) {
-  header("Location: $page");
+  header("Location: " . get_page_context(false));
   exit;
 }
 if (isset($_POST['yes'])) {
@@ -23,7 +23,7 @@ if (isset($_POST['yes'])) {
 
 // --- Basic Validation ---
 if (!is_numeric($mid) || !isset($forum)) {
-  header("Location: http://$server_name$script_name$path_info/");
+  header("Location: " . get_base_url() . $script_name . $path_info . "/");
   exit;
 }
 

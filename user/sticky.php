@@ -4,11 +4,10 @@ if (!isset($forum)) {
   exit;
 }
 
-$page = get_page_context(false);
 $tid = $_REQUEST['tid'];
 
 if (!$user->valid()) {
-  header("Location: $page");
+  header("Location: " . get_page_context(false));
   exit;
 }
 
@@ -18,7 +17,7 @@ if (!$user->capable($forum['fid'], 'Lock')) {
 }
 
 if (!isset($_REQUEST['stick']) || !is_numeric($_REQUEST['stick'])) {
-  header("Location: $page");
+  header("Location: " . get_page_context(false));
   exit;
 }
 
@@ -60,5 +59,5 @@ db_exec("update f_messages$iid  set " .
         "where mid = ?",
         array($what, $user->name, $user->aid, $thread['mid']));
 
-header("Location: $page");
+header("Location: " . get_page_context(false));
 ?>

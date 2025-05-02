@@ -40,6 +40,29 @@ function full_url( $s, $use_forwarded_host = false )
     return url_origin( $s, $use_forwarded_host ) . $s['REQUEST_URI'];
 }
 
+/**
+ * Get the base URL for the application, including protocol and domain
+ * This is used for constructing absolute URLs and preventing open redirects
+ *
+ * @param bool $use_forwarded_host Whether to use X-Forwarded-Host header
+ * @return string The base URL (e.g. "https://forums.example.com")
+ */
+function get_base_url($use_forwarded_host = false)
+{
+    global $server_name;
+
+    // Use url_origin() to get protocol and host
+    $base = url_origin($_SERVER, $use_forwarded_host);
+
+    // If we're in a subdirectory, add it to the base URL
+    $script_dir = dirname($_SERVER['SCRIPT_NAME']);
+    if ($script_dir !== '/' && $script_dir !== '\\') {
+        $base .= $script_dir;
+    }
+
+    return $base;
+}
+
 function getmicrotime()
 {
   $mtime = explode(" ", microtime());

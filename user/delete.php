@@ -6,23 +6,21 @@ require_once("message.inc");
 $user->req();
 $stoken = $user->token();
 
-// Get page context for redirects and form
-$page = get_page_context(false);
 $mid = $_REQUEST['mid'] ?? null;
 
 // --- Form Handling (Redirects) ---
 if (isset($_POST['no'])) {
-  header("Location: $page");
+  header("Location: " . get_page_context(false));
   exit;
 }
 if (isset($_POST['yes'])) {
-  header("Location: changestate.phtml?state=Deleted&mid=$mid" . format_page_param() . "&token=$stoken");
+  header("Location: changestate.phtml?state=Deleted&mid=$mid&" . format_page_param() . "&token=$stoken");
   exit;
 }
 
 // --- Basic Validation ---
 if (!is_numeric($mid) || !isset($forum)) {
-  header("Location: http://$server_name$script_name$path_info/");
+  header("Location: " . get_base_url() . $script_name . $path_info . "/");
   exit;
 }
 
@@ -58,7 +56,7 @@ $content_tpl->set("PREVIEW", $preview_html);
 
 // Set variables needed by the confirmation form
 $content_tpl->set("MSG_MID", $mid);
-$content_tpl->set("PAGE_VALUE", htmlspecialchars($page, ENT_QUOTES | ENT_HTML5, 'UTF-8'));
+$content_tpl->set("PAGE_VALUE", get_page_context(false));
 
 // --- Parse Final Blocks ---
 $content_tpl->parse("delete_content.confirmation");
