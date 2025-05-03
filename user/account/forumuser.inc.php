@@ -113,17 +113,6 @@ class ForumUser {
     if ($this->valid())
       return true;
 
-    if (isset($http_host) && !empty($http_host))
-      $url = $http_host;
-    else {
-      $url = $server_name;
-
-      if ($server_port != 80)
-        $url .= ":" . $server_port;
-    }
-
-    $url .= $script_name . $path_info;
-
     /* prevent recursion */
     if ($script_name . $path_info == '/login.phtml')
       return true;
@@ -139,11 +128,8 @@ class ForumUser {
     if ($script_name . $path_info == '/forgotpassword.phtml')
       return true;
 
-    if (isset($account_host))
-      header("Location: http://$account_host/login.phtml?url=$url");
-    else
-      header("Location: /login.phtml?url=$url");
-
+    $url = url_origin($_SERVER) . $script_name . $path_info;
+    header("Location: /login.phtml?url=$url");
     exit;
   }
 

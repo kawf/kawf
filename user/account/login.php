@@ -27,13 +27,24 @@ if($tou_available) {
 }
 
 // Get page context for the form's hidden field
-$content_tpl->set('PAGE', get_page_context());
+// Start with _REQUEST['page'] if it exists
+$page = get_page_context();
 
-// Handle direct URL redirect if present
+// Override with _REQUEST['url'] if it exists
 if (isset($_REQUEST['url'])) {
-  header("Location: http://" . $_REQUEST['url']);
-  exit;
+  $page = $_REQUEST['url'];
 }
+
+if (!isset($page)) {
+  // nothing left, fallback to /
+  $page = "/";
+}
+
+// Set the final page value in the template
+$content_tpl->set('PAGE_VALUE', $page);
+
+// This is different from how we usually set the page value in a form's hidden field
+$content_tpl->set('PAGE_VALUE', $page);
 
 if (isset($_POST['login']) && isset($_POST['email'])) {
   $email = $_POST['email'];
@@ -48,8 +59,7 @@ if (isset($_POST['login']) && isset($_POST['email'])) {
     $message = "You must agree to the Terms Of Use\n";
   } else {
     $user->setcookie();
-    // Redirect back to the page they came from
-    header("Location: " . get_page_context(false));
+    header("Location: $page");
     exit;
   }
 } else

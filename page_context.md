@@ -83,52 +83,52 @@ header("Location: changestate.phtml?state=Active&mid=$mid&page=$page&token=$stok
 
 ```
 user/
-├── postform.inc.php         ✅ Updated to use both PAGE_VALUE and PAGE
-├── delete.php               ✅ Updated to use get_page_context(false) for Location
-├── undelete.php             ✅ Updated to use get_page_context(false) for Location
 ├── changestate.php          ✅ Updated to use get_page_context(false) for Location
-├── preferences.php          ✅ Updated to use both variables
-├── showmessage.php          ✅ Updated to use both variables
-├── printsubject.inc.php     ✅ Updated to use format_page_param() for links
+├── delete.php               ✅ Updated to use get_page_context(false) for Location
 ├── lock.php                 ✅ Updated to use get_page_context(false) for Location
-├── unlock.php               ✅ Updated to use get_page_context(false) for Location
-├── track.php                ✅ Updated to use get_page_context(false) for Location
-├── sticky.php               ✅ Updated to use get_page_context(false) for Location
-├── markuptodate.php         ✅ Updated to use get_page_context(false) for Location
 ├── gmessage.php             ✅ Updated to use get_page_context(false) for Location
+├── markuptodate.php         ✅ Updated to use get_page_context(false) for Location
+├── postform.inc.php         ✅ Updated to use both PAGE_VALUE and PAGE
+├── preferences.php          ✅ Updated to use both variables
+├── printsubject.inc.php     ✅ Updated to use format_page_param() for links
+├── showmessage.php          ✅ Updated to use both variables
+├── sticky.php               ✅ Updated to use get_page_context(false) for Location
+├── track.php                ✅ Updated to use get_page_context(false) for Location
+├── undelete.php             ✅ Updated to use get_page_context(false) for Location
+├── unlock.php               ✅ Updated to use get_page_context(false) for Location
 └── account/
     ├── acctedit.php         ✅ Updated to use PAGE_VALUE for form
-    ├── login.php            ⚠️ TODO: REQUIRES SPECIAL HANDLING (Broken)
-    ├── logout.php           ⚠️ TODO: RETEST
+    ├── create.php           ✅ Updated to use PAGE_VALUE for form
     ├── forgotpassword.php   ✅ Updated to use PAGE_VALUE for form
-    └── create.php           ✅ Updated to use PAGE_VALUE for form
+    ├── login.php            ⚠️ Special handling: uses a combination of get_page_context(false) and _REQUEST['url'] for PAGE_VALUE and Location:
+    └── logout.php           ⚠️ Special handling: uses format_page_param() for Location: page= parameter
 ```
 
 ### Templates Updated
 
 ```
 templates/
-├── postform.yatt            ✅ Uses both PAGE for links and PAGE_VALUE for form
-├── delete.yatt              ✅ Uses PAGE_VALUE for form
-├── undelete.yatt            ✅ Uses PAGE_VALUE for form
-├── preferences.yatt         ✅ Uses both PAGE for links and PAGE_VALUE for form
-├── showmessage.yatt         ✅ Uses PAGE for links
-├── edit.yatt                ✅ No page context usage
-├── post.yatt                ✅ Uses PAGE for links
-├── page.yatt                ✅ No page context usage
 ├── 404.yatt                 ✅ No page context usage
+├── delete.yatt              ✅ Uses PAGE_VALUE for form
+├── edit.yatt                ✅ No page context usage
 ├── footer.yatt              ✅ No page context usage
 ├── header.yatt              ✅ No page context usage
 ├── message.yatt             ✅ Uses PAGE for links
+├── page.yatt                ✅ No page context usage
+├── post.yatt                ✅ Uses PAGE for links
+├── postform.yatt            ✅ Uses both PAGE for links and PAGE_VALUE for form
+├── preferences.yatt         ✅ Uses both PAGE for links and PAGE_VALUE for form
+├── showmessage.yatt         ✅ Uses PAGE for links
 ├── showthread.yatt          ✅ Uses PAGE for links
+├── showtracking.yatt        ✅ Uses PAGE for links
 ├── showforum.yatt           ✅ Uses PAGE for links
 ├── tracking.yatt            ✅ Uses PAGE for links
-├── showtracking.yatt        ✅ Uses PAGE for links
+├── undelete.yatt            ✅ Uses PAGE_VALUE for form
 ├── account/
-│   ├── login.yatt           ✅ Uses PAGE_VALUE for form
 │   ├── create.yatt          ✅ Uses PAGE_VALUE for form
 │   ├── edit.yatt            ✅ Uses PAGE_VALUE for form
-│   └── forgotpassword.yatt  ✅ Uses PAGE_VALUE for form
+│   ├── forgotpassword.yatt  ✅ Uses PAGE_VALUE for form
+│   └── login.yatt           ✅ Uses PAGE_VALUE for form
 └── admin/
     ├── admin.yatt           ✅ No page context usage
     ├── admin_page.yatt      ✅ No page context usage
@@ -136,23 +136,3 @@ templates/
     ├── forummodify.yatt     ✅ No page context usage
     └── gmessage.yatt        ✅ No page context usage
 ```
-
-### Benefits
-- Clear distinction between use cases
-- Consistent behavior
-- Improved security
-- Maintained compatibility
-
-### Known Issues
-1. **URL Validation:**
-   - Need to add validation for page context values
-   - Consider adding URL sanitization
-   - Review security implications of page context values
-
-### Migration Status
-- [x] Core functions added
-- [x] Basic usage updated
-- [x] Review multi-parameter redirects
-- [ ] Add URL validation
-- [ ] Standardize hardcoded paths
-
