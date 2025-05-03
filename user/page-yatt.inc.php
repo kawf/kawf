@@ -2,6 +2,30 @@
 require_once("lib/YATT/YATT.class.php");
 require_once("notices.inc.php");
 
+function generate_forum_header($forum) {
+    global $template_dir;
+
+    // Try to load forum-specific template first
+    $forum_specific = 'forum/' . $forum['shortname'] . '.yatt';
+    if (file_exists($template_dir . '/' . $forum_specific)) {
+	$forum_template = new_yatt($forum_specific, $forum);
+    } else {
+	$forum_template = new_yatt('forum/generic.yatt', $forum);
+    }
+
+    // Parse the forum header content
+    $forum_template->parse('forum_header');
+
+    $content = $forum_template->output();
+
+    // Check for YATT errors
+    if ($errors = $forum_template->get_errors()) {
+	debug_log("YATT errors in forum template: " . print_r($errors, true) . "\n");
+    }
+
+    return $content;
+}
+
 function generate_page($title, $contents, $skip_header=false, $meta_robots=false)
 {
     global $template_dir, $domain, $Debug, $forum;
@@ -52,31 +76,12 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
 
         // Handle forum header if we're in a forum context
         if (isset($forum)) {
-            // Try to load forum-specific template first
-            $forum_specific = 'forum/' . $forum['shortname'] . '.yatt';
-            if (file_exists($template_dir . '/' . $forum_specific)) {
-                $forum_template = new_yatt($forum_specific, $forum);
-            } else {
-                $forum_template = new_yatt('forum/generic.yatt', $forum);
-            }
+	    // Set the header content in the main page template
+	    $page->set('forum_header_content', generate_forum_header($forum));
 
-            // Parse the forum header content
-            $forum_template->parse('forum_header');
-
-            // Get the header content
-            $header_content = $forum_template->output();
-
-            // Set the header content in the main page template
-            $page->set('forum_header_content', $header_content);
-
-            // Parse the forum header block
-            $page->parse('page.forum_header');
-
-            // Check for YATT errors
-            if ($errors = $forum_template->get_errors()) {
-                debug_log("YATT errors in forum template: " . print_r($errors, true) . "\n");
-            }
-        }
+	    // Parse the forum header block
+	    $page->parse('page.forum_header');
+	}
     }
 
     // Check for YATT errors

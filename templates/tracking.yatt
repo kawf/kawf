@@ -1,15 +1,15 @@
-%begin [tracking_content]
-
+%begin [tracking]
   %[#] Outer container: Either the 'forums' block or 'no_threads' block will be parsed by PHP
-
-  %begin [forums]
-    %begin [hr]
-      <hr width="100%" size="1">
-    %end [hr]
-
+  <p><b>Your Tracked Threads</b></p>
+  %begin [forum]
+    <hr width="100%" size="1">
+    <table class="forumheader">
+    <tr><td><a href="/%[forum_shortname]"><b>%[forum_name]</b></a></td></tr>
     %[#] Forum header HTML is set as a variable by PHP
-    %[forum_header_html]
-    <br>
+    <tr>
+    %[forum_header]
+    </tr>
+    </table>
 
     %[#] Normal Mode block - Parsed by PHP if not simple mode
     %begin [normal]
@@ -31,9 +31,9 @@
 
       <table class="threads">
         %begin [row]
-        <tr class="%[thread_css_class]">
-          <td>%[thread_message_html]</td>
-          <td class="threadlinks">%[thread_links_html]</td>
+        <tr class="%[class]">
+          <td>%[messagestr]</td>
+          <td class="threadlinks">%[threadlinks]</td>
         </tr>
         %end [row]
       </table>
@@ -51,7 +51,7 @@
         %[thread_message_html]
       %end [row]
     %end [simple]
-  %end [forums]
+  %end [forum]
 
   %[#] Block shown if no threads are tracked - Parsed by PHP if num_shown is 0
   %begin [no_threads]
@@ -66,4 +66,4 @@
     </div>
   %end [footer_tools]
 
-%end [tracking_content]
+%end [tracking]

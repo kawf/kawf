@@ -26,9 +26,7 @@ $sql = "select * from f_forums order by fid";
 $sth = db_query($sql);
 
 $numshown = 0;
-$first = true; // Used for HR logic
-
-$forums_data = []; // Array to hold data for all forums
+$forums = []; // Array to hold data for all forums
 
 while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
   /* rebuild caches per forum */
@@ -37,7 +35,7 @@ while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
 
   $forumcount = 0;
   $forumupdated = 0;
-  $threads_data = []; // Array for threads within this forum
+  $threads = []; // Array for threads within this forum
 
   if (count($tthreads_by_tid)) {
     foreach ($tthreads_by_tid as $tthread) {
@@ -58,10 +56,10 @@ while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
       $threadlinks = gen_threadlinks($thread, true /* always collapse */);
 
       // Collect thread data for template parsing
-      $threads_data[] = [
-          'css_class' => $class,
-          'message_html' => $messagestr, // Assuming gen_thread returns safe HTML
-          'links_html' => $threadlinks,  // Assuming gen_threadlinks returns safe HTML
+      $threads[] = [
+          'class' => $class,
+          'messagestr' => $messagestr, // Assuming gen_thread returns safe HTML
+          'threadlinks' => $threadlinks,  // Assuming gen_threadlinks returns safe HTML
           'is_bumped' => $is_bumped
       ];
 
@@ -72,20 +70,13 @@ while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
 
   // Add forum data to the main array if it has tracked threads
   if ($forumcount > 0) {
-      $notices_html = get_notices_html($forum, $user->aid);
-
-      $forums_data[] = [
-          'name' => $forum['name'],
-          'shortname' => $forum['shortname'],
-          'threads' => $threads_data,
+      $forums[] = [
+          'forum' => $forum,
+          'threads' => $threads,
           'show_update_all' => ($forumupdated > 0),
-          'show_hr' => !$first,
-          'forum_notices' => $notices_html, // Add notices HTML
+          'forum_notices' => get_notices_html($forum, $user->aid),
           'has_threads' => true // Flag indicating this forum section should be rendered
       ];
-      $first = false; // HR should be shown before the *next* forum
-  } else {
-       // Skip forums with no tracked threads for rendering
   }
 
 } // end while forum
@@ -95,52 +86,48 @@ $sth->closeCursor();
 
 if ($numshown == 0) {
   // Parse the 'no_threads' block if nothing was found
-  $content_tpl->parse('tracking_content.no_threads');
+  $content_tpl->parse('tracking.no_threads');
 } else {
   // Loop through the collected forum data and parse blocks
-  foreach ($forums_data as $forum_item) {
+  foreach ($forums as $forum_item) {
     if (!$forum_item['has_threads']) continue; // Should not happen based on collection logic, but safe check
 
-    // Set variables for the current forum iteration
-    $content_tpl->set('forum_name', $forum_item['name']);
-    $content_tpl->set('forum_shortname', $forum_item['shortname']);
-    $content_tpl->set('FORUM_NOTICES', $forum_item['forum_notices']); // Set notices for this forum
+    $forum = $forum_item['forum'];
 
-    // Conditionally parse HR separator
-    if ($forum_item['show_hr']) {
-      $content_tpl->parse('tracking_content.forums.hr');
-    }
+    // Set variables for the current forum iteration
+    $content_tpl->set('forum_header', generate_forum_header($forum));
+    $content_tpl->set('forum_name', $forum['name']);
+    $content_tpl->set('forum_shortname', $forum['shortname']);
+    $content_tpl->set('FORUM_NOTICES', $forum_item['forum_notices']); // Set notices for this forum
 
     // Conditionally parse 'update_all' link within the correct mode block
     if ($forum_item['show_update_all']) {
-        $content_tpl->parse('tracking_content.forums.' . $mode_block . '.update_all');
+        $content_tpl->parse('tracking.forum.' . $mode_block . '.update_all');
     }
 
     // Loop through threads for this forum and parse rows
     foreach ($forum_item['threads'] as $thread_item) {
-      $content_tpl->set('thread_css_class', $thread_item['css_class']);
-      $content_tpl->set('thread_message_html', $thread_item['message_html']);
-      $content_tpl->set('thread_links_html', $thread_item['links_html']);
+      $content_tpl->set('class', $thread_item['class']);
+      $content_tpl->set('messagestr', $thread_item['messagestr']);
+      $content_tpl->set('threadlinks', $thread_item['threadlinks']);
 
       // Parse the row block relative to the current mode
-      $content_tpl->parse('tracking_content.forums.' . $mode_block . '.row');
+      $content_tpl->parse('tracking.forum.' . $mode_block . '.row');
     }
 
     // Parse the main mode block for this forum (either 'normal' or 'simple')
-    $content_tpl->parse('tracking_content.forums.' . $mode_block);
+    $content_tpl->parse('tracking.forum.' . $mode_block);
 
+    // Parse this forum
+    $content_tpl->parse('tracking.forum');
   } // End foreach forum_data
-
-  // Parse the outer 'forums' block which accumulates the parsed forums
-  $content_tpl->parse('tracking_content.forums');
-
 } // End if numshown > 0
 
 // Always parse the footer tools?
-$content_tpl->parse('tracking_content.footer_tools');
+$content_tpl->parse('tracking.footer_tools');
 
-// Parse the main tracking_content block which acts as the root for content
-$content_tpl->parse('tracking_content');
+// Parse the main tracking block which acts as the root for content
+$content_tpl->parse('tracking');
 
 // Get the final HTML for the content area
 $content_html = $content_tpl->output();
@@ -149,6 +136,8 @@ $content_html = $content_tpl->output();
 if ($content_errors = $content_tpl->get_errors()) {
   error_log("YATT errors in tracking.php / tracking.yatt: " . print_r($content_errors, true));
 }
+
+$forum = null; // NOT a forum context
 
 // Call the existing generate_page function
 print generate_page('Your Tracked Threads', $content_html);
