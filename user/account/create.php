@@ -43,7 +43,7 @@ if (isset($create_disabled) && $create_disabled) {
   } else {
     // Use get_page_context() to get the raw page value for the template
     // This value will be used in the hidden form field to return to the correct page after account creation
-    $content_tpl->set("PAGE", get_page_context());
+    $content_tpl->set("PAGE_VALUE", get_page_context());
 
     if (isset($_POST['name']))
       $name = $_POST['name'];

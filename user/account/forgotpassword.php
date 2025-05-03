@@ -5,7 +5,7 @@ require_once("page-yatt.inc.php");
 $content_tpl = new YATT($template_dir, "account/forgotpassword.yatt");
 
 // Set page context for the form
-$content_tpl->set('PAGE', get_page_context());
+$content_tpl->set('PAGE_VALUE', get_page_context());
 
 /* forgotpassword might get a POST with submit/email, or
    a simple GET with email */
