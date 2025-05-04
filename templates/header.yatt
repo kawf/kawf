@@ -1,6 +1,5 @@
 <!-- message.yatt -->
 <!-- <hr width="100%" size="1"> -->
-
 <div class="navigate">
 <form method="get" action="/redirect.phtml" style="display: inline; margin: 0;">
 <select name="url" onChange="if (this.selectedIndex) { location = this.options[this.selectedIndex].value; }">
@@ -17,5 +16,4 @@
 <noscript><input type="submit" value="GO"></noscript>
 </form>
 </div>
-
-<hr>
+<!-- <hr width="100%" size="1"> -->

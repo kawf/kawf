@@ -350,7 +350,7 @@ textarea.night-mode { background: #1A1A1D !important; border: 1px solid #131315 
 
 /* divider */
 hr {
-    border-width: 0px; height: 0.5px;
+    border-width: 0px; height: 1px;
     color: #888; background-color: #888;
 }
 
