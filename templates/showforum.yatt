@@ -24,12 +24,6 @@
   <td class="toolsright">%[NUMTHREADS] threads in %[NUMPAGES] pages</td>
 </tr>
 </table>
-
-%begin [restore_gmsgs]
-<div class="tools">
-  %[RESTORE_GMSGS_LINK]
-</div>
-%end [restore_gmsgs]
 %end [header]
 
 %begin [normal]

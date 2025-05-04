@@ -6,29 +6,6 @@ require_once("page-yatt.inc.php");
 require_once("postform.inc.php"); // Likely needed for the post form
 require_once("notices.inc.php"); // For forum notices
 
-// Function to generate the link for restoring hidden global messages
-// Placed here temporarily as the original definition location is unknown.
-function gen_global_messages_restore_link($page) {
-    global $user; // Need access to the user object
-
-    // Check if user is valid and if any global messages are actually filtered
-    if ($user->valid() && !empty($user->gmsgfilter)) {
-        // Construct the URL
-        $url = "/gmessage.phtml?gid=-1&hide=0"; // gid=-1 targets all, hide=0 means show
-        $url .= "&token=" . urlencode($user->token());
-        $url .= "&page=" . urlencode($page); // Return page
-
-        // Return the HTML link
-        // Note: The block `restore_gmsgs` in showforum.yatt might need adjustment
-        // if it doesn't expect just a raw link string.
-        // For now, returning the link assuming the block handles it or we set it via a var.
-        return '<a href="' . htmlspecialchars($url) . '">Restore global messages</a>';
-    } else {
-        // No user or no messages filtered, return empty string
-        return '';
-    }
-}
-
 if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
   $user->req();
   if ($user->status != 'Active') {
@@ -395,13 +372,6 @@ if ($tthreadsshown > 0) {
 // render_postform($content_tpl, 'post', $user); // Old call that modified $content_tpl
 $form_html = render_postform($template_dir, 'post', $user); // Pass $template_dir
 $content_tpl->set('FORM_HTML', $form_html);
-
-// Generate restore global messages link and parse block if needed
-$restore_link = gen_global_messages_restore_link($script_name . $path_info);
-if (!empty($restore_link)) {
-    $content_tpl->set("RESTORE_GMSGS_LINK", $restore_link);
-    $content_tpl->parse('header.restore_gmsgs');
-}
 
 // Parse the table container block (normal or simple)
 $content_tpl->parse($table_block);
