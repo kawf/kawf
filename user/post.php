@@ -275,10 +275,7 @@ if (isset($_POST['postcookie'])) {
 $content_tpl->parse('post_content');
 $content_html = $content_tpl->output();
 
-// Check for YATT errors
-if ($errors = $content_tpl->get_errors()) {
-    error_log("YATT errors in post.php: " . print_r($errors, true));
-}
+log_yatt_errors($content_tpl);
 
 // Determine page title
 $page_title = isset($msg['tid']) ? 'Post Reply' : 'Post New Thread';

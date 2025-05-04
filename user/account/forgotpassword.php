@@ -36,10 +36,7 @@ if (isset($_REQUEST['email'])) {
 // Parse the header
 $content_tpl->parse('header');
 
-// Check for any YATT errors
-if ($errors = $content_tpl->get_errors()) {
-    error_log("YATT errors in forgotpassword.php: " . implode(", ", $errors));
-}
+log_yatt_errors($content_tpl);
 
 // Get final content and pass to page wrapper
 $content_html = $content_tpl->output();

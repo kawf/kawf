@@ -59,10 +59,7 @@ $content_tpl->set("FORM_ACTION", basename($_SERVER['PHP_SELF']));
 $content_tpl->parse("forumadd_content");
 $page_content_html = $content_tpl->output("forumadd_content");
 
-// Check for content errors
-if ($content_errors = $content_tpl->get_errors()) {
-    error_log("YATT errors in forumadd.yatt: " . print_r($content_errors, true));
-}
+log_yatt_errors($content_tpl);
 
 // Render Page using YATT wrapper
 $page_tpl = new YATT($template_dir, 'admin/admin_page.yatt');
@@ -82,9 +79,5 @@ $page_tpl->parse("admin_page.back_link");
 $page_tpl->parse("admin_page");
 print $page_tpl->output("admin_page");
 
-// Check for page errors
-if ($page_errors = $page_tpl->get_errors()) {
-    error_log("YATT errors in admin_page.yatt: " . print_r($page_errors, true));
-}
-
+log_yatt_errors($page_tpl);
 ?>

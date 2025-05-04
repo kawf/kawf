@@ -98,9 +98,7 @@ if (isset($error)) {
 $content_tpl->parse('finish_content');
 $content_html = $content_tpl->output();
 
-if ($content_errors = $content_tpl->get_errors()) {
-  error_log("YATT errors in finish.yatt: " . print_r($content_errors, true));
-}
+log_yatt_errors($content_tpl);
 
 print generate_page('Finish Account Creation', $content_html);
 

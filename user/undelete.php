@@ -69,9 +69,8 @@ $content_tpl->parse("undelete_content");
 
 // --- Generate Output ---
 $content_html = $content_tpl->output('undelete_content');
-if ($errors = $content_tpl->get_errors()) {
-    error_log("YATT errors in undelete.php: " . print_r($errors, true));
-}
+log_yatt_errors($content_tpl);
+
 print generate_page('Undelete Message', $content_html);
 
 ?>

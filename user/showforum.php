@@ -384,11 +384,7 @@ $content_tpl->parse('post_form');
 // Get final HTML
 $content_html = $content_tpl->output();
 
-// Check for YATT errors
-if ($errors = $content_tpl->get_errors()) {
-    error_log("YATT errors in showforum.php: " . print_r($errors, true));
-    // Optionally display an error to the user or modify $content_html
-}
+log_yatt_errors($content_tpl);
 
 // Output page using the wrapper
 print generate_page($forum['name'], $content_html);

@@ -146,9 +146,7 @@ if (isset($create_disabled) && $create_disabled) {
 $content_tpl->parse('create_content');
 $content_html = $content_tpl->output();
 
-if ($content_errors = $content_tpl->get_errors()) {
-  error_log("YATT errors in create.yatt: " . print_r($content_errors, true));
-}
+log_yatt_errors($content_tpl);
 
 print generate_page('Create Account', $content_html);
 

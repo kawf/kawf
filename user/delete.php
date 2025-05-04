@@ -64,9 +64,8 @@ $content_tpl->parse("delete_content");
 
 // --- Generate Output ---
 $content_html = $content_tpl->output('delete_content');
-if ($errors = $content_tpl->get_errors()) {
-    error_log("YATT errors in delete.php: " . print_r($errors, true));
-}
-print generate_page('Delete Message', $content_html);
 
+log_yatt_errors($content_tpl);
+
+print generate_page('Delete Message', $content_html);
 ?>

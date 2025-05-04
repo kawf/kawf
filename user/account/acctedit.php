@@ -135,10 +135,7 @@ $content_tpl->set('token', $user->token());
 // Parse form
 $content_tpl->parse('form');
 
-// Check for any YATT errors
-if ($errors = $content_tpl->get_errors()) {
-  error_log("YATT errors in acctedit.php: " . implode(", ", $errors));
-}
+log_yatt_errors($content_tpl);
 
 // Get final content and pass to page wrapper
 $content_html = $content_tpl->output();

@@ -18,10 +18,7 @@ function generate_forum_header($forum) {
 
     $content = $forum_template->output();
 
-    // Check for YATT errors
-    if ($errors = $forum_template->get_errors()) {
-	debug_log("YATT errors in forum template: " . print_r($errors, true) . "\n");
-    }
+    log_yatt_errors($forum_template);
 
     return $content;
 }
@@ -76,22 +73,19 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
 
         // Handle forum header if we're in a forum context
         if (isset($forum)) {
-	    // Set the header content in the main page template
-	    $page->set('forum_header_content', generate_forum_header($forum));
+            // Set the header content in the main page template
+            $page->set('forum_header_content', generate_forum_header($forum));
 
-	    // Parse the forum header block
-	    $page->parse('page.forum_header');
-	}
+            // Parse the forum header block
+            $page->parse('page.forum_header');
+	    }
     }
 
-    // Check for YATT errors
-    if ($errors = $page->get_errors()) {
-        debug_log("YATT errors in page template: " . print_r($errors, true));
-    }
+    log_yatt_errors($page);
 
     if ($Debug && get_debug_log() != "") {
-	$page->set('debug_contents', "<pre>\n" . get_debug_log() . "</pre>\n");
-	$page->parse('page.debug_log');
+        $page->set('debug_contents', "<pre>\n" . get_debug_log() . "</pre>\n");
+        $page->parse('page.debug_log');
     }
 
     $page->parse('page');
@@ -119,6 +113,16 @@ set_error_page_renderer(function($error_data) {
 
     return generate_page($error_data['title'], $content_html);
 });
+
+function log_yatt_errors($yatt) {
+    if ($errors = $yatt->get_errors()) {
+        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
+        $caller = $bt[0];
+        $hdr = $caller['file'] . ":" . $caller['line'] . ": ";
+        debug_log($hdr . "\n" . $yatt->format_errors());
+        error_log($hdr . $yatt->format_errors());
+    }
+}
 
 // vim: sw=2
 ?>

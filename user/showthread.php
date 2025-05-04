@@ -99,10 +99,7 @@ $content_tpl->parse('footer');
 // Get final HTML
 $content_html = $content_tpl->output();
 
-// Check YATT errors
-if ($errors = $content_tpl->get_errors()) {
-    error_log("YATT errors in showthread.php: " . print_r($errors, true));
-}
+log_yatt_errors($content_tpl);
 
 // Robots meta tag logic (unchanged)
 $meta_robots = false;

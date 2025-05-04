@@ -76,10 +76,7 @@ $content_tpl->parse('form');
 // Parse footer
 $content_tpl->parse('footer');
 
-// Check for any YATT errors
-if ($errors = $content_tpl->get_errors()) {
-  error_log("YATT errors in login.php: " . implode(", ", $errors));
-}
+log_yatt_errors($content_tpl);
 
 // Get final content and pass to page wrapper
 $content_html = $content_tpl->output();

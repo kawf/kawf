@@ -295,9 +295,9 @@ if (!empty($error) || $preview) {
 
 // Final Output Generation
 $content_html = $content_tpl->output('edit_content');
-if ($errors = $content_tpl->get_errors()) {
-    error_log("YATT errors in edit.php: " . print_r($errors, true));
-}
+
+log_yatt_errors($content_tpl);
+
 print generate_page('Edit Message', $content_html);
 
 ?>

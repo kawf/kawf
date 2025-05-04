@@ -34,11 +34,20 @@ class YATT {
     # Holds information on errors
     var $errors;
 
+    # Current line number being processed
+    var $current_line = 0;
+
+    # Current template filename being processed
+    var $current_file = '';
+
     # INTERNAL: Push an error onto the error stack!
     function error() {
         $args = func_get_args ();
         $format = array_shift($args);
-        array_push($this->errors, vsprintf($format, $args));
+        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
+        $caller = $bt[0];
+        $message = vsprintf($format, $args);
+        array_push($this->errors, $caller['file'] . ":" . $caller['line'] . ": " . $message);
         return count($this->errors);
     }
 
@@ -71,6 +80,8 @@ class YATT {
 
     # load template file. more then one can be loaded into a template object.
     function load($fname) {
+        $this->current_file = $fname;
+        $this->current_line = 0;
         // --- Start: Integrated Line-by-Line Parser ---
         $data = $this->preprocess($fname);
         if ($data === false || $data === null) {
@@ -87,6 +98,7 @@ class YATT {
 
         foreach ($lines as $line_num => $line) {
             $line_num++; // Adjust to 1-based indexing for errors
+            $this->current_line = $line_num;
 
             $type = null;
             $name = null;
@@ -237,7 +249,7 @@ class YATT {
     # INTERNAL: Substitute some stuff!
     function subst($matches) {
         if (!isset($this->vars[$matches[1]])) {
-           $this->error('PARSE(): unbound variable %s', $matches[1]);
+           $this->error('PARSE(): unbound variable %s in %s:%d', $matches[1], $this->current_file, $this->current_line);
            return '';
         }
         return $this->vars[$matches[1]];
@@ -342,9 +354,12 @@ class YATT {
     # Get errors, or return FALSE if there are none.
     # Resets error list to zero!
     function get_errors() {
-        $err = $this->errors;
-        $this->errors = array();
-        return count($err) ? $err : FALSE;
+        return count($this->errors) ? $this->errors : FALSE;
+    }
+
+    # Format errors into a single line string
+    function format_errors() {
+        return implode("\n", $this->errors);
     }
 }
 

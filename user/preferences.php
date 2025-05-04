@@ -145,10 +145,7 @@ $content_tpl->parse('preferences_content');
 // Get the final HTML for the content area
 $content_html = $content_tpl->output();
 
-// Optional: Check for YATT errors from content parsing
-if ($content_errors = $content_tpl->get_errors()) {
-  error_log("YATT errors in preferences.yatt: " . print_r($content_errors, true));
-}
+log_yatt_errors($content_tpl);
 
 // Call the existing generate_page function with the YATT-generated content
 print generate_page('Preferences',$content_html);

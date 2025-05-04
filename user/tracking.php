@@ -132,10 +132,7 @@ $content_tpl->parse('tracking');
 // Get the final HTML for the content area
 $content_html = $content_tpl->output();
 
-// Optional: Check for YATT errors from content parsing
-if ($content_errors = $content_tpl->get_errors()) {
-  error_log("YATT errors in tracking.php / tracking.yatt: " . print_r($content_errors, true));
-}
+log_yatt_errors($content_tpl);
 
 $forum = null; // NOT a forum context
 

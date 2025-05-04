@@ -128,8 +128,6 @@ $content_tpl->parse("footer");
 
 $content_html = $content_tpl->output();
 
-if ($errors = $content_tpl->get_errors()) {
-    error_log("YATT errors in showtracking.php: " . print_r($errors, true));
-}
+log_yatt_errors($content_tpl);
 
 print generate_page("Your tracked threads in " . $forum['name'], $content_html);

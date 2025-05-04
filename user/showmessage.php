@@ -105,9 +105,7 @@ $content_tpl->parse("footer");
 
 $content_html = $content_tpl->output();
 
-if ($errors = $content_tpl->get_errors()) {
-    error_log("YATT errors in showmessage.php: " . print_r($errors, true));
-}
+log_yatt_errors($content_tpl);
 
 $meta_robots = false;
 if($robots_meta_tag) {
