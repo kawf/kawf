@@ -5,6 +5,7 @@ $user->req("ForumAdmin");
 
 require_once("user/tables.inc.php"); // For $create_* table SQL
 require_once('lib/YATT/YATT.class.php'); // Use include path
+require_once('page-yatt.inc.php'); // for log_yatt_errors
 
 // --- POST Handler ---
 if (isset($_POST['submit'])) {

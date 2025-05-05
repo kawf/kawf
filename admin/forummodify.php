@@ -3,6 +3,7 @@
 $user->req("ForumAdmin");
 
 require_once('lib/YATT/YATT.class.php'); // Ensure YATT is included
+require_once('page-yatt.inc.php'); // for log_yatt_errors
 
 /* If submit is set, shove the data into the database (well, after some */
 /* error checking) */

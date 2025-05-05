@@ -4,6 +4,7 @@
 require_once("pagenav.inc.php");
 require_once('lib/YATT/YATT.class.php'); // Use include path
 require_once('util.inc.php'); // Use include path
+require_once('page-yatt.inc.php'); // for log_yatt_errors
 
 $user->req("ForumAdmin");
 
