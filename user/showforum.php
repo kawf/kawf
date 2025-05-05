@@ -14,6 +14,9 @@ if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
   }
 }
 
+$forum = get_forum();
+$indexes = get_forum_indexes();
+
 // Instantiate YATT
 $content_tpl = new_yatt('showforum.yatt', $forum);
 
@@ -40,7 +43,9 @@ list($tthreads, $tthreads_by_tid) = build_tthreads($forum['fid']);
 // Function to calculate visible threads (remains the same)
 function threads($key)
 {
-  global $user, $forum, $indexes;
+  global $user;
+  $forum = get_forum();
+  $indexes = get_forum_indexes();
 
   $numthreads = $indexes[$key]['active'];
 

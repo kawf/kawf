@@ -2,6 +2,12 @@
 require_once("lib/YATT/YATT.class.php");
 require_once("message.inc.php");
 
+$forum = get_forum();
+if (!$forum) {
+  echo "Invalid forum\n";
+  exit;
+}
+
 if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
   $user->req();
   if ($user->status != 'Active') {

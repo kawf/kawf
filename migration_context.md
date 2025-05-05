@@ -164,7 +164,7 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
     *   ✅ **Rename `.inc` include files to `.inc.php`**
         - `git mv` all of them
         - Fix all references
-    *   **From Issue #40:** Replace globals in `include/utils.inc` with `user/kawfGlobals.class.php` object
+    *   **From [Issue #40](https://github.com/kawf/kawf/issues/40):** Replace globals in `include/utils.inc` with `user/kawfGlobals.class.php` object
         *   **Implementation Plan:**
             - Create `kawfGlobals` class structure
             - Migrate global variables from `utils.inc`

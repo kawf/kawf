@@ -19,7 +19,8 @@ if (isset($_POST['yes'])) {
 }
 
 // --- Basic Validation ---
-if (!is_numeric($mid) || !isset($forum)) {
+$forum = get_forum();
+if (!is_numeric($mid) || !$forum) {
   header("Location: " . get_page_context()); // use fallback
   exit;
 }

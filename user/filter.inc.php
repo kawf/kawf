@@ -2,7 +2,8 @@
 
 function filter_message($msg, $path = array())
 {
-  global $user, $forum;
+  global $user;
+  $forum = get_forum();
 
   /*
    * Hiding portions of the tree needs some tricky logic, so here's the

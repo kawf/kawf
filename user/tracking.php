@@ -9,7 +9,7 @@ require_once("thread.inc.php");
 require_once("page-yatt.inc.php");
 
 // Instantiate YATT for the content template
-// Note: No forum context needed as this page shows tracked threads across all forums
+// Note: No forum context needed yet as this page shows tracked threads across all forums
 $content_tpl = new_yatt('tracking.yatt');
 
 // Base variables available everywhere
@@ -21,7 +21,7 @@ $content_tpl->set("TIME", time());
 $is_simple_mode = isset($user->pref['SimpleHTML']);
 $mode_block = $is_simple_mode ? 'simple' : 'normal';
 
-// --- Data Fetching --- ( Largely unchanged from previous refactor )
+// --- Data Fetching ---
 $sql = "select * from f_forums order by fid";
 $sth = db_query($sql);
 
@@ -29,6 +29,9 @@ $numshown = 0;
 $forums = []; // Array to hold data for all forums
 
 while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
+  // Set the forum context for this iteration - this is ONLY done here, nowhere else.
+  set_forum($forum['fid']);
+
   /* rebuild caches per forum */
   $indexes = build_indexes($forum['fid']);
   list($tthreads, $tthreads_by_tid) = build_tthreads($forum['fid']);
@@ -133,8 +136,6 @@ $content_tpl->parse('tracking');
 $content_html = $content_tpl->output();
 
 log_yatt_errors($content_tpl);
-
-$forum = null; // NOT a forum context
 
 // Call the existing generate_page function
 print generate_page('Your Tracked Threads', $content_html);

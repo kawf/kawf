@@ -11,7 +11,7 @@ if(!ini_get('safe_mode'))
 
 function find_thread_index($tid)
 {
-  global $indexes;
+  $indexes = get_forum_indexes();
 
   foreach ($indexes as $index)
     if ($index['mintid'] <= $tid && $index['maxtid'] >= $tid)

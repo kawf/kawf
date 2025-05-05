@@ -1,6 +1,7 @@
 <?php
 
-if (!$user->valid() || !isset($forum)) {
+$forum = get_forum();
+if (!$user->valid() || !$forum) {
   header("Location: " . get_page_context(false));
   exit;
 }

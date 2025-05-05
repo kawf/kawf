@@ -25,7 +25,14 @@ function generate_forum_header($forum) {
 
 function generate_page($title, $contents, $skip_header=false, $meta_robots=false)
 {
-    global $template_dir, $domain, $Debug, $forum;
+    global $template_dir, $domain, $Debug;
+
+    // Try to get forum context, but don't require it
+    try {
+        $forum = get_forum();
+    } catch (Exception $e) {
+        $forum = null;
+    }
 
     $page = new_yatt('page.yatt');
     $page->set('domain', $domain);
@@ -35,8 +42,8 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
     $page->set('js_jquery_href', js_href($filename="jquery-3.5.0.slim.min.js", $cache_buster=false));
     $bch = browser_css_href();
     if ($bch) {
-	$page->set('browser_css_href', $bch);
-	$page->parse('page.bch');
+        $page->set('browser_css_href', $bch);
+        $page->parse('page.bch');
     }
     $page->set('browser_css_href', browser_css_href());
     if($meta_robots) {
@@ -60,7 +67,7 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
     }
 
     if (!$skip_header) {
-    // Set forum navigation
+        // Set forum navigation
         $nav = get_forum_navigation();
 
         // Add forums by category
@@ -85,13 +92,13 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
         $page->parse('page.header');
 
         // Handle forum header if we're in a forum context
-        if (isset($forum)) {
+        if ($forum !== null) {
             // Set the header content in the main page template
             $page->set('forum_header_content', generate_forum_header($forum));
 
             // Parse the forum header block
             $page->parse('page.forum_header');
-	    }
+        }
     }
 
     if ($Debug && get_debug_log() != "") {

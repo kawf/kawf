@@ -5,7 +5,8 @@ require_once("listthread.inc.php");
 
 function get_thread_messages($thread, $vmid = 0)
 {
-  global $user, $indexes;
+  global $user;
+  $indexes = get_forum_indexes();
 
   /* find my messages and later */
   for ($index = find_msg_index($thread['mid']); isset($indexes[$index]); $index++) {
@@ -83,7 +84,8 @@ function gen_thread_flags(&$thread)
 
 function gen_thread($thread, $collapse = false)
 {
-  global $user, $forum;
+  global $user;
+  $forum = get_forum();
 
   list($messages, $tree) = get_thread_messages($thread);
   if (!isset($messages) || !count($messages))
@@ -109,8 +111,9 @@ function gen_thread($thread, $collapse = false)
 
 function gen_threadlinks($thread, $collapse = false)
 {
-    global $user, $forum, $tthreads_by_tid;
+    global $user, $tthreads_by_tid;
     global $debug_f_tracking;
+    $forum = get_forum();
 
     /* not logged in, dont generate anything */
     if (!$user->valid()) return '';

@@ -3,7 +3,8 @@ require_once("message.inc.php");
 
 function print_subject($thread, $msg, $replies = -1, $collapse = false)
 {
-  global $vmid, $user, $tthreads_by_tid, $forum, $debug_f_tracking;
+  global $vmid, $user, $tthreads_by_tid, $debug_f_tracking;
+  $forum = get_forum();
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);

@@ -106,27 +106,20 @@ function update_visits()
   db_exec($sql, array($aid, $ip));
 }
 
-function find_forum($shortname)
+// Set up the forum context for the current request.
+// Also builds the thread tracking cache globals - this will eventually be moved to kawfGlobals.
+function load_forum($shortname)
 {
-  global $user, $forum, $indexes, $tthreads, $tthreads_by_tid;
+  global $tthreads, $tthreads_by_tid; // THESE ARE SET HERE, not just read
 
-  $sql = "select * from f_forums where shortname = ?";
-  $forum = db_query_first($sql, array($shortname));
-
-  if (!$forum)
+  // load the forum context
+  if (!kawfGlobals::loadForum($shortname)) {
     return 0;
-
-  if (isset($forum['version']) && $forum['version'] == 1) {
-    echo "This forum is currently undergoing maintenance, please try back in a couple of minutes\n";
-    exit;
   }
 
-  $indexes = build_indexes($forum['fid']);
+  // build the thread tracking cache globals
+  $forum = get_forum();
   list($tthreads, $tthreads_by_tid) = build_tthreads($forum['fid']);
-
-  $options = explode(",", $forum['options']);
-  foreach ($options as $value)
-    $forum['option'][$value] = true;
 
   return 1;
 }
@@ -189,7 +182,7 @@ function build_tthreads($fid)
         }
 
         /* Throw away threads that we can't see */
-        if (filter_thread($tid)) {
+        if (filter_thread($tid, array('fid' => $fid))) {
           error_log("Filtered out thread $tid for user {$user->aid}");
           continue;
         }
@@ -215,24 +208,23 @@ function build_tthreads($fid)
 
 function mid_to_iid($mid)
 {
-  global $indexes;
-
   $index = find_msg_index($mid);
   if (!isset($index)) return null;
+
+  $indexes = get_forum_indexes();
   return $indexes[$index]['iid'];
 }
 
 function last_iid()
 {
-  global $indexes;
-
+  $indexes = get_forum_indexes();
   $index = end($indexes);
   return $index['iid'];
 }
 
 function find_msg_index($mid)
 {
-  global $indexes;
+  $indexes = get_forum_indexes();
 
   if (!isset($indexes) || !count($indexes)) {
     err_not_found("indexes cache is empty");
@@ -247,8 +239,7 @@ function find_msg_index($mid)
 
 function tid_to_iid($tid)
 {
-  global $indexes;
-
+  $indexes = get_forum_indexes();
   $index = find_thread_index($tid);
   if (!isset($index)) return null;
   return $indexes[$index]['iid'];
@@ -256,8 +247,7 @@ function tid_to_iid($tid)
 
 function find_thread_index($tid)
 {
-  global $indexes;
-
+  $indexes = get_forum_indexes();
   if (!isset($indexes) || !count($indexes)) {
     err_not_found("indexes cache is empty");
     exit;
@@ -275,7 +265,7 @@ $s = get_server();
 // Parse out the directory/filename
 if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $s->scriptName . $s->pathInfo, $regs)) {
   if (!isset($scripts[$regs[2]])) {
-    if (find_forum($regs[2])) {
+    if (load_forum($regs[2])) {
       // got forum but need trailing slash
       Header("Location: $s->scriptName$s->pathInfo/");
       exit;
@@ -295,7 +285,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $s->scriptName . $s->pathInfo, $regs
   else
     Header("Location: pages/" . $regs[2] . ".phtml");
 } elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/([0-9a-zA-Z_.-]*)$/", $s->scriptName . $s->pathInfo, $regs)) {
-  if (!find_forum($regs[1]))
+  if (!load_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
   if (!isset($fscripts[$regs[2]]))
@@ -303,27 +293,28 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $s->scriptName . $s->pathInfo, $regs
 
   include_once($fscripts[$regs[2] . ""]);
 } else if (preg_match("/^\/([0-9a-zA-Z_.-]+)\/pages\/([0-9]+)\.phtml$/", $s->scriptName . $s->pathInfo, $regs)) {
-  if (!find_forum($regs[1]))
+  if (!load_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
   /* Now show that page */
   $curpage = $regs[2];
   require_once("showforum.php");
 } elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/tracking\/([0-9]+)\.phtml$/", $s->scriptName . $s->pathInfo, $regs)) {
-  if (!find_forum($regs[1]))
+  if (!load_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
   /* Now show that page */
   $curpage = $regs[2];
   require_once("showtracking.php");
 } elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/msgs\/([0-9]+)\.(phtml|txt)$/", $s->scriptName . $s->pathInfo, $regs)) {
-  if (!find_forum($regs[1]))
+  if (!load_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
   /* See if the message number is legitimate */
   $mid = $regs[2];
   $fmt = $regs[3];
   $iid = mid_to_iid($mid);
+  $forum = get_forum();
   if (isset($iid)) {
     $sql = "select mid from f_messages$iid where mid = ?";
     $args = array($mid);
@@ -352,7 +343,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $s->scriptName . $s->pathInfo, $regs
     err_not_found("Unknown message " . $mid . " in forum " . $forum['shortname']. ": " . $sql);
   if(isset($sth)) $sth->closeCursor();
 } elseif (preg_match("/^\/([0-9a-zA-Z_.-]+)\/threads\/([0-9]+)\.phtml$/", $s->scriptName . $s->pathInfo, $regs)) {
-  if (!find_forum($regs[1]))
+  if (!load_forum($regs[1]))
     err_not_found("Unknown forum " . $regs[1]);
 
   /* See if the thread number is legitimate */
@@ -366,6 +357,7 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $s->scriptName . $s->pathInfo, $regs
   if (isset($sth) && $sth->fetch()) {
     require_once("showthread.php");
   } else
+    $forum = get_forum();
     err_not_found("Unknown thread " . $tid . " in forum " . $forum['shortname']);
   if(isset($sth)) $sth->closeCursor();
 } else

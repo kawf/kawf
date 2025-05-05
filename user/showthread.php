@@ -52,7 +52,8 @@ if (!isset($messages) || empty($messages)) {
 /* print_message refactored to return HTML */
 function print_message($thread, $msg)
 {
-  global $user, $forum, $template_dir; // Assume $template_dir is global
+  global $user, $template_dir; // Assume $template_dir is global
+  $forum = get_forum();
 
   if (!isset($msg)) return ''; // Return empty if msg is null
 

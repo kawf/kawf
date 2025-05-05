@@ -1,7 +1,8 @@
 <?php
 require_once('thread.inc.php');
 
-if (!isset($forum)) {
+$forum = get_forum();
+if (!$forum) {
   echo "Invalid forum\n";
   exit;
 }

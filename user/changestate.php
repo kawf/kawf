@@ -14,6 +14,13 @@ if (empty(get_page_context(false))) {
   exit;
 }
 
+// Initialize and validate forum context
+$forum = get_forum();
+if (!$forum) {
+  header("Location: " . get_page_context(false));
+  exit;
+}
+
 if ($state != 'Active' && $state != 'OffTopic' && $state != 'Moderated' && $state != 'Deleted')
   err_not_found("Invalid state $state");
 

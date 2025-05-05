@@ -16,7 +16,8 @@ if ($user->status != 'Active') {
 }
 
 /* Check the data to make sure they entered stuff */
-if (!isset($forum)) {
+$forum = get_forum();
+if (!$forum) {
   if (isset($_REQUEST['page'])) {
     header("Location: " . get_page_context(false));
   } else {

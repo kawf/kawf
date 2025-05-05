@@ -17,9 +17,9 @@ function hidden($name, $value)
  */
 function render_postform($template_dir, $action, $user, $msg = null, $imgpreview = false)
 {
-    global $thread, $forum;
-    // global $tthreads_by_tid; // Not used directly here?
     global $Debug;
+    global $thread;
+    $forum = get_forum();
 
     // Instantiate YATT for the form template
     try {

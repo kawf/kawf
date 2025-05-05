@@ -58,7 +58,7 @@ $user = new AdminUser;
 
 function find_msg_index($mid)
 {
-  global $indexes;
+  $indexes = get_forum_indexes();
 
   reset($indexes);
   while (list($key) = each($indexes))
@@ -70,7 +70,7 @@ function find_msg_index($mid)
 
 function find_thread_index($tid)
 {
-  global $indexes;
+  $indexes = get_forum_indexes();
 
   reset($indexes);
   while (list($key) = each($indexes))

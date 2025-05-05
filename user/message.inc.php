@@ -99,7 +99,8 @@ function postprocess($msg, $noembed=false)
 /* pre is a hack for stacking used by showthread.php */
 function render_message($template_dir, $msg, $viewer, $owner=null)
 {
-  global $Debug, $forum, $viewer_aid_key;
+  global $Debug, $viewer_aid_key;
+  $forum = get_forum();
 
   // Instantiate YATT for this message
   $message_tpl = new_yatt('message.yatt', $forum);
@@ -216,7 +217,8 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
 // Helper function refactored for YATT
 function _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $moderator)
 {
-  global $forum, $p2f_address, $config_sponsor; // Need forum for permissions check
+  global $p2f_address, $config_sponsor; // Need forum for permissions check
+  $forum = get_forum();
 
   // Moderator Info Block
   if ($moderator) {

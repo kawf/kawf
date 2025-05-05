@@ -9,6 +9,12 @@ if (!$user->valid()) {
     exit;
 }
 
+$forum = get_forum();
+if (!$forum) {
+  echo "Invalid forum\n";
+  exit;
+}
+
 $content_tpl = new_yatt('showtracking.yatt', $forum);
 
 $content_tpl->set("user_token", $user->token());
