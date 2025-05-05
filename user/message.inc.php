@@ -205,8 +205,12 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
   // Parse the main container block
   $message_tpl->parse('message_block');
 
+  $output = $message_tpl->output();
+
+  log_yatt_errors($message_tpl);
+
   // Return the rendered HTML
-  return $message_tpl->output();
+  return $output;
 }
 
 // Helper function refactored for YATT
