@@ -93,6 +93,9 @@ $imgpreview = false;
 $accepted = false;
 $rendered_preview_html = ''; // Store rendered preview
 
+// Get server properties
+$s = get_server();
+
 // --- Main Logic: Handle POST or GET ---
 if (isset($_POST['postcookie'])) {
   // --- POST Submission ---
@@ -101,7 +104,7 @@ if (isset($_POST['postcookie'])) {
 
   // Basic message setup
   $msg['date'] = gen_date($user); // Use current time for processing
-  $msg['ip'] = $remote_addr;
+  $msg['ip'] = $s->remoteAddr;
   $msg['aid'] = $user->aid;
   $msg['flags'] = 'NewStyle'; // Default flag
   $msg['name'] = stripcrap($user->name); // Use current user name
@@ -194,7 +197,7 @@ if (isset($_POST['postcookie'])) {
       unset($nmsg['mid']); // FORCE unset mid for post-preview render
       $nmsg['pmid'] = isset($msg['pmid']) ? $msg['pmid'] : '';
       $nmsg['tid'] = isset($msg['tid']) ? $msg['tid'] : '';
-      $nmsg['ip'] = $remote_addr;
+      $nmsg['ip'] = $s->remoteAddr;
 
       $form_html = render_postform($template_dir, "post", $user, $nmsg);
       $content_tpl->set("FORM_HTML", $form_html);
@@ -238,7 +241,7 @@ if (isset($_POST['postcookie'])) {
   $nmsg = [];
   $nmsg['message'] = $nmsg['subject'] = $nmsg['url'] = $nmsg['urltext'] = $nmsg['imageurl'] = $nmsg['video'] = "";
   $nmsg['aid'] = $user->aid;
-  $nmsg['ip'] = $remote_addr;
+  $nmsg['ip'] = $s->remoteAddr;
 
   // Check if replying
   if (isset($_REQUEST['pmid']) && is_numeric($_REQUEST['pmid'])) {

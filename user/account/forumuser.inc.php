@@ -108,27 +108,28 @@ class ForumUser {
   function req()
   {
     global $account_host;
-    global $script_name, $path_info, $server_name, $server_port, $http_host;
+
+    $s = get_server();
 
     if ($this->valid())
       return true;
 
     /* prevent recursion */
-    if ($script_name . $path_info == '/login.phtml')
+    if ($s->scriptName . $s->pathInfo == '/login.phtml')
       return true;
 
     /* always allow people to create */
-    if ($script_name . $path_info == '/create.phtml')
+    if ($s->scriptName . $s->pathInfo == '/create.phtml')
       return true;
 
-    if ($script_name . $path_info == '/finish.phtml')
+    if ($s->scriptName . $s->pathInfo == '/finish.phtml')
       return true;
 
     /* always allow people to request password */
-    if ($script_name . $path_info == '/forgotpassword.phtml')
+    if ($s->scriptName . $s->pathInfo == '/forgotpassword.phtml')
       return true;
 
-    $url = url_origin($_SERVER) . $script_name . $path_info;
+    $url = url_origin($_SERVER) . $s->scriptName . $s->pathInfo;
     header("Location: /login.phtml?url=$url");
     exit;
   }
@@ -310,7 +311,8 @@ class AccountUser extends ForumUser {
 
   function send_email($pending)
   {
-    global $tpl, $bounce_host, $remote_addr;
+    global $tpl, $bounce_host;
+    $s = get_server();
 
     switch($pending['type']) {
     case 'NewAccount':
@@ -330,11 +332,12 @@ class AccountUser extends ForumUser {
       break;
     }
 
-    $tpl->set_var(array(
-      "REMOTE_ADDR" => $remote_addr,
+    $tpl->set(array(
+      "TOKEN" => $pending['tid'],
       "COOKIE" => $pending['cookie'],
-      "TID" => $pending['tid'],
-      "EMAIL" => $email,
+      "EMAIL" => $this->email,
+      "NAME" => $this->name,
+      "REMOTE_ADDR" => $s->remoteAddr,
       "PHPVERSION" => phpversion(),
     ));
 
@@ -347,7 +350,7 @@ class AccountUser extends ForumUser {
 
   function create()
   {
-    global $tpl, $bounce_host, $remote_addr;
+    global $tpl, $bounce_host;
 
     $cookie = md5("cookie" . $this->email . microtime());
 

@@ -1,27 +1,7 @@
 <?php
 
 require_once("error.inc.php");
-
-/* We use the templates for everything */
-// require_once("template.inc.php"); // REMOVED - No longer used here
-
-function safe_server_var($key)
-{
-    return (isset($_SERVER[$key])?$_SERVER[$key]:'');
-}
-
-$server_name=safe_server_var('SERVER_NAME');
-$server_port=safe_server_var('SERVER_PORT');
-
-$remote_addr=safe_server_var('REMOTE_ADDR');
-
-$http_host=safe_server_var('HTTP_HOST');
-$request_uri=safe_server_var('REQUEST_URI');
-$request_path=(@parse_url($request_uri))['path'];
-$script_name=safe_server_var('SCRIPT_NAME');
-$path_info=safe_server_var('PATH_INFO');
-
-$query_string=safe_server_var('QUERY_STRING');
+require_once("kawfGlobals.class.php");
 
 function url_origin( $s, $use_forwarded_host = false )
 {
@@ -49,8 +29,6 @@ function full_url( $s, $use_forwarded_host = false )
  */
 function get_base_url($use_forwarded_host = false)
 {
-    global $server_name;
-
     // Use url_origin() to get protocol and host
     $base = url_origin($_SERVER, $use_forwarded_host);
 
@@ -230,7 +208,8 @@ function format_page_param() {
  * @return string The page context value, URL encoded for safe use in forms and URLs
  */
 function get_page_context($use_fallback = true) {
-    global $script_name, $path_info;
-    return $_REQUEST['page'] ?? ($use_fallback ? ($script_name . $path_info) : '');
+    $s=get_server();
+    return $_REQUEST['page'] ?? ($use_fallback ? ($s->scriptName . $s->pathInfo) : '');
 }
+// vim: sw=4 ts=4 et:
 ?>

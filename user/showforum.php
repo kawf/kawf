@@ -92,6 +92,7 @@ $stickythreads = 0;
 $threadshown = array(); // Keep track of shown threads (stickies/tracked)
 // $rows_html = ''; // REMOVE HTML accumulator
 
+$s=get_server();
 if ($curpage == 1) {
   // Show global messages
   if ($enable_global_messages) {
@@ -102,8 +103,8 @@ if ($curpage == 1) {
           $class = "grow" . ($numshown % 2);
           $gid = "gid=" . $gmsg['gid'];
           // Construct the proper return page URL
-          $return_page = $script_name; // Use $script_name from main context
-          if (!empty($path_info)) $return_page .= $path_info; // Add path_info if present
+          $return_page = $s->scriptName;
+          if (!empty($s->pathInfo)) $return_page .= $s->pathInfo; // Add pathInfo if present
           $gpage = "page=" . urlencode($return_page); // Use raw return_page value
           $gtoken = "token=" . $user->token();
           // Build message HTML (unchanged logic)

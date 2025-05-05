@@ -23,7 +23,7 @@ if (isset($_POST['yes'])) {
 
 // --- Basic Validation ---
 if (!is_numeric($mid) || !isset($forum)) {
-  header("Location: " . get_base_url() . $script_name . $path_info . "/");
+  header("Location: " . get_page_context()); // use fallback
   exit;
 }
 

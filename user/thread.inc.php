@@ -109,7 +109,7 @@ function gen_thread($thread, $collapse = false)
 
 function gen_threadlinks($thread, $collapse = false)
 {
-    global $user, $forum, $tthreads_by_tid, $script_name, $path_info;
+    global $user, $forum, $tthreads_by_tid;
     global $debug_f_tracking;
 
     /* not logged in, dont generate anything */
@@ -119,7 +119,7 @@ function gen_threadlinks($thread, $collapse = false)
     /* is thread tracked by user? */
     if (isset($tthread))  {
       $tl = " <a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] .
-	"&amp;page=" . $script_name . $path_info .
+	"&amp;" . format_page_param() .
 	"&amp;token=" . $user->token() .
 	"\" class=\"ut\" title=\"Untrack thread\">ut</a>";
       if ($debug_f_tracking) {
@@ -127,7 +127,7 @@ function gen_threadlinks($thread, $collapse = false)
       }
     } else {
       $tl = " <a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] .
-	"&amp;page=" . $script_name . $path_info .
+	"&amp;" . format_page_param() .
 	"&amp;token=" . $user->token() .
 	"&amp;time=" . time() .	/* fix bug 2971483 - use page view time stamp for tracking */
 	"\" class=\"tt\" title=\"Track thread\">tt</a>";
@@ -138,7 +138,7 @@ function gen_threadlinks($thread, $collapse = false)
 
     if (is_thread_bumped($thread)) {
       $tl .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] .
-	"&amp;page=" . $script_name . $path_info .
+	"&amp;" . format_page_param() .
 	"&amp;token=" . $user->token() .
 	"&amp;time=" . time() .
 	"\" class=\"up\" title=\"Update thread\">up</a>";

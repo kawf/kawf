@@ -19,7 +19,7 @@ $mid = isset($_REQUEST['mid']) ? $_REQUEST['mid'] : null;
 
 /* Check the data */
 if (!is_numeric($mid) || !isset($forum)) {
-  Header("Location: http://$server_name$script_name$path_info/");
+  header("Location: " . get_page_context()); // use fallback
   exit;
 }
 
@@ -83,6 +83,9 @@ $error = [];
 $preview = false;
 $imgpreview = false;
 
+// Get server properties
+$s = get_server();
+
 // Determine state based on POST or initial load
 if (!isset($_POST['message'])) {
   // --- Initial Load (GET request or no form data) ---
@@ -98,7 +101,7 @@ if (!isset($_POST['message'])) {
 } else {
   // --- Form Submission (POST request) ---
   $nmsg = $msg; // Start with original, then overwrite with POST
-  $nmsg['ip'] = $remote_addr; // Update IP
+  $nmsg['ip'] = $s->remoteAddr; // Update IP
   preprocess($nmsg, $_POST); // Populate $nmsg with sanitized POST data (subject, message, url etc)
 
   if (isset($_REQUEST['preview'])) $preview = true;
@@ -269,7 +272,7 @@ if (!empty($error) || $preview) {
     $nmsg['name'], $nmsg['email'], $nmsg['flags'], $nmsg['subject'],
     $nmsg['message'], $nmsg['url'], $nmsg['urltext'], $nmsg['video'],
     $nmsg['state'],
-    $user->name, $user->aid, $remote_addr, $diff, // Add user/audit info for CONCAT
+    $user->name, $user->aid, $s->remoteAddr, $diff, // Add user/audit info for CONCAT
     $mid
   ));
 

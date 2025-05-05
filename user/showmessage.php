@@ -79,7 +79,7 @@ $nmsg['msg'] = $nmsg['subject'] = $nmsg['urltext'] = $nmsg['video'] = "";
 $nmsg['aid'] = $user->aid;
 $nmsg['pmid'] = $msg['mid'];
 $nmsg['tid'] = $msg['tid'];
-$nmsg['ip'] = $remote_addr;
+$nmsg['ip'] = get_server()->remoteAddr;
 
 if ($msg['pmid'] != 0 && !isset($pmsg)) {
   $pmsg = fetch_message($user, $msg['pmid'], 'mid,subject,name,date');

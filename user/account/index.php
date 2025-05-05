@@ -2,10 +2,10 @@
 include 'noob.inc.php';
 
 $user= new ForumUser;
-
-if (preg_match("/^\/[^\/]*\/([0-9]+)\.phtml$/", $script_name . $path_info, $regs)) {
+$s=get_server();
+if (preg_match("/^\/[^\/]*\/([0-9]+)\.phtml$/", $s->scriptName . $s->pathInfo, $regs)) {
     $uuser= new ForumUser($regs[1], false);
-} else if(empty($path_info) || $path_info =="/") {
+} else if(empty($s->pathInfo) || $s->pathInfo =="/") {
     $uuser= new ForumUser;	/* find by cookie */
     if(!$uuser->valid()) {	/* dont go to login page if user is invalid */
 	err_not_found("Unknown user");
@@ -42,7 +42,7 @@ if(array_key_exists('noob', $_GET)) {
 <!--
 <?php echo $user->name. ", ". $user->aid ."\n"; ?>
 <?php echo $uuser->name. ", ". $uuser->aid ."\n"; ?>
-<?php echo "'$script_name' '$path_info' '$regs[1]'\n" ?>
+<?php echo "'$s->scriptName' '$s->pathInfo' '$regs[1]'\n" ?>
 -->
 
 <?php

@@ -92,7 +92,7 @@ class YATT {
         $cur = &$this->obj;
         $line_num = 0;
         if (!defined('YATT_DSTART')) define('YATT_DSTART', 3);
-        // error_log("--- Starting Load (Integrated): $fname ---"); // DEBUG REMOVED
+        // debug_log("--- Starting Load (Integrated): $fname ---"); // DEBUG REMOVED
 
         $current_text = ''; // Initialize text accumulator outside the loop
 
@@ -185,12 +185,11 @@ class YATT {
              }
              array_unshift($unclosed_tags, 'ROOT');
              $error_msg = sprintf('LOAD(%s): mismatched begin/end pairs at EOF! Unclosed structure: %s', $fname, implode(' -> ', $unclosed_tags));
-             // error_log("--- Load ERROR: $error_msg ---"); // DEBUG REMOVED
              return $this->error($error_msg);
         }
 
-        // error_log("--- Load Complete (Integrated): $fname. Final Structure: ---"); // DEBUG REMOVED
-        // error_log(print_r($this->obj, true)); // DEBUG REMOVED
+        // debug_log("--- Load Complete (Integrated): $fname. Final Structure: ---"); // DEBUG REMOVED
+        // debug_log(print_r($this->obj, true)); // DEBUG REMOVED
 
         return count($this->errors);
         // --- End: Integrated Line-by-Line Parser ---
@@ -201,37 +200,37 @@ class YATT {
         $oid = $path!=NULL?explode('.', $path):[];
         $node = &$this->obj; // Start search from root
         $current_path_segment = 'ROOT';
-        // error_log("FIND_NODE: Searching for path '$path'");
+        // debug_log("FIND_NODE: Searching for path '$path'");
         $found = false; // Initialize found flag
 
         while ($cmp = array_shift($oid)) {
-            // error_log("FIND_NODE:  -> Looking for component '$cmp' within node '{$node[YATT_NAME]}'");
+            // debug_log("FIND_NODE:  -> Looking for component '$cmp' within node '{$node[YATT_NAME]}'");
             $found = false; // Reset for each path component
             $current_path_segment .= '.' . $cmp;
 
             if (!is_array($node) || count($node) <= YATT_DSTART) {
-                 // error_log("FIND_NODE:  -> ERROR: Current node '{$node[YATT_NAME]}' has no children to search.");
+                 // debug_log("FIND_NODE:  -> ERROR: Current node '{$node[YATT_NAME]}' has no children to search.");
                  $result = false; return $result;
             }
 
             for ($i = YATT_DSTART; $i < count($node); $i++) {
-                 // error_log("FIND_NODE:  -> Checking child index $i...");
-                 if (!isset($node[$i])) { /* error_log("FIND_NODE:  ->   Index $i not set."); */ continue; }
+                 // debug_log("FIND_NODE:  -> Checking child index $i...");
+                 if (!isset($node[$i])) { /* debug_log("FIND_NODE:  ->   Index $i not set."); */ continue; }
 
                  if (is_array($node[$i])) {
                      if (isset($node[$i][YATT_NAME])) {
-                         // error_log("FIND_NODE:  ->   Child $i is node '{$node[$i][YATT_NAME]}'");
+                         // debug_log("FIND_NODE:  ->   Child $i is node '{$node[$i][YATT_NAME]}'");
                          if (strcmp($node[$i][YATT_NAME], $cmp) == 0) {
                              $node = &$node[$i];
                              $found = true;
-                             // error_log("FIND_NODE:  ->   FOUND! Moving to node '{$node[YATT_NAME]}'");
+                             // debug_log("FIND_NODE:  ->   FOUND! Moving to node '{$node[YATT_NAME]}'");
                              break;
                          }
                      } else {
-                         // error_log("FIND_NODE:  ->   Child $i is array but has no NAME.");
+                         // debug_log("FIND_NODE:  ->   Child $i is array but has no NAME.");
                      }
                  } else {
-                     // error_log("FIND_NODE:  ->   Child $i is text, skipping.");
+                     // debug_log("FIND_NODE:  ->   Child $i is text, skipping.");
                  }
             }
             if (!$found) {
@@ -242,7 +241,7 @@ class YATT {
                 return $result;
             }
         }
-        // error_log("FIND_NODE: Success! Returning node '{$node[YATT_NAME]}'");
+        // debug_log("FIND_NODE: Success! Returning node '{$node[YATT_NAME]}'");
         return $node;
     }
 
@@ -250,6 +249,7 @@ class YATT {
     function subst($matches) {
         if (!isset($this->vars[$matches[1]])) {
            $this->error('PARSE(): unbound variable %s in %s:%d', $matches[1], $this->current_file, $this->current_line);
+           //error_log(sprintf('PARSE(): unbound variable %s in %s:%d', $matches[1], $this->current_file, $this->current_line));
            return '';
         }
         return $this->vars[$matches[1]];
