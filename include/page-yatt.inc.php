@@ -94,16 +94,18 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
 	    }
     }
 
-    log_yatt_errors($page);
-
     if ($Debug && get_debug_log() != "") {
         $page->set('debug_contents', "<pre>\n" . get_debug_log() . "</pre>\n");
         $page->parse('page.debug_log');
     }
 
     $page->parse('page');
+    $output = trim($page->output());
 
-    return trim($page->output());
+    // sadly, we can't render errors here, because we've already rendered the page, so just log them
+    log_yatt_errors($page);
+
+    return $output;
 }
 
 // Set up the YATT-based error renderer
