@@ -35,8 +35,8 @@ function run_test($description, $parse_order, $block_to_output, $expected_output
 
     $actual_output = $yatt->output($block_to_output);
 
-    $actual_norm = str_replace("\r\n", "\n", trim($actual_output));
-    $expected_norm = str_replace("\r\n", "\n", trim($expected_output));
+    $actual_norm = str_replace("\r\n", "\n", $actual_output);
+    $expected_norm = str_replace("\r\n", "\n", $expected_output);
 
     if ($actual_norm === $expected_norm) {
         echo "--- PASS: $description\n";
@@ -55,15 +55,18 @@ echo "Starting YATT Comment Handling Unit Tests...\n";
 
 // Test Case 1: Check if %[#] comments are ignored
 $expected_1 = <<<EOT
+
 Visible Before.
+
 Visible After.
+
 EOT;
 
 run_test(
     "Comments are ignored",
     ['comment_test'],
     'comment_test',
-    trim($expected_1)
+    $expected_1
 );
 
 

@@ -42,8 +42,8 @@ function run_test($description, $parse_order, $vars_to_set, $block_to_output, $e
 
     $actual_output = $yatt->output($block_to_output);
 
-    $actual_norm = str_replace("\r\n", "\n", trim($actual_output));
-    $expected_norm = str_replace("\r\n", "\n", trim($expected_output));
+    $actual_norm = str_replace("\r\n", "\n", $actual_output);
+    $expected_norm = str_replace("\r\n", "\n", $expected_output);
 
     if ($actual_norm === $expected_norm) {
         echo "--- PASS: $description\n";
@@ -62,42 +62,58 @@ echo "Starting YATT Multi-Parse Unit Tests...\n";
 
 // Test Case 1: Parse A, then B, output Container
 $expected_1 = <<<EOT
+
+
     Content Block A (Value A)
+
   Separator
+
     Content Block B (Value B)
+
+
 EOT;
 run_test(
     "Parse A, Parse B, Output Container",
-    ['container.block_a', 'container.block_b', 'container'],
+    ['container.block_1', 'container.block_2', 'container'],
     ['VAR_A' => 'Value A', 'VAR_B' => 'Value B'],
     'container',
-    trim($expected_1)
+    $expected_1
 );
 
 // Test Case 2: Parse only A, output Container (B should be missing)
 $expected_2 = <<<EOT
+
+
     Content Block A (Value A)
+
   Separator
+
+
 EOT;
 run_test(
     "Parse A, Output Container",
-    ['container.block_a', 'container'], // Only parse A and container
+    ['container.block_1', 'container'], // Only parse A and container
     ['VAR_A' => 'Value A'],
     'container',
-    trim($expected_2)
+    $expected_2
 );
 
 // Test Case 3: Parse only B, output Container (A should be missing)
 $expected_3 = <<<EOT
+
+
   Separator
+
     Content Block B (Value B)
+
+
 EOT;
 run_test(
     "Parse B, Output Container",
-    ['container.block_b', 'container'], // Only parse B and container
+    ['container.block_2', 'container'], // Only parse B and container
     ['VAR_B' => 'Value B'],
     'container',
-    trim($expected_3)
+    $expected_3
 );
 
 

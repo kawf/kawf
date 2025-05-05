@@ -1,0 +1,19 @@
+%begin [valid_block]
+This is a valid block with valid variables: %[VALID_VAR]
+%end [valid_block]
+
+%begin [invalid.block]
+This block has an invalid name with a dot
+%end [invalid.block]
+
+%begin [valid_block2]
+This block has an invalid variable: %[INVALID@VAR]
+%end [valid_block2]
+
+%begin [block/with/slashes]
+This block has slashes in its name
+%end [block/with/slashes]
+
+%begin [valid_block3]
+This block has a variable with spaces: %[INVALID VAR]
+%end [valid_block3]

@@ -89,11 +89,14 @@ echo "Starting YATT Immediate Nesting Unit Tests (Generic Names)...\n";
 // Test Case 1: INNER_VAR IS set
 // Expected: Both links appear, INNER_VAR substituted.
 $expected_case_1 = <<<EOT
+
       <a href="inner:inner_value">Inner Block Link</a> |
+
 <!-- Separator -->
       <a href="#outer">Outer Block Link</a>
+
 EOT;
-run_test("Inner variable set", true, trim($expected_case_1)); // Store result internally
+run_test("Inner variable set", true, $expected_case_1); // Store result internally
 
 
 // Test Case 2: INNER_VAR IS NOT set

@@ -56,12 +56,17 @@ echo "Starting YATT Text Node Merging Unit Tests...\n";
 
 // Test Case 1: Check if consecutive text lines are merged with correct newlines
 // Note: Expected output includes the newline characters from the template processing.
-$expected_1 =
-"Line 1\n".
-"Line 2\n".
-"Sub Block\n". // Now includes a newline after sub_block content
-"Line 3\n".
-"Line 4\n";
+$expected_1 = <<<EOT
+
+Line 1
+Line 2
+
+Sub Block
+
+Line 3
+Line 4
+
+EOT;
 
 run_test(
     "Consecutive text lines merge",
