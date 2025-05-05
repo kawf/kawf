@@ -50,4 +50,12 @@ $config_sponsor = array(
     'url' => 'http://kawf.sourceforge.net/'
 );
 */
+
+/*
+// PayPal donation button configuration example:
+// Copy to config-local.inc and customize
+$config_paypal = array(
+    'hosted_button_id' => 'YOUR_BUTTON_ID_HERE'  // Required: Your PayPal hosted button ID
+);
+*/
 ?>

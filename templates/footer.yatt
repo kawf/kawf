@@ -1,13 +1,22 @@
 <table class="smaller">
 <tr>
+  %begin [paypal]
   <td class="left">
-    <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-    <input type="hidden" name="cmd" value="_s-xclick">
-    <input type="hidden" name="hosted_button_id" value="4023927">
-    <input type="image" src="/pics/btn_donate_SM.gif" name="submit" alt="PayPal - The safer, easier way to pay online!">
-    <img alt="" src="/pics/pixel.gif" width="1" height="1">
+    <form action="https://www.paypal.com/donate" method="post" target="_top">
+    %[#] Required hosted button ID
+    <input type="hidden" name="hosted_button_id" value="%[BUTTON_ID]">
+    %[#] Use user's email and aid if logged in
+    %begin [user]
+    <input type="hidden" name="item_name" value="%[USER_EMAIL]" />
+    <input type="hidden" name="item_number" value="%[USER_AID]" />
+    %end [user]
+    %[#] Generate return URL based on current page
+    <input type="hidden" name="return" value="%[RETURN_VALUE]" />
+    <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+    <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
     </form>
   </td>
+  %end [paypal]
   <td class="right">
     <!-- Powered by <a href="http://kawf.sourceforge.net/">Kawf</a> -->
     Powered by <a href="http://github.com/kawf/kawf/">Kawf</a>

@@ -46,6 +46,19 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
     $page->set('title', $title);
     $page->set('contents', $contents);
 
+    // Set user variables if user is valid
+    global $user, $config_paypal;
+    if (isset($config_paypal['hosted_button_id'])) {
+        $page->set('RETURN_VALUE', full_url($_SERVER));
+        $page->set('BUTTON_ID', $config_paypal['hosted_button_id']);
+        if ($user->valid()) {
+            $page->set('USER_EMAIL', $user->email);
+            $page->set('USER_AID', $user->aid);
+            $page->parse('page.paypal.user');
+        }
+        $page->parse('page.paypal');
+    }
+
     if (!$skip_header) {
     // Set forum navigation
         $nav = get_forum_navigation();
