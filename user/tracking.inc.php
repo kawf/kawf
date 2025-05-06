@@ -4,54 +4,56 @@
 function load_tracking($fid): array {
   global $user;
 
+  if (!$user->valid()) {
+    return array(array(), array());
+  }
+
   $tthreads = array();
   $tthreads_by_tid = array();
 
-  if ($user->valid()) {
-    try {
-      /* TZ: unixtime is seconds since epoch */
-      $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = ? and aid = ? order by tid desc";
-      $sth = db_query($sql, array($fid, $user->aid));
+  try {
+    /* TZ: unixtime is seconds since epoch */
+    $sql = "select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_tracking where fid = ? and aid = ? order by tid desc";
+    $sth = db_query($sql, array($fid, $user->aid));
 
-      while ($tthread = $sth->fetch()) {
-        $tid = $tthread['tid'];
+    while ($tthread = $sth->fetch()) {
+      $tid = $tthread['tid'];
 
-        if ($tid<=0) {
-          error_log("Invalid tid in f_tracking: fid=$fid aid={$user->aid} tid=$tid");
+      if ($tid<=0) {
+        error_log("Invalid tid in f_tracking: fid=$fid aid={$user->aid} tid=$tid");
+        continue;
+      }
+
+      /* Handle duplicate entries */
+      if (isset($tthreads_by_tid[$tid])) {
+        if ($tthread['unixtime'] > $tthreads_by_tid[$tid]['unixtime']) {
+          error_log("Duplicate tracking entry for tid $tid, overwriting with newer entry");
+          $new = array();
+          foreach ($tthreads as $t) {
+            if ($t['tid']!=$tthread['tid']) $new[]=$tthread;
+          }
+          $tthreads[] = $new;
+        } else {
+          error_log("Duplicate tracking entry for tid $tid, ignoring older entry");
+          /* Throw it away. Don't add it to $tthreads_by_tid or $tthread */
           continue;
         }
-
-        /* Handle duplicate entries */
-        if (isset($tthreads_by_tid[$tid])) {
-          if ($tthread['unixtime'] > $tthreads_by_tid[$tid]['unixtime']) {
-            error_log("Duplicate tracking entry for tid $tid, overwriting with newer entry");
-            $new = array();
-            foreach ($tthreads as $t) {
-              if ($t['tid']!=$tthread['tid']) $new[]=$tthread;
-            }
-            $tthreads[] = $new;
-          } else {
-            error_log("Duplicate tracking entry for tid $tid, ignoring older entry");
-            /* Throw it away. Don't add it to $tthreads_by_tid or $tthread */
-            continue;
-          }
-        }
-
-        /* Process options */
-        if (!empty($tthread['options'])) {
-          $options = explode(',', $tthread['options']);
-          foreach ($options as $v) {
-            $tthread['option'][$v]=true;
-          }
-        }
-
-        $tthreads_by_tid[$tid] = $tthread;
-        $tthreads[] = $tthread;
       }
-      $sth->closeCursor();
-    } catch (Exception $e) {
-      error_log("Error loading tracking data: " . $e->getMessage() . ": " . $e->getTraceAsString());
+
+      /* Process options */
+      if (!empty($tthread['options'])) {
+        $options = explode(',', $tthread['options']);
+        foreach ($options as $v) {
+          $tthread['option'][$v]=true;
+        }
+      }
+
+      $tthreads_by_tid[$tid] = $tthread;
+      $tthreads[] = $tthread;
     }
+    $sth->closeCursor();
+  } catch (Exception $e) {
+    error_log("Error loading tracking data: " . $e->getMessage() . ": " . $e->getTraceAsString());
   }
   return array($tthreads, $tthreads_by_tid);
 }
