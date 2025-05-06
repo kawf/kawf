@@ -35,14 +35,12 @@ final class ServerInfo {
 }
 
 final class ForumInfo {
-    private $forum;
-    private array $indexes = [];
+    private $forum = null;
     private bool $isLoaded = false;
 
-    public function __construct() {
-        $this->forum;
-        $this->indexes = [];
-    }
+    private array $indexes = [];
+    private array $tthreads = [];
+    private array $tthreads_by_tid = [];
 
     public static function fromShortname(string $shortname): ?self {
         $instance = new self();
@@ -60,63 +58,45 @@ final class ForumInfo {
         return $instance;
     }
 
-    private function loadForum(string $shortname): bool {
-        $sql = "select * from f_forums where shortname = ?";
-        $this->forum = db_query_first($sql, array($shortname));
-
-        if (!$this->forum) {
+    private function loadForumData(array $forum): bool {
+        if (!$forum) {
             return false;
         }
 
-        if (isset($this->forum['version']) && $this->forum['version'] == 1) {
+        if (isset($forum['version']) && $forum['version'] == 1) {
             throw new Exception("Forum is under maintenance");
         }
 
-        $this->indexes = $this->buildIndexes($this->forum['fid']);
+        $this->forum = $forum;
 
-        // Process options
+        // Process options first
         $options = explode(",", $this->forum['options']);
         foreach ($options as $value) {
             $this->forum['option'][$value] = true;
         }
 
+        // Load indexes
+        $this->indexes = build_indexes($this->forum['fid']);
+
+        // Load raw tracking data
+        list($this->tthreads, $this->tthreads_by_tid) = load_tracking($this->forum['fid']);
+
+        // Now we can safely set isLoaded
         $this->isLoaded = true;
+
         return true;
+    }
+
+    private function loadForum(string $shortname): bool {
+        $sql = "select * from f_forums where shortname = ?";
+        $forum = db_query_first($sql, array($shortname));
+        return $this->loadForumData($forum);
     }
 
     private function loadForumById(int $fid): bool {
         $sql = "select * from f_forums where fid = ?";
-        $this->forum = db_query_first($sql, array($fid));
-
-        if (!$this->forum) {
-            return false;
-        }
-
-        if (isset($this->forum['version']) && $this->forum['version'] == 1) {
-            throw new Exception("Forum is under maintenance");
-        }
-
-        $this->indexes = $this->buildIndexes($fid);
-
-        // Process options
-        $options = explode(",", $this->forum['options']);
-        foreach ($options as $value) {
-            $this->forum['option'][$value] = true;
-        }
-
-        $this->isLoaded = true;
-        return true;
-    }
-
-    private function buildIndexes(int $fid): array {
-        $indexes = [];
-        $sql = "select * from f_indexes where fid = ? and ( minmid != 0 or minmid < maxmid ) order by iid";
-        $sth = db_query($sql, array($fid));
-        while ($index = $sth->fetch()) {
-            $indexes[] = $index;
-        }
-        $sth->closeCursor();
-        return $indexes;
+        $forum = db_query_first($sql, array($fid));
+        return $this->loadForumData($forum);
     }
 
     public function getForum(): array {
@@ -131,6 +111,20 @@ final class ForumInfo {
             throw new Exception("Forum not loaded");
         }
         return $this->indexes;
+    }
+
+    public function getTThreads(): array {
+        if (!$this->isLoaded) {
+            throw new Exception("Forum not loaded");
+        }
+        return $this->tthreads;
+    }
+
+    public function getTThreadsByTid(): array {
+        if (!$this->isLoaded) {
+            throw new Exception("Forum not loaded");
+        }
+        return $this->tthreads_by_tid;
     }
 
     public function isLoaded(): bool {
@@ -149,34 +143,11 @@ final class ForumInfo {
     }
 }
 
-final class ThreadInfo {
-    private $thread;
-    private array $tthreads = [];
-    private array $tthreads_by_tid = [];
-
-    public function __construct() {
-        $this->thread = [];
-        $this->tthreads = [];
-        $this->tthreads_by_tid = [];
-    }
-
-    public function __toString(): string {
-        $ret = "Thread Info:\n";
-        foreach ($this->thread as $key => $value) {
-            $ret .= "$key = '$value'\n";
-        }
-        return $ret;
-    }
-}
-
-kawfGlobals::initialize();
-
 final class kawfGlobals { // `final` prevents inheritance
     private static $initialized = false;
 
     public static ?ServerInfo $server;
     public static ?ForumInfo $forum;
-    public static ?ThreadInfo $thread;
 
     public static function initialize(): void {
         if (self::$initialized) return;
@@ -184,25 +155,26 @@ final class kawfGlobals { // `final` prevents inheritance
 
         self::$server = new ServerInfo();
         self::$forum = new ForumInfo(); // Initialize empty, will be loaded later
-        self::$thread = new ThreadInfo();
     }
 
     public static function loadForum(string $shortname): bool {
-        $forum = ForumInfo::fromShortname($shortname);
-        if ($forum === null) {
+        try {
+            self::$forum = ForumInfo::fromShortname($shortname);
+            return self::$forum !== null;
+        } catch (Exception $e) {
+            error_log("Error loading forum: " . $e->getMessage());
             return false;
         }
-        self::$forum = $forum;
-        return true;
     }
 
     public static function loadForumById(int $fid): bool {
-        $forum = ForumInfo::fromFid($fid);
-        if ($forum === null) {
+        try {
+            self::$forum = ForumInfo::fromFid($fid);
+            return self::$forum !== null;
+        } catch (Exception $e) {
+            error_log("Error loading forum: " . $e->getMessage());
             return false;
         }
-        self::$forum = $forum;
-        return true;
     }
 
     /**
@@ -211,8 +183,16 @@ final class kawfGlobals { // `final` prevents inheritance
     private function __construct() {}
 }
 
+// Initialize kawfGlobals when the file is loaded
+kawfGlobals::initialize();
+
 function get_server(): ServerInfo {
     return kawfGlobals::$server;
+}
+
+function load_forum($shortname): bool
+{
+  return kawfGlobals::loadForum($shortname);
 }
 
 function get_forum(): array {
@@ -236,13 +216,23 @@ function get_forum_indexes(): array {
     return kawfGlobals::$forum->getIndexes();
 }
 
-function get_current_thread(): ThreadInfo {
-    return kawfGlobals::$thread;
+function get_tthreads(): array {
+    if (!kawfGlobals::$forum || !kawfGlobals::$forum->isLoaded()) {
+        throw new Exception("Forum not loaded");
+    }
+    return kawfGlobals::$forum->getTThreads();
+}
+
+function get_tthreads_by_tid(): array {
+    if (!kawfGlobals::$forum || !kawfGlobals::$forum->isLoaded()) {
+        throw new Exception("Forum not loaded");
+    }
+    return kawfGlobals::$forum->getTThreadsByTid();
 }
 
 function has_forum_context(): bool {
     return kawfGlobals::$forum !== null && kawfGlobals::$forum->isLoaded();
 }
 
-// vim: ts=4 sw=4 et:
+// vim: ts=8 sw=4 et:
 ?>

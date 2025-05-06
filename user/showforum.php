@@ -36,9 +36,9 @@ $content_tpl->set("FORUM_SHORTNAME", $forum['shortname']);
 $notices_html = get_notices_html($forum, $user->aid);
 $content_tpl->set("FORUM_NOTICES", $notices_html);
 
-// Populate tracked threads data needed for is_thread_bumped()
-global $tthreads, $tthreads_by_tid; // Ensure these are global for helper functions
-list($tthreads, $tthreads_by_tid) = build_tthreads($forum['fid']);
+// Get tracked threads data needed for is_thread_bumped()
+$tthreads = get_tthreads();
+$tthreads_by_tid = get_tthreads_by_tid();
 
 // Function to calculate visible threads (remains the same)
 function threads($key)
@@ -394,5 +394,5 @@ log_yatt_errors($content_tpl);
 
 // Output page using the wrapper
 print generate_page($forum['name'], $content_html);
-
+// vim: ts=8 sw=2 et
 ?>

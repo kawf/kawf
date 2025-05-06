@@ -407,11 +407,7 @@ function fetch_message($user, $mid, $what = '*')
 }
 
 function format_tracking_debug($data = array()) {
-  global $thread;
   $parts = array();
-
-  // Don't always include server time
-  //$parts[] = sprintf("[NOW UTC:%s]", date('Y-m-d H:i:s', time()));
 
   // Add timestamps
   if (isset($data['unixtime'])) {
@@ -420,7 +416,7 @@ function format_tracking_debug($data = array()) {
 
   // Calculate track_unixtime if not provided
   if (!isset($data['track_unixtime']) && isset($thread) && isset($thread['tid'])) {
-    global $tthreads_by_tid;
+    $tthreads_by_tid = get_tthreads_by_tid();
     $tid = $thread['tid'];
     if (isset($tthreads_by_tid[$tid])) {
       $data['track_unixtime'] = $tthreads_by_tid[$tid]['unixtime'];
@@ -504,7 +500,7 @@ function mark_thread_read($fid, $msg, $user)
 
 function get_tthread_by_msg($msg)
 {
-    global $tthreads_by_tid;
+    $tthreads_by_tid = get_tthreads_by_tid();
     if ($msg == NULL || !array_key_exists('tid', $msg)) {
         return NULL;
     }
@@ -611,5 +607,5 @@ function get_uploaded_image_urls($filename) {
     return null;
 }
 
-// vim:sw=2
+// vim:sw=2 ts=8 et
 ?>

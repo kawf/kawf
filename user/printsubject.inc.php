@@ -3,8 +3,11 @@ require_once("message.inc.php");
 
 function print_subject($thread, $msg, $replies = -1, $collapse = false)
 {
-  global $vmid, $user, $tthreads_by_tid, $debug_f_tracking;
+  global $vmid, $user, $debug_f_tracking;
   $forum = get_forum();
+
+  $tthreads_by_tid = get_tthreads_by_tid();
+  $tthread = isset($tthreads_by_tid[$thread['tid']]) ? $tthreads_by_tid[$thread['tid']] : null;
 
   if (!empty($msg['flags'])) {
     $flagexp = explode(",", $msg['flags']);
@@ -157,5 +160,5 @@ function append_tools($user, $string, $forum, $thread, $msg)
   // if (!$msg['pmid']) $string .= sprintf(" %s (%d)", gen_date($user, $thread['unixtime']), $thread['unixtime']);
   return $string;
 }
-// vim: sw=2
+// vim: sw=2 ts=8 et
 ?>

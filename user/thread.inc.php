@@ -111,7 +111,7 @@ function gen_thread($thread, $collapse = false)
 
 function gen_threadlinks($thread, $collapse = false)
 {
-    global $user, $tthreads_by_tid;
+    global $user;
     global $debug_f_tracking;
     $forum = get_forum();
 
@@ -152,7 +152,7 @@ function gen_threadlinks($thread, $collapse = false)
 
 function process_tthreads($just_count = false)
 {
-  global $tthreads;
+  $tthreads = get_tthreads();
 
   $numshown = 0;
   $threadshown = array();
@@ -223,7 +223,6 @@ function track_thread($fid, $tid, $options='', $time=null)
   }
 }
 
-
 function untrack_thread($fid, $tid)
 {
   global $user;
@@ -241,31 +240,31 @@ function untrack_thread($fid, $tid)
 
 function get_tthread_by_thread($thread)
 {
-    global $tthreads_by_tid;
-    if ($thread == NULL || !array_key_exists('tid', $thread)) {
-        return NULL;
-    }
-    $tid = $thread['tid'];
-    return array_key_exists($tid, $tthreads_by_tid)?$tthreads_by_tid[$tid]:NULL;
+  $tthreads_by_tid = get_tthreads_by_tid();
+  if ($thread == NULL || !array_key_exists('tid', $thread)) {
+    return NULL;
+  }
+  $tid = $thread['tid'];
+  return array_key_exists($tid, $tthreads_by_tid)?$tthreads_by_tid[$tid]:NULL;
 }
 
 function is_thread_etracked($thread)
 {
-    $tthread = get_tthread_by_thread($thread);
-    return ($tthread && isset($tthread['option']['SendEmail']));
+  $tthread = get_tthread_by_thread($thread);
+  return ($tthread && isset($tthread['option']['SendEmail']));
 }
 
 function is_thread_tracked($thread)
 {
-    $tthread = get_tthread_by_thread($thread);
-    return isset($tthread);
+  $tthread = get_tthread_by_thread($thread);
+  return isset($tthread);
 }
 
 function is_thread_bumped($thread)
 {
-    $tthread = get_tthread_by_thread($thread);
-    return ($tthread && $thread['unixtime'] > $tthread['unixtime']);
+  $tthread = get_tthread_by_thread($thread);
+  return ($tthread && $thread['unixtime'] > $tthread['unixtime']);
 }
 
-// vim: sw=2
+// vim: sw=2 ts=8 et:
 ?>

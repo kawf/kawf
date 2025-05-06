@@ -34,7 +34,8 @@ while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
 
   /* rebuild caches per forum */
   $indexes = build_indexes($forum['fid']);
-  list($tthreads, $tthreads_by_tid) = build_tthreads($forum['fid']);
+  $tthreads = get_tthreads();
+  $tthreads_by_tid = get_tthreads_by_tid();
 
   $forumcount = 0;
   $forumupdated = 0;
