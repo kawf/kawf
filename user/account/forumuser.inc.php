@@ -9,6 +9,7 @@ require_once("validate.inc.php");
 require_once("mailfrom.inc.php");
 require_once("strip.inc.php");
 require_once("timezone.inc.php");
+require_once("page-yatt.inc.php");  // Add YATT support
 
 /* This is the standard ForumUser class */
 #[AllowDynamicProperties] /* temp workaround for Issue #77 */
@@ -107,8 +108,6 @@ class ForumUser {
 
   function req()
   {
-    global $account_host;
-
     $s = get_server();
 
     if ($this->valid())
@@ -311,46 +310,73 @@ class AccountUser extends ForumUser {
 
   function send_email($pending)
   {
-    global $tpl, $bounce_host;
+    global $bounce_host;
     $s = get_server();
 
+    // Get the template
+    $mail_tpl = new_yatt('mail/account.yatt');
+
+    // Set up email addresses
+    $fromprefix = strtolower($pending['type']);
+    $fromaddr = $fromprefix . "-" . $pending['tid'] . "@" . $bounce_host;
+    $email = ($pending['type'] === 'ChangeEmail') ? $pending['data'] : $this->email;
+
+    // Set common variables
+    $mail_tpl->set([
+        "COOKIE" => $pending['cookie'],
+        "EMAIL" => $this->email,
+        "NAME" => $this->name,
+        "REMOTE_ADDR" => $s->remoteAddr,
+        "DOMAIN" => $_SERVER['HTTP_HOST'] ?? $bounce_host,
+        "FROM" => $fromaddr,
+        "TO" => $email,
+        "PHPVERSION" => phpversion()
+    ]);
+
+    // Set type-specific subject, message and security notice
     switch($pending['type']) {
-    case 'NewAccount':
-      $tpl->set_file("mail", "mail/create.tpl");
-      $fromprefix = "create";
-      $email = $this->email;
-      break;
-    case 'ForgotPassword':
-      $tpl->set_file("mail", "mail/forgotpassword.tpl");
-      $fromprefix = "forgotpassword";
-      $email = $this->email;
-      break;
-    case 'ChangeEmail':
-      $tpl->set_file("mail", "mail/changeemail.tpl");
-      $fromprefix = "changeemail";
-      $email = $pending['data'];
-      break;
+        case 'NewAccount':
+            $mail_tpl->set([
+                "SUBJECT" => "New Account Confirmation",
+                "MESSAGE" => "Thank you for creating an account with us.",
+                "TYPE" => "new account"
+            ]);
+            break;
+        case 'ForgotPassword':
+            $mail_tpl->set([
+                "SUBJECT" => "Password Reset Request",
+                "MESSAGE" => "A password reset was requested for your account.",
+                "TYPE" => "password reset"
+            ]);
+            break;
+        case 'ChangeEmail':
+            $mail_tpl->set([
+                "SUBJECT" => "Email Change Confirmation",
+                "MESSAGE" => "A request was made to change the email address for your account to " . $pending['data'] . ".",
+                "TYPE" => "email change"
+            ]);
+            break;
     }
 
-    $tpl->set(array(
-      "TOKEN" => $pending['tid'],
-      "COOKIE" => $pending['cookie'],
-      "EMAIL" => $this->email,
-      "NAME" => $this->name,
-      "REMOTE_ADDR" => $s->remoteAddr,
-      "PHPVERSION" => phpversion(),
-    ));
+    // Generate the message
+    $mail_tpl->parse('email');
+    $message = $mail_tpl->output();
 
-    /* Send an email with the directions */
-    $message = $tpl->parse("MAIL", "mail");
+    // Clean up any leading/trailing whitespace
+    $message = ltrim($message); // temp to test error
 
-    $fromaddr = $fromprefix . "-" . $pending['tid'] . "@" . $bounce_host;
-    mailfrom($fromaddr, $email, $message);
+    // Send the email
+    debug_log("Sending email from $fromaddr to $email:\n$message");
+    if (!mailfrom($fromaddr, $email, $message)) {
+        error_log("Failed to send email - mailfrom() returned false");
+        return false;
+    }
+    return true;
   }
 
   function create()
   {
-    global $tpl, $bounce_host;
+    global $bounce_host;
 
     $cookie = md5("cookie" . $this->email . microtime());
 
@@ -378,7 +404,9 @@ class AccountUser extends ForumUser {
 
     $pending = $this->add_pending("NewAccount");
 
-    $this->send_email($pending);
+    if (!$this->send_email($pending)) {
+        return false;
+    }
 
     return $pending['tid'];
   }
@@ -456,7 +484,9 @@ class AccountUser extends ForumUser {
   {
     $pending = $this->add_pending("ForgotPassword");
 
-    $this->send_email($pending);
+    if (!$this->send_email($pending)) {
+        return false;
+    }
 
     return $pending['tid'];
   }
@@ -496,7 +526,9 @@ class AccountUser extends ForumUser {
 
     $pending = $this->add_pending("ChangeEmail", $email);
 
-    $this->send_email($pending);
+    if (!$this->send_email($pending)) {
+        return false;
+    }
 
     return $pending['tid'];
   }

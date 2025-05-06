@@ -21,11 +21,16 @@ if (isset($_REQUEST['email'])) {
         $content_tpl->parse('unknown');
         $content_tpl->parse('form');
     } else {
-        $user->forgotpassword();
-        $user->update();
-
-        // Show success message
-        $content_tpl->parse('success');
+        if (!$user->forgotpassword()) {
+            // Show error message
+            $content_tpl->set('ERROR', 'Failed to send password reset email. Please try again later.');
+            $content_tpl->parse('error');
+            $content_tpl->parse('form');
+        } else {
+            $user->update();
+            // Show success message
+            $content_tpl->parse('success');
+        }
     }
 } else {
     $content_tpl->set('EMAIL', '');
