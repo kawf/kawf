@@ -1,4 +1,6 @@
 <?php
+$forum = get_forum();
+
 if (!isset($forum)) {
   echo "Invalid forum\n";
   exit;
