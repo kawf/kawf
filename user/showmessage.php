@@ -86,7 +86,8 @@ if ($msg['pmid'] != 0 && !isset($pmsg)) {
 }
 
 if (isset($msg['subject']) && !preg_match("/^Re:/i", $msg['subject'])) {
-    $nmsg['subject'] = "Re: " . $msg['subject'];
+    // FIXME: make this an option?
+    //$nmsg['subject'] = "Re: " . $msg['subject'];
 } else if (isset($msg['subject'])) {
     $nmsg['subject'] = $msg['subject'];
 }
@@ -116,4 +117,5 @@ if($robots_meta_tag) {
 }
 
 print generate_page($msg['subject'], $content_html, false, $meta_robots);
+// vim: ts=8 sw=2 et:
 ?>

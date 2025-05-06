@@ -252,7 +252,8 @@ if (isset($_POST['postcookie'])) {
       if ($parent) {
           $nmsg['tid'] = $parent['tid'];
           if (isset($parent['subject']) && !preg_match("/^Re:/i", $parent['subject'])) {
-              $nmsg['subject'] = "Re: " . $parent['subject'];
+              //FIXME: make an option
+              //$nmsg['subject'] = "Re: " . $parent['subject'];
           } else if (isset($parent['subject'])) {
               $nmsg['subject'] = $parent['subject'];
           }
@@ -284,5 +285,5 @@ log_yatt_errors($content_tpl);
 // Determine page title
 $page_title = isset($msg['tid']) ? 'Post Reply' : 'Post New Thread';
 print generate_page($page_title, $content_html);
-
+// vim: ts=8 sw=2 et:
 ?>

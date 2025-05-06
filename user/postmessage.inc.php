@@ -218,5 +218,5 @@ function postmessage($user, $fid, &$msg, $request)
 
   return $newmessage;
 }
-// vim:sw=2
+// vim: ts=8 sw=2 et
 ?>
