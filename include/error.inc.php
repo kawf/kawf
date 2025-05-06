@@ -74,5 +74,5 @@ function get_debug_log() {
     return kawfError::$debug_log;
 }
 
-// vim: ts=4 sw=4 et:
+// vim: ts=8 sw=4 et:
 ?>

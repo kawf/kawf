@@ -211,5 +211,5 @@ function get_page_context($use_fallback = true) {
     $s=get_server();
     return $_REQUEST['page'] ?? ($use_fallback ? ($s->scriptName . $s->pathInfo) : '');
 }
-// vim: sw=4 ts=4 et:
+// vim: sw=4 ts=8 et:
 ?>
