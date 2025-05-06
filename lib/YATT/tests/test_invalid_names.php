@@ -55,4 +55,5 @@ foreach ($expected_counts as $msg => $count) {
 
 echo "PASS: All invalid name tests passed\n";
 exit(0);
+// vim: ts=8 sw=4 et:
 ?>

@@ -264,5 +264,5 @@ class YATT {
         return implode("\n", $this->errors);
     }
 }
-
+// vim: ts=8 sw=4 et:
 ?>
