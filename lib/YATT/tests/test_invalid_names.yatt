@@ -17,3 +17,7 @@ This block has slashes in its name
 %begin [valid_block3]
 This block has a variable with spaces: %[INVALID VAR]
 %end [valid_block3]
+
+%begin [one]
+This block has mismatched tags
+%end [two]

@@ -11,7 +11,7 @@ if (!$errors) {
 }
 
 // Check that we got the expected number of errors
-$expected_errors = 6; // 2 invalid blocks (begin+end) + 2 invalid variables
+$expected_errors = 7; // 3 invalid blocks (begin+end) + 2 invalid variables
 if (count($errors) != $expected_errors) {
     echo "FAIL: Expected $expected_errors errors, got " . count($errors) . "\n";
     echo "Errors:\n" . implode("\n", $errors) . "\n";

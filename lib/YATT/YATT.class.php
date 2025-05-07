@@ -135,7 +135,7 @@ class YATT {
             } else if (strcasecmp($type, 'end') == 0) {
                 if (strcmp($cur[YATT_NAME], $name)) {
                     return $this->error('%s:%d: LOAD(%s): Mismatched begin/end: got %s, wanted %s! aborting!',
-                                                $fname, $name, $cur[YATT_NAME]);
+                        $this->current_file, $this->current_line, $fname, $name, $cur[YATT_NAME]);
                 }
                 if (! ($cur =& my_pop($stack))) {
                     $cur = &$this->obj;
