@@ -202,11 +202,14 @@ function get_forum(): array {
     return kawfGlobals::$forum->getForum();
 }
 
-// This should only be called by user/tracking.php, nowhere else.
+// These should only be called by user/tracking.php, nowhere else.
 // No other code should require multiple forums.
 function set_forum(int $fid): array {
     kawfGlobals::loadForumById($fid);
     return get_forum();
+}
+function clear_forum() {
+    kawfGlobals::$forum = null;
 }
 
 function get_forum_indexes(): array {

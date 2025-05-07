@@ -138,7 +138,8 @@ $content_html = $content_tpl->output();
 
 log_yatt_errors($content_tpl);
 
-// Call the existing generate_page function
+// Call the existing generate_page function with no forum
+clear_forum();
 print generate_page('Your Tracked Threads', $content_html);
 
 // vim: sw=2
