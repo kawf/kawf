@@ -2,7 +2,7 @@
 <table class="tools">
 <tr>
   <td class="toolsleft">
-    <a href="/tips/?%[PAGE] target="_blank">Tips</a>
+    <a href="/tips/?%[PAGE]" target="_blank">Tips</a>
   | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;%[PAGE]" target="_blank">Search</a>
   | <a href="/%[FORUM_SHORTNAME]/"><b>Back to %[FORUM_NAME]</b></a>
   </td>
