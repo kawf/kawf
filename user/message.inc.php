@@ -52,8 +52,9 @@ function postprocess($msg, $noembed=false)
 
   if (!empty($msg['message'])) {
     // Apply text wrapping to message content
-    $message = softbreaklongwords($msg['message'], 78);
-    $out .= nl2brPre::out($message)."\n";
+    // breaks things like embeded urls. Don't do it.
+    //$message = softbreaklongwords($msg['message'], 78);
+    $out .= nl2brPre::out($msg['message'])."\n";
   }
 
   if (!empty($msg['url']) && validate_url($msg['url'])) {
