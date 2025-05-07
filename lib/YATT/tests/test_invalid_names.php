@@ -11,7 +11,7 @@ if (!$errors) {
 }
 
 // Check that we got the expected number of errors
-$expected_errors = 7; // 3 invalid blocks (begin+end) + 2 invalid variables
+$expected_errors = 8; // 4 invalid blocks (2 each for begin+end) + 2 invalid variables + 1 mismatched tag + 1 unclosed block
 if (count($errors) != $expected_errors) {
     echo "FAIL: Expected $expected_errors errors, got " . count($errors) . "\n";
     echo "Errors:\n" . implode("\n", $errors) . "\n";
@@ -23,7 +23,9 @@ $expected_messages = array(
     'Invalid block name "invalid.block"',
     'Invalid block name "block/with/slashes"',
     'Invalid variable name "INVALID@VAR"',
-    'Invalid variable name "INVALID VAR"'
+    'Invalid variable name "INVALID VAR"',
+    'Mismatched begin/end: got [two], wanted [one]! aborting!',
+    'mismatched begin/end pairs at EOF!'
 );
 
 // Count how many times each expected message appears
@@ -42,7 +44,9 @@ $expected_counts = array(
     'Invalid block name "invalid.block"' => 2,  // begin + end
     'Invalid block name "block/with/slashes"' => 2,  // begin + end
     'Invalid variable name "INVALID@VAR"' => 1,
-    'Invalid variable name "INVALID VAR"' => 1
+    'Invalid variable name "INVALID VAR"' => 1,
+    'Mismatched begin/end: got [two], wanted [one]! aborting!' => 1,
+    'mismatched begin/end pairs at EOF!' => 1
 );
 
 foreach ($expected_counts as $msg => $count) {

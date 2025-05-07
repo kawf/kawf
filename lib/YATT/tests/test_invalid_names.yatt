@@ -21,3 +21,11 @@ This block has a variable with spaces: %[INVALID VAR]
 %begin [one]
 This block has mismatched tags
 %end [two]
+
+%begin [test_unknown]
+This block has an unknown tag type
+%unknown [test_unknown]
+%end [test_unknown]
+
+%begin [unclosed_block]
+This block is not closed

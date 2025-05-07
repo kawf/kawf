@@ -73,6 +73,7 @@ class YATT {
 
         # Validate block names and variable names
         $lines = explode("\n", $data);
+        $seen_vars = array();    # Track which variables we've already reported errors for
         foreach ($lines as $lineno => $line) {
             $this->current_line = $lineno + 1;
 
@@ -88,9 +89,10 @@ class YATT {
             # Check variable names
             if (preg_match_all('/\%\[([^][%]+)\]/', $line, $matches)) {
                 foreach ($matches[1] as $var_name) {
-                    if (!preg_match('/^[A-Za-z0-9-_]+$/', $var_name)) {
+                    if (!preg_match('/^[A-Za-z0-9-_]+$/', $var_name) && !isset($seen_vars[$var_name])) {
                         $this->error('%s:%d: Invalid variable name "%s" - only letters, numbers, hyphens and underscores allowed',
                             $this->current_file, $this->current_line, $var_name);
+                        $seen_vars[$var_name] = true;
                     }
                 }
             }
@@ -134,18 +136,25 @@ class YATT {
                 unset($new);
             } else if (strcasecmp($type, 'end') == 0) {
                 if (strcmp($cur[YATT_NAME], $name)) {
-                    return $this->error('%s:%d: LOAD(%s): Mismatched begin/end: got %s, wanted %s! aborting!',
-                        $this->current_file, $this->current_line, $fname, $name, $cur[YATT_NAME]);
-                }
-                if (! ($cur =& my_pop($stack))) {
+                    $this->error('%s:%d: Mismatched begin/end: got [%s], wanted [%s]! aborting!',
+                        $this->current_file, $this->current_line, $name, $cur[YATT_NAME]);
+                    // Reset stack to avoid false EOF errors
+                    $stack = array();
                     $cur = &$this->obj;
+                } else {
+                    if (! ($cur =& my_pop($stack))) {
+                        $cur = &$this->obj;
+                    }
                 }
             } else {
-                return $this->error('%s:%d: LOAD(%s): unknown tag type %s, aborting!', $this->current_file, $this->current_line, $fname, $type);
+                $this->error('%s:%d: unknown tag type %s, aborting!', $this->current_file, $this->current_line, $type);
+                // Reset stack to avoid false EOF errors
+                $stack = array();
+                $cur = &$this->obj;
             }
         }
         if (count($stack)) {
-            return $this->error('%s:%d: LOAD(%s): mismatched begin/end pairs at EOF!', $this->current_file, $this->current_line, $fname);
+            $this->error('%s:%d: mismatched begin/end pairs at EOF!', $this->current_file, $this->current_line);
         }
         return count($this->errors);
     }
