@@ -58,7 +58,7 @@ if(array_key_exists('noob', $_GET)) {
 
   if($user->admin()) {
     $page = format_page_param();
-    if ($_GET['verbose']) $verbose = $_GET['verbose'];
+    if (isset($_GET['verbose'])) $verbose = $_GET['verbose'];
     else $verbose=0;
 
     if($uuser->createip) {
@@ -79,6 +79,7 @@ if(array_key_exists('noob', $_GET)) {
     }
     echo "<h2>IP addresses</h2>\n";
 
+    $v0 = $v1 = $v2 = "";
     if($verbose>1) $v2=" class=selected";
     else if($verbose>0) $v1=" class=selected";
     else $v0=" class=selected";
@@ -231,6 +232,7 @@ function print_footer() {
   echo "</table></td></tr>";
   echo "</table>";
 }
+// vim: sw=2 ts=8 noet:
 ?>
 
 </body>

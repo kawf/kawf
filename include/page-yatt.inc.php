@@ -1,5 +1,6 @@
 <?php
-require_once("lib/YATT/YATT.class.php");
+// give a good path, so we can include this from admin and account
+require_once(__DIR__ . "/../lib/YATT/YATT.class.php");
 require_once("notices.inc.php");
 
 function generate_forum_header($forum) {
