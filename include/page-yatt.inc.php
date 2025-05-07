@@ -61,6 +61,7 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
         $page->set('BUTTON_ID', $config_paypal['hosted_button_id']);
         if ($user->valid()) {
             $page->set('USER_EMAIL', $user->email);
+            $page->set('USER_NAME', $user->name);
             $page->set('USER_AID', $user->aid);
             $page->parse('page.paypal.user');
         }
