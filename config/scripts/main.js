@@ -80,8 +80,8 @@ function toggleNightMode() {
 }
 
 function applyNightMode() {
-	if (!nightModeActive) {
-    	$('.night-mode').removeClass('night-mode');
+    if (!nightModeActive) {
+        $('.night-mode').removeClass('night-mode');
 
         var allImages = $('img');
         $.map(allImages, function(image) {
@@ -104,7 +104,13 @@ function applyNightMode() {
 
         $('#night-mode-status').text('Off');
     } else {
-	$('html, body, select, a, em, a.tt, a.ut, .row0, .row1, .srow0, .srow1, .trow0, .trow1, .grow0, .grow1, .username, .threadinfo, .messageblock .subject, .vmid, .postform tr, .postform .text, .thread > li > a, .preferences tr, td.signaturepreview, textarea, .arrow, .navigate, div.changes').addClass('night-mode');
+        // Add night-mode class to html and body first
+        $('html, body').addClass('night-mode');
+
+        // Then add to other elements individually to prevent class splitting
+        $('select, a, em, a.tt, a.ut, .row0, .row1, .srow0, .srow1, .trow0, .trow1, .grow0, .grow1, .drow0, .drow1, .username, .threadinfo, .messageblock .subject, .vmid, .postform tr, .postform .text, .thread > li > a, .preferences tr, td.signaturepreview, textarea, .arrow, .navigate, div.changes').each(function() {
+            $(this).addClass('night-mode');
+        });
 
         var allImages = $('img');
         $.map(allImages, function(image) {

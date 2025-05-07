@@ -50,8 +50,9 @@ function get_limit_clause($curpage, $skipthreads, $threadsperpage, $numshown, $s
 
 function get_thread_class($thread, $numshown, $bumped) {
     $class = "row"; // Default for already read
-    if ($thread['state'] == 'Moderated') $class = "mrow";
-    elseif ($thread['state'] == 'OffTopic') $class = "orow";
+    if ($thread['state'] == 'OffTopic') $class = "orow";
+    // if you add moderated, you need to add it to the css and main.js
+    //elseif ($thread['state'] == 'Moderated') $class = "mrow";
     elseif ($thread['state'] == 'Deleted') $class = "drow";
     elseif (isset($thread['flag']['Sticky'])) $class = "srow";
     elseif ($bumped) $class = "trow";

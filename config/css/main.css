@@ -118,10 +118,12 @@ ul,li { padding-left: 0em; }
 .trow0 { background: #ddddff }
 .trow1 { background: #ccccee }
 
-/* deleted/moderated (unused) */
+/* deleted */
+.drow0 { background: #fff8f8 }
+.drow1 { background: #fff0f0 }
+
+/* moderated (unused) */
 /*
-.drow0 { background: #ddffdd }
-.drow1 { background: #cceecc }
 .mrow0 { background: #ffdddd }
 .mrow1 { background: #eecccc }
 */
@@ -336,6 +338,8 @@ div.changes.night-mode { background: #2c0d0d !important; }
 .srow1.night-mode { background: #282f28 !important; }
 .trow0.night-mode { background: #252532 !important; }
 .trow1.night-mode { background: #1d1e28 !important; }
+.drow0.night-mode { background: #2a1f1f !important; }
+.drow1.night-mode { background: #251a1a !important; }
 .grow0.night-mode { background: #301c1c !important; }
 .grow1.night-mode { background: #251616 !important; }
 .username.night-mode { color: #999 !important; }
