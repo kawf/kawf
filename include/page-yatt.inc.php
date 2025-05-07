@@ -55,7 +55,7 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
     $page->set('contents', $contents);
 
     // Set user variables if user is valid
-    global $user, $config_paypal;
+    global $user, $config_paypal, $config_hosting;
     if (isset($config_paypal['hosted_button_id'])) {
         $page->set('RETURN_VALUE', full_url($_SERVER));
         $page->set('BUTTON_ID', $config_paypal['hosted_button_id']);
@@ -66,6 +66,11 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
             $page->parse('page.paypal.user');
         }
         $page->parse('page.paypal');
+    }
+    if (isset($config_hosting['url']) && isset($config_hosting['text'])) {
+        $page->set('TEXT', $config_hosting['text']);
+        $page->set('URL', $config_hosting['url']);
+        $page->parse('page.hosting');
     }
 
     if (!$skip_header) {

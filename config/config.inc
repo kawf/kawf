@@ -50,6 +50,12 @@ $config_sponsor = array(
     'url' => 'http://kawf.sourceforge.net/'
 );
 */
+/*
+$config_hosting = array(
+    'text' => 'Example, Inc.'
+    'url' => 'https://example.com',
+);
+*/
 
 /*
 // PayPal donation button configuration example:

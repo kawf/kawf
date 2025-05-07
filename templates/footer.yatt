@@ -17,6 +17,11 @@
     </form>
   </td>
   %end [paypal]
+  %begin [hosting]
+  <td class="center">
+    Hosting provided by <a href="%[URL]">%[TEXT]</a>.
+  </td>
+  %end [hosting]
   <td class="right">
     <!-- Powered by <a href="http://kawf.sourceforge.net/">Kawf</a> -->
     Powered by <a href="http://github.com/kawf/kawf/">Kawf</a>
