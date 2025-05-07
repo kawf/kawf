@@ -2,7 +2,7 @@
   %[#] Outer container: Either the 'forums' block or 'no_threads' block will be parsed by PHP
   <p><b>Your Tracked Threads</b></p>
   %begin [forum]
-    <hr width="100%" size="1">
+    <hr class="tracking">
     <table class="forumheader">
     <tr><td><a href="/%[FORUM_SHORTNAME]"><b>%[FORUM_NAME]</b></a></td></tr>
     %[#] Forum header HTML is set as a variable by PHP

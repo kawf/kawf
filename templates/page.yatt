@@ -28,6 +28,7 @@
 %begin [header]
 <div class="header">
 %include [header.yatt]
+<hr>
 </div>
 %end [header]
 

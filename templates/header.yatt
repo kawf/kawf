@@ -1,10 +1,8 @@
 <!-- message.yatt -->
-<!-- <hr width="100%" size="1"> -->
 <div class="navigate">
 <form method="get" action="/redirect.phtml" style="display: inline; margin: 0;">
 <select name="url" onChange="if (this.selectedIndex) { location = this.options[this.selectedIndex].value; }">
 <option value="">Choose Discussion Forum</option>
-
 %begin [forums]
 %begin [category]
 <option value="/%[shortname]/">%[name]</option>
@@ -16,4 +14,3 @@
 <noscript><input type="submit" value="GO"></noscript>
 </form>
 </div>
-<!-- <hr width="100%" size="1"> -->
