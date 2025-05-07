@@ -70,7 +70,7 @@ This thread is locked. No replies are allowed.<br>
   <input type="submit" name="post" value="%[SUBMITTEXT]"><br>
   <div class="checkbox">
   %begin [offtopic]
-    <input type="checkbox" name="OffTopic"%[OFFTOPIC_CHECKED]>
+    <input type="checkbox" id="OffTopic" name="OffTopic"%[OFFTOPIC_CHECKED]>
     <label for="OffTopic">Mark as offtopic?</label><br>
   %end [offtopic]
   <input type="checkbox" id="ExposeEmail" name="ExposeEmail"%[EXPOSEEMAIL_CHECKED]>
