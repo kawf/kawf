@@ -23,6 +23,7 @@ $time = date("YmdHis", $time);
 
 if ($tid == "all") {
   require_once("thread.inc.php");	/* for is_thread_bumped() */
+  $tthreads = get_tthreads();
   foreach ($tthreads as $tthread) {
     $iid = tid_to_iid($tthread['tid']);
     if (!isset($iid))
@@ -41,5 +42,5 @@ if ($tid == "all") {
 }
 
 header("Location: " . get_page_context(false));
-
+// vim: ts=8 sw=2 et:
 ?>

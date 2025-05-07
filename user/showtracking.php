@@ -17,9 +17,9 @@ if (!$forum) {
 
 $content_tpl = new_yatt('showtracking.yatt', $forum);
 
-$content_tpl->set("user_token", $user->token());
-$content_tpl->set("page", get_page_context());
-$content_tpl->set("time", time());
+$content_tpl->set("USER_TOKEN", $user->token());
+$content_tpl->set("PAGE", format_page_param());
+$content_tpl->set("TIME", time());
 
 if (!isset($curpage))
   $curpage = 1;

@@ -28,6 +28,7 @@ if (isset($user->pref['SimpleHTML'])) {
 }
 
 // Set common variables
+$content_tpl->set("PAGE", format_page_param());
 $content_tpl->set("USER_TOKEN", $user->token());
 $content_tpl->set("FORUM_NAME", $forum['name']);
 $content_tpl->set("FORUM_SHORTNAME", $forum['shortname']);
@@ -66,8 +67,6 @@ function threads($key)
 // --- Pagination Logic (mostly unchanged, use $content_tpl->set) ---
 if (!isset($curpage))
   $curpage = 1;
-
-$content_tpl->set("PAGE", $curpage); // Set PAGE variable for use in template links
 
 if ($user->valid())
   $threadsperpage = $user->threadsperpage;
