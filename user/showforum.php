@@ -1,10 +1,62 @@
 <?php
+/*
+Pagination Rules:
+- Thread visibility based on starter's message state
+- Page 1: stickies first, then tracked/bumped, then regular
+- Other pages: regular threads only
+- Skip = (page-1)*threadsperpage - stickies
+- LIMIT: page1=skip,max(threadsperpage-numshown-stickies,0), other=skip,threadsperpage-numshown
+- Thread states: Active(always), Moderated(pref), OffTopic(pref), Deleted(admin), Own(valid)
+- Overflow: if stickies+bumped > threadsperpage, regular threads start on page 2
+- Table selection: iterate newest->oldest until found table with target thread
+*/
 
 require_once("thread.inc.php");
 require_once("pagenav.inc.php");
 require_once("page-yatt.inc.php");
 require_once("postform.inc.php"); // Likely needed for the post form
 require_once("notices.inc.php"); // For forum notices
+
+// --- Pagination Helper Functions ---
+
+function count_sticky_threads($indexes) {
+    $stickythreads = 0;
+    foreach ($indexes as $index) {
+        $sql = "select count(distinct tid) FROM f_sticky" . $index['iid'];
+        $row = db_query_first($sql, array());
+        if ($row) $stickythreads += $row[0];
+    }
+    return $stickythreads;
+}
+
+function find_starting_table($indexes, $skipthreads) {
+    $threadtable = count($indexes) - 1;
+    while ($threadtable >= 0 && isset($indexes[$threadtable])) {
+        if (threads($threadtable) > $skipthreads)
+            break;
+        $skipthreads -= threads($threadtable);
+        $threadtable--;
+    }
+    return array($threadtable, $skipthreads);
+}
+
+function get_limit_clause($curpage, $skipthreads, $threadsperpage, $numshown, $stickythreads) {
+    if ($curpage == 1) {
+        return " limit " . (int)($skipthreads) . "," . max((int)($threadsperpage - $numshown - $stickythreads),0);
+    } else {
+        return " limit " . (int)($skipthreads) . "," . (int)($threadsperpage - $numshown);
+    }
+}
+
+function get_thread_class($thread, $numshown, $bumped) {
+    $class = "row"; // Default for already read
+    if ($thread['state'] == 'Moderated') $class = "mrow";
+    elseif ($thread['state'] == 'OffTopic') $class = "orow";
+    elseif ($thread['state'] == 'Deleted') $class = "drow";
+    elseif (isset($thread['flag']['Sticky'])) $class = "srow";
+    elseif ($bumped) $class = "trow";
+    return $class . ($numshown % 2);
+}
 
 if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
   $user->req();
@@ -199,66 +251,19 @@ if ($curpage == 1) {
   }
 } /* End $curpage == 1 section */
 
-// --- Recalculate Skip/Pagination Logic ---
+// --- Pagination Helper Functions ---
 
-// Calculate the raw number of threads to skip based on page number
+// Base skip calculation: (page - 1) * threads_per_page
 $skipthreads = ($curpage - 1) * $threadsperpage;
 
-// If on page > 1, adjust skip count to account for stickies shown ONLY on page 1
-$page1_stickycount = 0;
+/* For pages > 1: subtract sticky count from skip to avoid skipping threads */
 if ($curpage > 1) {
-    // Calculate the count of stickies that would appear on page 1
-    // Note: This assumes a simple count is sufficient. A more complex calculation
-    // might be needed if sticky visibility depends heavily on user state/perms.
-    foreach ($indexes as $index_sticky_check) {
-        $sql_sticky = "select count(distinct tid) FROM f_sticky" . $index_sticky_check['iid'];
-        $row_sticky = db_query_first($sql_sticky);
-        if ($row_sticky) $page1_stickycount += $row_sticky[0];
-    }
-    // Subtract the count of page 1 stickies from the threads we need to skip
-    $skipthreads = max(0, $skipthreads - $page1_stickycount);
+    $stickythreads = count_sticky_threads($indexes);
+    $skipthreads = max(0, $skipthreads - $stickythreads);
 }
 
-// Find starting table index based on the adjusted skip count
-// We iterate through tables, subtracting the number of *visible, non-sticky* threads (estimated)
-// in each table from our skip count.
-$threadtable = count($indexes) - 1;
-while ($threadtable >= 0 && isset($indexes[$threadtable])) {
-    $index = $indexes[$threadtable]; // Get current index info
-
-    // --- Estimate visible, non-sticky threads in this index table ---
-    // 1. Get base visible count (includes stickies) using the fast helper
-    $base_visible_count = threads($threadtable);
-
-    // 2. Count stickies in this specific table
-    $sticky_count_in_table = 0;
-    $sql_sticky_count = "SELECT COUNT(DISTINCT tid) FROM f_sticky" . $index['iid'];
-    // Optimization: Check if sticky table even exists/has rows? (May need schema info or try/catch)
-    // For now, assume query runs, returns 0 if no table/rows.
-    try {
-      $sth_sticky_count = db_query($sql_sticky_count);
-      $sticky_count_in_table = (int)$sth_sticky_count->fetchColumn();
-      $sth_sticky_count->closeCursor();
-    } catch (PDOException $e) {
-        // Handle cases where f_stickyX might not exist (e.g., very old/small forums)
-        // Log error maybe? For now, assume count is 0.
-        error_log("PDOException counting stickies in table " . $index['iid'] . ": " . $e->getMessage());
-        $sticky_count_in_table = 0;
-    }
-
-    // 3. Estimate non-sticky visible threads
-    $estimated_non_sticky_visible = max(0, $base_visible_count - $sticky_count_in_table);
-    // --- End Estimation ---
-
-    if ($estimated_non_sticky_visible > $skipthreads) {
-        // This table contains the thread we should start with.
-        // The remaining $skipthreads value is the offset *within* this table.
-        break;
-    }
-    // Skip this entire table
-    $skipthreads -= $estimated_non_sticky_visible;
-    $threadtable--;
-}
+/* Find starting table by counting visible threads until we exceed skip count */
+list($threadtable, $skipthreads) = find_starting_table($indexes, $skipthreads);
 
 // Check if calculated page is valid
 if ($curpage != 1 && ($threadtable < 0 || !isset($indexes[$threadtable]))) {
@@ -312,7 +317,8 @@ while ($numshown < $threadsperpage) {
     $limit_offset = (int)$skipthreads; // Use the remaining skip count as offset for the *first* table queried
     $limit_count = (int)($threadsperpage - $numshown); // Fetch only needed threads
 
-    $sql .= " limit " . $limit_offset . "," . $limit_count;
+    /* Page 1: adjust count for stickies, Other pages: adjust skip for stickies */
+    $sql .= get_limit_clause($curpage, $skipthreads, $threadsperpage, $numshown, $stickythreads);
     // --- End of SQL Query Logic ---
 
     $sth = db_query($sql, $sql_args);
@@ -333,14 +339,7 @@ while ($numshown < $threadsperpage) {
       $threadlinks = gen_threadlinks($thread, $collapse);
 
       // Determine class based on state/flags AND bumped status
-      $class = "row"; // Default for already read
-      if ($thread['state'] == 'Moderated') $class = "mrow";
-      elseif ($thread['state'] == 'OffTopic') $class = "orow";
-      elseif ($thread['state'] == 'Deleted') $class = "drow";
-      elseif (isset($thread['flag']['Sticky'])) $class = "srow";
-      elseif ($bumped) $class = "trow"; // Use 'trow' only if actually bumped
-      // Otherwise, it remains 'row'
-      $class .= ($numshown % 2);
+      $class = get_thread_class($thread, $numshown, $bumped);
 
       // Set variables for YATT row block
       $content_tpl->set('CLASS', $class); // Only used in normal mode
