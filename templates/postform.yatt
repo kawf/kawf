@@ -71,14 +71,14 @@ This thread is locked. No replies are allowed.<br>
   <div class="checkbox">
   %begin [offtopic]
     <input type="checkbox" name="OffTopic"%[OFFTOPIC_CHECKED]>
-    <label for="checkbox">Mark as offtopic?</label><br>
+    <label for="OffTopic">Mark as offtopic?</label><br>
   %end [offtopic]
-  <input type="checkbox" name="ExposeEmail"%[EXPOSEEMAIL_CHECKED]>
-  <label for="checkbox">Show email address in post?</label><br>
-  <input type="checkbox" name="EmailFollowup"%[EMAILFOLLOWUP_CHECKED]>
-  <label for="checkbox">Send email on followup replies?</label><br>
-  <input type="checkbox" name="TrackThread"%[TRACKTHREAD_CHECKED]>
-  <label for="checkbox">Track thread?</label>
+  <input type="checkbox" id="ExposeEmail" name="ExposeEmail"%[EXPOSEEMAIL_CHECKED]>
+  <label for="ExposeEmail">Show email address in post?</label><br>
+  <input type="checkbox" id="EmailFollowup" name="EmailFollowup"%[EMAILFOLLOWUP_CHECKED]>
+  <label for="EmailFollowup">Send email on followup replies?</label><br>
+  <input type="checkbox" id="TrackThread" name="TrackThread"%[TRACKTHREAD_CHECKED]>
+  <label for="TrackThread">Track thread?</label>
   </div>
   </td>
 </tr>
