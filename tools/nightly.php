@@ -9,10 +9,8 @@ db_connect();
 if(!ini_get('safe_mode'))
     set_time_limit(0);
 
-function find_thread_index($tid)
+function find_thread_index($indexes, $tid)
 {
-  $indexes = get_forum_indexes();
-
   foreach ($indexes as $index)
     if ($index['mintid'] <= $tid && $index['maxtid'] >= $tid)
       return $index['iid'];
@@ -141,7 +139,7 @@ while ($forum = $sth->fetch()) {
     if (($i % 100)==0) {
 	echo " $i";
     }
-    $index = find_thread_index($tracking['tid']);
+    $index = find_thread_index($indexes, $tracking['tid']);
     if ($index < 0) {
       echo "Tracking index < 0! (tid = " . $tracking['tid'] . ", aid = " . $tracking['aid'] . ", tstamp = " . $tracking['tstamp'] . ", options = '" . $tracking['options'] . "')\n";
       $delete = 1;
