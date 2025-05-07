@@ -4,29 +4,6 @@ require_once("embed-media.inc.php");
 require_once("Skip32.inc.php");
 require_once("textwrap.inc.php");
 
-function message_set_block($tpl)
-{
-  $tpl->set_block("message", "owner");		/* opt */
-  $tpl->set_block("owner", "delete");		/* opt */
-  $tpl->set_block("owner", "undelete");		/* opt */
-  $tpl->set_block("owner", "statelocked");	/* opt */
-  $tpl->set_block("message", "reply");		/* opt */
-  $tpl->set_block("reply", "p2freply");		/* opt */
-
-  $tpl->set_block("message", "forum_mod");	/* opt */
-  $tpl->set_block("forum_mod", "admin");	/* opt */
-  $tpl->set_block("message", "moderator");	/* opt */
-  $tpl->set_block("message", "advertiser");	/* opt */
-
-  $tpl->set_block("message", "parent");		/* manual */
-
-  $tpl->set_block("message", "msg");
-
-  $tpl->set_block("message", "changes");	/* opt */
-
-  $tpl->set_block("message", "signature");
-}
-
 function blank_extra($tpl, $tag, $bool)
 {
   if (!$bool)

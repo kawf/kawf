@@ -14,15 +14,10 @@ if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
   }
 }
 
+$forum=get_forum();
+
 // Instantiate YATT for the main content
 $content_tpl = new_yatt('showthread.yatt', $forum);
-
-/* Removed old Template setup
-$tpl->set_file(array(
-  "showthread" => "showthread.tpl",
-  "forum_header" => array("forum/" . $forum['shortname'] . ".tpl", "forum/generic.tpl"),
-));
-*/
 
 // Set basic variables needed by header/footer
 $content_tpl->set("MESSAGES", $messages);

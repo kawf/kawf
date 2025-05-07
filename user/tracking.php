@@ -99,9 +99,9 @@ if ($numshown == 0) {
     $forum = $forum_item['forum'];
 
     // Set variables for the current forum iteration
-    $content_tpl->set('forum_header', generate_forum_header($forum));
-    $content_tpl->set('forum_name', $forum['name']);
-    $content_tpl->set('forum_shortname', $forum['shortname']);
+    $content_tpl->set('FORUM_HEADER', generate_forum_header($forum));
+    $content_tpl->set('FORUM_NAME', $forum['name']);
+    $content_tpl->set('FORUM_SHORTNAME', $forum['shortname']);
     $content_tpl->set('FORUM_NOTICES', $forum_item['forum_notices']); // Set notices for this forum
 
     // Conditionally parse 'update_all' link within the correct mode block
