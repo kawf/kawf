@@ -210,11 +210,11 @@ function _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $mo
   }
 
   // Advertiser/Moderator status flags
-  if (isset($owner->status) && $owner->status == 'Advertiser') {
-      $message_tpl->parse('message_block.advertiser');
-  }
   if ($owner->capable($forum['fid'], 'Moderate')) {
       $message_tpl->parse('message_block.moderator');
+  }
+  if ($owner->capable($forum['fid'], 'Advertise')) {
+      $message_tpl->parse('message_block.advertiser');
   }
   if ($owner->capable($forum['fid'], 'Sponsor') && isset($config_sponsor)) {
       $message_tpl->set('SPONSOR_TEXT', $config_sponsor['text']);
