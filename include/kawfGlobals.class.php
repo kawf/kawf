@@ -90,12 +90,14 @@ final class ForumInfo {
     private function loadForum(string $shortname): bool {
         $sql = "select * from f_forums where shortname = ?";
         $forum = db_query_first($sql, array($shortname));
+        if (empty($forum)) return false;
         return $this->loadForumData($forum);
     }
 
     private function loadForumById(int $fid): bool {
         $sql = "select * from f_forums where fid = ?";
         $forum = db_query_first($sql, array($fid));
+        if (empty($forum)) return false;
         return $this->loadForumData($forum);
     }
 
