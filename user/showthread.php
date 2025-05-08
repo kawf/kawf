@@ -20,7 +20,6 @@ $forum=get_forum();
 $content_tpl = new_yatt('showthread.yatt', $forum);
 
 // Set basic variables needed by header/footer
-$content_tpl->set("MESSAGES", $messages);
 $content_tpl->set("PAGE", format_page_param());
 $content_tpl->set("TIME", time());
 

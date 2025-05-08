@@ -18,7 +18,7 @@ if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
 
 $raw = isset($_REQUEST['raw']);
 
-$msg = fetch_message($user, $mid, 'message,url,urltext,video,tid');
+$msg = fetch_message($user, $mid, 'mid, ' . MESSAGE_PLAIN_FIELDS);
 
 if ($raw) {
     header("Content-type: text/plain");

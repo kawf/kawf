@@ -81,8 +81,8 @@ $nmsg['pmid'] = $msg['mid'];
 $nmsg['tid'] = $msg['tid'];
 $nmsg['ip'] = get_server()->remoteAddr;
 
-if ($msg['pmid'] != 0 && !isset($pmsg)) {
-  $pmsg = fetch_message($user, $msg['pmid'], 'mid,subject,name,date');
+if ($msg['pmid'] != 0) {
+  $pmsg = fetch_message($user, $msg['pmid'], 'mid, subject, name, date');
 }
 
 if (isset($msg['subject']) && !preg_match("/^Re:/i", $msg['subject'])) {

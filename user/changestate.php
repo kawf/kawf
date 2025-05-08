@@ -34,7 +34,7 @@ if (!isset($iid))
 if (!$user->is_valid_token($_REQUEST['token']))
   err_not_found('Invalid token');
 
-$msg = db_query_first("select mid, aid, pid, state, subject, flags from f_messages$iid where mid = ?", array($mid));
+$msg = db_query_first("select " . MESSAGE_STATE_FIELDS . " from f_messages$iid where mid = ?", array($mid));
 
 /* don't do anything if no change */
 if ($msg['state'] == $state)

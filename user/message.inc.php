@@ -4,6 +4,18 @@ require_once("embed-media.inc.php");
 require_once("Skip32.inc.php");
 require_once("textwrap.inc.php");
 
+// For state changes in changestate.php
+define('MESSAGE_STATE_FIELDS', 'mid, aid, pid, state, subject, flags');
+
+// For plain message display in plainmessage.php
+define('MESSAGE_PLAIN_FIELDS', 'tid, message, url, urltext, video');
+
+// For metadata fields
+define('MESSAGE_METADATA_FIELDS', 'name, date, email, views, changes, UNIX_TIMESTAMP(date) as unixtime, ip');
+
+// For complete message data in thread.inc.php
+define('MESSAGE_FIELDS', MESSAGE_PLAIN_FIELDS . ', ' . MESSAGE_METADATA_FIELDS . ', ' . MESSAGE_STATE_FIELDS);
+
 function blank_extra($tpl, $tag, $bool)
 {
   if (!$bool)
@@ -166,7 +178,7 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
 
   // Handle Parent Message Block
   if (isset($msg['pmid']) && $msg['pmid'] != 0) { // Check if pmid exists first
-    $pmsg = fetch_message($viewer, $msg['pmid'], 'mid,subject,name,date' ); // Fetch parent msg details
+    $pmsg = fetch_message($viewer, $msg['pmid'], 'mid, subject, name, date'); // Fetch parent msg details
     if ($pmsg) { // Check if fetch was successful
         $message_tpl->set("PMSG_MID", $pmsg['mid']);
         $message_tpl->set("PMSG_SUBJECT", htmlspecialchars($pmsg['subject'])); // Escape subject
