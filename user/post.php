@@ -159,7 +159,7 @@ if (isset($_POST['postcookie'])) {
     }
   } else {
     // Force preview if image/video exists but wasn't explicitly previewed
-    if ((!empty($msg['imageurl']) || !empty($msg['video'])) && !$imgpreview) {
+    if ((!empty($msg['imageurl']) || !empty($msg['video'])) && !isset($imgpreview)) {
       $preview = true;
     }
   }
