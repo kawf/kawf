@@ -166,73 +166,73 @@ if (isset($_POST['postcookie'])) {
 
   // --- Prepare for Preview/Error Display ---
   if (!empty($error) || $preview) {
-      $imgpreview = 1; // Flag that image/video was seen
-      if(!empty($msg['imageurl'])) $error["image"] = true; // Indicate image presence
-      if(!empty($msg['video'])) $error["video"] = true; // Indicate video presence
+    $imgpreview = 1; // Flag that image/video was seen
+    if(!empty($msg['imageurl'])) $error["image"] = true; // Indicate image presence
+    if(!empty($msg['video'])) $error["video"] = true; // Indicate video presence
 
-      // Render the preview using the submitted data in $msg
-      $rendered_preview_html = render_message($template_dir, $msg, $user); // Render with current state
-      $content_tpl->set('PREVIEW', $rendered_preview_html);
-      $content_tpl->parse('post_content.preview');
+    // Render the preview using the submitted data in $msg
+    $rendered_preview_html = render_message($template_dir, $msg, $user); // Render with current state
+    $content_tpl->set('PREVIEW', $rendered_preview_html);
+    $content_tpl->parse('post_content.preview');
 
-      // Parse specific error blocks
-      foreach (array_keys($error) as $err_key) {
-          // Need to ensure block names match error keys
-          if (in_array($err_key, ['image','video','subject_req','subject_change','subject_too_long','url_too_long','urltext_too_long','imageurl_too_long','image_upload_failed','video_too_long'])) {
-             $content_tpl->parse('post_content.error.' . $err_key);
-          }
-      }
-      $content_tpl->parse('post_content.error'); // Parse the outer error container
+    // Parse specific error blocks
+    foreach (array_keys($error) as $err_key) {
+        // Need to ensure block names match error keys
+        if (in_array($err_key, ['image','video','subject_req','subject_change','subject_too_long','url_too_long','urltext_too_long','imageurl_too_long','image_upload_failed','video_too_long'])) {
+            $content_tpl->parse('post_content.error.' . $err_key);
+        }
+    }
+    $content_tpl->parse('post_content.error'); // Parse the outer error container
 
-      // Prepare $nmsg for re-rendering the form with submitted values
-      $nmsg = $msg; // Copy validated/processed data back to form model
-      // Set checkbox states based on original POST
-      if (isset($_POST['OffTopic'])) $nmsg['checked_OffTopic'] = 'checked';
-      if (isset($_POST['ExposeEmail'])) $nmsg['checked_ExposeEmail'] = 'checked';
-      if (isset($_POST['EmailFollowup'])) $nmsg['checked_EmailFollowup'] = 'checked';
-      if (isset($_POST['TrackThread'])) $nmsg['checked_TrackThread'] = 'checked';
-      // Ensure hidden fields are populated for the form, BUT specifically unset 'mid'
-      // to prevent render_postform from showing "Update Message" after a preview.
-      // The presence/absence of 'pmid' will determine "Post Reply" vs "Post New Thread".
-      // $nmsg['mid'] = isset($msg['mid']) ? $msg['mid'] : ''; // Keep original mid if set
-      unset($nmsg['mid']); // FORCE unset mid for post-preview render
-      $nmsg['pmid'] = isset($msg['pmid']) ? $msg['pmid'] : '';
-      $nmsg['tid'] = isset($msg['tid']) ? $msg['tid'] : '';
-      $nmsg['ip'] = $s->remoteAddr;
+    // Prepare $nmsg for re-rendering the form with submitted values
+    $nmsg = $msg; // Copy validated/processed data back to form model
+    // Set checkbox states based on original POST
+    if (isset($_POST['OffTopic'])) $nmsg['checked_OffTopic'] = 'checked';
+    if (isset($_POST['ExposeEmail'])) $nmsg['checked_ExposeEmail'] = 'checked';
+    if (isset($_POST['EmailFollowup'])) $nmsg['checked_EmailFollowup'] = 'checked';
+    if (isset($_POST['TrackThread'])) $nmsg['checked_TrackThread'] = 'checked';
+    // Ensure hidden fields are populated for the form, BUT specifically unset 'mid'
+    // to prevent render_postform from showing "Update Message" after a preview.
+    // The presence/absence of 'pmid' will determine "Post Reply" vs "Post New Thread".
+    // $nmsg['mid'] = isset($msg['mid']) ? $msg['mid'] : ''; // Keep original mid if set
+    unset($nmsg['mid']); // FORCE unset mid for post-preview render
+    $nmsg['pmid'] = isset($msg['pmid']) ? $msg['pmid'] : '';
+    $nmsg['tid'] = isset($msg['tid']) ? $msg['tid'] : '';
+    $nmsg['ip'] = $s->remoteAddr;
 
-      $form_html = render_postform($template_dir, "post", $user, $nmsg);
-      $content_tpl->set("FORM_HTML", $form_html);
-      $content_tpl->parse("post_content.form");
+    $form_html = render_postform($template_dir, "post", $user, $nmsg);
+    $content_tpl->set("FORM_HTML", $form_html);
+    $content_tpl->parse("post_content.form");
 
   } else {
-      // --- Accepted - No Errors & Not Preview ---
-      $accepted = true;
+    // --- Accepted - No Errors & Not Preview ---
+    $accepted = true;
 
-      // Set status based on checkbox
-      $status = isset($_POST['OffTopic']) ? "OffTopic" : "Active";
-      $msg['state'] = $status;
+    // Set status based on checkbox
+    $status = isset($_POST['OffTopic']) ? "OffTopic" : "Active";
+    $msg['state'] = $status;
 
-      // We are now calling the refactored postmessage() from postmessage.inc.php (Corrected name)
-      $is_new_message = postmessage($user, $forum['fid'], $msg, $_POST);
-      // $msg array now contains the correct mid and tid set by postmessage() regardless of return value
+    // We are now calling the refactored postmessage() from postmessage.inc.php (Corrected name)
+    $is_new_message = postmessage($user, $forum['fid'], $msg, $_POST);
+    // $msg array now contains the correct mid and tid set by postmessage() regardless of return value
 
-      // Always render preview using the potentially updated $msg data from postmessage()
-      $rendered_preview_html = render_message($template_dir, $msg, $user);
-      $content_tpl->set('PREVIEW', $rendered_preview_html);
-      $content_tpl->set('MSG_MID', $msg['mid']); // Use the MID from $msg for links
+    // Always render preview using the potentially updated $msg data from postmessage()
+    $rendered_preview_html = render_message($template_dir, $msg, $user);
+    $content_tpl->set('PREVIEW', $rendered_preview_html);
+    $content_tpl->set('MSG_MID', $msg['mid']); // Use the MID from $msg for links
 
-      if ($is_new_message) {
-          // --- New Message Posted Successfully ---
-          // Handle Email Followups
-          if (isset($_POST['EmailFollowup'])) {
-              email_followup($msg, $forum);
-          }
-          $content_tpl->parse("post_content.accept");
-      } else {
-          // --- Duplicate Message Detected ---
-          // postmessage() should have updated the existing message with new content
-          $content_tpl->parse("post_content.duplicate");
-      }
+    if ($is_new_message) {
+        // --- New Message Posted Successfully ---
+        // Handle Email Followups
+        if (isset($_POST['EmailFollowup'])) {
+            email_followup($msg, $forum);
+        }
+        $content_tpl->parse("post_content.accept");
+    } else {
+        // --- Duplicate Message Detected ---
+        // postmessage() should have updated the existing message with new content
+        $content_tpl->parse("post_content.duplicate");
+    }
   }
 
 } else {
