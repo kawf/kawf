@@ -21,9 +21,13 @@
 ## Key Differences Between Template and YATT
 
 1. **Block Handling:**
-   - **Template:** Requires explicit `set("")` to clear a block, otherwise it remains in the output
-   - **YATT:** By default, blocks that are not parsed are not rendered in the output
+   - **Template:** Uses `set("")` to clear a block, otherwise it remains in the output
+   - **YATT:** No need to clear blocks - unparsed blocks are not rendered
    - This makes YATT more predictable but requires careful block parsing order
+   - YATT supports using a state variable to determine which block to parse
+   - Example: `$content_block = "preview"` or `"accept"` or `"duplicate"`
+   - Parse the chosen block: `$content_tpl->parse("post_content.$content_block")`
+   - This is cleaner than multiple conditional parse statements
 
 2. **Template Structure:**
    - **Template:** Uses HTML comments for block definitions
@@ -34,16 +38,34 @@
    - **Template:** Uses `{VAR_NAME}` syntax
    - **YATT:** Uses `%[VAR_NAME]` syntax
    - YATT requires variables to be set before parsing blocks that use them
+   - YATT's `set()` method:
+     - Takes a single variable name and value: `$yatt->set("VAR_NAME", "value")`
+     - Does NOT accept an array of variables like Template's `set_var()`
+     - Variables must be set individually before parsing blocks that use them
+     - No need to clear variables - unset variables are simply not rendered
+   - **Important:** YATT does NOT have a `get()` method. Any logic that previously used `get()` to retrieve variables should be handled in PHP code instead.
+   - **Template:** Unset variables are silently ignored
+   - **YATT:** Unset variables trigger errors - DO NOT set empty defaults. This is a feature, not a bug, as it helps catch template errors where variables are accidentally used without being set.
 
-4. **Conditional Logic & Comments:**
+4. **Error Handling:**
+   - **Template:** No built-in error handling
+   - **YATT:** Uses `log_yatt_errors()` for error handling
+   - **Critical Guidelines for `log_yatt_errors()`:**
+     - Must be called after `output()` but before using the output
+     - Store output in a variable first: `$content = $yatt->output()`
+     - Call `log_yatt_errors($yatt)` after output but before using content
+     - Only then use the content (e.g., pass to `generate_page()`)
+     - This ensures errors during output generation are properly logged
+
+5. **Conditional Logic & Comments:**
    - **YATT Conditional Logic:** **Does NOT support conditional syntax like `%if` within the template file itself.** Conditional rendering is achieved by defining named blocks (`%begin [name]...%end [name]`) in the `.yatt` file and then **selectively calling `$yatt->parse('block_name')` from the PHP script** based on the desired conditions.
    - **YATT Comment Syntax:** The correct format for comments within YATT templates is **`%[#] Comment Text Here`** (must be on its own line). These are distinct from standard HTML comments (`<!-- ... -->`).
 
-5. **Page Structure:**
+6. **Page Structure:**
    - **Template:** Standalone templates
    - **YATT:** Uses an outer `page.yatt` wrapper for all pages via `generate_page()` (defined in `page-yatt.inc.php`).
 
-6. **Parse Order:**
+7. **Parse Order:**
    - **Template:** No specific order required
    - **YATT:** Technically no order requirement, but following a top-to-bottom parse order is recommended as an idiom because:
      - Makes code more readable and maintainable
@@ -161,7 +183,7 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
         - Documented current patterns
 
 3.  **Current Phase: Clean Up**
-    *   ✅ **Rename `.inc` include files to `.inc.php`**
+    *   ✅ **Rename `.inc` include files to `.inc.php**
         - `git mv` all of them
         - Fix all references
     *   **From [Issue #40](https://github.com/kawf/kawf/issues/40):** Replace globals in `include/utils.inc` with `user/kawfGlobals.class.php` object
