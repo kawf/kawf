@@ -346,7 +346,7 @@ function process_message($user, &$msg)
 
     $items = array('subject','name','message');
     foreach ($items as $k) {
-      if (isset($msg[$k]) && $msg[$k]!=$omsg[$k]) {
+      if (isset($msg[$k]) && (!isset($omsg[$k]) || $msg[$k]!=$omsg[$k])) {
         $keys[] = "$k = ?";
         $vals[] = $msg[$k];
       }
