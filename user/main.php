@@ -269,14 +269,20 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $s->scriptName . $s->pathInfo, $regs
   if (isset($iid)) {
     $sql = "select tid from f_threads$iid where tid = ?";
     $sth = db_query($sql, array($tid));
+    if ($sth && $sth->fetch()) {
+      require_once("showthread.php");
+      if(isset($sth)) $sth->closeCursor();
+      exit;
+    }
   }
 
-  if (isset($sth) && $sth->fetch()) {
-    require_once("showthread.php");
-  } else
-    $forum = get_forum();
-    err_not_found("Unknown thread " . $tid . " in forum " . $forum['shortname']);
-  if(isset($sth)) $sth->closeCursor();
+  // If we get here, either iid wasn't found or thread wasn't found
+  $forum = get_forum();
+  if (!isset($iid)) {
+    err_not_found("Thread $tid is outside the range of available threads in forum " . $forum['shortname']);
+  } else {
+    err_not_found("Thread $tid not found in forum " . $forum['shortname']);
+  }
 } else
   err_not_found("Unknown path");
 

@@ -9,8 +9,7 @@ require_once("page-yatt.inc.php");
 if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
   $user->req();
   if ($user->status != 'Active') {
-    echo "Your account isn't validated\n";
-    exit;
+    err_not_found("Your account isn't validated");
   }
 }
 
