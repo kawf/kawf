@@ -182,17 +182,6 @@ function get_forum_navigation()
     return $nav;
 }
 
-function new_yatt($template, $forum = null) {
-    global $template_dir;
-    $yatt = new YATT($template_dir, $template);
-    if ($forum) {
-        $yatt->set('FORUM_NAME', htmlspecialchars($forum['name'], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
-        $yatt->set('FORUM_SHORTNAME', htmlspecialchars($forum['shortname'], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
-        $yatt->set('FORUM_NOTICES', isset($forum['notices']) ? $forum['notices'] : '');
-    }
-    return $yatt;
-}
-
 /**
  * Get the current page context from request parameters and format it as a URL parameter
  * @return string The formatted URL parameter string (e.g. "page=value")

@@ -8,7 +8,7 @@ final class kawfError {
     // Private constructor to prevent instantiation of this static utility class.
     private function __construct() {}
 
-    static $debug_log = '';
+    static $debug_log = [];
 
     // Global callback for error page rendering
     static $error_page_renderer;
@@ -80,11 +80,11 @@ function err_not_found($description = "") {
 }
 
 function debug_log($msg) {
-    kawfError::$debug_log .= $msg;
+    kawfError::$debug_log[] = $msg;
 }
 
 function get_debug_log() {
-    return kawfError::$debug_log;
+    return implode("\n", kawfError::$debug_log);
 }
 
 // vim: ts=8 sw=4 et:
