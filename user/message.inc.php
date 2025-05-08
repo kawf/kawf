@@ -120,7 +120,7 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
     $debug = "\nmsg:\n";
     foreach ($msg as $k => $v) {
       if (!is_numeric($k) && strlen($v)>0)
-	  $debug.=" $k => $v\n";
+        $debug.=" $k => $v\n";
     }
     $debug.="viewer=".$viewer->aid."\n";
     $debug.="owner=".$owner->aid."\n";
@@ -326,55 +326,55 @@ function process_message($user, &$msg)
     //$msg['subject'] = @utf8ize($msg['subject']);
     //$msg['name'] = @utf8ize($msg['name']);
     if (isset($msg['message'])) {
-	$msg['message'] = remoronize($msg['message']);
-	//$msg['message'] = utf8ize($msg['message']);
-	//$msg['message'] = debug_hexdump($msg['message']);
+      $msg['message'] = remoronize($msg['message']);
+      //$msg['message'] = utf8ize($msg['message']);
+      //$msg['message'] = debug_hexdump($msg['message']);
     }
 
     /* Workaround for issue #73 - handle empty subjects */
     if (empty($msg['subject']))
-	$msg['subject'] = "...";
+      $msg['subject'] = "...";
 
     $keys = array();
 
     /* auto update db if remoronize made a change */
     if (isset($msg['mid'])) {
-	$iid = mid_to_iid($msg['mid']);
-	$mid = $msg['mid'];
+    $iid = mid_to_iid($msg['mid']);
+    $mid = $msg['mid'];
 
-	$vals = array();
+    $vals = array();
 
-	$items = array('subject','name','message');
-	foreach ($items as $k) {
-	    if (isset($msg[$k]) && $msg[$k]!=$omsg[$k]) {
-		$keys[] = "$k = ?";
-		$vals[] = $msg[$k];
-	    }
-	}
-
-	if (count($keys)>0) {
-	    global $utf8_autofix_log, $utf8_autofix_message, $utf8_autofix_account;
-	    $sql = "update f_messages$iid set ".join(',', $keys).
-		" where mid=$mid";
-	    if ($utf8_autofix_log) {
-		error_log(full_url($_SERVER).
-		    " $mid.phtml f_messages$iid has bad chars");
-		error_log($sql);
-		//error_log(join(', ',$vals));
-	    }
-	    if ($utf8_autofix_message) db_exec($sql, $vals);
-
-	    if (in_array('name = ?', $keys) && isset($msg['aid'])) {
-		$user = new AccountUser($msg['aid']);
-		//if (isset($user) && $user->name!=utf8ize($user->name)) {
-		if (isset($user)) {
-		    if ($utf8_autofix_log)
-			error_log("Bad aid ".$user->aid." name '" .$user->name."'");
-		    //if ($utf8_autofix_account) $user->name(utf8ize($user->name));
-		}
-	    }
-	}
+    $items = array('subject','name','message');
+    foreach ($items as $k) {
+      if (isset($msg[$k]) && $msg[$k]!=$omsg[$k]) {
+        $keys[] = "$k = ?";
+        $vals[] = $msg[$k];
+      }
     }
+
+    if (count($keys)>0) {
+      global $utf8_autofix_log, $utf8_autofix_message, $utf8_autofix_account;
+      $sql = "update f_messages$iid set ".join(',', $keys).
+      " where mid=$mid";
+      if ($utf8_autofix_log) {
+        error_log(full_url($_SERVER).
+          " $mid.phtml f_messages$iid has bad chars");
+        error_log($sql);
+        //error_log(join(', ',$vals));
+      }
+      if ($utf8_autofix_message) db_exec($sql, $vals);
+
+      if (in_array('name = ?', $keys) && isset($msg['aid'])) {
+        $user = new AccountUser($msg['aid']);
+        //if (isset($user) && $user->name!=utf8ize($user->name)) {
+        if (isset($user)) {
+          if ($utf8_autofix_log)
+          error_log("Bad aid ".$user->aid." name '" .$user->name."'");
+          //if ($utf8_autofix_account) $user->name(utf8ize($user->name));
+        }
+      }
+    }
+  }
 
     /* return things that changed */
     return $keys;
@@ -531,38 +531,38 @@ function can_upload_images() {
 }
 
 function ini_val_to_bytes($val) {
-	$val = strtolower(trim($val));
+    $val = strtolower(trim($val));
 
-	if (preg_match("/^(\d+)([kmg])$/", $val, $m)) {
-		$val = intval($m[1]);
-		switch ($m[2]) {
-		case "k":
-			$val *= 1024;
-			break;
-		case "m";
-			$val *= 1024 * 1024;
-			break;
-		case "g";
-			$val *= 1024 * 1024;
-			break;
-		}
-	}
+    if (preg_match("/^(\d+)([kmg])$/", $val, $m)) {
+        $val = intval($m[1]);
+        switch ($m[2]) {
+        case "k":
+            $val *= 1024;
+            break;
+        case "m";
+            $val *= 1024 * 1024;
+            break;
+        case "g";
+            $val *= 1024 * 1024;
+            break;
+        }
+    }
 
-	return intval($val);
+    return intval($val);
 }
 
 function max_image_upload_bytes() {
-	$pms = ini_val_to_bytes(ini_get("post_max_size"));
-	$ums = ini_val_to_bytes(ini_get("upload_max_filesize"));
+    $pms = ini_val_to_bytes(ini_get("post_max_size"));
+    $ums = ini_val_to_bytes(ini_get("upload_max_filesize"));
 
-	/* imgur's upload limit is 10mb */
-	$mb = min((10 * 1024 * 1024), $pms, $ums);
+    /* imgur's upload limit is 10mb */
+    $mb = min((10 * 1024 * 1024), $pms, $ums);
 
-	/* leave 10k overhead for other post data */
-	if ($mb > 10240)
-		$mb -= 10240;
+    /* leave 10k overhead for other post data */
+    if ($mb > 10240)
+        $mb -= 10240;
 
-	return $mb;
+    return $mb;
 }
 
 function get_uploaded_image_urls($filename) {
