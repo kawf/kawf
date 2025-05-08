@@ -36,9 +36,10 @@ require_once("page-yatt.inc.php");
 */
 
 // Instantiate YATT
+// Sets up template and standard FORUM_NAME and FORUM_SHORTNAME variables
 $content_tpl = new_yatt('post.yatt', $forum);
 
-// Set common vars
+// Set common vars first, before any parsing
 $content_tpl->set("PAGE", format_page_param());
 
 // Permission Checks
@@ -49,14 +50,18 @@ if (!isset($_POST['tid'])) { // Posting new thread
   if (!$can_post_thread) {
     $content_tpl->parse("post_content.disabled.nonewthreads");
     $content_tpl->parse("post_content.disabled");
-    print generate_page('Post Message Denied', $content_tpl->output());
+    $content_html = $content_tpl->output();
+    log_yatt_errors($content_tpl);
+    print generate_page('Post Message Denied', $content_html);
     exit;
   }
 } else { // Replying
   if (!$can_post_reply) {
     $content_tpl->parse("post_content.disabled.noreplies");
     $content_tpl->parse("post_content.disabled");
-    print generate_page('Post Message Denied', $content_tpl->output());
+    $content_html = $content_tpl->output();
+    log_yatt_errors($content_tpl);
+    print generate_page('Post Message Denied', $content_html);
     exit;
   }
   // Check if thread is locked
@@ -65,14 +70,15 @@ if (!isset($_POST['tid'])) { // Posting new thread
       if (isset($thread['flag']['Locked']) && !$user->capable($forum['fid'], 'Lock')) {
           $content_tpl->parse("post_content.disabled.locked");
           $content_tpl->parse("post_content.disabled");
-          print generate_page('Post Message Denied', $content_tpl->output());
+          $content_html = $content_tpl->output();
+          log_yatt_errors($content_tpl);
+          print generate_page('Post Message Denied', $content_html);
           exit;
       }
   }
 }
-// If we reach here, posting is generally allowed
 
-// Debug Info
+// Debug Info - Set after permission checks
 if ($Debug) {
   $debug = "<!--\n_POST:\n";
   foreach ($_POST as $k => $v) {
@@ -81,34 +87,32 @@ if ($Debug) {
   }
   $debug .= "-->";
   $content_tpl->set("DEBUG", $debug);
-} else {
-  $content_tpl->set("DEBUG", "");
 }
-
-// Initialize variables
-$msg = []; // Holds the message data being processed
-$nmsg = []; // Holds data specifically for rendering the *next* form
-$error = []; // Holds validation error flags
-$preview = false;
-$imgpreview = false;
-$accepted = false;
-$rendered_preview_html = ''; // Store rendered preview
 
 // Get server properties
 $s = get_server();
 
+// Initialize variables
+$msg = []; // Holds the message data being processed
+$msg['date'] = gen_date($user); // Use current time for processing
+$msg['ip'] = $s->remoteAddr;
+$msg['aid'] = $user->aid;
+$msg['flags'] = 'NewStyle'; // Default flag
+$msg['name'] = stripcrap($user->name); // Use current user name
+
+$error = array(); // Holds validation error flags, start EMPTY!
+
+$imgpreview = false;
+$preview = false;
+$accepted = false;
+
 // --- Main Logic: Handle POST or GET ---
 if (isset($_POST['postcookie'])) {
   // --- POST Submission ---
-  if (isset($_POST['preview'])) $preview = true;
-  if (isset($_POST['imgpreview'])) $imgpreview = true;
+  if (isset($_POST['imgpreview'])) $imgpreview = true; // the user posted an image or video but didn't preview yet
+  if (isset($_POST['preview'])) $preview = true; // show the preview block
 
-  // Basic message setup
-  $msg['date'] = gen_date($user); // Use current time for processing
-  $msg['ip'] = $s->remoteAddr;
-  $msg['aid'] = $user->aid;
-  $msg['flags'] = 'NewStyle'; // Default flag
-  $msg['name'] = stripcrap($user->name); // Use current user name
+  //debug_log("postcookie set, imgpreview=" . var_export($imgpreview, true) . ", preview=" . var_export($preview, true));
 
   // Populate $msg from _POST (sanitize/validate below)
   if (array_key_exists('mid', $_POST) && is_numeric($_POST['mid'])) $msg['mid'] = $_POST['mid'];
@@ -126,7 +130,9 @@ if (isset($_POST['postcookie'])) {
 
   // --- Validation ---
   if (isset($msg['pmid'])) { // Check parent only if replying
-    $parent = db_query_first("select * from f_messages" . mid_to_iid($msg['pmid']) . " where mid = ?", array($msg['pmid']));
+    $iid = mid_to_iid($msg['pmid']);
+    if (!isset($iid)) throw new RuntimeException("no iid for pmid " . $msg['pmid']);
+    $parent = db_query_first("select * from f_messages$iid where mid = ?", array($msg['pmid']));
   }
 
   if (empty($msg['subject'])) {
@@ -139,6 +145,7 @@ if (isset($_POST['postcookie'])) {
     $error["subject_too_long"] = true;
     $msg['subject'] = mb_strcut($msg['subject'], 0, 100);
   }
+
   // URL length checks
   $max_item_len = 250;
   foreach (['url', 'urltext', 'imageurl', 'video'] as $item) {
@@ -147,6 +154,8 @@ if (isset($_POST['postcookie'])) {
       $msg[$item] = mb_strcut($msg[$item], 0, $max_item_len);
     }
   }
+
+  //debug_log("error=" . implode(", ", $error) .  " isset(error)=" . var_export(isset($error), true) .  " empty(error)=" . var_export(empty($error), true));
 
   // Image Upload Handling
   if (empty($error) && can_upload_images() && isset($_FILES["imagefile"]) && $_FILES["imagefile"]["size"] > 0) {
@@ -159,131 +168,153 @@ if (isset($_POST['postcookie'])) {
     }
   } else {
     // Force preview if image/video exists but wasn't explicitly previewed
-    if ((!empty($msg['imageurl']) || !empty($msg['video'])) && !isset($imgpreview)) {
+    if ((!empty($msg['imageurl']) || !empty($msg['video'])) && !$imgpreview) {
+      //debug_log("Force initial preview because imgpreview=$imgpreview and image/video exists but wasn't explicitly previewed");
       $preview = true;
     }
   }
 
-  // --- Prepare for Preview/Error Display ---
-  if (!empty($error) || $preview) {
-    $imgpreview = 1; // Flag that image/video was seen
-    if(!empty($msg['imageurl'])) $error["image"] = true; // Indicate image presence
-    if(!empty($msg['video'])) $error["video"] = true; // Indicate video presence
-
-    // Render the preview using the submitted data in $msg
-    $rendered_preview_html = render_message($template_dir, $msg, $user); // Render with current state
-    $content_tpl->set('PREVIEW', $rendered_preview_html);
-    $content_tpl->parse('post_content.preview');
-
-    // Parse specific error blocks
-    foreach (array_keys($error) as $err_key) {
-        // Need to ensure block names match error keys
-        if (in_array($err_key, ['image','video','subject_req','subject_change','subject_too_long','url_too_long','urltext_too_long','imageurl_too_long','image_upload_failed','video_too_long'])) {
-            $content_tpl->parse('post_content.error.' . $err_key);
-        }
-    }
-    $content_tpl->parse('post_content.error'); // Parse the outer error container
-
-    // Prepare $nmsg for re-rendering the form with submitted values
-    $nmsg = $msg; // Copy validated/processed data back to form model
-    // Set checkbox states based on original POST
-    if (isset($_POST['OffTopic'])) $nmsg['checked_OffTopic'] = 'checked';
-    if (isset($_POST['ExposeEmail'])) $nmsg['checked_ExposeEmail'] = 'checked';
-    if (isset($_POST['EmailFollowup'])) $nmsg['checked_EmailFollowup'] = 'checked';
-    if (isset($_POST['TrackThread'])) $nmsg['checked_TrackThread'] = 'checked';
-    // Ensure hidden fields are populated for the form, BUT specifically unset 'mid'
-    // to prevent render_postform from showing "Update Message" after a preview.
-    // The presence/absence of 'pmid' will determine "Post Reply" vs "Post New Thread".
-    // $nmsg['mid'] = isset($msg['mid']) ? $msg['mid'] : ''; // Keep original mid if set
-    unset($nmsg['mid']); // FORCE unset mid for post-preview render
-    $nmsg['pmid'] = isset($msg['pmid']) ? $msg['pmid'] : '';
-    $nmsg['tid'] = isset($msg['tid']) ? $msg['tid'] : '';
-    $nmsg['ip'] = $s->remoteAddr;
-
-    $form_html = render_postform($template_dir, "post", $user, $nmsg);
-    $content_tpl->set("FORM_HTML", $form_html);
-    $content_tpl->parse("post_content.form");
-
-  } else {
-    // --- Accepted - No Errors & Not Preview ---
-    $accepted = true;
-
-    // Set status based on checkbox
-    $status = isset($_POST['OffTopic']) ? "OffTopic" : "Active";
-    $msg['state'] = $status;
-
-    // We are now calling the refactored postmessage() from postmessage.inc.php (Corrected name)
-    $is_new_message = postmessage($user, $forum['fid'], $msg, $_POST);
-    // $msg array now contains the correct mid and tid set by postmessage() regardless of return value
-
-    // Always render preview using the potentially updated $msg data from postmessage()
-    $rendered_preview_html = render_message($template_dir, $msg, $user);
-    $content_tpl->set('PREVIEW', $rendered_preview_html);
-    $content_tpl->set('MSG_MID', $msg['mid']); // Use the MID from $msg for links
-
-    if ($is_new_message) {
-        // --- New Message Posted Successfully ---
-        // Handle Email Followups
-        if (isset($_POST['EmailFollowup'])) {
-            email_followup($msg, $forum);
-        }
-        $content_tpl->parse("post_content.accept");
-    } else {
-        // --- Duplicate Message Detected ---
-        // postmessage() should have updated the existing message with new content
-        $content_tpl->parse("post_content.duplicate");
-    }
+  if ((!empty($error) || $preview)) {
+    //debug_log("User saw preview because preview=" . var_export($preview, true) . " or error [" . implode(", ", $error) . "]");
+    $imgpreview = true; // this gets sent as a hidden input to the form via render_postform()
+    if(!empty($msg['imageurl'])) $error["image"] = true;
+    if(!empty($msg['video'])) $error["video"] = true;
   }
 
+
+  if (isset($_POST['OffTopic']))
+    $status = "OffTopic";
+  else
+    $status = "Active";
+
+  $accepted = empty($error);
 } else {
-  // --- GET Request ---
+  /* somebody hit post.phtml directly, just generate blank post form */
+  $msg['message'] = $msg['subject'] = "";
+  $msg['url'] = $msg['urltext'] = $msg['imageurl'] = $msg['video'] = "";
 
-  // Initialize blank message structure for the form
-  $nmsg = [];
-  $nmsg['message'] = $nmsg['subject'] = $nmsg['url'] = $nmsg['urltext'] = $nmsg['imageurl'] = $nmsg['video'] = "";
-  $nmsg['aid'] = $user->aid;
-  $nmsg['ip'] = $s->remoteAddr;
+  /* allow pmid to come from _POST or _GET, either as pid or pmid,
+     and populate hidden inputs in form with tid and pmid */
+  if (isset($_REQUEST['pid']) || isset($_REQUEST['pmid'])) {
+    /* Grab the actual message */
+    if (is_numeric($_REQUEST['pmid'])) $pmid = $_REQUEST['pmid'];
+    else if (is_numeric($_REQUEST['pid'])) $pmid = $_REQUEST['pid'];
 
-  // Check if replying
-  if (isset($_REQUEST['pmid']) && is_numeric($_REQUEST['pmid'])) {
-      $nmsg['pmid'] = $_REQUEST['pmid'];
-      // Fetch parent message details to prefill subject and tid
-      $parent = db_query_first("select * from f_messages" . mid_to_iid($nmsg['pmid']) . " where mid = ?", array($nmsg['pmid']));
-      if ($parent) {
-          $nmsg['tid'] = $parent['tid'];
-          if (isset($parent['subject']) && !preg_match("/^Re:/i", $parent['subject'])) {
-              //FIXME: make an option
-              //$nmsg['subject'] = "Re: " . $parent['subject'];
-          } else if (isset($parent['subject'])) {
-              $nmsg['subject'] = $parent['subject'];
-          }
-      } else {
-         // Handle invalid parent ID? Redirect or error?
-         error_log("Invalid pmid specified: " . $nmsg['pmid']);
-         // Perhaps redirect back to forum index?
-         Header("Location: /".$forum['shortname']."/"); exit;
-      }
-  } else {
-      // New thread, no pmid, tid needs to be generated later in post_message
-      $nmsg['pmid'] = 0;
-      $nmsg['tid'] = 0; // Placeholder
+    if (!isset($pmid)) throw new RuntimeException("invalid pmid");
+
+    /* get requested parent message */
+    $iid = mid_to_iid($pmid);
+    if (!isset($iid)) throw new RuntimeException("no iid for pmid $pmid");
+    $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages$iid where mid = ?";
+    $pmsg = db_query_first($sql, array($pmid));
+
+    /* grab tid and pmid from parent */
+    $msg['tid'] = $pmsg['tid'];
+    $msg['pmid'] = $pmsg['mid'];
+
+    /* munge subject line from parent */
+    if (preg_match("/^re:/i", $pmsg['subject'], $sregs))
+      $msg['subject'] = $pmsg['subject'];
+    /*
+    else
+      $msg['subject'] = "Re: " . $pmsg['subject'];
+    */
   }
-
-  // Render the blank/reply form
-  $form_html = render_postform($template_dir, "post", $user, $nmsg);
-  $content_tpl->set("FORM_HTML", $form_html);
-  $content_tpl->parse("post_content.form");
 }
 
-// --- Final Output ---
+// Parse error blocks if we have errors
+if (!empty($error)) {
+   $error_keys = array('image',
+   'video',
+   'subject_req',
+   'subject_change',
+   'subject_too_long',
+   'url_too_long',
+   'urltext_too_long',
+   'imageurl_too_long',
+   'image_upload_failed',
+   'video_too_long');
+
+  foreach (array_keys($error) as $err_key) {
+    if (in_array($err_key, $error_keys)) {
+      $content_tpl->parse("post_content.error." . $err_key);
+    }
+  }
+  $content_tpl->parse("post_content.error");
+}
+
+$content_block = "preview";
+if (!$accepted || $preview) {
+  //debug_log("Step 1: accepted=" . var_export($accepted, true) . " preview=" . var_export($preview, true) . ", rendering form with imgpreview=" . var_export($imgpreview, true));
+  // Step 1
+  // We're showing the form, nothing else to parse
+  $form_html = render_postform($content_tpl, "post", $user, $msg, $imgpreview);
+  $content_tpl->set("FORM_HTML", $form_html);
+  $content_tpl->parse("post_content.form");
+} else {
+  //debug_log("Step 2: accepted=" . var_export($accepted, true) . " preview=" . var_export($preview, true));
+  // Step 2
+  // Message was accepted, parse the accept block
+  if (postmessage($user, $forum['fid'], $msg, $_POST) == true) {
+    // Handle email followups
+    if (isset($_POST['EmailFollowup'])) {
+      email_followup($msg, $forum);
+    }
+
+    // Handle thread tracking and email notifications
+    $sql = "select * from f_tracking where fid = ? and tid = ? and options = 'SendEmail' and aid != ?";
+    $sth = db_query($sql, array($forum['fid'], isset($msg['tid']) ? $msg['tid'] : 0, $user->aid));
+    $track = $sth->fetch();
+
+    if ($track) {
+      $iid = mid_to_iid($thread['mid']);
+      if (!isset($iid)) throw new RuntimeException("no iid for thread mid " . $thread['mid']);
+
+      $sql = "select subject from f_messages$iid where mid = ?";
+      $row = db_query_first($sql, array($thread['mid']));
+      list($t_subject) = $row;
+
+      $e_message = mb_strcut($msg['message'], 0, 1024);
+      if (strlen($msg['message']) > 1024) {
+        $bytes = strlen($msg['message']) - 1024;
+        $plural = ($bytes == 1) ? '' : 's';
+        $e_message .= "...\n\nMessage continues for another $bytes byte$plural\n";
+      }
+
+      do {
+        $uuser = new ForumUser($track['aid']);
+        mailfrom("followup-" . $track['aid'] . "@" . $bounce_host,
+          $uuser->email, $e_message);
+      } while ($track = $sth->fetch());
+    }
+    $sth->closeCursor();
+
+    $content_block = "accept";
+  } else {
+    $content_block = "duplicate";
+  }
+
+  $content_tpl->set("MSG_MID", $msg['mid']);
+} // accepted and not preview
+
+// Parse post content block for one of the three contexts: preview, accept, duplicate
+$preview_html = render_message($content_tpl, $msg, $user);
+$content_tpl->set("PREVIEW", $preview_html);
+$content_tpl->parse("post_content.$content_block");
+
 // Parse the main container block
-$content_tpl->parse('post_content');
+$content_tpl->parse("post_content");
+
+// Get the rendered content
 $content_html = $content_tpl->output();
 
+// Log any YATT template errors after output
 log_yatt_errors($content_tpl);
 
 // Determine page title
 $page_title = isset($msg['tid']) ? 'Post Reply' : 'Post New Thread';
+
+// Generate the page
 print generate_page($page_title, $content_html);
 // vim: ts=8 sw=2 et:
 ?>
