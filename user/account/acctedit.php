@@ -135,11 +135,6 @@ $content_tpl->set('token', $user->token());
 // Parse form
 $content_tpl->parse('form');
 
-log_yatt_errors($content_tpl);
-
-// Get final content and pass to page wrapper
-$content_html = $content_tpl->output();
-
-print generate_page('Edit Account', $content_html);
+print generate_page('Edit Account', $content_tpl->output());
 
 ?>

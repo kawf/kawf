@@ -104,10 +104,6 @@ $content_tpl->parse("post_form");
 
 $content_tpl->parse("footer");
 
-$content_html = $content_tpl->output();
-
-log_yatt_errors($content_tpl);
-
 $meta_robots = false;
 if($robots_meta_tag) {
   $meta_robots = 'noindex';
@@ -116,6 +112,6 @@ if($robots_meta_tag) {
   }
 }
 
-print generate_page($msg['subject'], $content_html, false, $meta_robots);
+print generate_page($msg['subject'], $content_tpl->output(), false, $meta_robots);
 // vim: ts=8 sw=2 et:
 ?>

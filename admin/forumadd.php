@@ -5,7 +5,6 @@ $user->req("ForumAdmin");
 
 require_once("user/tables.inc.php"); // For $create_* table SQL
 require_once('lib/YATT/YATT.class.php'); // Use include path
-require_once('page-yatt.inc.php'); // for log_yatt_errors
 
 // --- POST Handler ---
 if (isset($_POST['submit'])) {
@@ -60,8 +59,6 @@ $content_tpl->set("FORM_ACTION", basename($_SERVER['PHP_SELF']));
 $content_tpl->parse("forumadd_content");
 $page_content_html = $content_tpl->output("forumadd_content");
 
-log_yatt_errors($content_tpl);
-
 // Render Page using YATT wrapper
 $page_tpl = new YATT($template_dir, 'admin/admin_page.yatt');
 $page_title = "Add Forum";
@@ -79,6 +76,4 @@ $page_tpl->parse("admin_page.back_link");
 // Parse and print the final page
 $page_tpl->parse("admin_page");
 print $page_tpl->output("admin_page");
-
-log_yatt_errors($page_tpl);
 ?>

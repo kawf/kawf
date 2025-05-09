@@ -67,10 +67,6 @@ $content_tpl->set("PAGE_VALUE", htmlspecialchars($page, ENT_QUOTES | ENT_HTML5, 
 $content_tpl->parse("undelete_content.confirmation");
 $content_tpl->parse("undelete_content");
 
-// --- Generate Output ---
-$content_html = $content_tpl->output('undelete_content');
-log_yatt_errors($content_tpl);
-
-print generate_page('Undelete Message', $content_html);
+print generate_page('Undelete Message', $content_tpl->output('undelete_content'));
 
 ?>

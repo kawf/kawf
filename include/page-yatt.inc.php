@@ -169,19 +169,5 @@ set_error_page_renderer(function($error_data) {
 
     return generate_page($error_data['title'], $content_html);
 });
-
-/**
- * @deprecated Use YATT error callbacks instead
- */
-function log_yatt_errors($yatt) {
-    if ($errors = $yatt->get_errors()) {
-        $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
-        $caller = $bt[0];
-        $hdr = $caller['file'] . ":" . $caller['line'] . ": ";
-        debug_log($hdr . "\n" . $yatt->format_errors());
-        error_log($hdr . $yatt->format_errors());
-    }
-}
-
-// vim: sw=2
+// vim: sw=4 ts=8 et
 ?>

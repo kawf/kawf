@@ -50,18 +50,14 @@ if (!isset($_POST['tid'])) { // Posting new thread
   if (!$can_post_thread) {
     $content_tpl->parse("post_content.disabled.nonewthreads");
     $content_tpl->parse("post_content.disabled");
-    $content_html = $content_tpl->output();
-    log_yatt_errors($content_tpl);
-    print generate_page('Post Message Denied', $content_html);
+    print generate_page('Post Message Denied', $content_tpl->output());
     exit;
   }
 } else { // Replying
   if (!$can_post_reply) {
     $content_tpl->parse("post_content.disabled.noreplies");
     $content_tpl->parse("post_content.disabled");
-    $content_html = $content_tpl->output();
-    log_yatt_errors($content_tpl);
-    print generate_page('Post Message Denied', $content_html);
+    print generate_page('Post Message Denied', $content_tpl->output());
     exit;
   }
   // Check if thread is locked
@@ -70,9 +66,7 @@ if (!isset($_POST['tid'])) { // Posting new thread
       if (isset($thread['flag']['Locked']) && !$user->capable($forum['fid'], 'Lock')) {
           $content_tpl->parse("post_content.disabled.locked");
           $content_tpl->parse("post_content.disabled");
-          $content_html = $content_tpl->output();
-          log_yatt_errors($content_tpl);
-          print generate_page('Post Message Denied', $content_html);
+          print generate_page('Post Message Denied', $content_tpl->output());
           exit;
       }
   }
@@ -305,16 +299,10 @@ $content_tpl->parse("post_content.$content_block");
 // Parse the main container block
 $content_tpl->parse("post_content");
 
-// Get the rendered content
-$content_html = $content_tpl->output();
-
-// Log any YATT template errors after output
-log_yatt_errors($content_tpl);
-
 // Determine page title
 $page_title = isset($msg['tid']) ? 'Post Reply' : 'Post New Thread';
 
 // Generate the page
-print generate_page($page_title, $content_html);
+print generate_page($page_title, $content_tpl->output());
 // vim: ts=8 sw=2 et:
 ?>

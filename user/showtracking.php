@@ -132,8 +132,4 @@ $content_tpl->parse("header");
 $content_tpl->parse($block);
 $content_tpl->parse("footer");
 
-$content_html = $content_tpl->output();
-
-log_yatt_errors($content_tpl);
-
-print generate_page("Your tracked threads in " . $forum['name'], $content_html);
+print generate_page("Your tracked threads in " . $forum['name'], $content_tpl->output());

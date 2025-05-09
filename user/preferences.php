@@ -142,12 +142,8 @@ else
 
 // Always parse the main content block wrapper
 $content_tpl->parse('preferences_content');
-// Get the final HTML for the content area
-$content_html = $content_tpl->output();
-
-log_yatt_errors($content_tpl);
 
 // Call the existing generate_page function with the YATT-generated content
-print generate_page('Preferences',$content_html);
+print generate_page('Preferences', $content_tpl->output());
 
 ?>

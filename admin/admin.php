@@ -4,7 +4,6 @@
 require_once("pagenav.inc.php");
 require_once('lib/YATT/YATT.class.php'); // Use include path
 require_once('util.inc.php'); // Use include path
-require_once('page-yatt.inc.php'); // for log_yatt_errors
 
 $user->req("ForumAdmin");
 
@@ -106,8 +105,6 @@ if ($count === 0) {
 $content_tpl->parse("admin_content");
 $page_content_html = $content_tpl->output("admin_content");
 
-log_yatt_errors($content_tpl);
-
 // --- YATT Page Template Rendering ---
 
 $page_tpl = new YATT($template_dir, 'admin/admin_page.yatt');
@@ -126,8 +123,6 @@ $page_tpl->parse("admin_page.back_link"); // Always show back link?
 // Parse and print the final page
 $page_tpl->parse("admin_page");
 print $page_tpl->output("admin_page");
-
-log_yatt_errors($page_tpl);
 
 // vim: sw=2
 ?>

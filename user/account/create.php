@@ -144,10 +144,7 @@ if (isset($create_disabled) && $create_disabled) {
 }
 
 $content_tpl->parse('create_content');
-$content_html = $content_tpl->output();
 
-log_yatt_errors($content_tpl);
-
-print generate_page('Create Account', $content_html);
+print generate_page('Create Account', $content_tpl->output());
 
 ?>

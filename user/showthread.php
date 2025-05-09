@@ -90,11 +90,6 @@ $content_tpl->parse('header');
 $content_tpl->parse('messages');
 $content_tpl->parse('footer');
 
-// Get final HTML
-$content_html = $content_tpl->output();
-
-log_yatt_errors($content_tpl);
-
 // Robots meta tag logic (unchanged)
 $meta_robots = false;
 if($robots_meta_tag) {
@@ -105,5 +100,5 @@ if($robots_meta_tag) {
 }
 
 // Print final page using the wrapper
-print generate_page($forum['name'], $content_html, false, $meta_robots);
+print generate_page($forum['name'], $content_tpl->output(), false, $meta_robots);
 ?>

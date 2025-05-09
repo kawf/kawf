@@ -3,7 +3,6 @@
 $user->req("ForumAdmin");
 
 require_once('lib/YATT/YATT.class.php'); // Ensure YATT is included
-require_once('page-yatt.inc.php'); // for log_yatt_errors
 
 /* If submit is set, shove the data into the database (well, after some */
 /* error checking) */
@@ -88,8 +87,6 @@ $content_tpl->set("externallysearchable_checked_attr", isset($options['Externall
 $content_tpl->parse("forummodify_content");
 $page_content_html = $content_tpl->output("forummodify_content");
 
-log_yatt_errors($content_tpl);
-
 // 2. Render Page Wrapper Template
 $page_tpl = new YATT($template_dir, 'admin/admin_page.yatt');
 
@@ -107,6 +104,4 @@ $page_tpl->parse("admin_page.back_link");
 // Parse and print the final page
 $page_tpl->parse("admin_page");
 print $page_tpl->output("admin_page");
-
-log_yatt_errors($page_tpl);
 ?>

@@ -133,14 +133,9 @@ $content_tpl->parse('tracking.footer_tools');
 // Parse the main tracking block which acts as the root for content
 $content_tpl->parse('tracking');
 
-// Get the final HTML for the content area
-$content_html = $content_tpl->output();
-
-log_yatt_errors($content_tpl);
-
 // Call the existing generate_page function with no forum
 clear_forum();
-print generate_page('Your Tracked Threads', $content_html);
+print generate_page('Your Tracked Threads', $content_tpl->output());
 
 // vim: sw=2
 ?>

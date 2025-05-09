@@ -76,10 +76,5 @@ $content_tpl->parse('form');
 // Parse footer
 $content_tpl->parse('footer');
 
-log_yatt_errors($content_tpl);
-
-// Get final content and pass to page wrapper
-$content_html = $content_tpl->output();
-
-print generate_page('Login', $content_html);
+print generate_page('Login', $content_tpl->output());
 ?>

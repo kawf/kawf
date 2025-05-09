@@ -386,12 +386,7 @@ $content_tpl->parse('header');
 $content_tpl->parse('footer');
 $content_tpl->parse('post_form');
 
-// Get final HTML
-$content_html = $content_tpl->output();
-
-log_yatt_errors($content_tpl);
-
 // Output page using the wrapper
-print generate_page($forum['name'], $content_html);
+print generate_page($forum['name'], $content_tpl->output());
 // vim: ts=8 sw=2 et
 ?>

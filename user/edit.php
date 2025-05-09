@@ -298,10 +298,6 @@ if (!empty($error) || $preview) {
 }
 
 // Final Output Generation
-$content_html = $content_tpl->output('edit_content');
-
-log_yatt_errors($content_tpl);
-
-print generate_page('Edit Message', $content_html);
+print generate_page('Edit Message', $content_tpl->output('edit_content'));
 
 ?>

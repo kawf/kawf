@@ -41,10 +41,5 @@ if (isset($_REQUEST['email'])) {
 // Parse the header
 $content_tpl->parse('header');
 
-log_yatt_errors($content_tpl);
-
-// Get final content and pass to page wrapper
-$content_html = $content_tpl->output();
-
-print generate_page('Forgot Password', $content_html);
+print generate_page('Forgot Password', $content_tpl->output());
 ?>

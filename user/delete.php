@@ -63,10 +63,5 @@ $content_tpl->set("PAGE_VALUE", get_page_context(false));
 $content_tpl->parse("delete_content.confirmation");
 $content_tpl->parse("delete_content");
 
-// --- Generate Output ---
-$content_html = $content_tpl->output('delete_content');
-
-log_yatt_errors($content_tpl);
-
-print generate_page('Delete Message', $content_html);
+print generate_page('Delete Message', $content_tpl->output('delete_content'));
 ?>
