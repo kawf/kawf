@@ -40,6 +40,26 @@ class YATT {
     # Current template filename being processed
     var $current_file = '';
 
+    # Error callback and context
+    private $error_callback = null;
+    private $error_context = array();
+
+    # Set error callback and context
+    public function setErrorCallback(callable $callback, array $context = array()) {
+        $this->error_callback = $callback;
+        $this->error_context = $context;
+    }
+
+    # Get current error callback
+    public function getErrorCallback() {
+        return $this->error_callback;
+    }
+
+    # Get current error context
+    public function getErrorContext() {
+        return $this->error_context;
+    }
+
     # INTERNAL: Push an error onto the error stack!
     function error() {
         $args = func_get_args ();
@@ -238,7 +258,14 @@ class YATT {
     # Return output, starting at a given node
     function output($path=NULL) {
         $obj =& $this->find_node($path);
-        return $obj ? $this->return_output($obj) : FALSE;
+        $result = $obj ? $this->return_output($obj) : FALSE;
+
+        # Call error callback if we have errors and a callback is set
+        if ($this->error_callback && $errors = $this->get_errors()) {
+            call_user_func($this->error_callback, $errors, $this, $this->error_context);
+        }
+
+        return $result;
     }
 
     # Generate text from an object tree

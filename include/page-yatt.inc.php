@@ -3,9 +3,35 @@
 require_once(__DIR__ . "/../lib/YATT/YATT.class.php");
 require_once("notices.inc.php");
 
+/**
+ * Default error handler for YATT templates
+ * @param array $errors Array of error messages
+ * @param YATT $yatt The YATT instance
+ * @param array $context Additional context information
+ */
+function default_yatt_error_handler($errors, $yatt, $context) {
+    // Get the caller's caller since this is a callback.
+    $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+    $caller = $bt[1];
+    $hdr = $caller['file'] . ":" . $caller['line'] . ": ";
+
+    // Log to debug log
+    debug_log($hdr . "\n" . $yatt->format_errors());
+
+    // Log to error log
+    error_log($hdr . $yatt->format_errors());
+}
+
 function new_yatt($template, $forum = null) {
     global $template_dir;
     $yatt = new YATT($template_dir, $template);
+
+    // Set default error handler with context
+    $yatt->setErrorCallback('default_yatt_error_handler', [
+        'template' => $template,
+        'forum' => $forum ? $forum['shortname'] : null
+    ]);
+
     if ($forum) {
         $yatt->set('FORUM_NAME', htmlspecialchars($forum['name'], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
         $yatt->set('FORUM_SHORTNAME', htmlspecialchars($forum['shortname'], ENT_QUOTES | ENT_HTML5, 'UTF-8'));
@@ -27,12 +53,7 @@ function generate_forum_header($forum) {
 
     // Parse the forum header content
     $forum_template->parse('forum_header');
-
-    $content = $forum_template->output();
-
-    log_yatt_errors($forum_template);
-
-    return $content;
+    return $forum_template->output();
 }
 
 function generate_page($title, $contents, $skip_header=false, $meta_robots=false)
@@ -125,12 +146,7 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
     }
 
     $page->parse('page');
-    $output = trim($page->output());
-
-    // sadly, we can't render errors here, because we've already rendered the page, so just log them
-    log_yatt_errors($page);
-
-    return $output;
+    return trim($page->output());
 }
 
 // Set up the YATT-based error renderer
@@ -154,6 +170,9 @@ set_error_page_renderer(function($error_data) {
     return generate_page($error_data['title'], $content_html);
 });
 
+/**
+ * @deprecated Use YATT error callbacks instead
+ */
 function log_yatt_errors($yatt) {
     if ($errors = $yatt->get_errors()) {
         $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 1);
