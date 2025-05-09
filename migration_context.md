@@ -39,8 +39,8 @@
    - **YATT:** Uses `%[VAR_NAME]` syntax
    - YATT requires variables to be set before parsing blocks that use them
    - YATT's `set()` method:
-     - Takes a single variable name and value: `$yatt->set("VAR_NAME", "value")`
-     - Does NOT accept an array of variables like Template's `set_var()`
+     - Can take a single variable name and value: `$yatt->set("VAR_NAME", "value")`
+     - Can also accept an array of variables like Template's `set_var()`
      - Variables must be set individually before parsing blocks that use them
      - No need to clear variables - unset variables are simply not rendered
    - **Important:** YATT does NOT have a `get()` method. Any logic that previously used `get()` to retrieve variables should be handled in PHP code instead.
@@ -54,12 +54,6 @@
 4. **Error Handling:**
    - **Template:** No built-in error handling
    - **YATT:** Uses YATT's built-in error callback system
-   - **Critical Guidelines for `log_yatt_errors()`:**
-     - Must be called after `output()` but before using the output
-     - Store output in a variable first: `$content = $yatt->output()`
-     - Call `log_yatt_errors($yatt)` after output but before using content
-     - Only then use the content (e.g., pass to `generate_page()`)
-     - This ensures errors during output generation are properly logged
 
 5. **Conditional Logic & Comments:**
    - **YATT Conditional Logic:** **Does NOT support conditional syntax like `%if` within the template file itself.** Conditional rendering is achieved by defining named blocks (`%begin [name]...%end [name]`) in the `.yatt` file and then **selectively calling `$yatt->parse('block_name')` from the PHP script** based on the desired conditions.
@@ -89,7 +83,6 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
 1. **URL Structure:**
    - Pages are accessed through `.phtml` extensions
    - Example: `login.php` is accessed via `login.phtml`
-   - Base URL: `https://forums-git.wayot.org/`
 
 2. **Account-related Routes:**
    ```php
@@ -135,7 +128,7 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
 ## Testing and Debugging
 
 1. **Error Logging:**
-   - Error log is symlinked to `error-git.log`
+   - Error log is symlinked to `error.log`
    - Timestamps in UTC/GMT
    - Server timezone is PDT
    - Example: 15:23:54 UTC = 08:23:54 PDT
