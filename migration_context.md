@@ -49,7 +49,7 @@
 
 4. **Error Handling:**
    - **Template:** No built-in error handling
-   - **YATT:** Uses `log_yatt_errors()` for error handling
+   - **YATT:** Uses YATT's built-in error callback system
    - **Critical Guidelines for `log_yatt_errors()`:**
      - Must be called after `output()` but before using the output
      - Store output in a variable first: `$content = $yatt->output()`
