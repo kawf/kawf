@@ -13,13 +13,13 @@ function default_yatt_error_handler($errors, $yatt, $context) {
     // Get the caller's caller since this is a callback.
     $bt = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
     $caller = $bt[1];
-    $hdr = $caller['file'] . ":" . $caller['line'] . ": ";
+    $hdr = $caller['file'] . ":" . $caller['line'];
 
     // Log to debug log
     debug_log($hdr . "\n" . $yatt->format_errors());
 
     // Log to error log
-    error_log($hdr . $yatt->format_errors());
+    error_log($hdr . ": " . $yatt->format_errors());
 }
 
 function new_yatt($template, $forum = null) {
