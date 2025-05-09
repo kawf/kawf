@@ -46,6 +46,10 @@
    - **Important:** YATT does NOT have a `get()` method. Any logic that previously used `get()` to retrieve variables should be handled in PHP code instead.
    - **Template:** Unset variables are silently ignored
    - **YATT:** Unset variables trigger errors - DO NOT set empty defaults. This is a feature, not a bug, as it helps catch template errors where variables are accidentally used without being set.
+   - **HTML Escaping:**
+     - Do NOT use htmlspecialchars() on message fields that go through stripcrap()
+     - This applies specifically to: subject, message, url, urltext, video fields
+     - Other fields like name, email still need htmlspecialchars() as they don't use the HTML tag validation system
 
 4. **Error Handling:**
    - **Template:** No built-in error handling

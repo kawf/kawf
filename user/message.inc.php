@@ -169,7 +169,7 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
 
   // Set basic message vars
   $message_tpl->set(array(
-    "MSG_SUBJECT" => softbreaklongwords(htmlspecialchars($msg['subject']), 40), // Escape and wrap subject
+    "MSG_SUBJECT" => softbreaklongwords($msg['subject'], 40), // stripcrap already sanitizes
     "MSG_DATE" => $msg['date'], // Assumes gen_date is safe
     "MSG_MID" => isset($msg['mid']) ? $msg['mid'] : '', // Check if mid exists
     "MSG_AID" => isset($msg['aid']) ? $msg['aid'] : '' // Check if aid exists
@@ -181,8 +181,8 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
     $pmsg = fetch_message($viewer, $msg['pmid'], 'mid, subject, name, date'); // Fetch parent msg details
     if ($pmsg) { // Check if fetch was successful
         $message_tpl->set("PMSG_MID", $pmsg['mid']);
-        $message_tpl->set("PMSG_SUBJECT", htmlspecialchars($pmsg['subject'])); // Escape subject
-        $message_tpl->set("PMSG_NAME", htmlspecialchars($pmsg['name'])); // Escape name
+        $message_tpl->set("PMSG_SUBJECT", $pmsg['subject']); // stripcrap already sanitizes
+        $message_tpl->set("PMSG_NAME", htmlspecialchars($pmsg['name'])); // Keep escaping for name
         $message_tpl->set("PMSG_DATE", gen_date($viewer, strtotime($pmsg['date']))); // Reformat date using viewer's prefs
         $message_tpl->parse('message_block.parent');
     }

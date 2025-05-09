@@ -258,8 +258,8 @@ $standard_tags = array(
   "b" => array(array(), "/b"),
   "i" => array(array(), "/i"),
   "u" => array(array(), "/u"),
-  "a" => array(array("href", "target"), "/a"),
-  "img" => array(array("src", "alt", "width", "height"), "/img"),
+  "a" => array(array("href=", true, 'validate_url', "target=", false, 'validate_target'), "/a"),
+  "img" => array(array("src=", true, 'validate_url', "alt=", false, 'validate_null', "width=", false, 'validate_number', "height=", false, 'validate_number')),
   "br" => array(array(), ""),
   "p" => array(array(), "/p"),
   "pre" => array(array(), "/pre"),
@@ -275,8 +275,8 @@ $standard_tags = array(
   "sub" => array(array(), "/sub"),
   "sup" => array(array(), "/sup"),
   "center" => array(array(), "/center"),
-  "embed" => array(array("src", "type", "width", "height"), "/embed"),
-  "object" => array(array("data", "type", "width", "height"), "/object"),
+  "embed" => array(array("src=", true, 'validate_url', "type=", false, 'validate_null', "width=", false, 'validate_number', "height=", false, 'validate_number')),
+  "object" => array(array("data=", true, 'validate_url', "type=", false, 'validate_null', "width=", false, 'validate_number', "height=", false, 'validate_number'), "/object"),
 );
 
 $no_tags = array(
