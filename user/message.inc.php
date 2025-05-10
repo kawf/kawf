@@ -10,7 +10,8 @@ define('MESSAGE_STATE_FIELDS', 'mid, aid, pid, state, subject, flags');
 // For plain message display in plainmessage.php
 define('MESSAGE_PLAIN_FIELDS', 'tid, message, url, urltext, video');
 
-// For metadata fields
+// Message metadata fields. The date field is stored in UTC and converted to seconds since epoch
+// using UNIX_TIMESTAMP(). Display conversion to user's local time happens in gen_date().
 define('MESSAGE_METADATA_FIELDS', 'name, date, email, views, changes, UNIX_TIMESTAMP(date) as unixtime, ip');
 
 // For complete message data in thread.inc.php
@@ -425,11 +426,16 @@ function format_tracking_debug($data = array()) {
   return ' ' . implode(' ', $parts);
 }
 
+/* Convert UTC timestamp (seconds since epoch) to user's local time.
+ * Since PHP is forced to UTC, we subtract the user's timezone offset
+ * to convert from UTC to the user's local time. */
 function gen_date($user, $unixtime = null, $track_unixtime = null)
 {
     global $debug_f_tracking;
 
-    /* TZ: tzoff is difference between PHP server and viewer, not SQL server and viewer */
+    /* $tzoff is the user's timezone offset from UTC in seconds.
+     * Since PHP is forced to UTC (date_default_timezone_set('UTC')),
+     * subtracting $tzoff converts UTC timestamps to the user's local time. */
     $tzoff = isset($user->tzoff)?$user->tzoff:0;
 
     if (!isset($unixtime)) $unixtime=time();
@@ -438,11 +444,9 @@ function gen_date($user, $unixtime = null, $track_unixtime = null)
       error_log("gen_date: timestamp in future: " . date('Y-m-d H:i:s', $unixtime));
     }
 
-    /* msg['date'] is time local to user... date() would normally be
-       time local to PHP server */
+    /* Convert UTC timestamp to user's local time by applying the timezone offset */
     if (!$debug_f_tracking)
       return date('Y-m-d H:i:s', $unixtime - $tzoff);
-
 
     return format_tracking_debug(array(
         'unixtime' => $unixtime,
