@@ -29,13 +29,13 @@ $content_tpl = new_yatt('edit.yatt', $forum);
 
 // Debug Info (using $content_tpl)
 if ($Debug) {
-  $debug = "<!--\n_REQUEST:\n";
+  $debug = "\n_REQUEST:\n";
   foreach ($_REQUEST as $k => $v) {
     if (!is_numeric($k) && is_scalar($v))
       $debug.=" $k => " . htmlspecialchars($v) . "\n";
   }
-  $debug .= "-->";
-  $content_tpl->set("DEBUG", $debug);
+  $debug = str_replace("--","- -", $debug);
+  $content_tpl->set("DEBUG", "<!-- $debug -->");
 } else {
   $content_tpl->set("DEBUG", "");
 }
@@ -52,11 +52,14 @@ if (!isset($msg)) {
   err_not_found("No message with mid $mid"); // Use error function
   exit;
 }
+
 if ($msg['aid'] != $user->aid && !$user->capable($forum['fid'], 'Edit')) { // Allow mods to edit?
   // TODO: Check capability properly - for now, restrict to owner
   print generate_page('Edit Message Denied', "<p>This message does not belong to you!</p>");
   exit;
 }
+
+$thread = get_thread($msg['tid']);
 
 // Check forum edit permission
 if (!isset($forum['option']['PostEdit'])) {
@@ -66,7 +69,6 @@ if (!isset($forum['option']['PostEdit'])) {
 }
 
 // Check thread lock status
-$thread = get_thread($msg['tid']);
 if (isset($thread['flag']['Locked']) && !$user->capable($forum['fid'], 'Lock')) {
   $content_tpl->parse("edit_content.edit_locked");
   print generate_page('Edit Message Denied', $content_tpl->output('edit_content'));
@@ -76,108 +78,100 @@ if (isset($thread['flag']['Locked']) && !$user->capable($forum['fid'], 'Lock')) 
 // Initialize flags and error array
 $flags = [];
 if (!empty($msg['flags'])) {
-  foreach (explode(",", $msg['flags']) as $flag) {
+  $flagexp = explode(",", $msg['flags']);
+  foreach ($flagexp as $flag)
     $flags[$flag] = true;
-  }
 }
-$error = [];
+$error = array(); // Make sure this starts empty
 $preview = false;
 $imgpreview = false;
 
+if (isset($_REQUEST['preview']))
+  $preview = true;
+
+if (isset($_REQUEST['imgpreview']))
+  $imgpreview = true;
+
 // Get server properties
 $s = get_server();
+/* pick up new remote_addr */
+$nmsg['ip'] = $s->remoteAddr;
 
 // Determine state based on POST or initial load
 if (!isset($_POST['message'])) {
-  // --- Initial Load (GET request or no form data) ---
-  $preview = true; // Force preview on initial load
-  $nmsg = $msg; // Start with original message data for the form
+  /* hit "edit" link, prefill postform (step 1) */
+  $preview = true;
 
-  // Synthesize checkbox state based on existing message
+  /* Synthesize state based on the state of the existing message. */
   $offtopic = ($msg['state'] == 'OffTopic');
   $expose_email = !empty($msg['email']);
-  $send_email = is_msg_etracked($msg); // Requires tracking functions
-  $track_thread = is_msg_tracked($msg); // Requires tracking functions
-
+  $send_email = is_msg_etracked($msg);
+  $track_thread = is_msg_tracked($msg);
 } else {
   // --- Form Submission (POST request) ---
-  $nmsg = $msg; // Start with original, then overwrite with POST
-  $nmsg['ip'] = $s->remoteAddr; // Update IP
-  preprocess($nmsg, $_POST); // Populate $nmsg with sanitized POST data (subject, message, url etc)
+  preprocess($nmsg, $_POST);
 
-  if (isset($_REQUEST['preview'])) $preview = true;
-  if (isset($_REQUEST['imgpreview'])) $imgpreview = true;
-
-  // Get checkbox state from POST
   $offtopic = isset($_POST['OffTopic']);
   $expose_email = isset($_POST['ExposeEmail']);
   $send_email = isset($_POST['EmailFollowup']);
   $track_thread = isset($_POST['TrackThread']) || $send_email; // Auto-track if emailing
-
-  // Update email field based on checkbox
-  $nmsg['name'] = stripcrap($user->name); // Always use current username
-  if ($expose_email)
-    $nmsg['email'] = stripcrap($user->email); // Use current email if exposed
-  else
-    $nmsg['email'] = ""; // Clear email if not exposed
-
-  // Update state field based on checkbox and permissions
-  if ($msg['state'] == 'Active' && $offtopic) {
-    $nmsg['state'] = "OffTopic";
-  } else if ($user->capable($forum['fid'], 'OffTopic') && $msg['state'] == 'OffTopic' && !$offtopic) {
-    $nmsg['state'] = "Active"; // Only mods can switch *from* OffTopic
-  } else {
-    $nmsg['state'] = $msg['state']; // Keep original state otherwise
-  }
-
-  // Validate Subject
-  if (empty($nmsg['subject'])) {
-    $error["subject_req"] = true;
-  }
-  if (mb_strlen($nmsg['subject']) > 100) {
-    $error["subject_too_long"] = true;
-    $nmsg['subject'] = mb_strcut($nmsg['subject'], 0, 100);
-  }
-
-  // Handle image URL - force preview if present but not explicitly previewed
-  if ((!empty($nmsg['imageurl']) || !empty($nmsg['video'])) && !$imgpreview) {
-    $preview = true;
-  }
 }
 
-// --- Render Preview (if applicable) ---
-if ($preview || !empty($error)) {
-    if (!empty($nmsg['imageurl'])) $error["image"] = true;
-    if (!empty($nmsg['video'])) $error["video"] = true;
-    $imgpreview = true; // Ensure imgpreview hidden field is set if needed
+// Update email field based on checkbox
+$nmsg['name'] = stripcrap($user->name); // Always use current username
+if ($expose_email)
+  $nmsg['email'] = stripcrap($user->email); // Use current email if exposed
+else
+  $nmsg['email'] = ""; // Clear email if not exposed
 
-    // Render preview using the potentially modified $nmsg
-    $preview_html = render_message($template_dir, $nmsg, $user); // Assumes render_message uses message.yatt
-    $content_tpl->set("PREVIEW", $preview_html);
-    $content_tpl->parse("edit_content.preview");
+// Update state field based on checkbox and permissions
+if ($msg['state'] == 'Active' && $offtopic)
+  $nmsg['state'] = "OffTopic";
+else if ($user->capable($forum['fid'], 'OffTopic') &&
+    $msg['state'] == 'OffTopic' && !$offtopic) {
+  /* user can't unset offtopic unless he has offtopic capabilities */
+  $nmsg['state'] = "Active";
+} else
+  $nmsg['state'] = $msg['state'];
+
+// Validate Subject
+if (empty($nmsg['subject'])) {
+  $error["subject_req"] = true;
 }
 
-// --- Handle Final State (Error/Preview vs. Accept) ---
+if (mb_strlen($nmsg['subject']) > 100) {
+  $error["subject_too_long"] = true;
+  $nmsg['subject'] = mb_strcut($nmsg['subject'], 0, 100);
+}
+
+/* first time around, there is an imageurl set, and the user
+   did not preview, force the action to "preview" */
+if ((!empty($nmsg['imageurl']) || !empty($nmsg['video'])) && !$imgpreview) {
+  $preview = true;
+}
+
 if (!empty($error) || $preview) {
-  // --- State: Display Form with Errors or for Preview ---
+  $imgpreview = true;
+  if (!empty($nmsg['imageurl']))
+    $error["image"] = true;
 
-  // Parse specific error blocks
-  foreach (array_keys($error) as $err_key) {
-      if (in_array($err_key, ['image','video','subject_req','subject_too_long'])) {
-          $content_tpl->parse('edit_content.error.' . $err_key);
-      }
-  }
-  if (!empty($error)) {
-      $content_tpl->parse('edit_content.error'); // Parse outer error container
-  }
+  if (!empty($nmsg['video']))
+    $error["video"] = true;
+}
 
-  // Render the form using render_postform (which uses postform.yatt)
-  // Pass the $nmsg state for pre-filling fields and correct button text ("Update Message")
-  // Pass $imgpreview flag for hidden field
+// We show the preview even on accept
+$preview_html = render_message($template_dir, $nmsg, $user);
+$content_tpl->set("PREVIEW", $preview_html);
+
+if (!empty($error) || $preview) {
+  /* PREVIEW - edit */
+
+  /* generate post form for new message */
   $form_html = render_postform($template_dir, "edit", $user, $nmsg, $imgpreview);
   $content_tpl->set("FORM_HTML", $form_html);
   $content_tpl->parse("edit_content.form");
 
+  $content_block = "preview";
 } else {
   // --- State: Accept Changes (No Errors, Not Preview) ---
 
@@ -190,82 +184,78 @@ if (!empty($error) || $preview) {
   if (!empty($nmsg['imageurl']) || preg_match("/<[[:space:]]*img[[:space:]]+src/i", $nmsg['message'])) $flagset[] = "Picture";
   $nmsg['flags'] = implode(",", $flagset);
 
-  // Calculate Diffs - Restore original logic with labels and state checks
-  $msg = image_url_hack_extract($msg); // Prepare original msg for diff
-  $nmsg_for_diff = image_url_hack_extract($nmsg); // Prepare new msg for diff
+  /* IMAGEURL HACK - extract imageurl from old msg */
+  /* for diffing */
+  $msg = image_url_hack_extract($msg);
+
+  /* Record message state changes */
   $diff = '';
   $state_changed = false;
-  if ($msg['state'] != $nmsg['state']) {
-    $diff .= "Changed state from '".$msg['state']."' to '".$nmsg['state']."'\n";
+  if ($msg['state']!=$nmsg['state']) {
+    $diff .= "Changed from '".$msg['state']."' to '".$nmsg['state']."'\n";
     $state_changed = true;
   }
 
-  // Specific state/preference change tracking from original logic
-  if (empty($msg['email']) && !empty($nmsg['email'])) {
+  if (empty($msg['email']) && !empty($nmsg['email']))
     $diff .= "Exposed e-mail address\n";
-  } else if (!empty($msg['email']) && empty($nmsg['email'])) {
+  else if (!empty($msg['email']) && empty($nmsg['email']))
     $diff .= "Hid e-mail address\n";
-  }
-  // Note: $send_email and $track_thread vars need to be available here from earlier POST handling
-  if ($send_email && !is_msg_etracked($msg)) {
+
+  if ($send_email && !is_msg_etracked($msg))
     $diff .= "Requested e-mail notification\n";
-  } else if (!$send_email && is_msg_etracked($msg)) {
+  else if (!$send_email && is_msg_etracked($msg))
     $diff .= "Cancelled e-mail notification\n";
-  }
-  if ($track_thread && !is_msg_tracked($msg)) {
+
+  if ($track_thread && !is_msg_tracked($msg))
     $diff .= "Tracked message\n";
-  } else if (!$track_thread && is_msg_tracked($msg)) {
+  else if (!$track_thread && is_msg_tracked($msg))
     $diff .= "Untracked message\n";
+
+  /* Dump the \r's, we don't want them */
+  $msg['message'] = preg_replace("/\r/", "", $msg['message']);
+  $nmsg['message'] = preg_replace("/\r/", "", $nmsg['message']);
+
+  /* Synthesize fake records for optional links */
+  $old[]="Subject: " . $msg['subject'];
+  $old = array_merge($old, explode("\n", $msg['message']));
+  if (!empty($msg['url'])) {
+    $old[]="urltext: " . $msg['urltext'];
+    $old[]="url: " . $msg['url'];
   }
+  if (!empty($msg['imageurl']))
+    $old[]="imageurl: " . $msg['imageurl'];
+  if (!empty($msg['video']))
+    $old[]="video: " . $msg['video'];
 
-  // Restore original method: Build aggregated arrays with labels and call diff() once.
-  $old_lines = [];
-  $new_lines = [];
-
-  // Add Subject
-  $old_lines[] = "Subject: " . ($msg['subject'] ?? '');
-  $new_lines[] = "Subject: " . ($nmsg_for_diff['subject'] ?? '');
-
-  // Add Message Lines
-  $old_lines = array_merge($old_lines, explode("\n", $msg['message'] ?? ''));
-  $new_lines = array_merge($new_lines, explode("\n", $nmsg_for_diff['message'] ?? ''));
-
-  // Add optional fields if they exist in either old or new
-  if (!empty($msg['url']) || !empty($nmsg_for_diff['url'])) {
-    $old_lines[]="urltext: " . ($msg['urltext'] ?? '');
-    $old_lines[]="url: " . ($msg['url'] ?? '');
-    $new_lines[]="urltext: " . ($nmsg_for_diff['urltext'] ?? '');
-    $new_lines[]="url: " . ($nmsg_for_diff['url'] ?? '');
+  $new[]="Subject: " . $nmsg['subject'];
+  $new = array_merge($new, explode("\n", $nmsg['message']));
+  if (!empty($nmsg['url'])) {
+    $new[]="urltext: " . $nmsg['urltext'];
+    $new[]="url: " . $nmsg['url'];
   }
-  if (!empty($msg['imageurl']) || !empty($nmsg_for_diff['imageurl'])) {
-    $old_lines[]="imageurl: " . ($msg['imageurl'] ?? '');
-    $new_lines[]="imageurl: " . ($nmsg_for_diff['imageurl'] ?? '');
-  }
-  if (!empty($msg['video']) || !empty($nmsg_for_diff['video'])) {
-    $old_lines[]="video: " . ($msg['video'] ?? '');
-    $new_lines[]="video: " . ($nmsg_for_diff['video'] ?? '');
-  }
+  if (!empty($nmsg['imageurl']))
+    $new[]="imageurl: " . $nmsg['imageurl'];
+  if (!empty($nmsg['video']))
+    $new[]="video: " . $nmsg['video'];
 
-  // Remove trailing empty line from explode if present (often happens)
-  if (end($old_lines) === '') array_pop($old_lines);
-  if (end($new_lines) === '') array_pop($new_lines);
+  $diff .= diff($old, $new);
 
-  // Only call diff if the aggregated arrays are different
-  if ($old_lines !== $new_lines) {
-      $diff .= diff($old_lines, $new_lines); // Call diff once
-  }
-  // End Restore original method
-
-  // Append the combined diff to any existing changes record
-  $nmsg['changes'] = ($msg['changes'] ?? '') . $diff; // Ensure msg[changes] exists
-
-  // Restore IMAGEURL HACK - prepend before insert
+  /* IMAGEURL HACK - prepend before insert */
+  /* for diffing and for entry into the db */
   $nmsg = image_url_hack_insert($nmsg);
+
+  /* Modern safety: Ensure changes field exists before SQL update.
+     Original code relied on MySQL's CONCAT to handle null values,
+     but explicitly handling it in PHP is more robust. */
+  $nmsg['changes'] = ($msg['changes'] ?? '') . $diff;
 
   // Update Database
   $iid = mid_to_iid($mid);
-  $sql = "update f_messages$iid set " .
-    "name = ?, email = ?, flags = ?, subject = ?, " .
+  if (!isset($iid)) {
+    err_not_found("message $mid has no iid");
+    exit;
+  }
+  $sql = "update f_messages$iid set name = ?, email = ?, flags = ?, subject = ?, " .
     "message = ?, url = ?, urltext = ?, video = ?, state = ?, " .
     "changes = CONCAT(IFNULL(changes,''), 'Edited by ', ?, '/', ?, ' at ', NOW(), ' from ', ?, '\n', ?, '\n') " .
     "where mid = ?";
@@ -273,7 +263,7 @@ if (!empty($error) || $preview) {
     $nmsg['name'], $nmsg['email'], $nmsg['flags'], $nmsg['subject'],
     $nmsg['message'], $nmsg['url'], $nmsg['urltext'], $nmsg['video'],
     $nmsg['state'],
-    $user->name, $user->aid, $s->remoteAddr, $diff, // Add user/audit info for CONCAT
+    $user->name, $user->aid, $s->remoteAddr, $nmsg['changes'],
     $mid
   ));
 
@@ -281,23 +271,26 @@ if (!empty($error) || $preview) {
   $sql = "replace into f_updates ( fid, mid ) values ( ?, ? )";
   db_exec($sql, array($forum['fid'], $mid));
 
-  // Restore call to msg_state_changed() function
+  /* update user post counts and f_indexes */
   if ($state_changed)
     msg_state_changed($forum['fid'], $msg, $nmsg['state']);
 
-  // Update tracking
-  if (!is_msg_tracked($msg) && $track_thread)
-    track_thread($forum['fid'], $msg['tid'], ($send_email)?'SendEmail':'');
-  else if (is_msg_tracked($msg) && !$track_thread)
-    untrack_thread($forum['fid'], $msg['tid']);
+  if ($track_thread)
+    track_thread($forum['fid'], $nmsg['tid'], $send_email?"SendEmail":"");
+  else
+    untrack_thread($forum['fid'], $nmsg['tid']);
 
-  // Render the final message preview
-  $preview_html = render_message($template_dir, $nmsg, $user);
-  $content_tpl->set("PREVIEW", $preview_html);
-  $content_tpl->parse("edit_content.accept");
-}
+  $content_block = "accept";
+} // end of "not (isset($error) || $preview)"
+
+// Parse post content block for one of the two contexts: preview, accept
+$content_tpl->parse("edit_content.$content_block");
+
+// Parse the main container block
+$content_tpl->parse("edit_content");
 
 // Final Output Generation
 print generate_page('Edit Message', $content_tpl->output('edit_content'));
 
+// vim: set ts=8 sw=2 et:
 ?>

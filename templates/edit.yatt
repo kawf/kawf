@@ -38,20 +38,24 @@ what kinds of video are supported.</i></p>
 %end [error]
 
 %begin [preview]
+<!-- begin preview -->
 <div class="info">Message Preview</div>
 <div class="tools">
   <a href="/%[FORUM_SHORTNAME]/">Cancel editing and go back to the forum</a>
 </div>
 <div class="preview">
-%[PREVIEW] %[#] Rendered message preview HTML
+%[PREVIEW] %[#] Rendered message preview HTML (shown again on accept)
 </div>
+<!-- end preview -->
 %end [preview]
 
+%[#] Only for preview, accept does not need a form
 %begin [form]
 %[FORM_HTML] %[#] Rendered form HTML from render_postform()
 %end [form]
 
 %begin [accept]
+<!-- begin accept -->
 <div class="info">Message Updated</div>
 <div class="tools">
     <a href="/%[FORUM_SHORTNAME]/msgs/%[MSG_MID].phtml">Go to Your Message</a>
@@ -59,9 +63,10 @@ what kinds of video are supported.</i></p>
 </div>
 %[#] Note: Original used a table, using div for consistency with post.yatt
 <div class="preview">
-%[PREVIEW] %[#] Rendered message preview HTML (shown again on success)
+%[PREVIEW] %[#] Rendered message preview HTML (same as in preview)
 </div>
 <p>
+<!-- end accept -->
 %end [accept]
 
 %end [edit_content]
