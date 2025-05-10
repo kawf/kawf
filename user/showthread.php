@@ -52,6 +52,10 @@ function print_message($thread, $msg)
 
   $uuser = new ForumUser($msg['aid']);
 
+  // showwmessage.php calls image_url_hack_extract() before render_message()
+  // let's do that here too
+  $msg = image_url_hack_extract($msg);
+
   // Render the message using the refactored function which returns HTML
   // Ensure render_message has access to necessary globals or parameters
   $message_html = render_message($template_dir, $msg, $user, $uuser);
