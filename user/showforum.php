@@ -232,7 +232,7 @@ if ($curpage == 1) {
     if (!isset($thread)) continue;
 
     if ($thread['unixtime'] > $tthread['unixtime']) { // Is bumped?
-      $messagestr = gen_thread($forum['fid'], $thread);
+      $messagestr = gen_thread($forum['fid'], $thread, false);
       if (!$messagestr) continue;
       $threadlinks = gen_threadlinks($thread);
       $class = "trow" . ($numshown % 2);

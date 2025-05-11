@@ -2,8 +2,22 @@
 
 require_once("printsubject.inc.php");
 
-/* Recursive listing of a thread */
-function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = array(), $dontshow = false)
+/*
+ * Recursively render a message thread as a nested list using a callback for each message.
+ *
+ * @param callable $callback Function to call for each message (e.g., print_subject)
+ * @param array $messages Array of messages in the thread
+ * @param array $tree Message tree structure
+ * @param array $siblings Sibling message indices for the current recursion
+ * @param array $thread Thread data (passed by reference)
+ * @param int|null $vmid (optional) Message ID to highlight as the 'viewed message' (used for is_vmid in print_subject)
+ * @param array $path (optional) Path for recursion, used internally
+ * @param bool $countonly (optional) If true, only count messages, do not render (used for collapsed/hidden threads)
+ *
+ * The $vmid parameter should be set in contexts where a specific message is being viewed (e.g., showmessage.php),
+ * and will be used to highlight that message in the output. In all other contexts, leave as null.
+ */
+function list_thread($callback, $messages, $tree, $siblings, &$thread, $vmid = null, $path = array(), $countonly = false)
 {
   global $user;
 
@@ -25,12 +39,13 @@ function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = a
 
   next($siblings); // Advance pointer for loops below
 
-  if (!$dontshow &&
+  if (!$countonly &&
      (isset($path[$msg['mid']]) ||
       $msg['state'] != 'OffTopic' ||
       !isset($user->pref['CollapseOffTopic']))) {
 
-    $string .= $callback($thread, $msg);
+    $is_vmid = ($vmid !== null && $msg['mid'] == $vmid);
+    $string .= $callback($thread, $msg, $is_vmid);
 
     $sibs = "";
     // Revert to original iteration logic using internal pointer
@@ -43,7 +58,7 @@ function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = a
         $children = isset($tree[$messages[$s1]['mid']]) && is_array($tree[$messages[$s1]['mid']])
                       ? $tree[$messages[$s1]['mid']]
                       : [];
-        $sibs .= list_thread($callback, $messages, $tree, $children, $thread, $path);
+        $sibs .= list_thread($callback, $messages, $tree, $children, $thread, $vmid, $path);
       }
     } else {
       // Original logic iterated from end back to the element *after* the first ($s)
@@ -56,7 +71,7 @@ function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = a
           $children = isset($tree[$messages[$s1]['mid']]) && is_array($tree[$messages[$s1]['mid']])
                         ? $tree[$messages[$s1]['mid']]
                         : [];
-          $sibs .= list_thread($callback, $messages, $tree, $children, $thread, $path);
+          $sibs .= list_thread($callback, $messages, $tree, $children, $thread, $vmid, $path);
       }
     }
 
@@ -75,13 +90,14 @@ function list_thread($callback, $messages, $tree, $siblings, &$thread, $path = a
         $children = isset($tree[$messages[$s1]['mid']]) && is_array($tree[$messages[$s1]['mid']])
                       ? $tree[$messages[$s1]['mid']]
                       : [];
-        $count += list_thread($callback, $messages, $tree, $children, $thread, $path, true /* dontshow */);
+        $count += list_thread($callback, $messages, $tree, $children, $thread, $vmid, $path, true /* countonly */);
     }
 
-    if ($dontshow)
+    if ($countonly)
       return $count + 1;
 
-    $string .= $callback($thread, $msg, $count, true /* collapse */);
+    $is_vmid = ($vmid !== null && $msg['mid'] == $vmid);
+    $string .= $callback($thread, $msg, $is_vmid, $count, true /* collapse */);
     $hidden = ' class="hidden"';
   }
 

@@ -1,9 +1,18 @@
 <?php
 require_once("message.inc.php");
 
-function print_subject($thread, $msg, $replies = -1, $collapse = false)
+/*
+ * Render the subject line for a message in a thread.
+ *
+ * @param array $thread Thread data
+ * @param array $msg Message data
+ * @param bool $is_vmid True if this message is the 'viewed message' (mid == vmid), used for special highlighting in showmessage.php
+ * @param int $replies Number of replies (optional)
+ * @param bool $collapse Whether the thread is collapsed (optional)
+ */
+function print_subject($thread, $msg, $is_vmid, $replies = -1, $collapse = false)
 {
-  global $vmid, $user, $debug_f_tracking;
+  global $user, $debug_f_tracking;
   $forum = get_forum();
 
   $tthreads_by_tid = get_tthreads_by_tid();
@@ -22,7 +31,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
     $nt = " class=\"nt\"";
 
   $string = "";
-  if (isset($vmid) && $vmid == $msg['mid'])
+  if ($is_vmid)
     $string .= "<span class=\"vmid\">" . $msg['subject'] . "</span>";
   else {
     if (isset($user->pref['FlatThread']))

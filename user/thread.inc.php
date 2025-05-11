@@ -81,27 +81,37 @@ function gen_thread_flags(&$thread)
   }
 }
 
-function gen_thread($fid, $thread, $collapse = false)
+/*
+ * Render a thread as a nested list of messages.
+ *
+ * @param int $fid Forum ID
+ * @param array $thread Thread data
+ * @param bool $collapse Whether to collapse the thread view
+ * @param int|null $vmid (optional) Message ID to highlight as the 'viewed message'
+ */
+function gen_thread($fid, $thread, $collapse, $vmid = null)
 {
   global $user;
 
-  list($messages, $tree) = get_thread_messages($fid, $thread);
+  list($messages, $tree) = get_thread_messages($fid, $thread, $vmid);
   if (!isset($messages) || !count($messages))
     return null;
 
   $count = count($messages);
+  $first_message = reset($messages);
 
   if (isset($user->pref['Collapsed']) || $collapse) {
     if ($count>1) $hidden = " class=\"hidden\"";
     else $hidden = "";
-    $messagestr = "<li$hidden>".print_subject($thread, reset($messages), $count - 1, true)."</li>";
+    $is_vmid = ($first_message['mid'] == $vmid);
+    $messagestr = "<li$hidden>".print_subject($thread, $first_message, $is_vmid, $count - 1, true)."</li>";
   } else
-    $messagestr = list_thread('print_subject', $messages, $tree, reset($tree), $thread);
+    $messagestr = list_thread('print_subject', $messages, $tree, reset($tree), $thread, $vmid);
 
   if (empty($messagestr))
     return null;
 
-  $message = reset($messages);
+  $message = $first_message;
   $state = $message['state'];
 
   return $count?"<ul class=\"thread\">\n" . $messagestr . "</ul>":null;

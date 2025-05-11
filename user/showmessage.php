@@ -55,7 +55,7 @@ list($messages, $tree, $path) = get_thread_messages($forum['fid'], $thread, $vmi
 
 $threadmsg = "";
 if(isset($messages)) {
-    $threadmsg = gen_thread($forum['fid'], $thread);
+    $threadmsg = gen_thread($forum['fid'], $thread, false, $vmid);
 } else {
     /* FIXME: Issue #24 */
     //$threadmsg .= "Thread missing, creating new thread";
