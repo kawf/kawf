@@ -62,7 +62,7 @@ if (!isset($_POST['tid'])) { // Posting new thread
   }
   // Check if thread is locked
   if (isset($_POST['tid']) && is_numeric($_POST['tid'])) {
-      $thread = get_thread($_POST['tid']);
+      $thread = get_thread($forum['fid'], $_POST['tid']);
       if (isset($thread['flag']['Locked']) && !$user->capable($forum['fid'], 'Lock')) {
           $content_tpl->parse("post_content.disabled.locked");
           $content_tpl->parse("post_content.disabled");
@@ -124,7 +124,7 @@ if (isset($_POST['postcookie'])) {
 
   // --- Validation ---
   if (isset($msg['pmid'])) { // Check parent only if replying
-    $iid = mid_to_iid($msg['pmid']);
+    $iid = mid_to_iid($forum['fid'], $msg['pmid']);
     if (!isset($iid)) throw new RuntimeException("no iid for pmid " . $msg['pmid']);
     $parent = db_query_first("select * from f_messages$iid where mid = ?", array($msg['pmid']));
   }
@@ -197,7 +197,7 @@ if (isset($_POST['postcookie'])) {
     if (!isset($pmid)) throw new RuntimeException("invalid pmid");
 
     /* get requested parent message */
-    $iid = mid_to_iid($pmid);
+    $iid = mid_to_iid($forum['fid'], $pmid);
     if (!isset($iid)) throw new RuntimeException("no iid for pmid $pmid");
     $sql = "select *, DATE_FORMAT(date, \"%Y%m%d%H%i%s\") as tstamp from f_messages$iid where mid = ?";
     $pmsg = db_query_first($sql, array($pmid));
@@ -261,7 +261,7 @@ if (!$accepted || $preview) {
     $track = $sth->fetch();
 
     if ($track) {
-      $iid = mid_to_iid($thread['mid']);
+      $iid = mid_to_iid($forum['fid'], $thread['mid']);
       if (!isset($iid)) throw new RuntimeException("no iid for thread mid " . $thread['mid']);
 
       $sql = "select subject from f_messages$iid where mid = ?";

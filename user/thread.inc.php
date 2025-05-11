@@ -3,20 +3,20 @@
 require_once("filter.inc.php");
 require_once("listthread.inc.php");
 
-function get_thread_messages($thread, $vmid = 0)
+function get_thread_messages($fid, $thread, $vmid = 0)
 {
   global $user;
   $indexes = get_forum_indexes();
 
   /* find my messages and later */
-  for ($index = find_msg_index($thread['mid']); isset($indexes[$index]); $index++) {
+  for ($index = find_msg_index($fid, $thread['mid']); isset($indexes[$index]); $index++) {
     $iid = $indexes[$index]['iid'];
     /* TZ: unixtime is seconds since epoch */
     $sql = "select " . MESSAGE_FIELDS . " from f_messages$iid where tid = ? order by mid";
     $sth = db_query($sql, array($thread['tid']));
     while ($msg = $sth->fetch()) {
       /* modifies message */
-      process_message($user, $msg);
+      process_message($fid, $user, $msg);
       $messages[] = $msg;
     }
     $sth->closeCursor();
@@ -54,9 +54,9 @@ function get_thread_messages($thread, $vmid = 0)
   return array($messages, $tree, $path);
 }
 
-function get_thread($tid)
+function get_thread($fid, $tid)
 {
-  $iid = tid_to_iid($tid);
+  $iid = tid_to_iid($fid, $tid);
   if (!isset($iid)) return null;
 
   $t = "f_threads$iid";
@@ -81,12 +81,11 @@ function gen_thread_flags(&$thread)
   }
 }
 
-function gen_thread($thread, $collapse = false)
+function gen_thread($fid, $thread, $collapse = false)
 {
   global $user;
-  $forum = get_forum();
 
-  list($messages, $tree) = get_thread_messages($thread);
+  list($messages, $tree) = get_thread_messages($fid, $thread);
   if (!isset($messages) || !count($messages))
     return null;
 
@@ -149,7 +148,7 @@ function gen_threadlinks($thread, $collapse = false)
     return $tl;
 }
 
-function process_tthreads($just_count = false)
+function process_tthreads($fid, $just_count = false)
 {
   $tthreads = get_tthreads();
 
@@ -162,7 +161,7 @@ function process_tthreads($just_count = false)
     if (isset($threadshown[$tid]))
       continue;
 
-    $thread = get_thread($tid);
+    $thread = get_thread($fid, $tid);
     if (!isset($thread))
       continue;
 

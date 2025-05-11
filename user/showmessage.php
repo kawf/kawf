@@ -24,12 +24,12 @@ $content_tpl->set("USER_TOKEN", $user->token());
 $content_tpl->set("PAGE", format_page_param());
 $content_tpl->set("TIME", time());
 
-$msg = fetch_message($user, $mid);
+$msg = fetch_message($forum['fid'], $user, $mid);
 
 $content_tpl->set("MSG_TID", $msg['tid']);
 $content_tpl->set("MSG_MID", $msg['mid']);
 
-$iid = mid_to_iid($mid);
+$iid = mid_to_iid($forum['fid'], $mid);
 $sql = "update f_messages$iid  set views = views + 1 where mid = ?";
 db_exec($sql, array($mid));
 
@@ -44,18 +44,18 @@ $uuser = new ForumUser($msg['aid']);
 
 mark_thread_read($forum['fid'], $msg, $user);
 
-$thread = get_thread($msg['tid']);
+$thread = get_thread($forum['fid'], $msg['tid']);
 
 $message = render_message($template_dir, $msg, $user, $uuser);
 $content_tpl->set("MESSAGE", $message);
 
 $vmid = $msg['mid'];
 
-list($messages, $tree, $path) = get_thread_messages($thread, $vmid);
+list($messages, $tree, $path) = get_thread_messages($forum['fid'], $thread, $vmid);
 
 $threadmsg = "";
 if(isset($messages)) {
-    $threadmsg = gen_thread($thread);
+    $threadmsg = gen_thread($forum['fid'], $thread);
 } else {
     /* FIXME: Issue #24 */
     //$threadmsg .= "Thread missing, creating new thread";
@@ -82,7 +82,7 @@ $nmsg['tid'] = $msg['tid'];
 $nmsg['ip'] = get_server()->remoteAddr;
 
 if ($msg['pmid'] != 0) {
-  $pmsg = fetch_message($user, $msg['pmid'], 'mid, subject, name, date');
+  $pmsg = fetch_message($fid, $user, $msg['pmid'], 'mid, subject, name, date');
 }
 
 if (isset($msg['subject']) && !preg_match("/^Re:/i", $msg['subject'])) {

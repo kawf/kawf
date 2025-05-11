@@ -27,7 +27,7 @@ if ($state != 'Active' && $state != 'OffTopic' && $state != 'Moderated' && $stat
 if (!is_numeric($mid))
   err_not_found("Invalid mid $mid");
 
-$iid = mid_to_iid($mid);
+$iid = mid_to_iid($forum['fid'], $mid);
 if (!isset($iid))
   err_not_found("Invalid mid $mid");
 

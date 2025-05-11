@@ -27,7 +27,7 @@ if (!isset($curpage))
 $tpp = $user->threadsperpage;
 if ($tpp<=0) $tpp=20;
 
-$out = process_tthreads();
+$out = process_tthreads($forum['fid']);
 $numpages = ceil($out['numshown']/$tpp);
 
 if ($numpages && $curpage>$numpages) {
@@ -62,7 +62,7 @@ if ($out['numshown']>0) {
     if ($count>=$start && $count<$end) {
       $thread = $t['thread'];
       $collapse = isset($user->pref['Collapsed']) && !$t['new'];
-      $messagestr = gen_thread($thread, $collapse);
+      $messagestr = gen_thread($forum['fid'], $thread, $collapse);
       if ($messagestr) {
         $threadlinks = gen_threadlinks($thread, $collapse);
         $class = "srow" . ($i&1);
@@ -86,7 +86,7 @@ if ($out['numshown']>0) {
     if ($count>=$start && $count<$end) {
       $thread = $t['thread'];
       $collapse = false;
-      $messagestr = gen_thread($thread, $collapse);
+      $messagestr = gen_thread($forum['fid'], $thread, $collapse);
       if ($messagestr) {
         $threadlinks = gen_threadlinks($thread, $collapse);
         $class = "trow" . ($i&1);
@@ -107,7 +107,7 @@ if ($out['numshown']>0) {
     if ($count>=$start && $count<$end) {
       $thread = $t['thread'];
       $collapse = isset($user->pref['Collapsed']);
-      $messagestr = gen_thread($thread, $collapse);
+      $messagestr = gen_thread($forum['fid'], $thread, $collapse);
       if ($messagestr) {
         $threadlinks = gen_threadlinks($thread, $collapse);
         $class = "row" . ($i&1);

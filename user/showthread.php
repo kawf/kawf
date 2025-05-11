@@ -23,7 +23,7 @@ $content_tpl->set("PAGE", format_page_param());
 $content_tpl->set("TIME", time());
 
 /* $tid set by main.php for showthread.php */
-$thread = get_thread($tid);
+$thread = get_thread($forum['fid'], $tid);
 if (!isset($thread))
   err_not_found("No such thread $tid");
 
@@ -34,7 +34,7 @@ if (is_thread_bumped($thread)) {
 }
 
 // Get messages and tree structure
-list($messages, $tree, $path) = get_thread_messages($thread);
+list($messages, $tree, $path) = get_thread_messages($forum['fid'], $thread);
 if (!isset($messages) || empty($messages)) {
     err_not_found("No messages found in thread $tid");
 }

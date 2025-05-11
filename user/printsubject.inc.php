@@ -31,7 +31,7 @@ function print_subject($thread, $msg, $replies = -1, $collapse = false)
       $string .= "<a href=\"/" . $forum['shortname'] . "/msgs/" . $msg['mid'] . ".phtml\"" . $nt . ">" . $msg['subject'] . "</a>";
   }
 
-  if(is_msg_bumped($msg))
+  if(is_msg_bumped($forum['fid'], $msg))
     $string = '<em>'.$string.'</em>';
 
   if (isset($flags['NoText'])) {

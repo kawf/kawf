@@ -47,7 +47,7 @@ while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
       $thread = db_query_first("select *, UNIX_TIMESTAMP(tstamp) as unixtime from f_threads$iid where tid = ?", array($tthread['tid']));
       if (!$thread) continue;
 
-      $messagestr = gen_thread($thread, true /* always collapse */);
+      $messagestr = gen_thread($forum['fid'], $thread, true /* always collapse */);
       if (!isset($messagestr)) continue;
 
       $is_bumped = is_thread_bumped($thread);

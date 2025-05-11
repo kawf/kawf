@@ -45,7 +45,7 @@ $content_tpl->set("PAGE", format_page_param());
 $content_tpl->set("MSG_MID", $mid); // For accept page link
 
 // Fetch original message
-$nmsg = $msg = fetch_message($user, $mid); // $nmsg will hold the potentially modified version
+$nmsg = $msg = fetch_message($forum['fid'], $user, $mid); // $nmsg will hold the potentially modified version
 
 // Basic Validation
 if (!isset($msg)) {
@@ -59,7 +59,7 @@ if ($msg['aid'] != $user->aid && !$user->capable($forum['fid'], 'Edit')) { // Al
   exit;
 }
 
-$thread = get_thread($msg['tid']);
+$thread = get_thread($forum['fid'], $msg['tid']);
 
 // Check forum edit permission
 if (!isset($forum['option']['PostEdit'])) {
@@ -250,7 +250,7 @@ if (!empty($error) || $preview) {
   $nmsg['changes'] = ($msg['changes'] ?? '') . $diff;
 
   // Update Database
-  $iid = mid_to_iid($mid);
+  $iid = mid_to_iid($forum['fid'], $mid);
   if (!isset($iid)) {
     err_not_found("message $mid has no iid");
     exit;

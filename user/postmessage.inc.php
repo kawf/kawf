@@ -12,7 +12,7 @@
 
 function postmessage($user, $fid, &$msg, $request)
 {
-  $iid = last_iid();
+  $iid = last_iid($fid);
   $mtable = "f_messages" . $iid;
   $ttable = "f_threads" . $iid;
 

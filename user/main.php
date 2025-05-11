@@ -123,23 +123,23 @@ function build_indexes($fid): array
   return $indexes;
 }
 
-function mid_to_iid($mid)
+function mid_to_iid($fid, $mid)
 {
-  $index = find_msg_index($mid);
+  $index = find_msg_index($fid, $mid);
   if (!isset($index)) return null;
 
   $indexes = get_forum_indexes();
   return $indexes[$index]['iid'];
 }
 
-function last_iid()
+function last_iid($fid)
 {
   $indexes = get_forum_indexes();
   $index = end($indexes);
   return $index['iid'];
 }
 
-function find_msg_index($mid)
+function find_msg_index($fid, $mid)
 {
   $indexes = get_forum_indexes();
 
@@ -228,9 +228,10 @@ if (preg_match("/^(\/)?([A-Za-z0-9\.]*)$/", $s->scriptName . $s->pathInfo, $regs
     err_not_found("Unknown forum " . $regs[1]);
 
   /* See if the message number is legitimate */
+  $fid = $regs[1];
   $mid = $regs[2];
   $fmt = $regs[3];
-  $iid = mid_to_iid($mid);
+  $iid = mid_to_iid($fid, $mid);
   $forum = get_forum();
   if (isset($iid)) {
     $sql = "select mid from f_messages$iid where mid = ?";

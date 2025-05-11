@@ -29,12 +29,12 @@ if (!is_numeric($mid) || !$forum) {
 $content_tpl = new_yatt('delete.yatt', $forum);
 
 // --- Fetch Message & Permission Checks ---
-$iid = mid_to_iid($mid);
+$iid = mid_to_iid($forum['fid'], $mid);
 if (!isset($iid)) {
   err_not_found("Invalid message ID mapping for $mid");
   exit;
 }
-$msg = fetch_message($user, $mid);
+$msg = fetch_message($forum['fid'], $user, $mid);
 if (!isset($msg)) {
   err_not_found("No message with mid $mid");
   exit;

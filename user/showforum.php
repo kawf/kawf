@@ -201,7 +201,7 @@ if ($curpage == 1) {
     while ($thread = $sth->fetch()) {
       gen_thread_flags($thread);
       $collapse = !is_thread_bumped($thread);
-      $messagestr = gen_thread($thread, $collapse);
+      $messagestr = gen_thread($forum['fid'], $thread, $collapse);
       if (!$messagestr) continue;
       $threadlinks = gen_threadlinks($thread, $collapse);
       $class = "srow" . ($numshown % 2);
@@ -228,11 +228,11 @@ if ($curpage == 1) {
   if (count($tthreads)) foreach ($tthreads as $tthread) {
     $tid = $tthread['tid'];
     if (isset($threadshown[$tid])) continue;
-    $thread = get_thread($tid);
+    $thread = get_thread($forum['fid'], $tid);
     if (!isset($thread)) continue;
 
     if ($thread['unixtime'] > $tthread['unixtime']) { // Is bumped?
-      $messagestr = gen_thread($thread);
+      $messagestr = gen_thread($forum['fid'], $thread);
       if (!$messagestr) continue;
       $threadlinks = gen_threadlinks($thread);
       $class = "trow" . ($numshown % 2);
@@ -335,7 +335,7 @@ while ($numshown < $threadsperpage) {
       // Collapse only if user pref is set AND thread is not bumped
       $collapse = isset($user->pref['Collapsed']) && !$bumped;
 
-      $messagestr = gen_thread($thread, $collapse);
+      $messagestr = gen_thread($forum['fid'], $thread, $collapse);
       if (!$messagestr) continue;
       $threadlinks = gen_threadlinks($thread, $collapse);
 

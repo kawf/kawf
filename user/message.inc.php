@@ -179,7 +179,7 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
 
   // Handle Parent Message Block
   if (isset($msg['pmid']) && $msg['pmid'] != 0) { // Check if pmid exists first
-    $pmsg = fetch_message($viewer, $msg['pmid'], 'mid, subject, name, date'); // Fetch parent msg details
+    $pmsg = fetch_message($forum['fid'], $viewer, $msg['pmid'], 'mid, subject, name, date'); // Fetch parent msg details
     if ($pmsg) { // Check if fetch was successful
         $message_tpl->set("PMSG_MID", $pmsg['mid']);
         $message_tpl->set("PMSG_SUBJECT", $pmsg['subject']); // stripcrap already sanitizes
@@ -305,7 +305,7 @@ function image_url_hack_extract($msg)
    message.inc.php:process_message() - message display
    thread.inc.php:get_thread_message() - "All messages" thread display
  */
-function process_message($user, &$msg)
+function process_message($fid, $user, &$msg)
 {
     /* make a copy for comparison later */
     $omsg=$msg;
@@ -336,7 +336,7 @@ function process_message($user, &$msg)
 
     /* auto update db if remoronize made a change */
     if (isset($msg['mid'])) {
-    $iid = mid_to_iid($msg['mid']);
+    $iid = mid_to_iid($fid, $msg['mid']);
     $mid = $msg['mid'];
 
     $vals = array();
@@ -377,17 +377,17 @@ function process_message($user, &$msg)
     return $keys;
 }
 
-function fetch_message($user, $mid, $what = '*')
+function fetch_message($fid, $user, $mid, $what = '*')
 {
     /* Grab the actual message */
-    $iid = mid_to_iid($mid);
+    $iid = mid_to_iid($fid, $mid);
 
     /* TZ: unixtime is seconds since epoch */
     $sql = "select $what, UNIX_TIMESTAMP(date) as unixtime from f_messages$iid where mid = ?";
     $msg = db_query_first($sql, array($mid));
 
     /* modifies message */
-    process_message($user, $msg);
+    process_message($fid, $user, $msg);
 
     /* IMAGEURL HACK - extract from message */
     return image_url_hack_extract($msg);
@@ -469,7 +469,7 @@ function msg_state_changed($fid, $msg, $newstate)
 
   /* For the purposes of these calculations */
   if ($msg['pmid'] == 0) {
-    $iid = mid_to_iid($msg['mid']);
+    $iid = mid_to_iid($fid, $msg['mid']);
     db_exec("update f_indexes set " . $msg['state'] . " = " . $msg['state'] . " - 1, $newstate = $newstate + 1 where iid = ?", array($iid));
   }
 }
@@ -481,7 +481,7 @@ function mark_thread_read($fid, $msg, $user)
   $tid = $msg['tid'];
 
   /* Mark the thread as read if need be */
-  if (is_msg_bumped($msg)) {
+  if (is_msg_bumped($fid, $msg)) {
     /* TZ: f_tracking 'tstamp' is SQL server local time */
     $sql = "update f_tracking set tstamp = NOW() where fid = ? and tid = ? and aid = ?";
     db_exec($sql, array($fid, $tid, $user->aid));
@@ -510,7 +510,7 @@ function is_msg_tracked($msg)
     return isset($tthread);
 }
 
-function is_msg_bumped($msg)
+function is_msg_bumped($fid, $msg)
 {
     $tthread = get_tthread_by_msg($msg);
 /*
