@@ -328,6 +328,7 @@ class AccountUser extends ForumUser {
         "NAME" => $this->name,
         "REMOTE_ADDR" => $s->remoteAddr,
         "DOMAIN" => $_SERVER['HTTP_HOST'] ?? $bounce_host,
+        "BASE_URL" => get_base_url(),
         "FROM" => $fromaddr,
         "TO" => $email,
         "PHPVERSION" => phpversion()
@@ -363,7 +364,7 @@ class AccountUser extends ForumUser {
     $message = $mail_tpl->output();
 
     // Clean up any leading/trailing whitespace
-    $message = ltrim($message); // temp to test error
+    $message = ltrim($message);
 
     // Send the email
     debug_log("Sending email from $fromaddr to $email:\n$message");

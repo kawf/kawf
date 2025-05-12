@@ -7,7 +7,7 @@ X-Mailer: PHP/%[PHPVERSION]
 %[MESSAGE]
 
 To complete this action, please visit:
-http://forums.%[DOMAIN]/finish.phtml?cookie=%[COOKIE]
+%[BASE_URL]/finish.phtml?cookie=%[COOKIE]
 
 If you did not request this %[TYPE], you can safely ignore this email.
 
