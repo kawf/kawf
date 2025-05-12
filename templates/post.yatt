@@ -54,7 +54,7 @@
   <p>Image URL too long! Truncated</p>
   %end [imageurl_too_long]
   %begin [image_upload_failed]
-  <p>Image upload failed, try reducing file size</p>
+  <p>Image upload failed: %[UPLOAD_ERROR]</p>
   %end [image_upload_failed]
   %begin [video_too_long]
   <p>Video URL too long! Truncated</p>

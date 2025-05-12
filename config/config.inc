@@ -13,16 +13,24 @@ $bounce_host = "bounce.kawf.org";
 
 $cookie_host = ".kawf.org";
 
-/* imgur client id and secret, to allow image uploading */
-$imgur_client_id = "";
-$imgur_client_secret = "";
+// Image uploading. Pick one.
+// imgur configuration
+//$imgur_client_id = '';
+// WebDAV configuration
+/*
+$webdav_config = array(
+    'url' => 'https://dav.example.com',
+    'username' => 'kawf',
+    'password' => 'your_webdav_password',
+    'public_url' => 'https://images.example.com'
+);
+*/
 
 /* Skip32 key for encrypting viewer AIDs */
 // set here or in config-local.inc
 //$viewer_aid_key = "0123456789abcdef0123";
 
-/* allow user to override default in a separate file (prevents merge problems
-   when using source control */
+/* allow user to override default in a separate file (prevents merge problems when using source control) */
 if (is_file(dirname(__FILE__) . "/config-local.inc") )
     include_once dirname(__FILE__) . "/config-local.inc";
 

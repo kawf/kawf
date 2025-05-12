@@ -161,7 +161,8 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
              $show_offtopic_option = false;
         }
         if (!$track_thread) $email_followup = false; // Can't follow if not tracking
-        $show_image_upload = can_upload_images() && !isset($msg["mid"]);
+        $upload_config = get_upload_config();
+        $show_image_upload = can_upload_images($upload_config) && !isset($msg["mid"]);
 
         $form_tpl->set('show_offtopic_option', $show_offtopic_option);
         $form_tpl->set('show_image_upload', $show_image_upload);
@@ -169,7 +170,8 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
         $form_tpl->set("EXPOSEEMAIL_CHECKED", $expose_email ? " checked" : "");
         $form_tpl->set("EMAILFOLLOWUP_CHECKED", $email_followup ? " checked" : "");
         $form_tpl->set("TRACKTHREAD_CHECKED", $track_thread ? " checked" : "");
-        $form_tpl->set("MAXIMAGEFILEBYTES", max_image_upload_bytes());
+        $form_tpl->set("MAXIMAGEFILEBYTES", max_image_upload_bytes($upload_config));
+        $form_tpl->set("IMAGEDELETEURL", isset($msg['imagedeleteurl']) ? $msg['imagedeleteurl'] : '');
 
     } else {
          // Not enabled or not logged in - $is_acct_active remains false
@@ -189,21 +191,18 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
         if (!$is_acct_active) {
             $form_tpl->parse('post_form_content.enabled.noacct');
         } else {
-            // Parse nested blocks for logged-in user
-            if ($show_image_upload) $form_tpl->parse('post_form_content.enabled.acct.imageupload');
+            if ($show_image_upload) {
+              $form_tpl->set("js_image_resizer", js_href('image-resizer.js'));
+              $form_tpl->set("js_postform_upload", js_href('postform.js'));
+              $form_tpl->parse('post_form_content.enabled.acct.imageupload');
+            }
             if ($show_offtopic_option) $form_tpl->parse('post_form_content.enabled.acct.offtopic');
             $form_tpl->parse('post_form_content.enabled.acct');
         }
         $form_tpl->parse('post_form_content.enabled');
     }
 
-    // Return the fully rendered HTML
-    try {
-        return $form_tpl->output('post_form_content');
-    } catch (Exception $e) {
-        error_log("YATT output error in render_postform: " . $e->getMessage());
-        return "<p class=\"error\">Error rendering post form.</p>";
-    }
+    return $form_tpl->output('post_form_content');
 }
 // vim: sw=2
 ?>

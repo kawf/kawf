@@ -3,6 +3,10 @@ require_once("nl2brPre.inc.php");
 require_once("embed-media.inc.php");
 require_once("Skip32.inc.php");
 require_once("textwrap.inc.php");
+require_once("lib/Upload/UploadFactory.php");
+require_once("lib/Upload/UploadContext.php");
+
+use Kawf\Upload\{UploadFactory, UploadContext};
 
 // For state changes in changestate.php
 define('MESSAGE_STATE_FIELDS', 'mid, aid, pid, state, subject, flags');
@@ -532,10 +536,9 @@ function is_msg_bumped($fid, $msg)
     return ($tthread && $msg['unixtime'] > $tthread['unixtime']);
 }
 
-function can_upload_images() {
-    global $imgur_client_id, $imgur_client_secret;
-
-    return !(empty($imgur_client_id) || empty($imgur_client_secret));
+function can_upload_images($upload_config) {
+    //error_log("upload_config: " . print_r($upload_config, false));
+    return isset($upload_config) && ($upload_config['dav']['enabled'] || $upload_config['imgur']['enabled']);
 }
 
 function ini_val_to_bytes($val) {
@@ -559,50 +562,133 @@ function ini_val_to_bytes($val) {
     return intval($val);
 }
 
-function max_image_upload_bytes() {
+// Upload configuration -- TODO: get rid of this
+function get_upload_config(): array {
+    global $webdav_config, $imgur_client_id;
+    return array(
+        // DAV configuration
+        'dav' => isset($webdav_config) && is_array($webdav_config) ? array(
+            'enabled' => !empty($webdav_config['url']),
+            'url' => $webdav_config['url'],
+            'username' => $webdav_config['username'],
+            'password' => $webdav_config['password'],
+            'path' => $webdav_config['path'],
+            'public_url' => $webdav_config['public_url']
+        ):array('enabled'=>false),
+        // Imgur configuration
+        'imgur' => isset($imgur_client_id) ? array(
+            'enabled' => true,
+            'client_id' => $imgur_client_id
+        ):array('enabled'=>false)
+    );
+}
+
+function max_image_upload_bytes($upload_config) {
     $pms = ini_val_to_bytes(ini_get("post_max_size"));
     $ums = ini_val_to_bytes(ini_get("upload_max_filesize"));
 
-    /* imgur's upload limit is 10mb */
-    $mb = min((10 * 1024 * 1024), $pms, $ums);
+    // Get the maximum upload size from the configured service
+    $service_limit = UploadFactory::getMaxUploadSize($upload_config);
 
-    /* leave 10k overhead for other post data */
+    // Use the smallest limit
+    $mb = min($service_limit, $pms, $ums);
+
+    // Leave 10k overhead for other post data
     if ($mb > 10240)
         $mb -= 10240;
 
     return $mb;
 }
 
-function get_uploaded_image_urls($filename) {
-    global $imgur_client_id;
+/**
+ * Uploads an image using the configured upload service
+ *
+ * Takes an UploadContext containing all necessary upload information and handles
+ * the upload process through the appropriate uploader (DAV or Imgur). Returns
+ * an array containing the image URL, delete URL, and metadata URL if successful,
+ * or an error message if the upload fails.
+ *
+ * @param UploadContext $context Context containing upload configuration, file data,
+ *                             and metadata
+ * @return array|null Array containing:
+ *                    - url: Public URL of the uploaded image
+ *                    - delete_url: URL to delete the image
+ *                    - metadata_url: URL to the image metadata (if supported)
+ *                    - error: Error message if upload fails
+ */
+function upload_image(UploadContext $context): ?array {
+    if (!can_upload_images($context->getConfig()))
+        return array('error' => "No upload service configured");
 
-    if (!can_upload_images())
-      return null;
+    $uploader = UploadFactory::create($context->getConfig());
 
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, "https://api.imgur.com/3/image");
-    curl_setopt($ch, CURLOPT_POST, true);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array(
-      "Authorization: Client-ID " . $imgur_client_id,
-    ));
-    curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-      "image" => file_get_contents($filename),
-    ));
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    $result = curl_exec($ch);
+    if (!$uploader) {
+        return array('error' => "No upload service configured");
+    }
 
-    if ($result != "") {
-      $j = json_decode($result, true);
-      if ($j["data"] && array_key_exists("link", $j["data"]) && $j["data"]["link"]) {
-        $iu = preg_replace("/^http:/", "https:", $j["data"]["link"]);
-        return array($iu, "https://imgur.com/delete/" . $j["data"]["deletehash"]);
-      } else {
-        error_log("error from imgur: " . var_export($j, true));
-      }
-    } else
-      error_log("null response from imgur");
+    // Pass metadata to uploader
+    $result = $uploader->upload(
+        $context->getFilepath(),
+        $context->getNamespace(),
+        $context->createMetadata()
+    );
 
-    return null;
+    if (!$result) {
+        return array('error' => $uploader->getError());
+    }
+
+    return $result;
+}
+
+/**
+ * Creates an UploadContext for image uploads
+ *
+ * @param array $upload_config Upload configuration
+ * @param string $filepath Path to the file to upload
+ * @param array $fileMetadata File metadata from client
+ * @param int $userId User ID of the uploader
+ * @param string $forumId Forum ID to create namespace from
+ * @return UploadContext Context object for the upload
+ */
+function create_upload_context(array $upload_config, string $filepath, array $fileMetadata, int $userId, string $forumId): UploadContext {
+    return new UploadContext(
+        $upload_config,
+        $filepath,
+        $fileMetadata,
+        $userId,
+        $userId . '/' . $forumId
+    );
+}
+
+/**
+ * Updates image metadata with a message reference
+ *
+ * @param array $upload_config Upload configuration
+ * @param string $metadata_url URL to the image metadata
+ * @param string $forum_shortname Forum shortname for URL construction
+ * @param int $message_id Message ID to add
+ * @return bool True if metadata was updated successfully
+ */
+function update_image_metadata(array $upload_config, string $metadata_url, string $forum_shortname, int $message_id): bool {
+    $uploader = UploadFactory::create($upload_config);
+    if (!$uploader || !$uploader->supports_metadata()) {
+        return false;
+    }
+
+    // Get current metadata
+    $metadata = $uploader->load_metadata($metadata_url);
+    if (!$metadata) {
+        return false;
+    }
+
+    // Add message reference
+    $message_url = '/' . $forum_shortname . '/msgs/' . $message_id . '.phtml';
+    if (!in_array($message_url, $metadata->messages)) {
+        $metadata->messages[] = $message_url;
+        return $uploader->save_metadata($metadata_url, $metadata);
+    }
+
+    return true;
 }
 
 // vim:sw=2 ts=8 et

@@ -55,9 +55,34 @@ This thread is locked. No replies are allowed.<br>
   <tr>
     <th>Image Upload:</th>
     <td class="button">
-    <input class="text" type="file" name="imagefile" onchange="if (this.files && this.files[0] && this.files[0].size > (%[MAXIMAGEFILEBYTES])) { alert('Image upload cannot exceed ' + (parseInt((%[MAXIMAGEFILEBYTES] / 1024 / 1024) * 100) / 100) + 'Mb'); this.value = ''; }">
+    <div class="form-group">
+        <select id="imageWidth" class="form-control">
+            <option value="640p">Small (640p)</option>
+            <option value="1080" selected>Medium (1080p)</option>
+            <option value="1280">Large (1280p)</option>
+            <option value="1920">X-Large (1920p)</option>
+        </select>
+        <input type="file" name="imagefile" id="imagefile" class="form-control" accept="image/*">
+        <!-- <small class="form-text text-muted">Maximum file size: %[MAXIMAGEFILEBYTES] MB</small> -->
+        <input type="hidden" name="fileMetadata" id="fileMetadata" value="">
+        <input type="hidden" name="fileData" id="fileData" value="">
+        <input type="hidden" name="imagedeleteurl" id="imagedeleteurl" value="%[IMAGEDELETEURL]">
+        <div id="uploadInfo" class="upload-info"></div>
+    </div>
     </td>
   </tr>
+  <script>
+      const maxImageBytes = %[MAXIMAGEFILEBYTES];
+  </script>
+  <script src="%[js_image_resizer]"></script>
+  <script src="%[js_postform_upload]"></script>
+  <style>
+  .upload-info {
+      margin-top: 5px;
+      font-size: 0.9em;
+      color: #666;
+  }
+  </style>
 %end [imageupload]
 <tr>
   <th>Video URL:</th>

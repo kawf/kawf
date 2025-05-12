@@ -105,6 +105,7 @@ if (isset($_POST['postcookie'])) {
   // --- POST Submission ---
   if (isset($_POST['imgpreview'])) $imgpreview = true; // the user posted an image or video but didn't preview yet
   if (isset($_POST['preview'])) $preview = true; // show the preview block
+  if (isset($_POST['imagedeleteurl'])) $msg['imagedeleteurl'] = $_POST['imagedeleteurl']; // propogate the delete url to the message from preview
 
   //debug_log("postcookie set, imgpreview=" . var_export($imgpreview, true) . ", preview=" . var_export($preview, true));
 
@@ -152,29 +153,61 @@ if (isset($_POST['postcookie'])) {
   //debug_log("error=" . implode(", ", $error) .  " isset(error)=" . var_export(isset($error), true) .  " empty(error)=" . var_export(empty($error), true));
 
   // Image Upload Handling
-  if (empty($error) && can_upload_images() && isset($_FILES["imagefile"]) && $_FILES["imagefile"]["size"] > 0) {
-    $newimageurls = get_uploaded_image_urls($_FILES["imagefile"]["tmp_name"]);
-    if ($newimageurls) {
-      $msg["imageurl"] = $newimageurls[0];
-      $msg["imagedeleteurl"] = $newimageurls[1]; // Need to store this? Maybe in session?
-    } else {
+  $upload_config = get_upload_config();
+  //debug_log("post.php: checking if we can upload images: " . implode(", ", $error) .  " fileMetadata=" . print_r($_POST['fileMetadata'], true));
+  if (empty($error) && can_upload_images($upload_config) && !empty($_POST['fileData']) && !empty($_POST['fileMetadata'])) {
+    //debug_log("post.php: can upload images");
+    // Get filename information from the hidden input
+    $fileMetadata = json_decode($_POST['fileMetadata'], true);
+    //debug_log("post.php: decoded fileMetadata from POST: " . print_r($fileMetadata, true));
+
+    // Create a temporary file from the data URL
+    $tempFile = tempnam(sys_get_temp_dir(), 'kawf_');
+    $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $_POST['fileData']));
+    file_put_contents($tempFile, $data);
+
+    // Rename the temp file to use the correct filename from metadata
+    $finalTempFile = dirname($tempFile) . '/' . $fileMetadata['resized'];
+    rename($tempFile, $finalTempFile);
+
+    // Create upload context
+    $context = create_upload_context(
+        $upload_config,
+        $finalTempFile,
+        $fileMetadata,
+        $user->aid,
+        $forum['fid']
+    );
+
+    // Get the image URLs
+    $result = upload_image($context);
+    if (isset($result['error'])) {
       $error["image_upload_failed"] = true;
-    }
-  } else {
-    // Force preview if image/video exists but wasn't explicitly previewed
-    if ((!empty($msg['imageurl']) || !empty($msg['video'])) && !$imgpreview) {
-      //debug_log("Force initial preview because imgpreview=$imgpreview and image/video exists but wasn't explicitly previewed");
-      $preview = true;
+      $content_tpl->set("UPLOAD_ERROR", $result['error']);
+    } else {
+      $msg["imageurl"] = $result['url'];
+      $msg["imagedeleteurl"] = $result['delete_url'];
+      if (isset($result['metadata_url'])) {
+          $msg["imagemetadataurl"] = $result['metadata_url'];
+      }
     }
   }
 
+  // Force preview if image/video exists but wasn't explicitly previewed
+  if ((!empty($msg['imageurl']) || !empty($msg['video'])) && !$imgpreview) {
+    //debug_log("Setting preview to true because imgpreview=" . $imgpreview?"true":"false" . "and image/video exists but wasn't explicitly previewed");
+    $preview = true;
+  }
+
   if ((!empty($error) || $preview)) {
-    //debug_log("User saw preview because preview=" . var_export($preview, true) . " or error [" . implode(", ", $error) . "]");
+    //debug_log("Setting imgpreview true: user saw preview because preview=" . $preview?"true":"false" . " or error [" . implode(", ", $error) . "]");
     $imgpreview = true; // this gets sent as a hidden input to the form via render_postform()
     if(!empty($msg['imageurl'])) $error["image"] = true;
     if(!empty($msg['video'])) $error["video"] = true;
   }
 
+  $preview_html = render_message($content_tpl, $msg, $user);
+  $content_tpl->set("PREVIEW", $preview_html);
 
   if (isset($_POST['OffTopic']))
     $status = "OffTopic";
@@ -182,6 +215,11 @@ if (isset($_POST['postcookie'])) {
     $status = "Active";
 
   $accepted = empty($error);
+
+  // After successful post, update image metadata with message reference
+  if (empty($error) && !$preview && !empty($msg['imageurl']) && !empty($msg['imagemetadataurl'])) {
+    update_image_metadata($upload_config, $msg['imagemetadataurl'], $forum['shortname'], $msg['mid']);
+  }
 } else {
   /* somebody hit post.phtml directly, just generate blank post form */
   $msg['message'] = $msg['subject'] = "";
@@ -237,9 +275,12 @@ if (!empty($error)) {
   $content_tpl->parse("post_content.error");
 }
 
-// Parse post content block BEFORE storage, which does hack_insert, which is not what we want for preview
-$preview_html = render_message($content_tpl, $msg, $user);
-$content_tpl->set("PREVIEW", $preview_html);
+/*
+debug_log("post.php: error=" . implode(", ", $error) .
+          ", accepted=" . ($accepted ? "true" : "false") .
+          ", preview=" . ($preview ? "true" : "false") .
+          ", imgpreview=" . ($imgpreview ? "true" : "false"));
+*/
 
 $content_block = "preview";
 if (!$accepted || $preview) {

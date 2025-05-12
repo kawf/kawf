@@ -237,7 +237,13 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 .postform th.top { vertical-align: top; }
 .postform td { padding: 0.5em; }
 .postform td.input { padding: 0; }
-.postform td.button { padding: 1px 0px; }
+/* "Image Upload" and "Post Message" buttons/checkboxes */
+.postform td.button { padding: 0.3em 0px 0px 0px; }
+.postform td.button input[type="submit"] { margin-left: 4px; }
+.postform td.button input[type="submit"] + input[type="submit"] { margin-left: 0; }
+.postform td.button select { margin-left: 4px; } /* "Image Upload" size dropdown  */
+/* .postform td.button input[type="file"] { margin-left: 4px; } */ /* "Image Upload" "Browse" file input button */
+.postform td.button .upload-info { margin-left: 4px; font-size: 80%; }
 
 /***************/
 /* preferences */
