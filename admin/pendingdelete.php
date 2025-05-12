@@ -14,14 +14,14 @@ if(isset($_GET['clean']) && $_GET['clean'] == 1) {
     Header("Location: pending.phtml?message=" . urlencode("Cleaned up completed requests"));
 } else {
     if(is_valid_integer($_GET['aid'])&&is_valid_integer($_GET['tid'])) {
-	$aid=$_GET['aid'];
-	$tid=$_GET['tid'];
+        $aid=$_GET['aid'];
+        $tid=$_GET['tid'];
     } else
-	err_not_found('Invalid aid/tid');
+        err_not_found('Invalid aid/tid');
 
     $sql="delete from u_pending where aid = ? and tid = ?";
     db_exec($sql, array($aid, $tid));
     Header("Location: pending.phtml?message=" . urlencode("Request Deleted"));
 }
-
+// vim: set ts=8 sw=4 et:
 ?>

@@ -36,7 +36,7 @@ if (!$pending) {
   if (!$user->valid()) {
     $error = "invalid_aid";
   } else {
-    db_exec("update u_pending set status = 'Done' where tid = ?", array($pending['tid']));
+    db_exec("update u_pending set status = 'Done' where cookie = ?", array($cookie));
     switch ($pending['type']) {
     case "NewAccount":
       if ($user->status == 'Create') {

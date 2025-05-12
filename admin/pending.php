@@ -8,10 +8,16 @@ page_header("Pending Requests");
 if (isset($_GET['message']))
   page_show_message($_GET['message']);
 
+$show_all = isset($_GET['show_all']) && $_GET['show_all'] == 1;
+$toggle_link = $show_all ?
+  "<a href=\"pending.phtml\">Show Deduplicated</a>" :
+  "<a href=\"pending.phtml?show_all=1\">Show All</a>";
+
 $sth = db_query("select u_pending.*, u_users.name, u_users.email from u_pending, u_users where u_users.aid = u_pending.aid order by tstamp");
 ?>
 
 <a href="pendingdelete.phtml?clean=1&token=<?php echo $stoken; ?>">Delete completed or old requests</a>
+<?php echo $toggle_link; ?>
 
 <p>
 
@@ -30,17 +36,19 @@ $sth = db_query("select u_pending.*, u_users.name, u_users.email from u_pending,
 </tr>
 
 <?php
-$p = Array();
 $requests = Array();
-
 while ($request = $sth->fetch()) {
-  $key = $request['aid'] . $request['type'];
+  if (!$show_all) {
+    $key = $request['aid'] . $request['type'];
 
-  /* If the entry doesn't exist already or the capabilities are different */
-  if (!isset($requests[$key]) ||
-      $requests[$key]['type'] != $request['type']) {
-    $requests[$key] = $request;
-    $requestlist[] = &$requests[$key];
+    /* If the entry doesn't exist already or the capabilities are different */
+    if (!isset($requests[$key]) ||
+        $requests[$key]['type'] != $request['type']) {
+      $requests[$key] = $request;
+      $requestlist[] = $request;
+    }
+  } else {
+    $requestlist[] = $request;
   }
 }
 $sth->closeCursor();
@@ -69,4 +77,5 @@ if(isset($requestlist)) {
 
 <?php
 page_footer();
+// vim: set ts=8 sw=2 et:
 ?>
