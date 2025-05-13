@@ -286,14 +286,22 @@ function image_url_hack_insert($msg)
 /* strip imageurl from message and fill in $msg['imageurl'] */
 function image_url_hack_extract($msg)
 {
+    if (empty($msg['message'])) {
+      return $msg;
+    }
+
     /* Strip from existing (old) message if it doesn't already have an
        imageurl. Theoretically, users shouldn't be able to add <p>'s to their
        message, so this should ONLY be in messages that were prepended with
        images automatcially by post/edit */
-    if (empty($msg['imageurl']) && array_key_exists('message', $msg) &&
-      preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>\s*(.*)$/s", $msg['message'], $regs)) {
-      $msg['imageurl'] = unescapequotes($regs[1]);
-      $msg['message'] = $regs[2];
+    if (array_key_exists('message', $msg) &&
+        preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>\s*(.*)$/s", $msg['message'], $regs)) {
+      if (empty($msg['imageurl'])) {
+        $msg['imageurl'] = unescapequotes($regs[1]);
+        $msg['message'] = $regs[2];
+      } else {
+        error_log("image_url_hack_extract: imgurl AND center imgurl found in msg->message: " . $msg['message']);
+      }
     }
 
     return $msg;

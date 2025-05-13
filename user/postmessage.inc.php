@@ -61,9 +61,9 @@ function postmessage($user, $fid, &$msg, $request)
     /* Issue #25 - if there is no mid for this cookie, the message wasn't posted yet,
      * so this message isn't a dup - it truly is new. Pretend nothing bad happened */
     if (!$msg['mid'])
-	$newmessage = true;
+    $newmessage = true;
     else
-	$newmessage = false;
+    $newmessage = false;
   }
 
   if(!$newmessage) {
@@ -72,9 +72,9 @@ function postmessage($user, $fid, &$msg, $request)
 
     /* update with new message */
     $sql = "update $mtable set " .
-	"name = ?, email = ?, ip = ?, flags = ?, subject = ?, " .
-	"message = ?, url = ?, urltext = ?, video = ?, state = ? " .
-	"where mid = ? and state = 'Active'";
+      "name = ?, email = ?, ip = ?, flags = ?, subject = ?, " .
+      "message = ?, url = ?, urltext = ?, video = ?, state = ? " .
+      "where mid = ? and state = 'Active'";
     db_exec($sql, array(
       $msg['name'], $msg['email'], $msg['ip'], $msg['flags'], $msg['subject'],
       $msg['message'], $msg['url'], $msg['urltext'], $msg['video'],
@@ -84,11 +84,11 @@ function postmessage($user, $fid, &$msg, $request)
     /* unwind... do we really need these? */
     /* unwind index for old message */
     if ($omsg != null && !is_null($omsg['state'])) {
-	if (!isset($msg['pmid']))
-	  db_exec("update f_indexes set " . $omsg['state'] . " = " . $omsg['state'] . " - 1 where iid = ?", array($iid));
+      if (!isset($msg['pmid']))
+        db_exec("update f_indexes set " . $omsg['state'] . " = " . $omsg['state'] . " - 1 where iid = ?", array($iid));
 
-	/* unwind post count for old message */
-	$user->post($fid, $omsg['state'], -1);
+      /* unwind post count for old message */
+      $user->post($fid, $omsg['state'], -1);
     }
 
     $track_thread = $untrack_thread = false;
@@ -117,8 +117,8 @@ function postmessage($user, $fid, &$msg, $request)
     /* TZ: f_messagesXX 'date' is SQL server local time */
     /* FIXME: translate pid -> pmid */
     $sql = "insert into $mtable " .
-	"( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, video, state, views, changes ) "
-            . "values ( ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, 0, ? );";
+      "( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, video, state, views, changes ) " .
+      "values ( ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, 0, ? );";
 
     if (array_key_exists('imagedeleteurl', $msg) && $msg["imagedeleteurl"]) {
       $msg["changes"] = "Image delete url for " . $msg["imageurl"] . " = " . $msg["imagedeleteurl"] . "\n";
@@ -143,7 +143,7 @@ function postmessage($user, $fid, &$msg, $request)
       do {
         $row = db_query_first("select max(id) + 1 from f_unique where fid = ? and type = 'Thread'", array($fid));
         $msg['tid'] = $row ? $row[0] : NULL;
-	if (!is_numeric($msg['tid']))
+        if (!is_numeric($msg['tid']))
           throw new RuntimeException('failed to get new tid for ' . $request['postcookie']);
 
         $sql = "insert into f_unique ( fid, type, id ) values ( ?, 'Thread', ? )";
@@ -170,8 +170,7 @@ function postmessage($user, $fid, &$msg, $request)
 
       $tid = addslashes($msg['tid']);
 
-      /* check to make sure we're not already tracking, or we're already
-	 not tracking */
+      /* check to make sure we're not already tracking, or we're already not tracking */
       $row = db_query_first(
         "select count(*) from f_tracking where fid = ? and aid = ? and tid = ?",
         array($fid, $user->aid, $tid)
@@ -186,8 +185,8 @@ function postmessage($user, $fid, &$msg, $request)
       /* TZ: 'tstamp' is SQL server localtime */
       /* save current tstamp for track thread - bug 2969636 */
       if ($track_thread) {
-	$row = db_query_first("select UNIX_TIMESTAMP(tstamp) from $ttable where tid = ?", array($tid));
-	$tstamp = $row ? $row[0] : NULL;
+        $row = db_query_first("select UNIX_TIMESTAMP(tstamp) from $ttable where tid = ?", array($tid));
+        $tstamp = $row ? $row[0] : NULL;
       }
       $sql = "update $ttable set replies = replies + 1, tstamp = NOW() where tid = ?";
       db_exec($sql, array($tid));

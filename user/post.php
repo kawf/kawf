@@ -237,6 +237,10 @@ if (!empty($error)) {
   $content_tpl->parse("post_content.error");
 }
 
+// Parse post content block BEFORE storage, which does hack_insert, which is not what we want for preview
+$preview_html = render_message($content_tpl, $msg, $user);
+$content_tpl->set("PREVIEW", $preview_html);
+
 $content_block = "preview";
 if (!$accepted || $preview) {
   //debug_log("Step 1: accepted=" . var_export($accepted, true) . " preview=" . var_export($preview, true) . ", rendering form with imgpreview=" . var_export($imgpreview, true));
@@ -291,9 +295,6 @@ if (!$accepted || $preview) {
   $content_tpl->set("MSG_MID", $msg['mid']);
 } // accepted and not preview
 
-// Parse post content block for one of the three contexts: preview, accept, duplicate
-$preview_html = render_message($content_tpl, $msg, $user);
-$content_tpl->set("PREVIEW", $preview_html);
 $content_tpl->parse("post_content.$content_block");
 
 // Parse the main container block
