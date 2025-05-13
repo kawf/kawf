@@ -61,8 +61,14 @@ class DAV extends Upload {
         return true;
     }
 
-    public function delete(string $path): bool {
+    public function delete(string $path, string $hash, int $timestamp, int $userId): bool {
         if (!$this->isAvailable()) {
+            return false;
+        }
+
+        // Verify the deletion hash
+        if (!$this->verifyDeleteHash($path, $hash, $timestamp, $userId)) {
+            $this->error = "Invalid or expired deletion hash";
             return false;
         }
 
@@ -182,9 +188,16 @@ class DAV extends Upload {
             return null;
         }
 
+        // Create a structured delete URL that can be used in changes
+        $timestamp = time();
+        $deletehash = $this->generateDeleteHash($path, $metadata->user_id, $timestamp);
+
+        // Return relative path for deletion - forum software will prepend its base URL
+        $delete_url = 'deleteimage.phtml?url=' . urlencode($path) . '&hash=' . $deletehash . '&t=' . $timestamp;
+
         return [
             'url' => rtrim($this->config['public_url'], '/') . '/' . $remote_path,
-            'delete_url' => $path, // temporary, will be replaced with a signed URL
+            'delete_url' => $delete_url,
             'metadata_url' => $remote_path
         ];
     }

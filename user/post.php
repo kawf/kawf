@@ -3,10 +3,11 @@
 require_once("strip.inc.php");          // For stripcrap
 require_once("thread.inc.php");         // For get_thread
 require_once("message.inc.php");        // For preprocess, render_message, mid_to_iid, db_query_first etc.
+require_once("image.inc.php");          // For upload_image, can_upload_images, create_upload_context, update_image_metadata
 require_once("postform.inc.php");       // For render_postform
 require_once("postmessage.inc.php");    // For postmessage
 require_once("mailfrom.inc.php");       // For email_followup, db_exec
-require_once("page-yatt.inc.php");  // For YATT class, generate_page
+require_once("page-yatt.inc.php");      // For YATT class, generate_page
 
 $user->req(); // This now relies on user.inc.php being loaded before this script
 

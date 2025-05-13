@@ -22,7 +22,8 @@ $webdav_config = array(
     'url' => 'https://dav.example.com',
     'username' => 'kawf',
     'password' => 'your_webdav_password',
-    'public_url' => 'https://images.example.com'
+    'public_url' => 'https://images.example.com',
+    'delete_salt' => 'your_delete_salt'
 );
 */
 

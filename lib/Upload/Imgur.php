@@ -69,5 +69,30 @@ class Imgur extends Upload {
     public function load_metadata(string $path): ?ImageMetadata {
         return null;
     }
+
+    public function delete(string $deletehash): bool {
+        if (!$this->isAvailable()) {
+            return false;
+        }
+
+        $url = self::IMGUR_DELETE_URL . $deletehash;
+        $result = $this->makeCurlRequest($url, [
+            CURLOPT_CUSTOMREQUEST => 'DELETE',
+            CURLOPT_HTTPHEADER => ['Authorization: Client-ID ' . $this->config['client_id']]
+        ]);
+
+        if (!$result) {
+            $this->error = "Failed to delete image from Imgur";
+            return false;
+        }
+
+        $data = json_decode($result['response'], true);
+        if (!isset($data['success']) || !$data['success']) {
+            $this->error = 'Imgur deletion failed: ' . ($data['data']['error'] ?? 'Unknown error');
+            return false;
+        }
+
+        return true;
+    }
 }
 // vim: set ts=8 sw=4 et:

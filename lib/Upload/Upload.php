@@ -105,6 +105,51 @@ abstract class Upload {
      * @return array|null Array containing 'url' and optionally 'delete_url', or null on failure
      */
     abstract public function upload(string $filename, ?string $namespace = null, ?ImageMetadata $metadata = null): ?array;
+
+    /**
+     * Generate a secure deletehash for an upload that can be verified without database storage
+     *
+     * @param string $path The path or identifier of the upload
+     * @param int $userId The user ID of the uploader
+     * @param int $timestamp When the hash was generated
+     * @return string A secure hash that can be used for deletion
+     */
+    protected function generateDeleteHash(string $path, int $userId, int $timestamp): string {
+        // Create a data string that includes all verification info
+        $data = sprintf(
+            "%s|%d|%d|%s",
+            $path,
+            $userId,
+            $timestamp,
+            $this->config['delete_salt'] ?? 'default_salt_change_me'
+        );
+
+        // Generate SHA-256 hash of the data
+        return hash('sha256', $data);
+    }
+
+    /**
+     * Verify a delete hash from a URL
+     *
+     * @param string $path The path from the URL
+     * @param string $hash The hash from the URL
+     * @param int $timestamp The timestamp from the URL
+     * @param int $userId The current user's ID
+     * @param int $maxAge Maximum age of the hash in seconds (default 24 hours)
+     * @return bool True if the hash is valid and not expired
+     */
+    public function verifyDeleteHash(string $path, string $hash, int $timestamp, int $userId, int $maxAge = 86400): bool {
+        // Check if the hash has expired
+        if (time() - $timestamp > $maxAge) {
+            return false;
+        }
+
+        // Generate the expected hash
+        $expectedHash = $this->generateDeleteHash($path, $userId, $timestamp);
+
+        // Compare hashes using hash_equals for timing attack prevention
+        return hash_equals($expectedHash, $hash);
+    }
 }
 
 class ImageMetadata {

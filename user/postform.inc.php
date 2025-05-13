@@ -1,4 +1,7 @@
 <?php
+
+require_once("image.inc.php"); // For can_upload_images, get_upload_config, max_image_upload_bytes
+
 function hidden($name, $value)
 {
   return "<input type=\"hidden\" name=\"" . htmlspecialchars($name) . "\" "

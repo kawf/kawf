@@ -121,7 +121,12 @@ function postmessage($user, $fid, &$msg, $request)
       "values ( ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, 0, ? );";
 
     if (array_key_exists('imagedeleteurl', $msg) && $msg["imagedeleteurl"]) {
-      $msg["changes"] = "Image delete url for " . $msg["imageurl"] . " = " . $msg["imagedeleteurl"] . "\n";
+      $deleteurl = $msg["imagedeleteurl"];
+      // Convert relative URL to absolute if needed
+      if (strpos($deleteurl, 'http') !== 0) {
+        $deleteurl = get_base_url() . '/' . ltrim($deleteurl, '/');
+      }
+      $msg["changes"] = "Image delete url for " . $msg["imageurl"] . " = " . $deleteurl . "\n";
     } else {
       $msg["changes"] = "";
     }
