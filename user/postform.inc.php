@@ -175,6 +175,7 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
         $form_tpl->set("TRACKTHREAD_CHECKED", $track_thread ? " checked" : "");
         $form_tpl->set("MAXIMAGEFILEBYTES", max_image_upload_bytes($upload_config));
         $form_tpl->set("IMAGEDELETEURL", isset($msg['imagedeleteurl']) ? $msg['imagedeleteurl'] : '');
+        $form_tpl->set("IMAGEMETADATAURL", isset($msg['imagemetadataurl']) ? $msg['imagemetadataurl'] : '');
 
     } else {
          // Not enabled or not logged in - $is_acct_active remains false

@@ -114,7 +114,7 @@ class DAV extends Upload {
         ]);
 
         if (!$result) {
-            error_log("Failed to save metadata for $path");
+            $this->error = "Failed to save metadata for $path";
             return false;
         }
         return true;
@@ -129,17 +129,17 @@ class DAV extends Upload {
         ]);
 
         if (!$result) {
-            error_log("[DAV::load_metadata] Failed to load metadata for $path (URL: $url)");
+            $this->error = "Failed to load metadata for $path (URL: $url)";
             return null;
         }
         if ($result['http_code'] < 200 || $result['http_code'] >= 300) {
-            error_log("[DAV::load_metadata] Non-2xx response for $path: " . $result['response']);
+            $this->error = "Non-2xx response for $path: " . $result['response'];
             return null;
         }
 
         $data = json_decode($result['response'], true);
         if (!$data) {
-            error_log("[DAV::load_metadata] Failed to decode metadata JSON for $path. Response: " . $result['response']);
+            $this->error = "Failed to decode metadata JSON for $path. Response: " . $result['response'];
             return null;
         }
 
@@ -166,6 +166,7 @@ class DAV extends Upload {
 
         // Ensure all parent directories exist
         if (!$this->ensureRemoteDirectories($remote_path)) {
+            $this->error = "Failed to ensure remote directories for $remote_path";
             return null;
         }
 

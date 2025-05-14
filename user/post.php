@@ -107,6 +107,7 @@ if (isset($_POST['postcookie'])) {
   if (isset($_POST['imgpreview'])) $imgpreview = true; // the user posted an image or video but didn't preview yet
   if (isset($_POST['preview'])) $preview = true; // show the preview block
   if (isset($_POST['imagedeleteurl'])) $msg['imagedeleteurl'] = $_POST['imagedeleteurl']; // propogate the delete url to the message from preview
+  if (isset($_POST['imagemetadataurl'])) $msg['imagemetadataurl'] = $_POST['imagemetadataurl']; // propogate the metadata url to the message from preview
 
   //debug_log("postcookie set, imgpreview=" . var_export($imgpreview, true) . ", preview=" . var_export($preview, true));
 
@@ -216,11 +217,6 @@ if (isset($_POST['postcookie'])) {
     $status = "Active";
 
   $accepted = empty($error);
-
-  // After successful post, update image metadata with message reference
-  if (empty($error) && !$preview && !empty($msg['imageurl']) && !empty($msg['imagemetadataurl'])) {
-    update_image_metadata($upload_config, $msg['imagemetadataurl'], $forum['shortname'], $msg['mid']);
-  }
 } else {
   /* somebody hit post.phtml directly, just generate blank post form */
   $msg['message'] = $msg['subject'] = "";
@@ -293,7 +289,8 @@ if (!$accepted || $preview) {
   $content_tpl->parse("post_content.form");
 } else {
   //debug_log("Step 2: accepted=" . var_export($accepted, true) . " preview=" . var_export($preview, true));
-  // Step 2
+
+ // Step 2
   // Message was accepted, parse the accept block
   if (postmessage($user, $forum['fid'], $msg, $_POST) == true) {
     // Handle email followups
@@ -332,6 +329,15 @@ if (!$accepted || $preview) {
     $content_block = "accept";
   } else {
     $content_block = "duplicate";
+  }
+
+  // After successful post, update image metadata with message reference
+  if (empty($error) && !$preview && !empty($msg['imageurl']) && !empty($msg['imagemetadataurl'])) {
+    $error = update_image_metadata($upload_config, $msg['imagemetadataurl'], $forum['shortname'], $msg['mid']);
+    if ($error) {
+      $content_tpl->set("UPLOAD_ERROR", $error);
+    }
+  } else {
   }
 
   $content_tpl->set("MSG_MID", $msg['mid']);

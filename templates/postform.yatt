@@ -67,6 +67,7 @@ This thread is locked. No replies are allowed.<br>
         <input type="hidden" name="fileMetadata" id="fileMetadata" value="">
         <input type="hidden" name="fileData" id="fileData" value="">
         <input type="hidden" name="imagedeleteurl" id="imagedeleteurl" value="%[IMAGEDELETEURL]">
+        <input type="hidden" name="imagemetadataurl" id="imagemetadataurl" value="%[IMAGEMETADATAURL]">
         <div id="uploadInfo" class="upload-info"></div>
     </div>
     </td>
