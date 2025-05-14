@@ -368,6 +368,9 @@ while ($numshown < $threadsperpage) {
 // Parse conditional blocks based on state
 if ($user->valid()) {
   $content_tpl->parse('header.tracked_threads');
+  if (can_upload_images()) {
+    $content_tpl->parse('header.images');
+  }
 }
 if ($tthreadsshown > 0) {
   $content_tpl->parse('header.update_all');

@@ -6,7 +6,7 @@
 require_once('lib/Upload/Upload.php');
 require_once('lib/Upload/UploadFactory.php');
 
-use Kawf\Upload\{ImageMetadata, UploadFactory};
+use Kawf\Upload\{ImageMetadata, UploadFactory, Upload};
 
 class UploadContext {
     public array $config;
@@ -42,7 +42,10 @@ class UploadContext {
 /**
  * Check if image uploads are enabled in the configuration
  */
-function can_upload_images($upload_config) {
+function can_upload_images($upload_config = null) {
+    if ($upload_config == null) {
+        $upload_config = get_upload_config();
+    }
     return isset($upload_config) && ($upload_config['dav']['enabled'] || $upload_config['imgur']['enabled']);
 }
 
@@ -70,7 +73,7 @@ function get_upload_config(): array {
     );
 }
 
-function get_uploader() {
+function get_uploader(): Upload {
     // Get upload configuration
     $upload_config = get_upload_config();
 
@@ -224,13 +227,12 @@ function update_image_metadata(array $upload_config, string $metadata_url, strin
 /**
  * Delete an uploaded image
  *
+ * @param Upload $uploader The uploader instance
  * @param string $delete_url The deletion URL from the upload result
  * @param int $userId The ID of the user requesting deletion
  * @return bool True if deletion was successful
  */
-function delete_image(string $delete_url, int $userId): bool {
-    global $uploader;
-
+function delete_image(Upload $uploader, string $delete_url, int $userId): bool {
     // Parse the delete URL
     $parsed = parse_url($delete_url);
     if (!$parsed) {
@@ -260,4 +262,27 @@ function delete_image(string $delete_url, int $userId): bool {
     error_log("Unknown delete URL format: $delete_url");
     return false;
 }
+
+function show_images(Upload $uploader, array $forum, ForumUser $user): string {
+    $yatt = new_yatt('showimages.yatt', $forum);
+
+    $namespace = "{$forum['fid']}/{$user->aid}";
+    $images = $uploader->readdir($namespace);
+    if (empty($images)) {
+        $yatt->parse('images_page.no_images');
+    } else {
+        foreach ($images as $img) {
+            $yatt->set('IMAGE_URL', htmlspecialchars($img['url']));
+            $yatt->set('IMAGE_ORIGINAL_NAME', htmlspecialchars($img['original_name']));
+            $yatt->set('IMAGE_UPLOAD_TIME', $img['upload_time'] ? date('Y-m-d H:i:s', strtotime($img['upload_time'])) : '');
+            $yatt->set('IMAGE_FILE_SIZE', $img['file_size'] ? format_bytes($img['file_size']) : '');
+            $yatt->parse('images_page.images_list.image');
+        }
+        $yatt->parse('images_page.images_list');
+    }
+    $yatt->parse('images_page');
+    return $yatt->output();
+}
+
+
 // vim: set ts=8 sw=4 et:

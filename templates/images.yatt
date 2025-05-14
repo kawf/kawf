@@ -1,24 +1,51 @@
-%begin [images_page]
-<p><b>Your images in %[FORUM_NAME]</b></p>
-%begin [no_images]
-<p>No images found in this forum.</p>
-%end [no_images]
-%begin [images_list]
-<div class="image-grid">
-%begin [image]
-  <div class="image-card">
-    <a href="%[IMAGE_URL]" target="_blank">
-      <img src="%[IMAGE_URL]" alt="%[IMAGE_ORIGINAL_NAME]" loading="lazy">
-    </a>
-    <div class="image-info">
-      <div class="image-name">%[IMAGE_ORIGINAL_NAME]</div>
-      <div class="image-meta">
-        <span class="upload-time">%[IMAGE_UPLOAD_TIME]</span>
-        <span class="file-size">%[IMAGE_FILE_SIZE]</span>
-      </div>
+%begin [images]
+  %[#] Outer container: Either the 'forums' block or 'no_images' block will be parsed by PHP
+  <p><b>Your Images</b></p>
+  %begin [forum]
+    <hr class="images">
+
+    <table class="forumheader">
+    <tr><td><a href="/%[FORUM_SHORTNAME]"><b>%[FORUM_NAME]</b></a></td></tr>
+    %[#] Forum header HTML is set as a variable by PHP
+    <tr>
+    %[FORUM_HEADER]
+    </tr>
+    </table>
+
+    <table class="tools">
+    <tr>
+      <td class="toolsleft">
+        <a href="/tips/?%[PAGE]" target="_blank">Tips</a>
+      | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;%[PAGE]" target="_blank">Search</a>
+      | <a href="/%[FORUM_SHORTNAME]"><b>Go to %[FORUM_NAME]</b></a>
+      </td>
+      <td class="toolsright">
+        <a href="/%[FORUM_SHORTNAME]/images.phtml"><b>Images</b></a>
+        %begin [update_all]
+          | <a href="/%[FORUM_SHORTNAME]/markuptodate.phtml?tid=all&amp;%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a>
+        %end [update_all]
+      </td>
+    </tr>
+    </table>
+
+    <table class="images">
+    <tr>
+      <td>%[content]</td>
+    </tr>
+    </table>
+  %end [forum]
+
+  %[#] Block shown if no images - Parsed by PHP if num_shown is 0
+  %begin [no_images]
+    <span style="font-size: larger;">No images</span><br>
+  %end [no_images]
+
+  %[#] Common footer tools - Always shown? Assume parsed by PHP outside the main conditional
+  %begin [footer_tools]
+    <div class="tools">
+        <a href="/tips/?%[PAGE]" target="_blank">Tips</a>
+      | <a href="/search/?%[PAGE]" target="_blank">Search</a>
     </div>
-  </div>
-%end [image]
-</div>
-%end [images_list]
-%end [images_page]
+  %end [footer_tools]
+
+%end [images]

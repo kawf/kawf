@@ -45,6 +45,7 @@ $scripts = array(
 
   "tracking.phtml" => "tracking.php",
   "directory.phtml" => "directory.php",
+  "images.phtml" => "images.php",
 
   "redirect.phtml" => "redirect.php",
   "gmessage.phtml" => "gmessage.php",
@@ -87,7 +88,7 @@ $fscripts = array(
   "changestate.phtml" => "changestate.php",
   "sticky.phtml" => "sticky.php",
 
-  "images.phtml" => "images.php",
+  "images.phtml" => "showimages.php",
   "deleteimage.phtml" => "deleteimage.php",
 );
 

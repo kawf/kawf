@@ -1,43 +1,73 @@
 <?php
+
+$user->req(); // Restore user requirement check
+
+require_once("page-yatt.inc.php");
 require_once("image.inc.php");
-require_once("include/page-yatt.inc.php");
 
-use Kawf\Upload\UploadFactory;
-
-// Get forum info
-$forum = get_forum();
-
-// Ensure user is logged in
-if (!isset($user) || !$user) {
-    header('Location: login.phtml');
+if (!can_upload_images()) {
+    header('Location: ' . get_page_context(false));
     exit;
 }
 
-// Get uploader instance
+// Instantiate YATT for the content template
+// Note: No forum context needed yet as this page shows images across all forums
+$content_tpl = new_yatt('images.yatt');
+
+$content_tpl->set("PAGE", format_page_param());
+
+$sql = "select * from f_forums order by fid";
+$sth = db_query($sql);
+
+$numshown = 0;
+$forums = []; // Array to hold data for all forums
+
 $uploader = get_uploader();
+while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
+  set_forum($forum['fid']);
+  $content = show_images($uploader, $forum, $user);
+  if ($content) {
+    $forums[] = [
+      'forum' => $forum,
+      'content' => $content
+    ];
+    $numshown++;
+  }
+} // end while forum
+$sth->closeCursor();
 
-// Get list of images for this forum using the uploader abstraction
-$namespace = "{$forum['fid']}/{$user->aid}";
-$images = $uploader->readdir($namespace);
+// --- YATT Parsing Logic ---
 
-$yatt = new_yatt('images.yatt', $forum);
-$yatt->set('FORUM_NAME', $forum['name']);
-
-if (empty($images)) {
-    $yatt->parse('images_page.no_images');
+if ($numshown == 0) {
+  // Parse the 'no_images' block if nothing was found
+  $content_tpl->parse('images.no_images');
 } else {
-    foreach ($images as $img) {
-        $yatt->set('IMAGE_URL', htmlspecialchars($img['url']));
-        $yatt->set('IMAGE_ORIGINAL_NAME', htmlspecialchars($img['original_name']));
-        $yatt->set('IMAGE_UPLOAD_TIME', $img['upload_time'] ? date('Y-m-d H:i:s', strtotime($img['upload_time'])) : '');
-        $yatt->set('IMAGE_FILE_SIZE', $img['file_size'] ? format_bytes($img['file_size']) : '');
-        $yatt->parse('images_page.images_list.image');
-    }
-    $yatt->parse('images_page.images_list');
-}
-$yatt->parse('images_page');
+  // Loop through the collected forum data and parse blocks
+  foreach ($forums as $forum_item) {
+    $forum = $forum_item['forum'];
 
-// Render with site layout
-echo generate_page('Image Browser', $yatt->output());
+    // Set variables for the current forum iteration
+    $content_tpl->set('FORUM_HEADER', generate_forum_header($forum));
+    $content_tpl->set('FORUM_NAME', $forum['name']);
+    $content_tpl->set('FORUM_SHORTNAME', $forum['shortname']);
+    $content_tpl->set('FORUM_NOTICES', $forum_item['forum_notices']); // Set notices for this forum
 
-// vim: set ts=8 sw=4 et:
+    // Put the content in the content block
+    $content_tpl->set('content', $forum_item['content']);
+    // Parse this forum
+    $content_tpl->parse('images.forum');
+  } // End foreach forum_data
+} // End if numshown > 0
+
+// Always parse the footer tools?
+$content_tpl->parse('images.footer_tools');
+
+// Parse the main images block which acts as the root for content
+$content_tpl->parse('images');
+
+// Call the existing generate_page function with no forum
+clear_forum();
+print generate_page('Your Images', $content_tpl->output());
+
+// vim: sw=2
+?>

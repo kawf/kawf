@@ -259,8 +259,6 @@ class DAV extends Upload {
                     ];
                 }
             }
-        } else {
-            error_log("[DAV::readdir] No PROPFIND result");
         }
         if (count($images) === 0 && isset($result['response'])) {
             error_log("[DAV::readdir] Raw PROPFIND response: " . substr($result['response'], 0, 1000)); // log first 1000 chars

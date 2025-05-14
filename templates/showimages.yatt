@@ -1,0 +1,24 @@
+%begin [images_page]
+<p><b>Your images in <a href="/%[FORUM_SHORTNAME]/">%[FORUM_NAME]</a></b></p>
+%begin [no_images]
+<p>No images found in this forum.</p>
+%end [no_images]
+%begin [images_list]
+<div class="image-grid">
+%begin [image]
+  <div class="image-card">
+    <a href="%[IMAGE_URL]" target="_blank">
+      <img src="%[IMAGE_URL]" alt="%[IMAGE_ORIGINAL_NAME]" loading="lazy">
+    </a>
+    <div class="image-info">
+      <div class="image-name">%[IMAGE_ORIGINAL_NAME]</div>
+      <div class="image-meta">
+        <span class="upload-time">%[IMAGE_UPLOAD_TIME]</span>
+        <span class="file-size">%[IMAGE_FILE_SIZE]</span>
+      </div>
+    </div>
+  </div>
+%end [image]
+</div>
+%end [images_list]
+%end [images_page]
