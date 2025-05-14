@@ -193,19 +193,23 @@ if (!$result) {
 - Full path: `wayot/1/1/0430-175430.jpg`
 - Metadata path: `wayot/1/1/0430-175430.jpg.json`
 
-## Image Deletion Plan
+## Image Deletion
 
 - **Authenticated User Deletion:**
   - When a user is authenticated via the forum, image deletion can bypass hash checking and permission is granted based on session/user context.
   - This allows for a more seamless user experience in the image browser.
+  - The path format must be `userId/forumId/filename` for proper namespace verification.
+  - The delete endpoint is `/<forum>/deleteimage.phtml` and expects a POST request with JSON data containing the path.
 
 - **External API Deletion (`deleteimage.phtml`):**
   - The `deleteimage.phtml` endpoint is intended for external API usage, where hash checking and other security measures are enforced.
   - This endpoint is suitable for deletion links sent via email, bots, or other non-authenticated contexts.
+  - The delete URL format is `deleteimage.phtml?url=path&hash=xxx&t=yyy`.
 
 - **Direct Deletion from Image Browser:**
   - If the user is authenticated and the image browser provides a "delete" URL for an image, the browser can call the uploader's `delete` method directly, bypassing hash checks.
   - This should only be allowed for users with proper permissions (e.g., image owner, moderator).
+  - The JavaScript function `deleteImage(forum, path, imageName)` handles the deletion with proper confirmation and error handling.
 
 - **User Confirmation and Clickjacking Protection:**
   - To prevent accidental or malicious deletions (e.g., someone tricking a user into clicking an `images?delete=img` link), always require explicit user confirmation (e.g., a JavaScript `confirm('Are you sure?')` dialog) before performing the delete action in the browser.
@@ -215,3 +219,4 @@ if (!$result) {
   - Use direct delete for authenticated users in the browser (with confirmation).
   - Use `deleteimage.phtml` for external/API deletion (with hash checking).
   - Always protect users from accidental or tricked deletions.
+  - Maintain proper namespace verification for all deletion paths.

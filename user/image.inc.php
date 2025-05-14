@@ -225,14 +225,42 @@ function update_image_metadata(array $upload_config, string $metadata_url, strin
 }
 
 /**
- * Delete an uploaded image
+ * Delete an image by verifying ownership through namespace
+ * This is for authenticated users only and does not use hash verification
+ *
+ * @param Upload $uploader The uploader instance
+ * @param string $path The path to the image
+ * @param int $userId The ID of the user requesting deletion
+ * @return bool True if deletion was successful
+ */
+function delete_image(Upload $uploader, string $path, int $userId): bool {
+    // Extract namespace from path (format: "userId/forumId/filename")
+    $parts = explode('/', $path);
+    if (count($parts) < 2) {
+        error_log("Invalid path format: $path");
+        return false;
+    }
+
+    // First part should be the user ID
+    $pathUserId = (int)$parts[0];
+    if ($pathUserId !== $userId) {
+        error_log("Unauthorized: Image belongs to a different user: $pathUserId != $userId");
+        return false;
+    }
+
+    return $uploader->delete($path);
+}
+
+/**
+ * Delete an image using URL and hash verification
+ * This is for API/unauthenticated use
  *
  * @param Upload $uploader The uploader instance
  * @param string $delete_url The deletion URL from the upload result
  * @param int $userId The ID of the user requesting deletion
  * @return bool True if deletion was successful
  */
-function delete_image(Upload $uploader, string $delete_url, int $userId): bool {
+function delete_image_by_url(Upload $uploader, string $delete_url, int $userId): bool {
     // Parse the delete URL
     $parsed = parse_url($delete_url);
     if (!$parsed) {
@@ -263,7 +291,7 @@ function delete_image(Upload $uploader, string $delete_url, int $userId): bool {
     return false;
 }
 
-function show_images(Upload $uploader, array $forum, ForumUser $user): string {
+function show_images(Upload $uploader, array $forum, ForumUser $user) {
     $yatt = new_yatt('showimages.yatt', $forum);
 
     $namespace = "{$forum['fid']}/{$user->aid}";
@@ -272,16 +300,21 @@ function show_images(Upload $uploader, array $forum, ForumUser $user): string {
         $yatt->parse('images_page.no_images');
     } else {
         foreach ($images as $img) {
+            $md = $img['metadata'];
             $yatt->set('IMAGE_URL', htmlspecialchars($img['url']));
-            $yatt->set('IMAGE_ORIGINAL_NAME', htmlspecialchars($img['original_name']));
-            $yatt->set('IMAGE_UPLOAD_TIME', $img['upload_time'] ? date('Y-m-d H:i:s', strtotime($img['upload_time'])) : '');
-            $yatt->set('IMAGE_FILE_SIZE', $img['file_size'] ? format_bytes($img['file_size']) : '');
+            $yatt->set('IMAGE_ORIGINAL_NAME', $md ? htmlspecialchars($md->original_name) : '');
+            $yatt->set('IMAGE_UPLOAD_TIME', $md ? date('Y-m-d H:i:s', strtotime($md->upload_time)) : '');
+            $yatt->set('IMAGE_FILE_SIZE', $md ? format_bytes($md->file_size) : '');
+
+            // Set delete path - ensure it includes the full namespace (userId/forumId/filename)
+            $yatt->set('DELETE_PATH', htmlspecialchars($img['path']));
+
             $yatt->parse('images_page.images_list.image');
         }
         $yatt->parse('images_page.images_list');
     }
     $yatt->parse('images_page');
-    return $yatt->output();
+    return $yatt;
 }
 
 

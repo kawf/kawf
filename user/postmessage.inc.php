@@ -120,6 +120,7 @@ function postmessage($user, $fid, &$msg, $request)
       "( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, video, state, views, changes ) " .
       "values ( ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, 0, ? );";
 
+    /*
     if (array_key_exists('imagedeleteurl', $msg) && $msg["imagedeleteurl"]) {
       $deleteurl = $msg["imagedeleteurl"];
       // Convert relative URL to absolute if needed
@@ -130,6 +131,8 @@ function postmessage($user, $fid, &$msg, $request)
     } else {
       $msg["changes"] = "";
     }
+    */
+    $msg["changes"] = "";
 
     db_exec($sql, array(
       $msg['mid'], $user->aid, isset($msg['pmid']) ? $msg['pmid'] : 0, isset($msg['tid']) ? $msg['tid'] : 0, $msg['name'],

@@ -1,3 +1,6 @@
+%begin [script]
+<script src="%[js_image_action_href]"></script>
+%end [script]
 %begin [images]
   %[#] Outer container: Either the 'forums' block or 'no_images' block will be parsed by PHP
   <p><b>Your Images</b></p>

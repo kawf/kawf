@@ -413,3 +413,18 @@ hr.tracking { height: 1px; }
 .upload-time, .file-size {
     white-space: nowrap;
 }
+.image-actions {
+    margin-top: 8px;
+    text-align: right;
+}
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.delete-btn:hover {
+    background-color: #c82333;
+}

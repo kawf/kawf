@@ -1,6 +1,6 @@
 <?php
 
-$user->req(); // Restore user requirement check
+$user->req();
 
 require_once("page-yatt.inc.php");
 require_once("image.inc.php");
@@ -13,8 +13,8 @@ if (!can_upload_images()) {
 // Instantiate YATT for the content template
 // Note: No forum context needed yet as this page shows images across all forums
 $content_tpl = new_yatt('images.yatt');
-
 $content_tpl->set("PAGE", format_page_param());
+$content_tpl->set('js_image_action_href', js_href("image-action.js"));
 
 $sql = "select * from f_forums order by fid";
 $sth = db_query($sql);
@@ -25,7 +25,10 @@ $forums = []; // Array to hold data for all forums
 $uploader = get_uploader();
 while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
   set_forum($forum['fid']);
-  $content = show_images($uploader, $forum, $user);
+
+  $tpl = show_images($uploader, $forum, $user);
+  $content = $tpl->output();
+
   if ($content) {
     $forums[] = [
       'forum' => $forum,
@@ -42,6 +45,7 @@ if ($numshown == 0) {
   // Parse the 'no_images' block if nothing was found
   $content_tpl->parse('images.no_images');
 } else {
+  $content_tpl->parse('script'); // parse script once
   // Loop through the collected forum data and parse blocks
   foreach ($forums as $forum_item) {
     $forum = $forum_item['forum'];

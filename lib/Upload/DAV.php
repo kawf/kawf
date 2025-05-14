@@ -61,13 +61,13 @@ class DAV extends Upload {
         return true;
     }
 
-    public function delete(string $path, string $hash, int $timestamp, int $userId): bool {
+    public function delete(string $path, ?string $hash = null, int $timestamp = 0, int $userId = 0): bool {
         if (!$this->isAvailable()) {
             return false;
         }
 
         // Verify the deletion hash
-        if (!$this->verifyDeleteHash($path, $hash, $timestamp, $userId)) {
+        if ($hash && !$this->verifyDeleteHash($path, $hash, $timestamp, $userId)) {
             $this->error = "Invalid or expired deletion hash";
             return false;
         }
@@ -252,10 +252,10 @@ class DAV extends Upload {
                         $metadata = $this->load_metadata($path . $img_path);
                     }
                     $images[] = [
+                        'img' => $img_path,
+                        'path' => $namespace . '/' . $img_path,
                         'url' => $base_url . '/' . $path . $img_path,
-                        'original_name' => $metadata ? $metadata->original_name : basename($img_path),
-                        'upload_time' => $metadata ? $metadata->upload_time : '',
-                        'file_size' => $metadata ? $metadata->file_size : 0,
+                        'metadata' => $metadata
                     ];
                 }
             }
@@ -265,7 +265,9 @@ class DAV extends Upload {
         }
         // Sort by upload_time (newest first)
         usort($images, function($a, $b) {
-            return strtotime($b['upload_time']) - strtotime($a['upload_time']);
+            $md_a = $a['metadata'];
+            $md_b = $b['metadata'];
+            return strtotime($md_b->upload_time) - strtotime($md_a->upload_time);
         });
         return $images;
     }

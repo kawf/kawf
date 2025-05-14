@@ -1,3 +1,6 @@
+%begin [script]
+<script src="%[js_image_action_href]"></script>
+%end [script]
 %begin [images_page]
 <p><b>Your images in <a href="/%[FORUM_SHORTNAME]/">%[FORUM_NAME]</a></b></p>
 %begin [no_images]
@@ -15,6 +18,9 @@
       <div class="image-meta">
         <span class="upload-time">%[IMAGE_UPLOAD_TIME]</span>
         <span class="file-size">%[IMAGE_FILE_SIZE]</span>
+      </div>
+      <div class="image-actions">
+        <button class="delete-btn" onclick="deleteImage('%[FORUM_SHORTNAME]', '%[DELETE_PATH]', '%[IMAGE_ORIGINAL_NAME]')">Delete</button>
       </div>
     </div>
   </div>

@@ -1,39 +1,53 @@
 <?php
 require_once("image.inc.php");
+require_once("include/page-yatt.inc.php");
 
-use Kawf\Upload\UploadFactory;
-
-// Get forum
-$forum = get_forum();
-
-// Check if user is logged in
-if (!$user->valid()) {
-    header("HTTP/1.1 401 Unauthorized");
-    echo json_encode(['error' => 'You must be logged in to delete images']);
-    exit;
-}
-
-// Get the delete URL and hash from the request
-$path = $_GET['url'] ?? '';
-$hash = $_GET['hash'] ?? '';
-$timestamp = (int)($_GET['t'] ?? 0);
-
-if (empty($path) || empty($hash)) {
-    header("HTTP/1.1 400 Bad Request");
-    echo json_encode(['error' => 'Missing required parameters']);
-    exit;
-}
-
+// Get uploader instance
 $uploader = get_uploader();
 
-// Attempt to delete the image
-$result = $uploader->delete($path, $hash, $timestamp, $user->aid);
+// Handle different request methods
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Get JSON data from request body
+    $json = file_get_contents('php://input');
+    $data = json_decode($json, true);
 
-if ($result) {
-    echo json_encode(['success' => true]);
+    if (!$data || !isset($data['path'])) {
+        header('HTTP/1.1 400 Bad Request');
+        exit('Missing or invalid request data');
+    }
+
+    // Authenticated user deletion path
+    if (!isset($user) || !$user) {
+        header('HTTP/1.1 401 Unauthorized');
+        exit('Unauthorized');
+    }
+
+    if (!can_upload_images()) {
+        header('HTTP/1.1 403 Forbidden');
+        exit('Forbidden');
+    }
+
+    // Delete using namespace verification
+    if (delete_image($uploader, $data['path'], $user->aid)) {
+        header('HTTP/1.1 200 OK');
+        exit('Image deleted successfully');
+    }
 } else {
-    header("HTTP/1.1 500 Internal Server Error");
-    echo json_encode(['error' => 'Failed to delete image']);
+    // Hash-based API deletion path
+    $delete_url = $_GET['delete_url'] ?? '';
+    if (empty($delete_url)) {
+        header('HTTP/1.1 400 Bad Request');
+        exit('Missing delete URL');
+    }
+
+    // Delete using hash verification
+    if (delete_image_by_url($uploader, $delete_url, 0)) {
+        header('HTTP/1.1 200 OK');
+        exit('Image deleted successfully');
+    }
 }
+
+header('HTTP/1.1 500 Internal Server Error');
+exit('Failed to delete image');
 
 // vim: set ts=8 sw=4 et:
