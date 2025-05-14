@@ -40,6 +40,20 @@ function get_upload_config(): array {
     );
 }
 
+function get_uploader() {
+    // Get upload configuration
+    $upload_config = get_upload_config();
+
+    // Create uploader instance
+    $uploader = UploadFactory::create($upload_config);
+    if (!$uploader) {
+        header("HTTP/1.1 500 Internal Server Error");
+        echo json_encode(['error' => 'No upload service configured']);
+        exit;
+    }
+    return $uploader;
+}
+
 /**
  * Convert PHP ini value to bytes
  */
@@ -159,8 +173,9 @@ function update_image_metadata(array $upload_config, string $metadata_url, strin
         return false;
     }
 
-    // Get current metadata
-    $metadata = $uploader->load_metadata($metadata_url);
+    // Always use the full relative path for metadata operations
+    $full_metadata_path = $metadata_url;
+    $metadata = $uploader->load_metadata($full_metadata_path);
     if (!$metadata) {
         return false;
     }
@@ -169,7 +184,7 @@ function update_image_metadata(array $upload_config, string $metadata_url, strin
     $message_url = '/' . $forum_shortname . '/msgs/' . $message_id . '.phtml';
     if (!in_array($message_url, $metadata->messages)) {
         $metadata->messages[] = $message_url;
-        return $uploader->save_metadata($metadata_url, $metadata);
+        return $uploader->save_metadata($full_metadata_path, $metadata);
     }
 
     return true;

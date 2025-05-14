@@ -87,6 +87,7 @@ $fscripts = array(
   "changestate.phtml" => "changestate.php",
   "sticky.phtml" => "sticky.php",
 
+  "images.phtml" => "images.php",
   "deleteimage.phtml" => "deleteimage.php",
 );
 

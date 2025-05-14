@@ -176,3 +176,42 @@ if (!$result) {
   - Token expiration handling
   - Permission validation
   - Clear separation between URL handling and file operations
+
+## Path and Namespace Conventions
+
+- **Namespace**: A logical grouping, often used as a directory prefix (e.g., `forumid/userid` or `wayot/1/1`). Used to organize files on the server.
+- **Path**: The full relative path to a file, including the namespace and filename (e.g., `wayot/1/1/0430-175430.jpg`).
+- **Metadata Path**: The full relative path to the metadata file, which is the image path with `.json` appended (e.g., `wayot/1/1/0430-175430.jpg.json`).
+
+**Best Practice:**
+- Always pass the full relative path (namespace + filename) to all uploader methods that operate on files or metadata (e.g., `load_metadata`, `save_metadata`, `delete`).
+- The uploader will handle appending `.json` for metadata and constructing the full URL as needed.
+
+**Example:**
+- Namespace: `wayot/1/1`
+- Filename: `0430-175430.jpg`
+- Full path: `wayot/1/1/0430-175430.jpg`
+- Metadata path: `wayot/1/1/0430-175430.jpg.json`
+
+## Image Deletion Plan
+
+- **Authenticated User Deletion:**
+  - When a user is authenticated via the forum, image deletion can bypass hash checking and permission is granted based on session/user context.
+  - This allows for a more seamless user experience in the image browser.
+
+- **External API Deletion (`deleteimage.phtml`):**
+  - The `deleteimage.phtml` endpoint is intended for external API usage, where hash checking and other security measures are enforced.
+  - This endpoint is suitable for deletion links sent via email, bots, or other non-authenticated contexts.
+
+- **Direct Deletion from Image Browser:**
+  - If the user is authenticated and the image browser provides a "delete" URL for an image, the browser can call the uploader's `delete` method directly, bypassing hash checks.
+  - This should only be allowed for users with proper permissions (e.g., image owner, moderator).
+
+- **User Confirmation and Clickjacking Protection:**
+  - To prevent accidental or malicious deletions (e.g., someone tricking a user into clicking an `images?delete=img` link), always require explicit user confirmation (e.g., a JavaScript `confirm('Are you sure?')` dialog) before performing the delete action in the browser.
+  - Consider additional CSRF protection if using GET/POST requests for deletion.
+
+- **Summary:**
+  - Use direct delete for authenticated users in the browser (with confirmation).
+  - Use `deleteimage.phtml` for external/API deletion (with hash checking).
+  - Always protect users from accidental or tricked deletions.

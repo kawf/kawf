@@ -150,6 +150,13 @@ abstract class Upload {
         // Compare hashes using hash_equals for timing attack prevention
         return hash_equals($expectedHash, $hash);
     }
+
+    /**
+     * List images in a namespace (directory) and return info for each image
+     * @param string $namespace Namespace or subdirectory (e.g. "f123")
+     * @return array List of images (uploader-specific structure)
+     */
+    abstract public function readdir(string $namespace): array;
 }
 
 class ImageMetadata {

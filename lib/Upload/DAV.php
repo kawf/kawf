@@ -129,13 +129,17 @@ class DAV extends Upload {
         ]);
 
         if (!$result) {
-            error_log("Failed to load metadata for $path");
+            error_log("[DAV::load_metadata] Failed to load metadata for $path (URL: $url)");
+            return null;
+        }
+        if ($result['http_code'] < 200 || $result['http_code'] >= 300) {
+            error_log("[DAV::load_metadata] Non-2xx response for $path: " . $result['response']);
             return null;
         }
 
-        $data = json_decode($result, true);
+        $data = json_decode($result['response'], true);
         if (!$data) {
-            error_log("Failed to decode metadata JSON for $path");
+            error_log("[DAV::load_metadata] Failed to decode metadata JSON for $path. Response: " . $result['response']);
             return null;
         }
 
@@ -200,6 +204,71 @@ class DAV extends Upload {
             'delete_url' => $delete_url,
             'metadata_url' => $remote_path
         ];
+    }
+
+    /**
+     * List images in a namespace (directory) and return info for each image
+     * @param string $namespace Namespace or subdirectory (e.g. "f123")
+     * @return array List of images with keys: url, original_name, upload_time, file_size
+     */
+    public function readdir(string $namespace): array {
+        $images = [];
+        $base_url = rtrim($this->config['public_url'], '/');
+        $path = rtrim($this->config['path'] . '/' . $namespace, '/') . '/';
+        $url = rtrim($this->config['url'], '/') . '/' . $path;
+        $result = $this->makeCurlRequest($url, [
+            CURLOPT_CUSTOMREQUEST => 'PROPFIND',
+            CURLOPT_USERPWD => $this->config['username'] . ':' . $this->config['password'],
+            CURLOPT_HTTPHEADER => ['Depth: 1']
+        ]);
+        if ($result) {
+            libxml_use_internal_errors(true);
+            $xml = simplexml_load_string($result['response']);
+            if ($xml === false) {
+                error_log("[DAV::readdir] Failed to parse XML response");
+                foreach (libxml_get_errors() as $error) {
+                    error_log("[DAV::readdir] XML error: " . $error->message);
+                }
+                libxml_clear_errors();
+            } else {
+                $xml->registerXPathNamespace('d', 'DAV:');
+                $prefix = parse_url($url, PHP_URL_PATH);
+                $hrefs = $xml->xpath('//d:response/d:href');
+                foreach ($hrefs as $hrefObj) {
+                    $href = (string)$hrefObj;
+                    if (strpos($href, $prefix) === 0) {
+                        $img_path = urldecode(substr($href, strlen($prefix)));
+                    } else {
+                        $img_path = urldecode($href);
+                    }
+                    // Skip directories and metadata files
+                    if (strpos($img_path, '/') !== false || strpos($img_path, '.json') !== false || $img_path === '') {
+                        continue;
+                    }
+                    // Get metadata if available, using the full relative path
+                    $metadata = null;
+                    if ($this->supports_metadata()) {
+                        $metadata = $this->load_metadata($path . $img_path);
+                    }
+                    $images[] = [
+                        'url' => $base_url . '/' . $path . $img_path,
+                        'original_name' => $metadata ? $metadata->original_name : basename($img_path),
+                        'upload_time' => $metadata ? $metadata->upload_time : '',
+                        'file_size' => $metadata ? $metadata->file_size : 0,
+                    ];
+                }
+            }
+        } else {
+            error_log("[DAV::readdir] No PROPFIND result");
+        }
+        if (count($images) === 0 && isset($result['response'])) {
+            error_log("[DAV::readdir] Raw PROPFIND response: " . substr($result['response'], 0, 1000)); // log first 1000 chars
+        }
+        // Sort by upload_time (newest first)
+        usort($images, function($a, $b) {
+            return strtotime($b['upload_time']) - strtotime($a['upload_time']);
+        });
+        return $images;
     }
 }
 // vim: set ts=8 sw=4 et:

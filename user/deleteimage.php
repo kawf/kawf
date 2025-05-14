@@ -24,16 +24,7 @@ if (empty($path) || empty($hash)) {
     exit;
 }
 
-// Get upload configuration
-$upload_config = get_upload_config();
-
-// Create uploader instance
-$uploader = UploadFactory::create($upload_config);
-if (!$uploader) {
-    header("HTTP/1.1 500 Internal Server Error");
-    echo json_encode(['error' => 'No upload service configured']);
-    exit;
-}
+$uploader = get_uploader();
 
 // Attempt to delete the image
 $result = $uploader->delete($path, $hash, $timestamp, $user->aid);

@@ -94,5 +94,14 @@ class Imgur extends Upload {
 
         return true;
     }
+
+    /**
+     * Imgur does not support directory listing; always returns empty array
+     * @param string $namespace
+     * @return array
+     */
+    public function readdir(string $namespace): array {
+        return [];
+    }
 }
 // vim: set ts=8 sw=4 et:
