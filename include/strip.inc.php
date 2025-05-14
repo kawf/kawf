@@ -275,6 +275,7 @@ $standard_tags = array(
   "sub" => array(array(), "/sub"),
   "sup" => array(array(), "/sup"),
   "center" => array(array(), "/center"),
+  "small" => array(array(), "/small"),
   "embed" => array(array("src=", true, 'validate_url', "type=", false, 'validate_null', "width=", false, 'validate_number', "height=", false, 'validate_number')),
   "object" => array(array("data=", true, 'validate_url', "type=", false, 'validate_null', "width=", false, 'validate_number', "height=", false, 'validate_number'), "/object"),
 );
