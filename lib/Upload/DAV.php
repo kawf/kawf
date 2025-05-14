@@ -53,7 +53,7 @@ class DAV extends Upload {
             $mkcol_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
             curl_close($ch);
             if ($mkcol_code != 201 && $mkcol_code != 405) { // 201 Created, 405 Method Not Allowed (already exists)
-                $this->error = "Failed to create directory: $url (HTTP $mkcol_code)";
+                $this->setError("Failed to create directory: $url (HTTP $mkcol_code)");
                 return false;
             }
             $created = true;
@@ -61,28 +61,20 @@ class DAV extends Upload {
         return true;
     }
 
-    public function delete(string $path, ?string $hash = null, int $timestamp = 0, int $userId = 0): bool {
-        if (!$this->isAvailable()) {
-            return false;
-        }
-
-        // Verify the deletion hash
-        if ($hash && !$this->verifyDeleteHash($path, $hash, $timestamp, $userId)) {
-            $this->error = "Invalid or expired deletion hash";
-            return false;
-        }
-
-        $remote_path = $this->config['path'] . '/' . $path;
+    /**
+     * Private utility method to perform the actual deletion
+     * This method assumes the path is already in the correct format
+     */
+    private function performDelete(string $remote_path): bool {
         $url = rtrim($this->config['url'], '/') . '/' . $remote_path;
-
         // Delete the main file
         $result = $this->makeCurlRequest($url, [
             CURLOPT_CUSTOMREQUEST => 'DELETE',
             CURLOPT_USERPWD => $this->config['username'] . ':' . $this->config['password']
         ]);
 
-        if (!$result) {
-            $this->error = "Failed to delete file from DAV";
+        if (isset($result['error'])) {
+            $this->setError("Failed to delete file '$remote_path': " . $result['error']);
             return false;
         }
 
@@ -92,8 +84,57 @@ class DAV extends Upload {
             CURLOPT_CUSTOMREQUEST => 'DELETE',
             CURLOPT_USERPWD => $this->config['username'] . ':' . $this->config['password']
         ]);
-
         return true;
+    }
+
+    /**
+     * Delete a file by its path
+     * This method always prepends the config path
+     */
+    public function delete(string $path): bool {
+        $remote_path = $this->config['path'] . '/' . $path;
+        return $this->performDelete($remote_path);
+    }
+
+    /**
+     * Delete a file using a deletion URL
+     * This method handles both full URLs and path fragments
+     */
+    public function deleteByUrl(string $deleteUrl): bool {
+        // Handle both full URLs and path fragments
+        if (strpos($deleteUrl, '?') !== false) {
+            // Extract query string from URL if it's a full URL
+            if (strpos($deleteUrl, '://') !== false) {
+                $queryString = substr($deleteUrl, strpos($deleteUrl, '?') + 1);
+            } else {
+                $queryString = $deleteUrl;
+            }
+        } else {
+            $queryString = $deleteUrl;
+        }
+
+        // Parse query parameters (parse_str handles URL decoding)
+        parse_str($queryString, $query);
+
+        // Extract parameters
+        $path = $query['url'] ?? '';
+        $hash = $query['hash'] ?? '';
+        $timestamp = (int)($query['t'] ?? 0);
+
+        if (empty($path)) {
+            $this->setError("Missing URL parameter");
+            return false;
+        }
+
+        // Verify hash before proceeding
+        if (!$this->verifyDeleteHash($path, $hash, $timestamp)) {
+            // Error message is already set by verifyDeleteHash
+            return false;
+        }
+
+        // For URL-based deletion, we need to prepend the config path
+        $remote_path = $this->config['path'] . '/' . $path;
+        return $this->performDelete($remote_path);
     }
 
     public function supports_metadata(): bool {
@@ -114,7 +155,7 @@ class DAV extends Upload {
         ]);
 
         if (!$result) {
-            $this->error = "Failed to save metadata for $path";
+            $this->setError("Failed to save metadata for $path: " . $this->getError());
             return false;
         }
         return true;
@@ -129,17 +170,17 @@ class DAV extends Upload {
         ]);
 
         if (!$result) {
-            $this->error = "Failed to load metadata for $path (URL: $url)";
+            $this->setError("Failed to load metadata for $path (URL: $url): " . $this->getError());
             return null;
         }
         if ($result['http_code'] < 200 || $result['http_code'] >= 300) {
-            $this->error = "Non-2xx response for $path: " . $result['response'];
+            $this->setError("Non-2xx response for $path: " . $result['response']);
             return null;
         }
 
         $data = json_decode($result['response'], true);
         if (!$data) {
-            $this->error = "Failed to decode metadata JSON for $path. Response: " . $result['response'];
+            $this->setError("Failed to decode metadata JSON for $path. Response: " . $result['response']);
             return null;
         }
 
@@ -195,7 +236,7 @@ class DAV extends Upload {
 
         // Create a structured delete URL that can be used in changes
         $timestamp = time();
-        $deletehash = $this->generateDeleteHash($path, $metadata->user_id, $timestamp);
+        $deletehash = $this->generateDeleteHash($path, $timestamp);
 
         // Return relative path for deletion - forum software will prepend its base URL
         $delete_url = 'deleteimage.phtml?url=' . urlencode($path) . '&hash=' . $deletehash . '&t=' . $timestamp;
@@ -222,7 +263,7 @@ class DAV extends Upload {
             CURLOPT_USERPWD => $this->config['username'] . ':' . $this->config['password'],
             CURLOPT_HTTPHEADER => ['Depth: 1']
         ]);
-        if ($result) {
+        if (isset($result['response'])) {
             libxml_use_internal_errors(true);
             $xml = simplexml_load_string($result['response']);
             if ($xml === false) {
@@ -259,9 +300,6 @@ class DAV extends Upload {
                     ];
                 }
             }
-        }
-        if (count($images) === 0 && isset($result['response'])) {
-            error_log("[DAV::readdir] Raw PROPFIND response: " . substr($result['response'], 0, 1000)); // log first 1000 chars
         }
         // Sort by upload_time (newest first)
         usort($images, function($a, $b) {

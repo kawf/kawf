@@ -1,11 +1,9 @@
 # Image Upload Library
 
 ## Overview
-
 The Image Upload Library provides a unified interface for handling image uploads across different backends (WebDAV, Imgur). It handles file uploads, metadata management, and secure deletion URLs.
 
 ## Design Goals
-
 1. **Abstraction**
    - Support multiple upload backends (DAV, Imgur)
    - Common interface for all uploaders
@@ -15,35 +13,28 @@ The Image Upload Library provides a unified interface for handling image uploads
    - Prevent filename collisions
    - Support namespacing (e.g. by forum ID and user ID)
    - Preserve original filenames where possible
-   - Allow overwrite option
 
 3. **Image Resizing**
    - Client-side resizing before upload
    - Configurable dimensions (640px, 1024px, 1920px)
    - Maintain aspect ratio
-   - Show original and resized file sizes
 
 4. **Error Handling**
    - Consistent error reporting
    - File validation
    - Size limit checks
-   - HTTP error handling
 
 5. **Security**
    - Access control for uploaded images
-   - Future: Proxy all image requests through forum server
-   - Prevent unauthorized access to image server
    - Secure image deletion with signed URLs
    - Hash-based deletion tokens with secret salt
 
 ## URL Handling
 
-The library handles URLs differently based on the backend:
-
 ### Imgur
 - `url`: Full URL to the uploaded image (e.g., `https://i.imgur.com/abc123.jpg`)
-- `delete_url`: Full URL to Imgur's deletion API (e.g., `https://api.imgur.com/3/image/abc123`)
-- `metadata_url`: Full URL to the image (Imgur doesn't support metadata)
+- `delete_url`: Full URL to Imgur's deletion API
+- `metadata_url`: Imgur doesn't support metadata
 
 ### WebDAV
 - `url`: Full URL to the uploaded image (e.g., `https://images.example.com/path/to/image.jpg`)
@@ -61,32 +52,48 @@ The forum software is responsible for:
 The base Upload class provides secure deletion hashes that can be verified without database storage:
 
 ```php
-$hash = $uploader->generateDeleteHash($path, $userId, $timestamp);
+$hash = $uploader->generateDeleteHash($path, $timestamp);
 ```
 
 The hash includes:
 - File path
-- User ID
 - Timestamp
 - Secret salt
 - SHA-256 hash
 
 ### Hash Verification
 ```php
-$isValid = $uploader->verifyDeleteHash($path, $hash, $timestamp, $userId);
+$isValid = $uploader->verifyDeleteHash($path, $hash, $timestamp);
 ```
 
 Verification checks:
 1. Hash hasn't expired (default 24 hours)
 2. Hash matches expected value
-3. User has permission to delete
 
 ### Deletion Flow
-1. Forum generates delete URL with query parameters
+1. Forum generates delete URL with query parameters:
+   ```
+   deletemessage.phtml?url=path/to/file&hash=abc123&t=1234567890
+   ```
 2. User clicks delete URL
-3. `deleteimage.php` parses query parameters
-4. Uploader verifies hash and performs deletion
-5. Uploader has no knowledge of URLs, only handles raw paths
+3. `deleteimage.php` receives the URL and passes it to the uploader
+4. Uploader handles the URL:
+   - Determines if it's a full URL or path fragment
+   - Extracts necessary parameters (url, hash, timestamp)
+   - Verifies hash/credentials
+   - Performs deletion
+5. Uploader returns success/failure
+
+### URL Handling
+Uploaders must handle both full URLs and path fragments:
+- Full URLs: "https://server.com/path?params"
+- Path fragments: "path?params"
+
+Each uploader is responsible for:
+1. Detecting URL format
+2. Extracting required parameters
+3. Constructing the correct deletion request
+4. Performing proper verification
 
 ## Configuration
 
@@ -110,23 +117,17 @@ $config = [
 ```
 
 ## Usage Example
-
 ```php
-// Create uploader
 $uploader = new DAV($config);
-
-// Upload file
 $result = $uploader->upload($filename, $namespace, $metadata);
 
 if ($result) {
     $imageUrl = $result['url'];          // Full URL to view image
     $deleteUrl = $result['delete_url'];  // Query parameter format for deletion
-    $metadataUrl = $result['metadata_url']; // Path to metadata
 }
 ```
 
 ## Error Handling
-
 All uploaders provide consistent error handling:
 ```php
 if (!$result) {
@@ -134,6 +135,67 @@ if (!$result) {
     // Handle error
 }
 ```
+
+## Path and Namespace Conventions
+- **Namespace**: A logical grouping, often used as a directory prefix (e.g., `forumid/userid` or `wayot/1/1`). Used to organize files on the server.
+- **Path**: The full relative path to a file, including the namespace and filename (e.g., `wayot/1/1/0430-175430.jpg`).
+- **Metadata Path**: The full relative path to the metadata file, which is the image path with `.json` appended (e.g., `wayot/1/1/0430-175430.jpg.json`).
+
+**Best Practice:**
+- Always pass the full relative path (namespace + filename) to all uploader methods that operate on files or metadata (e.g., `load_metadata`, `save_metadata`, `delete`).
+- The uploader will handle appending `.json` for metadata and constructing the full URL as needed.
+
+**Example:**
+- Namespace: `wayot/1/1`
+- Filename: `0430-175430.jpg`
+- Full path: `wayot/1/1/0430-175430.jpg`
+- Metadata path: `wayot/1/1/0430-175430.jpg.json`
+
+## Image Deletion
+- **Authenticated User Deletion:**
+  - When a user is authenticated via the forum, image deletion can bypass hash checking and permission is granted based on session/user context.
+  - This allows for a more seamless user experience in the image browser.
+  - The path format must be `userId/forumId/filename` for proper namespace verification.
+  - The delete endpoint is `/<forum>/deleteimage.phtml` and expects a POST request with JSON data containing the path.
+
+### deleteByUrl(string $deleteUrl): bool
+Delete a file using a deletion URL. The URL format varies by uploader:
+
+- **DAV**: Expects a query string with parameters:
+  ```
+  url=path/to/file&hash=abc123&t=1234567890
+  ```
+  Where:
+  - `url`: The path to the file relative to the uploader's base path
+  - `hash`: A verification hash generated using `generateDeleteHash()`
+  - `t`: Unix timestamp when the hash was generated
+
+- **Imgur**: Expects either:
+  ```
+  url=https://imgur.com/abc123
+  ```
+  Or just the deletehash directly. The uploader will extract the deletehash from the URL.
+
+The uploader is responsible for:
+1. Parsing the URL format appropriate for its implementation
+2. Extracting necessary parameters
+3. Verifying the deletion request (e.g., checking hash validity)
+4. Performing the actual deletion
+
+Returns true if deletion was successful, false otherwise. Use `getError()` to get error details.
+
+## Notes
+- WebDAV directory creation support varies by server
+- Imgur has a 10MB file size limit
+- Client-side resizing reduces server load
+- Namespacing helps organize uploads (DAV only)
+- Original filenames are preserved for DAV but not Imgur
+- Deletion security requires:
+  - Secret salt for hash generation
+  - URL signing mechanism
+  - Token expiration handling
+  - Permission validation
+  - Clear separation between URL handling and file operations
 
 ## Future Improvements
 
@@ -163,60 +225,34 @@ if (!$result) {
    - Cache proxied images for performance
    - Support private images visible only to specific users/forums
 
-## Notes
+## Application Layer vs Upload Class Responsibilities
 
-- WebDAV directory creation support varies by server
-- Imgur has a 10MB file size limit
-- Client-side resizing reduces server load
-- Namespacing helps organize uploads (DAV only)
-- Original filenames are preserved for DAV but not Imgur
-- Deletion security requires:
-  - Secret salt for hash generation
-  - URL signing mechanism
-  - Token expiration handling
-  - Permission validation
-  - Clear separation between URL handling and file operations
+### Application Layer (Forum Software)
+- Converting relative delete URLs to absolute URLs for display
+- Handling deletion requests through `deleteimage.php`
+- Parsing query parameters from incoming requests
+- Managing user authentication and session state
+- Determining if a user has permission to delete
+- Constructing the initial delete URL with hash and timestamp
+- Handling HTTP responses and user feedback
+- Managing the upload form and file selection
+- Client-side image resizing before upload
+- Displaying upload progress and results
 
-## Path and Namespace Conventions
+### Upload Class
+- Implementing the upload interface for specific backends
+- Generating and verifying deletion hashes
+- Managing file storage and retrieval
+- Handling backend-specific URL formats
+- Managing metadata storage and retrieval
+- Implementing backend-specific error handling
+- Ensuring secure file operations
+- Managing file paths and namespaces
+- Handling backend authentication
+- Implementing retry logic for failed operations
 
-- **Namespace**: A logical grouping, often used as a directory prefix (e.g., `forumid/userid` or `wayot/1/1`). Used to organize files on the server.
-- **Path**: The full relative path to a file, including the namespace and filename (e.g., `wayot/1/1/0430-175430.jpg`).
-- **Metadata Path**: The full relative path to the metadata file, which is the image path with `.json` appended (e.g., `wayot/1/1/0430-175430.jpg.json`).
-
-**Best Practice:**
-- Always pass the full relative path (namespace + filename) to all uploader methods that operate on files or metadata (e.g., `load_metadata`, `save_metadata`, `delete`).
-- The uploader will handle appending `.json` for metadata and constructing the full URL as needed.
-
-**Example:**
-- Namespace: `wayot/1/1`
-- Filename: `0430-175430.jpg`
-- Full path: `wayot/1/1/0430-175430.jpg`
-- Metadata path: `wayot/1/1/0430-175430.jpg.json`
-
-## Image Deletion
-
-- **Authenticated User Deletion:**
-  - When a user is authenticated via the forum, image deletion can bypass hash checking and permission is granted based on session/user context.
-  - This allows for a more seamless user experience in the image browser.
-  - The path format must be `userId/forumId/filename` for proper namespace verification.
-  - The delete endpoint is `/<forum>/deleteimage.phtml` and expects a POST request with JSON data containing the path.
-
-- **External API Deletion (`deleteimage.phtml`):**
-  - The `deleteimage.phtml` endpoint is intended for external API usage, where hash checking and other security measures are enforced.
-  - This endpoint is suitable for deletion links sent via email, bots, or other non-authenticated contexts.
-  - The delete URL format is `deleteimage.phtml?url=path&hash=xxx&t=yyy`.
-
-- **Direct Deletion from Image Browser:**
-  - If the user is authenticated and the image browser provides a "delete" URL for an image, the browser can call the uploader's `delete` method directly, bypassing hash checks.
-  - This should only be allowed for users with proper permissions (e.g., image owner, moderator).
-  - The JavaScript function `deleteImage(forum, path, imageName)` handles the deletion with proper confirmation and error handling.
-
-- **User Confirmation and Clickjacking Protection:**
-  - To prevent accidental or malicious deletions (e.g., someone tricking a user into clicking an `images?delete=img` link), always require explicit user confirmation (e.g., a JavaScript `confirm('Are you sure?')` dialog) before performing the delete action in the browser.
-  - Consider additional CSRF protection if using GET/POST requests for deletion.
-
-- **Summary:**
-  - Use direct delete for authenticated users in the browser (with confirmation).
-  - Use `deleteimage.phtml` for external/API deletion (with hash checking).
-  - Always protect users from accidental or tricked deletions.
-  - Maintain proper namespace verification for all deletion paths.
+The upload class is designed to be backend-agnostic, focusing on file operations and security. The application layer handles user interaction, authentication, and URL management. This separation allows for:
+- Easy addition of new storage backends
+- Consistent security model across backends
+- Flexible URL handling for different forum setups
+- Clear separation of concerns

@@ -257,38 +257,10 @@ function delete_image(Upload $uploader, string $path, int $userId): bool {
  *
  * @param Upload $uploader The uploader instance
  * @param string $delete_url The deletion URL from the upload result
- * @param int $userId The ID of the user requesting deletion
  * @return bool True if deletion was successful
  */
-function delete_image_by_url(Upload $uploader, string $delete_url, int $userId): bool {
-    // Parse the delete URL
-    $parsed = parse_url($delete_url);
-    if (!$parsed) {
-        error_log("Invalid delete URL: $delete_url");
-        return false;
-    }
-
-    // Extract path and query parameters
-    $path = ltrim($parsed['path'], '/');
-    parse_str($parsed['query'] ?? '', $query);
-
-    // Handle different uploader types
-    if ($path === 'deleteimage.phtml') {
-        // DAV deletion with new parameter format
-        return $uploader->delete(
-            $query['url'] ?? '',
-            $query['hash'] ?? '',
-            (int)($query['t'] ?? 0),
-            $userId
-        );
-    } else if (strpos($delete_url, 'api.imgur.com/3/image/') !== false) {
-        // Imgur deletion
-        $deletehash = basename($delete_url);
-        return $uploader->delete($deletehash);
-    }
-
-    error_log("Unknown delete URL format: $delete_url");
-    return false;
+function delete_image_by_url(Upload $uploader, string $delete_url): bool {
+    return $uploader->deleteByUrl($delete_url);
 }
 
 function show_images(Upload $uploader, array $forum, ForumUser $user) {

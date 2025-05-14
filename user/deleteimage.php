@@ -5,49 +5,68 @@ require_once("include/page-yatt.inc.php");
 // Get uploader instance
 $uploader = get_uploader();
 
+// Set JSON response headers
+header('Content-Type: application/json');
+
 // Handle different request methods
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $user->req();
+
     // Get JSON data from request body
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
 
     if (!$data || !isset($data['path'])) {
-        header('HTTP/1.1 400 Bad Request');
-        exit('Missing or invalid request data');
+        http_response_code(400);
+        echo json_encode(['error' => 'Missing or invalid request data']);
+        exit;
     }
 
     // Authenticated user deletion path
     if (!isset($user) || !$user) {
-        header('HTTP/1.1 401 Unauthorized');
-        exit('Unauthorized');
+        http_response_code(401);
+        echo json_encode(['error' => 'Unauthorized']);
+        exit;
     }
 
     if (!can_upload_images()) {
-        header('HTTP/1.1 403 Forbidden');
-        exit('Forbidden');
+        http_response_code(403);
+        echo json_encode(['error' => 'Image uploads are not enabled']);
+        exit;
     }
 
-    // Delete using namespace verification
+    // Delete using path-based deletion with user verification
     if (delete_image($uploader, $data['path'], $user->aid)) {
-        header('HTTP/1.1 200 OK');
-        exit('Image deleted successfully');
+        echo json_encode(['success' => true, 'message' => 'Image deleted successfully']);
+        exit;
     }
+
+    // If we get here, deletion failed - get error from uploader
+    http_response_code(500);
+    echo json_encode(['error' => $uploader->getError() ?? 'Failed to delete image']);
+    exit;
 } else {
     // Hash-based API deletion path
-    $delete_url = $_GET['delete_url'] ?? '';
-    if (empty($delete_url)) {
-        header('HTTP/1.1 400 Bad Request');
-        exit('Missing delete URL');
+    // Expected URL formats:
+    // - DAV: deletemessage.phtml?url=path/to/file&hash=abc123&t=1234567890
+    // - Imgur: deletemessage.phtml?url=https://imgur.com/abc123
+    $queryString = $_SERVER['QUERY_STRING'] ?? '';
+    if (empty($queryString)) {
+        http_response_code(400);
+        echo json_encode(['error' => 'Missing delete URL']);
+        exit;
     }
 
-    // Delete using hash verification
-    if (delete_image_by_url($uploader, $delete_url, 0)) {
-        header('HTTP/1.1 200 OK');
-        exit('Image deleted successfully');
+    // Delete using URL-based deletion
+    if (delete_image_by_url($uploader, $queryString)) {
+        echo json_encode(['success' => true, 'message' => 'Image deleted successfully']);
+        exit;
     }
+
+    // If we get here, deletion failed - get error from uploader
+    http_response_code(500);
+    echo json_encode(['error' => $uploader->getError() ?? 'Failed to delete image']);
+    exit;
 }
-
-header('HTTP/1.1 500 Internal Server Error');
-exit('Failed to delete image');
 
 // vim: set ts=8 sw=4 et:

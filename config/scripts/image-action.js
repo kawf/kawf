@@ -15,8 +15,9 @@ function deleteImage(forum, path, imageName) {
         path: path
       })
     })
-    .then(response => {
-      if (response.ok) {
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
         // Remove the image card from the DOM
         const imageCard = document.querySelector(`.image-card img[alt="${imageName}"]`).closest('.image-card');
         imageCard.remove();
@@ -30,7 +31,7 @@ function deleteImage(forum, path, imageName) {
           imageGrid.remove();
         }
       } else {
-        alert('Failed to delete image. Please try again.');
+        alert(data.error || 'Failed to delete image. Please try again.');
       }
     })
     .catch(error => {

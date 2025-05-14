@@ -1,12 +1,94 @@
 <?php
 namespace Kawf\Upload;
 
-abstract class Upload {
+interface ImageUploader {
+    /**
+     * Check if upload is available/configured
+     */
+    public function isAvailable(): bool;
+
+    /**
+     * Get maximum upload size in bytes
+     */
+    public function getMaxUploadSize(): int;
+
+    /**
+     * Upload a file and return the public URL
+     *
+     * @param string $filename Path to the file to upload
+     * @param string|null $namespace Optional namespace for the upload (e.g. "fid/aid")
+     * @param ImageMetadata|null $metadata Optional metadata for the upload
+     * @return array|null Array containing 'url' and optionally 'delete_url', or null on failure
+     */
+    public function upload(string $filename, ?string $namespace = null, ?ImageMetadata $metadata = null): ?array;
+
+    /**
+     * Delete an image by its path
+     * This is for authenticated users only and does not use hash verification
+     *
+     * @param string $path The path of the image to delete
+     * @return bool True if the image was deleted successfully, false otherwise
+     */
+    public function delete(string $path): bool;
+
+    /**
+     * Delete an image using a deletion URL
+     * This is for API/unauthenticated use and requires hash verification
+     *
+     * @param string $deleteUrl The deletion URL or path. The uploader must handle both:
+     *                          - Full URLs (e.g. "https://server.com/path?params")
+     *                          - Path fragments (e.g. "path?params")
+     *                          The uploader is responsible for:
+     *                          1. Determining if the input is a full URL or path
+     *                          2. Extracting the necessary parameters
+     *                          3. Performing the deletion with proper verification
+     * @return bool True if the image was deleted successfully, false otherwise
+     */
+    public function deleteByUrl(string $deleteUrl): bool;
+
+    /**
+     * Check if this uploader supports metadata operations
+     * If false, save_metadata() and load_metadata() will always fail
+     */
+    public function supports_metadata(): bool;
+
+    /**
+     * Save metadata for an uploaded file
+     * @param string $path The path of the file
+     * @param ImageMetadata $metadata The metadata to save
+     * @return bool True if metadata was saved successfully
+     * @throws \RuntimeException if metadata is not supported
+     */
+    public function save_metadata(string $path, ImageMetadata $metadata): bool;
+
+    /**
+     * Load metadata for an uploaded file
+     * @param string $path The path of the file
+     * @return ImageMetadata|null The metadata if found, null if not found or not supported
+     * @throws \RuntimeException if metadata is not supported
+     */
+    public function load_metadata(string $path): ?ImageMetadata;
+
+    /**
+     * List images in a namespace (directory) and return info for each image
+     * @param string $namespace Namespace or subdirectory (e.g. "f123")
+     * @return array List of images (uploader-specific structure)
+     */
+    public function readdir(string $namespace): array;
+
+    /**
+     * Get the last error message
+     */
+    public function getError(): ?string;
+}
+
+abstract class Upload implements ImageUploader {
     protected $config;
     protected $error;
 
     public function __construct(array $config = []) {
         $this->config = $config;
+        $this->error = null;
     }
 
     /**
@@ -17,6 +99,25 @@ abstract class Upload {
     }
 
     /**
+     * Set an error message and optionally log it
+     * @param string $message The error message
+     * @param bool $log Whether to log the error (default: true)
+     */
+    protected function setError(string $message, bool $log = true): void {
+        $this->error = $message;
+        if ($log) {
+            error_log("[Upload] " . $message);
+        }
+    }
+
+    /**
+     * Clear any existing error message
+     */
+    protected function clearError(): void {
+        $this->error = null;
+    }
+
+   /**
      * Generate a unique filename for the upload
      * @param string|null $namespace Optional namespace (e.g. "fid/aid")
      * @param string $original Original filename
@@ -56,7 +157,7 @@ abstract class Upload {
 
     protected function validateFile(string $filename): bool {
         if (!file_exists($filename)) {
-            $this->error = "$filename not found";
+            $this->setError("File not found: $filename");
             return false;
         }
         return true;
@@ -73,11 +174,27 @@ abstract class Upload {
 
         $response = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+        if ($response === false) {
+            $this->setError("CURL error: " . curl_error($ch));
+            curl_close($ch);
+            return null;
+        }
+
         curl_close($ch);
 
         if ($http_code < 200 || $http_code >= 300) {
-            $this->error = "HTTP request failed: $http_code";
-            return null;
+            // Extract error message from HTML response if present
+            $error_msg = $response;
+            if (preg_match('/<title>(.*?)<\/title>/i', $response, $matches)) {
+                $error_msg = $matches[1];
+            } elseif (preg_match('/<h1>(.*?)<\/h1>/i', $response, $matches)) {
+                $error_msg = $matches[1];
+            }
+            return [
+                'error' => $error_msg,
+                'http_code' => $http_code
+            ];
         }
 
         return [
@@ -87,76 +204,60 @@ abstract class Upload {
     }
 
     /**
-     * Check if upload is available/configured
-     */
-    abstract public function isAvailable(): bool;
-
-    /**
-     * Get maximum upload size in bytes
-     */
-    abstract public function getMaxUploadSize(): int;
-
-    /**
-     * Upload a file and return the public URL
+     * Verify a deletion hash
+     * This is used by deleteByUrl to verify the hash before deletion
      *
-     * @param string $filename Path to the file to upload
-     * @param string|null $namespace Optional namespace for the upload (e.g. "fid/aid")
-     * @param ImageMetadata|null $metadata Optional metadata for the upload
-     * @return array|null Array containing 'url' and optionally 'delete_url', or null on failure
+     * @param string $path The path from the URL
+     * @param string $hash The hash from the URL
+     * @param int $timestamp The timestamp from the URL
+     * @return bool True if the hash is valid and not expired
      */
-    abstract public function upload(string $filename, ?string $namespace = null, ?ImageMetadata $metadata = null): ?array;
+    protected function verifyDeleteHash(string $path, string $hash, int $timestamp): bool {
+        // Check if the hash has expired
+        $now = time();
+        $elapsed = $now - $timestamp;
+        if ($elapsed > 86400) { // 24 hours
+            $this->setError(sprintf(
+                "Hash expired: path=%s, elapsed=%d seconds",
+                $path, $elapsed));
+            return false;
+        }
+
+        // Generate the expected hash
+        $expectedHash = $this->generateDeleteHash($path, $timestamp);
+
+        // Compare hashes using hash_equals for timing attack prevention
+        if (!hash_equals($expectedHash, $hash)) {
+            $this->setError(sprintf(
+                "Hash mismatch: path=%s, expected=%s, got=%s, timestamp=%d",
+                $path, $expectedHash, $hash, $timestamp
+            ));
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * Generate a secure deletehash for an upload that can be verified without database storage
      *
      * @param string $path The path or identifier of the upload
-     * @param int $userId The user ID of the uploader
      * @param int $timestamp When the hash was generated
      * @return string A secure hash that can be used for deletion
      */
-    protected function generateDeleteHash(string $path, int $userId, int $timestamp): string {
+    protected function generateDeleteHash(string $path, int $timestamp): string {
         // Create a data string that includes all verification info
         $data = sprintf(
-            "%s|%d|%d|%s",
+            "%s|%d|%s",
             $path,
-            $userId,
             $timestamp,
             $this->config['delete_salt'] ?? 'default_salt_change_me'
         );
 
         // Generate SHA-256 hash of the data
-        return hash('sha256', $data);
+        $hash = hash('sha256', $data);
+        return $hash;
     }
-
-    /**
-     * Verify a delete hash from a URL
-     *
-     * @param string $path The path from the URL
-     * @param string $hash The hash from the URL
-     * @param int $timestamp The timestamp from the URL
-     * @param int $userId The current user's ID
-     * @param int $maxAge Maximum age of the hash in seconds (default 24 hours)
-     * @return bool True if the hash is valid and not expired
-     */
-    public function verifyDeleteHash(string $path, string $hash, int $timestamp, int $userId, int $maxAge = 86400): bool {
-        // Check if the hash has expired
-        if (time() - $timestamp > $maxAge) {
-            return false;
-        }
-
-        // Generate the expected hash
-        $expectedHash = $this->generateDeleteHash($path, $userId, $timestamp);
-
-        // Compare hashes using hash_equals for timing attack prevention
-        return hash_equals($expectedHash, $hash);
-    }
-
-    /**
-     * List images in a namespace (directory) and return info for each image
-     * @param string $namespace Namespace or subdirectory (e.g. "f123")
-     * @return array List of images (uploader-specific structure)
-     */
-    abstract public function readdir(string $namespace): array;
 }
 
 class ImageMetadata {
@@ -263,12 +364,4 @@ class ImageMetadata {
     }
 }
 
-interface ImageUploader {
-    // ... existing methods ...
-
-    // Add metadata support methods
-    public function supports_metadata(): bool;
-    public function save_metadata(string $path, ImageMetadata $metadata): bool;
-    public function load_metadata(string $path): ?ImageMetadata;
-}
 // vim: set ts=8 sw=4 et:
