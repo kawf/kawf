@@ -1,7 +1,8 @@
 <?php
 // give a good path, so we can include this from admin and account
-require_once(__DIR__ . "/../lib/YATT/YATT.class.php");
+require_once("lib/YATT/YATT.class.php");
 require_once("notices.inc.php");
+require_once("image.inc.php");
 
 /**
  * Default error handler for YATT templates
@@ -128,6 +129,9 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
         }
 
         $page->parse('page.header.forums');
+        if (can_upload_images()) {
+            $page->parse('page.header.images');
+        }
         $page->parse('page.header');
 
         // Handle forum header if we're in a forum context

@@ -364,8 +364,9 @@ hr {
     color: #888; background-color: #888;
 }
 
-/* header divider only for tracking.phtml */
+/* header divider only for tracking.phtml and images.phtml*/
 hr.tracking { height: 1px; }
+hr.images { height: 1px; }
 
 /* forum notices addon */
 .forumnotices { width: 99%; vertical-align: top; text-align: right; }

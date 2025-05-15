@@ -10,6 +10,9 @@
 %end [forums]
 <option value="">---</option>
 <option value="/tracking.phtml">Your tracked threads</option>
+%begin [images]
+<option value="/images.phtml">Your images</option>
+%end [images]
 </select>
 <noscript><input type="submit" value="GO"></noscript>
 </form>
