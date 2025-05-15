@@ -7,8 +7,9 @@
     <input type="hidden" name="hosted_button_id" value="%[BUTTON_ID]">
     %[#] Use user's email and aid if logged in
     %begin [user]
-    <input type="hidden" name="item_name" value="%[USER_NAME]:%[USER_EMAIL]">
-    <input type="hidden" name="item_number" value="%[USER_AID]">
+    <input type="hidden" name="item_name" value="%[USER_NAME]:%[USER_AID]:%[USER_EMAIL]">
+    <input type="hidden" name="item_number" value="AID %[USER_AID]">
+    <input type="hidden" name="custom" value="AID %[USER_AID]">
     %end [user]
     %[#] Generate return URL based on current page
     <input type="hidden" name="return" value="%[RETURN_VALUE]">
