@@ -15,8 +15,8 @@ This thread is locked. No replies are allowed.<br>
 %begin [noacct]
 <p>You must be registered and logged in to post. Please select an option:</p>
 <ul>
-    <li><a href="/register.phtml">Register a new account</a></li>
-    <li><a href="/login.phtml?FORWARD=%[FORWARD]">Log in to an existing account</a></li>
+    <li><a href="/login.phtml?url=%[PAGE_VALUE]">Log in to an existing account</a></li>
+    <li><a href="/create.phtml?url=%[PAGE_VALUE]">Create a new account</a></li>
 </ul>
 %end [noacct]
 %begin [acct]
