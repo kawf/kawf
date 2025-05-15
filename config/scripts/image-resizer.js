@@ -15,6 +15,31 @@ class ImageResizer {
         return mimeToExt[mimeType] || '.jpg';
     }
 
+    normalizeFilename(filename) {
+        // Get the extension
+        const ext = filename.slice(filename.lastIndexOf('.')).toLowerCase();
+        // Get the basename without extension
+        const basename = filename.slice(0, filename.lastIndexOf('.'));
+
+        // Replace only truly problematic chars with underscore
+        // Preserve spaces, hyphens, underscores, and alphanumeric
+        let normalized = basename.replace(/[^A-Za-z0-9\s\-_]/g, '_');
+
+        // Remove multiple consecutive underscores
+        normalized = normalized.replace(/_+/g, '_');
+
+        // Trim underscores from start and end
+        normalized = normalized.replace(/^_+|_+$/g, '');
+
+        // If the name is empty after normalization, use 'file'
+        if (!normalized) {
+            normalized = 'file';
+        }
+
+        // Reattach extension
+        return normalized + ext;
+    }
+
     ensureCorrectExtension(filename, mimeType) {
         const ext = this.getExtensionFromMimeType(mimeType);
         const currentExt = filename.slice(filename.lastIndexOf('.')).toLowerCase();
@@ -36,8 +61,14 @@ class ImageResizer {
                 img.onload = () => {
                     // Check if resizing is needed
                     if (img.width <= this.maxWidth && img.height <= this.maxHeight) {
+                        // Still normalize the filename even if we don't resize
+                        const normalizedName = this.normalizeFilename(file.name);
+                        const newFile = new File([file], normalizedName, {
+                            type: file.type,
+                            lastModified: file.lastModified
+                        });
                         resolve({
-                            file: file,
+                            file: newFile,
                             wasResized: false
                         });
                         return;
@@ -68,7 +99,11 @@ class ImageResizer {
                             const mimeType = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'].includes(file.type)
                                 ? file.type
                                 : 'image/jpeg';
-                            const newFilename = this.ensureCorrectExtension(file.name, mimeType);
+
+                            // Normalize filename and ensure correct extension
+                            const normalizedName = this.normalizeFilename(file.name);
+                            const newFilename = this.ensureCorrectExtension(normalizedName, mimeType);
+
                             const resizedFile = new File([blob], newFilename, {
                                 type: mimeType,
                                 lastModified: Date.now()

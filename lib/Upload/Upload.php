@@ -117,7 +117,97 @@ abstract class Upload implements ImageUploader {
         $this->error = null;
     }
 
-   /**
+    /**
+     * Construct a URL with proper path encoding
+     *
+     * Examples:
+     * Input: base_url="http://localhost:8080", path="/1", config[path]="path"
+     * Output: "http://localhost:8080/path/1"
+     *
+     * Input: base_url="http://localhost:8080", path="1/1/foo.png", config[path]="path"
+     * Output: "http://localhost:8080/path/1/1/foo.png"
+     *
+     * Input: base_url="https://images.path.org", path="1/1/foo.png", config[path]="path"
+     * Output: "https://images.path.org/path/1/1/foo.png"
+     *
+     * @param string $base_url The base URL to prepend
+     * @param string $path The path to encode and append
+     * @return string The complete URL with encoded path
+     */
+    protected function getUrl(string $base_url, string $path): string {
+        // Normalize path by removing leading/trailing slashes
+        // Example: "/1" -> "1", "1/1/foo.png" -> "1/1/foo.png"
+        $path = trim($path, '/');
+
+        // Split path into segments and encode each one
+        // Example: "1/1/foo.png" -> ["1", "1", "foo.png"] -> ["1", "1", "foo%bar.png"]
+        $segments = explode('/', $path);
+        $encoded_segments = array_map('rawurlencode', $segments);
+
+        // Prepend config path if it exists
+        // Example: config[path]="path" -> ["path"] -> ["path", "1", "1", "foo%bar.png"]
+        if (!empty($this->config['path'])) {
+            $config_segments = explode('/', $this->config['path']);
+            $encoded_config = array_map('rawurlencode', $config_segments);
+            $encoded_segments = array_merge($encoded_config, $encoded_segments);
+        }
+
+        // Join everything together with slashes
+        // Example: "http://localhost:8080" + "/" + "path/1/1/foo%bar.png"
+        $result = rtrim($base_url, '/') . '/' . implode('/', $encoded_segments);
+        return $result;
+    }
+
+    /**
+     * Base upload method that handles URL encoding
+     * @param string $filename Path to the file to upload
+     * @param string|null $namespace Optional namespace for the upload
+     * @param ImageMetadata|null $metadata Optional metadata for the upload
+     * @return array|null Array containing 'url' and optionally 'delete_url', or null on failure
+     */
+    public function upload(string $filename, ?string $namespace = null, ?ImageMetadata $metadata = null): ?array {
+        if (!$this->isAvailable() || !$this->validateFile($filename)) {
+            return null;
+        }
+
+        // Use the provided metadata or create new metadata
+        if (!$metadata) {
+            $metadata = ImageMetadata::fromFilename($filename);
+        }
+
+        // Generate path using namespace and original filename
+        $path = $this->generateUniqueFilename($namespace, $metadata->original_name);
+
+        // Perform the actual upload
+        $result = $this->doUpload($filename, $path, $metadata);
+        if (!$result) {
+            return null;
+        }
+
+        // Create a structured delete URL that can be used in changes
+        $timestamp = time();
+        $deletehash = $this->generateDeleteHash($path, $timestamp);
+        $delete_url = 'deleteimage.phtml?url=' . urlencode($path) . '&hash=' . $deletehash . '&t=' . $timestamp;
+
+        // Return URLs with proper encoding
+        return [
+            'url' => $this->getUrl($this->config['public_url'], $path),
+            'delete_url' => $delete_url,
+            'metadata_path' => $path
+        ];
+    }
+
+    /**
+     * Perform the actual upload operation
+     * This must be implemented by each uploader
+     * @param string $filename Path to the file to upload
+     * @param string $path The path where the file should be uploaded
+     * @param ImageMetadata $metadata The metadata for the upload
+     * @return bool True if the upload was successful
+     */
+    abstract protected function doUpload(string $filename, string $path, ImageMetadata $metadata): bool;
+
+    /**
      * Generate a unique filename for the upload
      * @param string|null $namespace Optional namespace (e.g. "fid/aid")
      * @param string $original Original filename
@@ -174,11 +264,16 @@ abstract class Upload implements ImageUploader {
 
         $response = curl_exec($ch);
         $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curl_error = curl_error($ch);
+        $curl_errno = curl_errno($ch);
 
         if ($response === false) {
-            $this->setError("CURL error: " . curl_error($ch));
+            $this->setError("CURL error ($curl_errno): $curl_error");
             curl_close($ch);
-            return null;
+            return [
+                'error' => "CURL error ($curl_errno): $curl_error",
+                'http_code' => 0
+            ];
         }
 
         curl_close($ch);
@@ -193,7 +288,8 @@ abstract class Upload implements ImageUploader {
             }
             return [
                 'error' => $error_msg,
-                'http_code' => $http_code
+                'http_code' => $http_code,
+                'response' => $response
             ];
         }
 

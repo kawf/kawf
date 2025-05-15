@@ -21,9 +21,14 @@ class DAV extends Upload {
         return parent::generateUniqueFilename($namespace, $original);
     }
 
-    protected function ensureRemoteDirectories($remote_path) {
+    /**
+     * Ensure all parent directories exist for a path
+     * @param string $path The path to ensure directories for
+     * Example: "1/1/foo bar.png" -> creates directories "1" and "1/1"
+     */
+    protected function ensureRemoteDirectories($path) {
         // Remove leading/trailing slashes and split into parts
-        $path = trim($remote_path, '/');
+        $path = trim($path, '/');
         $parts = explode('/', $path);
         if (count($parts) <= 1) return true; // No directory to create
         $base_url = rtrim($this->config['url'], '/');
@@ -32,7 +37,7 @@ class DAV extends Upload {
         // Create each directory in the path except the last (the file)
         for ($i = 0; $i < count($parts) - 1; $i++) {
             $current .= '/' . $parts[$i];
-            $url = $base_url . $current;
+            $url = $this->getUrl($this->config['url'], $current);
             // Check if directory exists (HEAD request)
             $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_NOBODY, true);
@@ -66,7 +71,7 @@ class DAV extends Upload {
      * This method assumes the path is already in the correct format
      */
     private function performDelete(string $remote_path): bool {
-        $url = rtrim($this->config['url'], '/') . '/' . $remote_path;
+        $url = $this->getUrl($this->config['url'], $remote_path);
         // Delete the main file
         $result = $this->makeCurlRequest($url, [
             CURLOPT_CUSTOMREQUEST => 'DELETE',
@@ -89,7 +94,8 @@ class DAV extends Upload {
 
     /**
      * Delete a file by its path
-     * This method always prepends the config path
+     * @param string $path The path of the file to delete
+     * Example: "1/1/foo bar.png" -> deletes "/path/1/1/foo bar.png"
      */
     public function delete(string $path): bool {
         $remote_path = $this->config['path'] . '/' . $path;
@@ -98,7 +104,9 @@ class DAV extends Upload {
 
     /**
      * Delete a file using a deletion URL
-     * This method handles both full URLs and path fragments
+     * @param string $deleteUrl The deletion URL or path
+     * Example: "deleteimage.phtml?url=1/1/foo%20bar.png&hash=abc&t=123"
+     *         -> deletes "/path/1/1/foo bar.png"
      */
     public function deleteByUrl(string $deleteUrl): bool {
         // Handle both full URLs and path fragments
@@ -141,12 +149,17 @@ class DAV extends Upload {
         return true;
     }
 
+    /**
+     * Save metadata for an uploaded file
+     * @param string $path The path of the file
+     * Example: "1/1/foo bar.png" -> saves to "/path/1/1/foo bar.png.json"
+     */
     public function save_metadata(string $path, ImageMetadata $metadata): bool {
         $metadata_path = $this->get_metadata_path($path);
         $data = $metadata->toArray();
         $json = json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) . "\n";
 
-        $url = rtrim($this->config['url'], '/') . '/' . $metadata_path;
+        $url = $this->getUrl($this->config['url'], $metadata_path);
         $result = $this->makeCurlRequest($url, [
             CURLOPT_CUSTOMREQUEST => 'PUT',
             CURLOPT_USERPWD => $this->config['username'] . ':' . $this->config['password'],
@@ -154,65 +167,76 @@ class DAV extends Upload {
             CURLOPT_HTTPHEADER => ['Content-Type: application/json']
         ]);
 
-        if (!$result) {
-            $this->setError("Failed to save metadata for $path: " . $this->getError());
+        if (isset($result['error'])) {
+            $this->error = "Failed to save metadata: " . $result['error'];
             return false;
         }
+
+        if ($result['http_code'] < 200 || $result['http_code'] >= 300) {
+            $this->error = "WebDAV metadata save failed with status " . $result['http_code'] . ": " . $result['response'];
+            return false;
+        }
+
         return true;
     }
 
+    /**
+     * Load metadata for an uploaded file
+     * @param string $path The path of the file
+     * Example: "1/1/foo bar.png" -> loads from "/path/1/1/foo bar.png.json"
+     */
     public function load_metadata(string $path): ?ImageMetadata {
         $metadata_path = $this->get_metadata_path($path);
-        $url = rtrim($this->config['url'], '/') . '/' . $metadata_path;
+        $url = $this->getUrl($this->config['url'], $metadata_path);
 
         $result = $this->makeCurlRequest($url, [
             CURLOPT_USERPWD => $this->config['username'] . ':' . $this->config['password']
         ]);
 
-        if (!$result) {
-            $this->setError("Failed to load metadata for $path (URL: $url): " . $this->getError());
+        if (isset($result['error'])) {
+            $this->error = "Failed to load metadata: " . $result['error'];
             return null;
         }
+
         if ($result['http_code'] < 200 || $result['http_code'] >= 300) {
-            $this->setError("Non-2xx response for $path: " . $result['response']);
+            $this->error = "WebDAV metadata load failed with status " . $result['http_code'] . ": " . $result['response'];
             return null;
         }
 
         $data = json_decode($result['response'], true);
         if (!$data) {
-            $this->setError("Failed to decode metadata JSON for $path. Response: " . $result['response']);
+            $this->error = "Failed to decode metadata JSON for $path. Response: " . $result['response'];
             return null;
         }
 
         return ImageMetadata::fromArray($data);
     }
 
+    /**
+     * Get the metadata path for a file
+     * @param string $path The path of the file
+     * Example: "1/1/foo bar.png" -> returns "1/1/foo bar.png.json"
+     */
     private function get_metadata_path(string $path): string {
         return $path . '.json';
     }
 
-    public function upload(string $filename, ?string $namespace = null, ?ImageMetadata $metadata = null): ?array {
-        if (!$this->isAvailable() || !$this->validateFile($filename)) {
-            return null;
-        }
-
-        // Use the provided metadata or create new metadata
-        if (!$metadata) {
-            $metadata = ImageMetadata::fromFilename($filename);
-        }
-
-        // Generate path using namespace and original filename
-        $path = $this->generateUniqueFilename($namespace, $metadata->original_name);
-        $remote_path = $this->config['path'] . '/' . $path;
-
+    /**
+     * Perform the actual upload operation
+     * @param string $filename Path to the file to upload
+     * @param string $path The path where the file should be uploaded
+     * Example: $path="1/1/foo bar.png" -> uploads to "/path/1/1/foo bar.png"
+     * @param ImageMetadata $metadata The metadata for the upload
+     */
+    protected function doUpload(string $filename, string $path, ImageMetadata $metadata): bool {
         // Ensure all parent directories exist
-        if (!$this->ensureRemoteDirectories($remote_path)) {
-            $this->error = "Failed to ensure remote directories for $remote_path";
-            return null;
+        if (!$this->ensureRemoteDirectories($path)) {
+            $this->error = "Failed to ensure remote directories for $path";
+            return false;
         }
 
         // Upload the image file
-        $curl_path = $this->config['url'] . '/' . $remote_path;
+        $curl_path = $this->getUrl($this->config['url'], $path);
         $curl_opts =[
             CURLOPT_PUT => true,
             CURLOPT_USERPWD => $this->config['username'] . ':' . $this->config['password'],
@@ -221,31 +245,25 @@ class DAV extends Upload {
         ];
         $result = $this->makeCurlRequest($curl_path, $curl_opts);
 
-        if (!$result) {
-            $this->error = "Failed to upload to DAV, no result";
-            return null;
+        if (isset($result['error'])) {
+            $this->error = "Failed to upload to DAV: " . $result['error'];
+            return false;
+        }
+
+        if ($result['http_code'] < 200 || $result['http_code'] >= 300) {
+            $this->error = "WebDAV upload failed with status " . $result['http_code'] . ": " . $result['response'];
+            return false;
         }
 
         // Set the image URL in metadata
         $metadata->image_url = $path;
 
-        if (!$this->save_metadata($remote_path, $metadata)) {
+        if (!$this->save_metadata($path, $metadata)) {
             $this->error = "Failed to save metadata";
-            return null;
+            return false;
         }
 
-        // Create a structured delete URL that can be used in changes
-        $timestamp = time();
-        $deletehash = $this->generateDeleteHash($path, $timestamp);
-
-        // Return relative path for deletion - forum software will prepend its base URL
-        $delete_url = 'deleteimage.phtml?url=' . urlencode($path) . '&hash=' . $deletehash . '&t=' . $timestamp;
-
-        return [
-            'url' => rtrim($this->config['public_url'], '/') . '/' . $remote_path,
-            'delete_url' => $delete_url,
-            'metadata_path' => $remote_path
-        ];
+        return true;
     }
 
     /**
@@ -256,49 +274,71 @@ class DAV extends Upload {
     public function readdir(string $namespace): array {
         $images = [];
         $base_url = rtrim($this->config['public_url'], '/');
-        $path = rtrim($this->config['path'] . '/' . $namespace, '/') . '/';
-        $url = rtrim($this->config['url'], '/') . '/' . $path;
+        // Don't manually add config path, let getUrl handle it
+        $path = rtrim($namespace, '/') . '/';
+        // PROPFIND requires a trailing slash!
+        $url = rtrim($this->getUrl($this->config['url'], $path), '/') . '/';
+
         $result = $this->makeCurlRequest($url, [
             CURLOPT_CUSTOMREQUEST => 'PROPFIND',
             CURLOPT_USERPWD => $this->config['username'] . ':' . $this->config['password'],
             CURLOPT_HTTPHEADER => ['Depth: 1']
         ]);
+
+        // 404 is expected for directories that have not been created yet, other errors are not
+        if ($result['http_code'] === 404) {
+            return []; // Directory doesn't exist yet, return empty list
+        }
+
+        // Now check for other CURL errors
+        if (isset($result['error'])) {
+            $this->setError("PROPFIND $url failed: " . $result['error']);
+            return [];
+        }
+
+        // Check for other non-200 response codes
+        if ($result['http_code'] < 200 || $result['http_code'] >= 300) {
+            $this->setError("PROPFIND $url failed with status " . $result['http_code'] . ": " . $result['response']);
+            return [];
+        }
+
         if (isset($result['response'])) {
             libxml_use_internal_errors(true);
             $xml = simplexml_load_string($result['response']);
             if ($xml === false) {
-                error_log("[DAV::readdir] Failed to parse XML response");
+                $this->setError("Failed to parse PROPFIND $url response");
                 foreach (libxml_get_errors() as $error) {
                     error_log("[DAV::readdir] XML error: " . $error->message);
                 }
                 libxml_clear_errors();
-            } else {
-                $xml->registerXPathNamespace('d', 'DAV:');
-                $prefix = parse_url($url, PHP_URL_PATH);
-                $hrefs = $xml->xpath('//d:response/d:href');
-                foreach ($hrefs as $hrefObj) {
-                    $href = (string)$hrefObj;
-                    if (strpos($href, $prefix) === 0) {
-                        $img_path = urldecode(substr($href, strlen($prefix)));
-                    } else {
-                        $img_path = urldecode($href);
-                    }
-                    // Skip directories and metadata files
-                    if (strpos($img_path, '/') !== false || strpos($img_path, '.json') !== false || $img_path === '') {
-                        continue;
-                    }
-                    // Get metadata if available, using the full relative path
-                    $metadata = null;
-                    if ($this->supports_metadata()) {
-                        $metadata = $this->load_metadata($path . $img_path);
-                    }
-                    $images[] = [
-                        'img' => $img_path,
-                        'path' => $namespace . '/' . $img_path,
-                        'url' => $base_url . '/' . $path . $img_path,
-                        'metadata' => $metadata
-                    ];
+                return [];
+            }
+            $xml->registerXPathNamespace('d', 'DAV:');
+            $prefix = parse_url($url, PHP_URL_PATH);
+            $hrefs = $xml->xpath('//d:response/d:href');
+            foreach ($hrefs as $hrefObj) {
+                $href = (string)$hrefObj;
+                if (strpos($href, $prefix) === 0) {
+                    $img_path = urldecode(substr($href, strlen($prefix)));
+                } else {
+                    $img_path = urldecode($href);
                 }
+                // Skip directories and metadata files
+                if (strpos($img_path, '/') !== false || strpos($img_path, '.json') !== false || $img_path === '') {
+                    continue;
+                }
+                // Get metadata if available, using the full relative path
+                $metadata = null;
+                if ($this->supports_metadata()) {
+                    // Don't add config path here, let getUrl handle it
+                    $metadata = $this->load_metadata($path . $img_path);
+                }
+                $images[] = [
+                    'img' => $img_path,
+                    'path' => $namespace . '/' . $img_path,
+                    'url' => $this->getUrl($this->config['public_url'], $path . $img_path),
+                    'metadata' => $metadata
+                ];
             }
         }
         // Sort by upload_time (newest first)
