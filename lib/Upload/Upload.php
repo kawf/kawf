@@ -106,7 +106,7 @@ abstract class Upload implements ImageUploader {
     protected function setError(string $message, bool $log = true): void {
         $this->error = $message;
         if ($log) {
-            error_log("[Upload] " . $message);
+            error_log("[" . get_class($this) . "] " . $message);
         }
     }
 

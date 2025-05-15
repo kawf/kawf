@@ -27,36 +27,51 @@ class Imgur extends Upload {
      * @return bool True if the upload was successful
      */
     protected function doUpload(string $filename, string $path, ImageMetadata $metadata): bool {
-        $curl_opts = [
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => [
-                'image' => new \CURLFile($filename)
-            ],
-            CURLOPT_HTTPHEADER => [
-                'Authorization: Client-ID ' . $this->config['client_id']
-            ]
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://api.imgur.com/3/image');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Client-ID ' . $this->config['client_id']
+        ]);
+
+        $post = [
+            'image' => base64_encode(file_get_contents($filename)),
+            'name' => basename($path),
+            'title' => basename($path),
+            'description' => 'Uploaded via Kawf'
         ];
 
-        $result = $this->makeCurlRequest('https://api.imgur.com/3/image', $curl_opts);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+        $response = curl_exec($ch);
+        $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curl_error = curl_error($ch);
+        $curl_errno = curl_errno($ch);
+        curl_close($ch);
 
-        if (!$result) {
-            $this->error = "Failed to upload to Imgur, no result";
+        if ($response === false) {
+            $this->setError("CURL error ($curl_errno): $curl_error");
             return false;
         }
 
-        if (isset($result['error'])) {
-            $this->error = "Failed to upload to Imgur: " . $result['error'];
-            return false;
-        }
-
-        $data = json_decode($result['response'], true);
+        $data = json_decode($response, true);
         if (!$data || !isset($data['data']['link'])) {
-            $this->error = "Invalid response from Imgur: " . $result['response'];
+            $this->setError("Failed to upload to Imgur: " . ($data['data']['error'] ?? 'Unknown error'));
+            return false;
+        }
+
+        if ($http_code < 200 || $http_code >= 300) {
+            $this->setError("Imgur upload failed with status $http_code: " . ($data['data']['error'] ?? 'Unknown error'));
             return false;
         }
 
         // Set the image URL in metadata
         $metadata->image_url = $data['data']['link'];
+
+        if (!$this->save_metadata($path, $metadata)) {
+            $this->setError("Failed to save metadata");
+            return false;
+        }
 
         return true;
     }
@@ -66,33 +81,8 @@ class Imgur extends Upload {
      * This method handles both full URLs and path fragments
      */
     public function delete(string $path): bool {
-        // Extract the deletehash from the path
-        $deletehash = $this->extractDeleteHash($path);
-        if (!$deletehash) {
-            $this->error = "Invalid path format for Imgur deletion";
-            return false;
-        }
-
-        $curl_opts = [
-            CURLOPT_CUSTOMREQUEST => 'DELETE',
-            CURLOPT_HTTPHEADER => [
-                'Authorization: Client-ID ' . $this->config['client_id']
-            ]
-        ];
-
-        $result = $this->makeCurlRequest('https://api.imgur.com/3/image/' . $deletehash, $curl_opts);
-
-        if (!$result) {
-            $this->error = "Failed to delete from Imgur, no result";
-            return false;
-        }
-
-        if (isset($result['error'])) {
-            $this->error = "Failed to delete from Imgur: " . $result['error'];
-            return false;
-        }
-
-        return true;
+        $this->setError("Imgur does not support deletion");
+        return false;
     }
 
     /**
@@ -100,69 +90,8 @@ class Imgur extends Upload {
      * This method handles both full URLs and path fragments
      */
     public function deleteByUrl(string $deleteUrl): bool {
-        // Handle both full URLs and path fragments
-        if (strpos($deleteUrl, '?') !== false) {
-            // Extract query string from URL if it's a full URL
-            if (strpos($deleteUrl, '://') !== false) {
-                $queryString = substr($deleteUrl, strpos($deleteUrl, '?') + 1);
-            } else {
-                $queryString = $deleteUrl;
-            }
-        } else {
-            $queryString = $deleteUrl;
-        }
-
-        // Parse query parameters (parse_str handles URL decoding)
-        parse_str($queryString, $query);
-
-        // Extract parameters
-        $path = $query['url'] ?? '';
-        $hash = $query['hash'] ?? '';
-        $timestamp = (int)($query['t'] ?? 0);
-
-        if (empty($path)) {
-            $this->setError("Missing URL parameter");
-            return false;
-        }
-
-        // Verify hash before proceeding
-        if (!$this->verifyDeleteHash($path, $hash, $timestamp)) {
-            // Error message is already set by verifyDeleteHash
-            return false;
-        }
-
-        return $this->delete($path);
-    }
-
-    /**
-     * Extract the deletehash from an Imgur path
-     * @param string $path The path to extract from
-     * @return string|null The deletehash if found, null otherwise
-     */
-    private function extractDeleteHash(string $path): ?string {
-        // Handle both full URLs and path fragments
-        if (strpos($path, '://') !== false) {
-            // Extract the last part of the URL
-            $path = basename(parse_url($path, PHP_URL_PATH));
-        }
-
-        // Remove any file extension
-        $path = pathinfo($path, PATHINFO_FILENAME);
-
-        // The deletehash should be the last part of the path
-        return $path;
-    }
-
-    public function supports_metadata(): bool {
+        $this->setError("Imgur does not support deletion");
         return false;
-    }
-
-    public function save_metadata(string $path, ImageMetadata $metadata): bool {
-        throw new \RuntimeException("Metadata operations are not supported by Imgur uploader");
-    }
-
-    public function load_metadata(string $path): ?ImageMetadata {
-        throw new \RuntimeException("Metadata operations are not supported by Imgur uploader");
     }
 
     /**
@@ -171,8 +100,22 @@ class Imgur extends Upload {
      * @return array List of images with keys: url, original_name, upload_time, file_size
      */
     public function readdir(string $namespace): array {
-        // Imgur doesn't support directory listing
+        $this->setError("Imgur does not support directory listing");
         return [];
+    }
+
+    public function supports_metadata(): bool {
+        return false;
+    }
+
+    public function save_metadata(string $path, ImageMetadata $metadata): bool {
+        $this->setError("Imgur does not support metadata");
+        return false;
+    }
+
+    public function load_metadata(string $path): ?ImageMetadata {
+        $this->setError("Imgur does not support metadata");
+        return null;
     }
 }
 // vim: set ts=8 sw=4 et:

@@ -168,12 +168,12 @@ class DAV extends Upload {
         ]);
 
         if (isset($result['error'])) {
-            $this->error = "Failed to save metadata: " . $result['error'];
+            $this->setError("Failed to save metadata: " . $result['error']);
             return false;
         }
 
         if ($result['http_code'] < 200 || $result['http_code'] >= 300) {
-            $this->error = "WebDAV metadata save failed with status " . $result['http_code'] . ": " . $result['response'];
+            $this->setError("WebDAV metadata save failed with status " . $result['http_code'] . ": " . $result['response']);
             return false;
         }
 
@@ -194,18 +194,18 @@ class DAV extends Upload {
         ]);
 
         if (isset($result['error'])) {
-            $this->error = "Failed to load metadata: " . $result['error'];
+            $this->setError("Failed to load metadata: " . $result['error']);
             return null;
         }
 
         if ($result['http_code'] < 200 || $result['http_code'] >= 300) {
-            $this->error = "WebDAV metadata load failed with status " . $result['http_code'] . ": " . $result['response'];
+            $this->setError("WebDAV metadata load failed with status " . $result['http_code'] . ": " . $result['response']);
             return null;
         }
 
         $data = json_decode($result['response'], true);
         if (!$data) {
-            $this->error = "Failed to decode metadata JSON for $path. Response: " . $result['response'];
+            $this->setError("Failed to decode metadata JSON for $path. Response: " . $result['response']);
             return null;
         }
 
@@ -231,7 +231,7 @@ class DAV extends Upload {
     protected function doUpload(string $filename, string $path, ImageMetadata $metadata): bool {
         // Ensure all parent directories exist
         if (!$this->ensureRemoteDirectories($path)) {
-            $this->error = "Failed to ensure remote directories for $path";
+            $this->setError("Failed to ensure remote directories for $path");
             return false;
         }
 
@@ -246,12 +246,12 @@ class DAV extends Upload {
         $result = $this->makeCurlRequest($curl_path, $curl_opts);
 
         if (isset($result['error'])) {
-            $this->error = "Failed to upload to DAV: " . $result['error'];
+            $this->setError("Failed to upload to DAV: " . $result['error']);
             return false;
         }
 
         if ($result['http_code'] < 200 || $result['http_code'] >= 300) {
-            $this->error = "WebDAV upload failed with status " . $result['http_code'] . ": " . $result['response'];
+            $this->setError("WebDAV upload failed with status " . $result['http_code'] . ": " . $result['response']);
             return false;
         }
 
@@ -259,7 +259,7 @@ class DAV extends Upload {
         $metadata->image_url = $path;
 
         if (!$this->save_metadata($path, $metadata)) {
-            $this->error = "Failed to save metadata";
+            $this->setError("Failed to save metadata");
             return false;
         }
 

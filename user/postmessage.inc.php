@@ -120,13 +120,14 @@ function postmessage($user, $fid, &$msg, $request): bool
       "( mid, aid, pid, tid, name, email, date, ip, flags, subject, message, url, urltext, video, state, views, changes ) " .
       "values ( ?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?, ?, ?, ?, ?, ?, 0, ? );";
 
-    if (array_key_exists('imagedeleteurl', $msg) && $msg["imagedeleteurl"]) {
+    $log_delete_url = false; // disable until we have a place to put this
+    if ($log_delete_url && array_key_exists('imagedeleteurl', $msg) && $msg["imagedeleteurl"]) {
       $deleteurl = $msg["imagedeleteurl"];
       // Convert relative URL to absolute if needed
       if (strpos($deleteurl, 'http') !== 0) {
         $deleteurl = get_base_url() . '/' . ltrim($deleteurl, '/');
       }
-      $msg["changes"] = "Image delete url:  " . $deleteurl . "\n";
+      $msg["changes"] = "Image delete URL:  " . $deleteurl . "\n";
     } else {
       $msg["changes"] = "";
     }
