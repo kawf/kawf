@@ -79,8 +79,8 @@ class DAV extends Upload {
         }
 
         // Also delete the metadata file if it exists
-        $metadata_url = $url . '.json';
-        $this->makeCurlRequest($metadata_url, [
+        $metadata_path = $url . '.json';
+        $this->makeCurlRequest($metadata_path, [
             CURLOPT_CUSTOMREQUEST => 'DELETE',
             CURLOPT_USERPWD => $this->config['username'] . ':' . $this->config['password']
         ]);
@@ -244,7 +244,7 @@ class DAV extends Upload {
         return [
             'url' => rtrim($this->config['public_url'], '/') . '/' . $remote_path,
             'delete_url' => $delete_url,
-            'metadata_url' => $remote_path
+            'metadata_path' => $remote_path
         ];
     }
 

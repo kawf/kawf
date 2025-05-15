@@ -164,7 +164,7 @@ function create_upload_context(array $upload_config, string $filepath, array $fi
  * @return array|null Array containing:
  *                    - url: Public URL of the uploaded image
  *                    - delete_url: URL to delete the image
- *                    - metadata_url: URL to the image metadata (if supported)
+ *                    - metadata_path: URL to the image metadata (if supported)
  *                    - error: Error message if upload fails
  */
 function upload_image(UploadContext $context): ?array {
@@ -195,19 +195,19 @@ function upload_image(UploadContext $context): ?array {
  * Updates image metadata with a message reference
  *
  * @param array $upload_config Upload configuration
- * @param string $metadata_url URL to the image metadata
+ * @param string $metadata_path URL to the image metadata
  * @param string $forum_shortname Forum shortname for URL construction
  * @param int $message_id Message ID to add
  * @return string|null Error message if metadata update fails, null if successful
  */
-function update_image_metadata(array $upload_config, string $metadata_url, string $forum_shortname, int $message_id): ?string {
+function update_image_metadata(array $upload_config, string $metadata_path, string $forum_shortname, int $message_id): ?string {
     $uploader = UploadFactory::create($upload_config);
     if (!$uploader || !$uploader->supports_metadata()) {
         return "No upload service configured";
     }
 
     // Always use the full relative path for metadata operations
-    $full_metadata_path = $metadata_url;
+    $full_metadata_path = $metadata_path;
     $metadata = $uploader->load_metadata($full_metadata_path);
     if (!$metadata) {
         return "No metadata found for $full_metadata_path: " . $uploader->getError();

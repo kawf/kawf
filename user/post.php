@@ -107,7 +107,7 @@ if (isset($_POST['postcookie'])) {
   if (isset($_POST['imgpreview'])) $imgpreview = true; // the user posted an image or video but didn't preview yet
   if (isset($_POST['preview'])) $preview = true; // show the preview block
   if (isset($_POST['imagedeleteurl'])) $msg['imagedeleteurl'] = $_POST['imagedeleteurl']; // propogate the delete url to the message from preview
-  if (isset($_POST['imagemetadataurl'])) $msg['imagemetadataurl'] = $_POST['imagemetadataurl']; // propogate the metadata url to the message from preview
+  if (isset($_POST['metadatapath'])) $msg['metadatapath'] = $_POST['metadatapath']; // propogate the metadata url to the message from preview
 
   //debug_log("postcookie set, imgpreview=" . var_export($imgpreview, true) . ", preview=" . var_export($preview, true));
 
@@ -189,8 +189,8 @@ if (isset($_POST['postcookie'])) {
     } else {
       $msg["imageurl"] = $result['url'];
       $msg["imagedeleteurl"] = $result['delete_url'];
-      if (isset($result['metadata_url'])) {
-          $msg["imagemetadataurl"] = $result['metadata_url'];
+      if (isset($result['metadata_path'])) {
+          $msg["metadatapath"] = $result['metadata_path'];
       }
     }
   }
@@ -334,8 +334,8 @@ if (!$accepted || $preview) {
   }
 
   // After successful post, update image metadata with message reference
-  if (empty($error) && !$preview && !empty($msg['imageurl']) && !empty($msg['imagemetadataurl'])) {
-    $error = update_image_metadata($upload_config, $msg['imagemetadataurl'], $forum['shortname'], $msg['mid']);
+  if (empty($error) && !$preview && !empty($msg['imageurl']) && !empty($msg['metadatapath'])) {
+    $error = update_image_metadata($upload_config, $msg['metadatapath'], $forum['shortname'], $msg['mid']);
     if ($error) {
       $content_tpl->set("UPLOAD_ERROR", $error);
     }

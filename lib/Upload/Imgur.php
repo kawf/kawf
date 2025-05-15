@@ -50,7 +50,7 @@ class Imgur extends Upload {
         return [
             'url' => $data['data']['link'],
             'delete_url' => self::IMGUR_DELETE_URL . $data['data']['deletehash'],
-            'metadata_url' => null  // Imgur doesn't support metadata
+            'metadata_path' => null  // Imgur doesn't support metadata
         ];
     }
 

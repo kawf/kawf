@@ -34,12 +34,12 @@ The Image Upload Library provides a unified interface for handling image uploads
 ### Imgur
 - `url`: Full URL to the uploaded image (e.g., `https://i.imgur.com/abc123.jpg`)
 - `delete_url`: Full URL to Imgur's deletion API
-- `metadata_url`: Imgur doesn't support metadata
+- `metadata_path`: Imgur doesn't support metadata
 
 ### WebDAV
 - `url`: Full URL to the uploaded image (e.g., `https://images.example.com/path/to/image.jpg`)
 - `delete_url`: Query parameter format for deletion (e.g., `deleteimage.phtml?url=path/to/image&hash=xxx&t=yyy`)
-- `metadata_url`: Relative path to metadata file (e.g., `path/to/image.jpg.json`)
+- `metadata_path`: Relative path to metadata file (e.g., `path/to/image.jpg.json`)
 
 The forum software is responsible for:
 1. Converting relative delete URLs to absolute URLs
