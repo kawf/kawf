@@ -13,7 +13,9 @@ require_once("diff.inc.php");         // For calculating diffs
 require_once("thread.inc.php");       // For get_thread
 require_once("message.inc.php");      // For fetch_message, render_message, preprocess etc.
 require_once("postform.inc.php");     // For render_postform
-require_once("page-yatt.inc.php"); // For YATT class and generate_page
+require_once("image.inc.php");        // For image upload support
+require_once("postcommon.inc.php");   // For shared functionality
+require_once("page-yatt.inc.php");    // For YATT class and generate_page
 
 $mid = isset($_REQUEST['mid']) ? $_REQUEST['mid'] : null;
 
@@ -134,30 +136,14 @@ else if ($user->capable($forum['fid'], 'OffTopic') &&
 } else
   $nmsg['state'] = $msg['state'];
 
-// Validate Subject
-if (empty($nmsg['subject'])) {
-  $error["subject_req"] = true;
-}
+// Handle image upload
+$nmsg = handle_image_upload($user, $nmsg, $forum, $error, $content_tpl);
 
-if (mb_strlen($nmsg['subject']) > 100) {
-  $error["subject_too_long"] = true;
-  $nmsg['subject'] = mb_strcut($nmsg['subject'], 0, 100);
-}
+// Validate message
+validate_message($user, $nmsg, $error);
 
-/* first time around, there is an imageurl set, and the user
-   did not preview, force the action to "preview" */
-if ((!empty($nmsg['imageurl']) || !empty($nmsg['video'])) && !$imgpreview) {
-  $preview = true;
-}
-
-if (!empty($error) || $preview) {
-  $imgpreview = true;
-  if (!empty($nmsg['imageurl']))
-    $error["image"] = true;
-
-  if (!empty($nmsg['video']))
-    $error["video"] = true;
-}
+// Handle preview state
+handle_preview_state($user, $nmsg, $error, $preview, $imgpreview);
 
 // We show the preview even on accept
 $preview_html = render_message($template_dir, $nmsg, $user);
@@ -175,70 +161,15 @@ if (!empty($error) || $preview) {
 } else {
   // --- State: Accept Changes (No Errors, Not Preview) ---
 
-  // Re-calculate flags based on final $nmsg state
-  $flagset = ["NewStyle"]; // Base flag
-  if (isset($flags['StateLocked'])) $flagset[] = 'StateLocked'; // Preserve StateLocked if set
-  if (empty($nmsg['message'])) $flagset[] = "NoText";
-  if (!empty($nmsg['url']) || preg_match("/<[[:space:]]*a[[:space:]]+href/i", $nmsg['message'])) $flagset[] = "Link";
-  if (!empty($nmsg['video']) || preg_match("/<[[:space:]]*video[[:space:]]+src/i", $nmsg['message'])) $flagset[] = "Video";
-  if (!empty($nmsg['imageurl']) || preg_match("/<[[:space:]]*img[[:space:]]+src/i", $nmsg['message'])) $flagset[] = "Picture";
-  $nmsg['flags'] = implode(",", $flagset);
+  // Calculate flags
+  $nmsg['flags'] = calculate_message_flags($user, $nmsg);
 
   /* IMAGEURL HACK - extract imageurl from old msg */
   /* for diffing */
   $msg = image_url_hack_extract($msg);
 
-  /* Record message state changes */
-  $diff = '';
-  $state_changed = false;
-  if ($msg['state']!=$nmsg['state']) {
-    $diff .= "Changed from '".$msg['state']."' to '".$nmsg['state']."'\n";
-    $state_changed = true;
-  }
-
-  if (empty($msg['email']) && !empty($nmsg['email']))
-    $diff .= "Exposed e-mail address\n";
-  else if (!empty($msg['email']) && empty($nmsg['email']))
-    $diff .= "Hid e-mail address\n";
-
-  if ($send_email && !is_msg_etracked($msg))
-    $diff .= "Requested e-mail notification\n";
-  else if (!$send_email && is_msg_etracked($msg))
-    $diff .= "Cancelled e-mail notification\n";
-
-  if ($track_thread && !is_msg_tracked($msg))
-    $diff .= "Tracked message\n";
-  else if (!$track_thread && is_msg_tracked($msg))
-    $diff .= "Untracked message\n";
-
-  /* Dump the \r's, we don't want them */
-  $msg['message'] = preg_replace("/\r/", "", $msg['message']);
-  $nmsg['message'] = preg_replace("/\r/", "", $nmsg['message']);
-
-  /* Synthesize fake records for optional links */
-  $old[]="Subject: " . $msg['subject'];
-  $old = array_merge($old, explode("\n", $msg['message']));
-  if (!empty($msg['url'])) {
-    $old[]="urltext: " . $msg['urltext'];
-    $old[]="url: " . $msg['url'];
-  }
-  if (!empty($msg['imageurl']))
-    $old[]="imageurl: " . $msg['imageurl'];
-  if (!empty($msg['video']))
-    $old[]="video: " . $msg['video'];
-
-  $new[]="Subject: " . $nmsg['subject'];
-  $new = array_merge($new, explode("\n", $nmsg['message']));
-  if (!empty($nmsg['url'])) {
-    $new[]="urltext: " . $nmsg['urltext'];
-    $new[]="url: " . $nmsg['url'];
-  }
-  if (!empty($nmsg['imageurl']))
-    $new[]="imageurl: " . $nmsg['imageurl'];
-  if (!empty($nmsg['video']))
-    $new[]="video: " . $nmsg['video'];
-
-  $diff .= diff($old, $new);
+  // Calculate diff
+  $diff = calculate_message_diff($user, $msg, $nmsg);
 
   /* IMAGEURL HACK - prepend before insert */
   /* for diffing and for entry into the db */
@@ -271,25 +202,29 @@ if (!empty($error) || $preview) {
   $sql = "replace into f_updates ( fid, mid ) values ( ?, ? )";
   db_exec($sql, array($forum['fid'], $mid));
 
-  /* update user post counts and f_indexes */
-  if ($state_changed)
+  // Handle state changes
+  if ($msg['state'] != $nmsg['state']) {
     msg_state_changed($forum['fid'], $msg, $nmsg['state']);
+  }
 
-  if ($track_thread)
-    track_thread($forum['fid'], $nmsg['tid'], $send_email?"SendEmail":"");
-  else
+  // Handle thread tracking with email option
+  if ($track_thread) {
+    track_thread($forum['fid'], $nmsg['tid'], $send_email ? "SendEmail" : "");
+  } else {
     untrack_thread($forum['fid'], $nmsg['tid']);
+  }
+
+  if (can_upload_images()) {
+    $content_tpl->parse('edit_content.accept.image_browser');
+  }
 
   $content_block = "accept";
-} // end of "not (isset($error) || $preview)"
+}
 
-// Parse post content block for one of the two contexts: preview, accept
+// Parse the appropriate content block
 $content_tpl->parse("edit_content.$content_block");
 
-// Parse the main container block
-$content_tpl->parse("edit_content");
-
-// Final Output Generation
+// Generate the final page
 print generate_page('Edit Message', $content_tpl->output('edit_content'));
 
 // vim: set ts=8 sw=2 et:

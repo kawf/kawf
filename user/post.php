@@ -7,6 +7,7 @@ require_once("image.inc.php");          // For upload_image, can_upload_images, 
 require_once("postform.inc.php");       // For render_postform
 require_once("postmessage.inc.php");    // For postmessage
 require_once("mailfrom.inc.php");       // For email_followup, db_exec
+require_once("postcommon.inc.php");     // For shared functionality
 require_once("page-yatt.inc.php");      // For YATT class, generate_page
 
 $user->req(); // This now relies on user.inc.php being loaded before this script
@@ -26,15 +27,6 @@ if (!$forum) {
   }
   exit;
 }
-
-// REMOVED SECOND INCLUDE BLOCK
-/*
-require_once("textwrap.inc.php");
-require_once("strip.inc.php");
-require_once("thread.inc.php");
-require_once("message.inc.php");
-require_once("page-yatt.inc.php");
-*/
 
 // Instantiate YATT
 // Sets up template and standard FORUM_NAME and FORUM_SHORTNAME variables
@@ -132,81 +124,18 @@ if (isset($_POST['postcookie'])) {
     $parent = db_query_first("select * from f_messages$iid where mid = ?", array($msg['pmid']));
   }
 
-  if (empty($msg['subject'])) {
-    $error["subject_req"] = true;
-    $msg['subject'] = '...'; // Default subject if empty
-  } elseif (isset($parent) && $msg['subject'] == "Re: " . $parent['subject'] && empty($msg['message']) && empty($msg['url'])) {
-    $error["subject_change"] = true; // Discourage empty "Re:" posts
-  }
-  if (mb_strlen($msg['subject']) > 100) {
-    $error["subject_too_long"] = true;
-    $msg['subject'] = mb_strcut($msg['subject'], 0, 100);
-  }
+  // Handle image upload
+  $msg = handle_image_upload($user, $msg, $forum, $error, $content_tpl);
 
-  // URL length checks
-  $max_item_len = 250;
-  foreach (['url', 'urltext', 'imageurl', 'video'] as $item) {
-    if (isset($msg[$item]) && mb_strlen($msg[$item]) > $max_item_len) {
-      $error[$item . '_too_long'] = true;
-      $msg[$item] = mb_strcut($msg[$item], 0, $max_item_len);
-    }
-  }
+  // Validate message
+  validate_message($user, $msg, $error, $parent ?? null);
 
   //debug_log("error=" . implode(", ", $error) .  " isset(error)=" . var_export(isset($error), true) .  " empty(error)=" . var_export(empty($error), true));
 
-  // Image Upload Handling
-  $upload_config = get_upload_config();
-  //debug_log("post.php: checking if we can upload images: " . implode(", ", $error) .  " fileMetadata=" . print_r($_POST['fileMetadata'], true));
-  if (empty($error) && can_upload_images($upload_config) && !empty($_POST['fileData']) && !empty($_POST['fileMetadata'])) {
-    //debug_log("post.php: can upload images");
-    // Get filename information from the hidden input
-    $fileMetadata = json_decode($_POST['fileMetadata'], true);
-    //debug_log("post.php: decoded fileMetadata from POST: " . print_r($fileMetadata, true));
+  // Handle preview state
+  handle_preview_state($user, $msg, $error, $preview, $imgpreview);
 
-    // Create a temporary file from the data URL
-    $tempFile = tempnam(sys_get_temp_dir(), 'kawf_');
-    $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $_POST['fileData']));
-    file_put_contents($tempFile, $data);
-
-    // Rename the temp file to use the correct filename from metadata
-    $finalTempFile = dirname($tempFile) . '/' . $fileMetadata['resized'];
-    rename($tempFile, $finalTempFile);
-
-    // Create upload context
-    $context = create_upload_context(
-        $upload_config,
-        $finalTempFile,
-        $fileMetadata,
-        $user->aid,
-        $forum['fid']
-    );
-
-    // Get the image URLs
-    $result = upload_image($context);
-    if (isset($result['error'])) {
-      $error["image_upload_failed"] = true;
-      $content_tpl->set("UPLOAD_ERROR", $result['error']);
-    } else {
-      $msg["imageurl"] = $result['url'];
-      $msg["imagedeleteurl"] = $result['delete_url'];
-      if (isset($result['metadata_path'])) {
-          $msg["metadatapath"] = $result['metadata_path'];
-      }
-    }
-  }
-
-  // Force preview if image/video exists but wasn't explicitly previewed
-  if ((!empty($msg['imageurl']) || !empty($msg['video'])) && !$imgpreview) {
-    //debug_log("Setting preview to true because imgpreview=" . $imgpreview?"true":"false" . "and image/video exists but wasn't explicitly previewed");
-    $preview = true;
-  }
-
-  if ((!empty($error) || $preview)) {
-    //debug_log("Setting imgpreview true: user saw preview because preview=" . $preview?"true":"false" . " or error [" . implode(", ", $error) . "]");
-    $imgpreview = true; // this gets sent as a hidden input to the form via render_postform()
-    if(!empty($msg['imageurl'])) $error["image"] = true;
-    if(!empty($msg['video'])) $error["video"] = true;
-  }
+  //debug_log("Setting imgpreview true: user saw preview because preview=" . $preview?"true":"false" . " or error [" . implode(", ", $error) . "]");
 
   $preview_html = render_message($content_tpl, $msg, $user);
   $content_tpl->set("PREVIEW", $preview_html);

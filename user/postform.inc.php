@@ -33,31 +33,31 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
     }
 
     // --- Determine form state flags ---
-    $is_form_enabled = true;
-    $show_locked_msg = false;
-    $show_noreplies_msg = false;
-    $show_nonewthreads_msg = false;
-    $is_acct_active = false;
-    $show_offtopic_option = false;
-    $show_image_upload = false;
+
+    $flags = [
+      'acct_active' => false,
+      'form_enabled' => false,
+      'locked' => false,
+      'noreplies' => false,
+      'nonewthreads' => false,
+      'offtopic' => false,
+      'image_upload' => false,
+      'expose_email' => false,
+      'email_followup' => false,
+      'track_thread' => false,
+    ];
 
     // Check conditions that disable the form
     if (isset($thread) && !isset($forum['option']['PostReply']) && !$user->capable($forum['fid'], 'Delete')) {
-        $is_form_enabled = false;
-        $show_noreplies_msg = true;
+        $flags['noreplies'] = true;
     } else if (!isset($thread) && !isset($forum['option']['PostThread']) && !$user->capable($forum['fid'], 'Delete')) {
-        $is_form_enabled = false;
-        $show_nonewthreads_msg = true;
+        $flags['nonewthreads'] = true;
     } else if (isset($thread) && isset($thread['flag']['Locked']) && !$user->capable($forum['fid'], 'Lock')) {
-        $is_form_enabled = false;
-        $show_locked_msg = true;
+        $flags['locked'] = true;
+    } else {
+        // all false, so form is enabled
+        $flags['form_enabled'] = true;
     }
-
-    // Set flags on the form template
-    $form_tpl->set('is_form_enabled', $is_form_enabled);
-    $form_tpl->set('show_locked_msg', $show_locked_msg);
-    $form_tpl->set('show_noreplies_msg', $show_noreplies_msg);
-    $form_tpl->set('show_nonewthreads_msg', $show_nonewthreads_msg);
 
     // Set page context variables - needed in both enabled and disabled states
     $form_tpl->set("PAGE_VALUE", get_page_context());
@@ -95,8 +95,8 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
     }
 
     // --- Set variables based on login status and form state ---
-    if ($is_form_enabled && $user->valid()) { // Check $user->valid() instead of isset($user->aid)
-        $is_acct_active = true;
+    if ($flags['form_enabled'] && $user->valid()) { // Check $user->valid() instead of isset($user->aid)
+        $flags['acct_active'] = true;
 
         // Set Hidden Fields
         if (!isset($_REQUEST['postcookie'])) $postcookie = md5("post" . microtime());
@@ -158,17 +158,15 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
         }
 
         // Apply Overrides and Set Flags/Vars
-        $show_offtopic_option = isset($forum['option']['OffTopic']);
+        $flags['offtopic'] = isset($forum['option']['OffTopic']);
         if ($offtopic && !$user->capable($forum['fid'], 'OffTopic')) {
              // User cannot unset offtopic if already set and no perms
-             $show_offtopic_option = false;
+             $flags['offtopic'] = false;
         }
         if (!$track_thread) $email_followup = false; // Can't follow if not tracking
         $upload_config = get_upload_config();
-        $show_image_upload = can_upload_images($upload_config) && !isset($msg["mid"]);
+        $flags['image_upload'] = can_upload_images($upload_config);
 
-        $form_tpl->set('show_offtopic_option', $show_offtopic_option);
-        $form_tpl->set('show_image_upload', $show_image_upload);
         $form_tpl->set("OFFTOPIC_CHECKED", $offtopic ? " checked" : "");
         $form_tpl->set("EXPOSEEMAIL_CHECKED", $expose_email ? " checked" : "");
         $form_tpl->set("EMAILFOLLOWUP_CHECKED", $email_followup ? " checked" : "");
@@ -178,29 +176,27 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
         $form_tpl->set("METADATAPATH", isset($msg['metadatapath']) ? $msg['metadatapath'] : '');
 
     } else {
-         // Not enabled or not logged in - $is_acct_active remains false
-         $is_acct_active = false;
+         // Not enabled or not logged in - $flags['acct_active'] remains false
+         $flags['acct_active'] = false;
     }
 
-    $form_tpl->set('is_acct_active', $is_acct_active);
-
     // --- Explicitly parse blocks within postform.yatt ---
-    if (!$is_form_enabled) {
+    if (!$flags['form_enabled']) {
         // Parse the relevant disabled message block
-        if($show_nonewthreads_msg) $form_tpl->parse('post_form_content.disabled.nonewthreads');
-        if($show_noreplies_msg) $form_tpl->parse('post_form_content.disabled.noreplies');
-        if($show_locked_msg) $form_tpl->parse('post_form_content.disabled.locked');
+        if($flags['nonewthreads']) $form_tpl->parse('post_form_content.disabled.nonewthreads');
+        if($flags['noreplies']) $form_tpl->parse('post_form_content.disabled.noreplies');
+        if($flags['locked']) $form_tpl->parse('post_form_content.disabled.locked');
         $form_tpl->parse('post_form_content.disabled');
     } else {
-        if (!$is_acct_active) {
+        if (!$flags['acct_active']) {
             $form_tpl->parse('post_form_content.enabled.noacct');
         } else {
-            if ($show_image_upload) {
+            if ($flags['image_upload']) {
               $form_tpl->set("js_image_resizer", js_href('image-resizer.js'));
               $form_tpl->set("js_postform_upload", js_href('postform.js'));
               $form_tpl->parse('post_form_content.enabled.acct.imageupload');
             }
-            if ($show_offtopic_option) $form_tpl->parse('post_form_content.enabled.acct.offtopic');
+            if ($flags['offtopic']) $form_tpl->parse('post_form_content.enabled.acct.offtopic');
             $form_tpl->parse('post_form_content.enabled.acct');
         }
         $form_tpl->parse('post_form_content.enabled');
@@ -208,5 +204,5 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
 
     return $form_tpl->output('post_form_content');
 }
-// vim: sw=2
+// vim: sw=2 ts=8 et
 ?>

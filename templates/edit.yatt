@@ -57,10 +57,19 @@ what kinds of video are supported.</i></p>
 %begin [accept]
 <!-- begin accept -->
 <div class="info">Message Updated</div>
-<div class="tools">
+<table class="tools"><tr>
+<td class="toolsleft">
     <a href="/%[FORUM_SHORTNAME]/msgs/%[MSG_MID].phtml">Go to Your Message</a>
   | <a href="/%[FORUM_SHORTNAME]/">Go back to the forum</a>
-</div>
+</td>
+<td class="toolsright">
+  <a href="/preferences.phtml?%[PAGE]">Preferences</a>
+%begin [image_browser]
+  | <a href="/%[FORUM_SHORTNAME]/images.phtml">Your images</a>
+%end [image_browser]
+</td>
+</tr></table>
+
 %[#] Note: Original used a table, using div for consistency with post.yatt
 <div class="preview">
 %[PREVIEW] %[#] Rendered message preview HTML (same as in preview)
