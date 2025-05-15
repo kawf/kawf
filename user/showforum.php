@@ -369,7 +369,7 @@ while ($numshown < $threadsperpage) {
 if ($user->valid()) {
   $content_tpl->parse('header.tracked_threads');
   if (can_upload_images()) {
-    $content_tpl->parse('header.images');
+    $content_tpl->parse('header.image_browser');
   }
 }
 if ($tthreadsshown > 0) {

@@ -14,9 +14,9 @@
 %begin [tracked_threads]
     <a href="/%[FORUM_SHORTNAME]/tracking.phtml"><b>Tracked threads</b></a>
 %end [tracked_threads]
-%begin [images]
+%begin [image_browser]
   | <a href="/%[FORUM_SHORTNAME]/images.phtml"><b>Your images</b></a>
-%end [images]
+%end [image_browser]
 %begin [update_all]
   | <a href="/%[FORUM_SHORTNAME]/markuptodate.phtml?tid=all&amp;%[PAGE]&amp;token=%[USER_TOKEN]&amp;time=%[TIME]">Update all</a>
 %end [update_all]

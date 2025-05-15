@@ -7,6 +7,7 @@ require_once("filter.inc.php");
 require_once("strip.inc.php");
 require_once("message.inc.php");
 require_once("postform.inc.php");
+require_once("image.inc.php");
 require_once("page-yatt.inc.php");
 
 if(isset($forum['option']['LoginToRead']) and $forum['option']['LoginToRead']) {
@@ -97,6 +98,9 @@ $content_tpl->set("FORM_HTML", $form_html);
 
 $content_tpl->set('threadlinks', $threadlinks);
 $content_tpl->set('class', $class);
+if (can_upload_images()) {
+  $content_tpl->parse('header.image_browser');
+}
 $content_tpl->parse("header");
 $content_tpl->parse("main_message");
 $content_tpl->parse("thread_context");

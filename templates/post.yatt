@@ -62,51 +62,51 @@
   </div>
 %end [error]
 
+%[#] Displayed when previewing a message
 %begin [preview]
-  %[#] Displayed when previewing a message
+<!-- begin preview -->
   <div class="info">Message Preview</div>
   <div class="tools"><a href="/%[FORUM_SHORTNAME]/">Cancel post and go back to the forum</a></div>
   <div class="preview">
   %[PREVIEW] %[#] Rendered message preview HTML
   </div>
+<!-- end preview -->
 %end [preview]
 
+%begin [accept]
+<!-- begin accept -->
+%[#] Displayed on accept and duplicate, but not preview
+
+<table class="tools"><tr>
+<td class="toolsleft">
+    <a href="/%[FORUM_SHORTNAME]/msgs/%[MSG_MID].phtml">Go to Your Message</a>
+  | <a href="/%[FORUM_SHORTNAME]/">Go back to the forum</a>
+</td>
+<td class="toolsright">
+  <a href="/preferences.phtml?%[PAGE]">Preferences</a>
+%begin [image_browser]
+  | <a href="/%[FORUM_SHORTNAME]/images.phtml">Your images</a>
+%end [image_browser]
+</td>
+</tr></table>
+
 %begin [duplicate]
-  %[#] Displayed on duplicate post detection
-  <div class="warning">Duplicate message detected, overwriting</div>
-  %[#] Add navigation links and preview similar to accept block
-  <div class="tools">
-      <a href="/%[FORUM_SHORTNAME]/msgs/%[MSG_MID].phtml">Go to Your Message</a>
-    | <a href="/%[FORUM_SHORTNAME]/">Go back to the forum</a>
-  </div>
-  %[#] Add header to clarify preview content
-  <div class="info">Content updated to:</div>
-  <div class="preview">
-  %[PREVIEW] %[#] Rendered message preview HTML (showing content after overwrite)
-  </div>
-  <p>
+%[#] Displayed on duplicate, but not accept or preview
+<!-- begin duplicate -->
+<div class="warning">Duplicate message detected, overwriting</div>
+<div class="info">Content updated to:</div>
+<!-- end duplicate -->
 %end [duplicate]
+
+<div class="preview">
+%[PREVIEW] %[#] Rendered message preview HTML (showing content after overwrite)
+</div>
+<!-- end accept -->
+%end [accept]
 
 %begin [form]
   %[#] Contains the actual post form rendered by postform.inc
   %[FORM_HTML]
 %end [form]
-
-%begin [accept]
-  %[#] Displayed on successful post
-  %begin [refresh_page]
-  <!-- meta http-equiv="Refresh" content="10;url=%[PAGE]" -->
-  %end [refresh_page]
-
-  <div class="info">Message Added</div>
-  <div class="tools">
-      <a href="/%[FORUM_SHORTNAME]/msgs/%[MSG_MID].phtml">Go to Your Message</a>
-    | <a href="/%[FORUM_SHORTNAME]/">Go back to the forum</a>
-  </div>
-  <div class="preview">
-  %[PREVIEW] %[#] Rendered message preview HTML (shown again on success)
-  </div>
-  <p>
-%end [accept]
 
 %end [post_content]

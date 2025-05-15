@@ -10,7 +10,7 @@
  * returns true if ok, false if detected dup
 */
 
-function postmessage($user, $fid, &$msg, $request)
+function postmessage($user, $fid, &$msg, $request): bool
 {
   $iid = last_iid($fid);
   $mtable = "f_messages" . $iid;
@@ -61,9 +61,9 @@ function postmessage($user, $fid, &$msg, $request)
     /* Issue #25 - if there is no mid for this cookie, the message wasn't posted yet,
      * so this message isn't a dup - it truly is new. Pretend nothing bad happened */
     if (!$msg['mid'])
-    $newmessage = true;
+      $newmessage = true;
     else
-    $newmessage = false;
+      $newmessage = false;
   }
 
   if(!$newmessage) {

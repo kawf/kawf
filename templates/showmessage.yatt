@@ -9,11 +9,13 @@
   </td>
   <td class="toolsright">
     <a href="/preferences.phtml?%[PAGE]">Preferences</a>
+%begin [image_browser]
+  | <a href="/%[FORUM_SHORTNAME]/images.phtml">Your images</a>
+%end [image_browser]
   </td>
 </tr>
 </table>
 %end [header]
-
 
 %begin [main_message]
 <div class="showmessage">

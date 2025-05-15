@@ -5,6 +5,7 @@ $user->req();
 require_once("strip.inc.php");
 require_once("timezone.inc.php");
 require_once("nl2brPre.inc.php");
+require_once("image.inc.php");
 require_once("page-yatt.inc.php");
 
 // Instantiate YATT for the content template
@@ -139,6 +140,10 @@ if(isset($user->timezone))
     $content_tpl->set(str_replace("/","_",$user->timezone), " selected=\"selected\"");
 else
     $content_tpl->set("US_Pacific", " selected=\"selected\"");
+
+if (can_upload_images()) {
+  $content_tpl->parse('preferences_content.image_browser');
+}
 
 // Always parse the main content block wrapper
 $content_tpl->parse('preferences_content');

@@ -288,11 +288,12 @@ if (!$accepted || $preview) {
   $content_tpl->set("FORM_HTML", $form_html);
   $content_tpl->parse("post_content.form");
 } else {
+  $content_block = "accept";
   //debug_log("Step 2: accepted=" . var_export($accepted, true) . " preview=" . var_export($preview, true));
 
  // Step 2
   // Message was accepted, parse the accept block
-  if (postmessage($user, $forum['fid'], $msg, $_POST) == true) {
+  if (postmessage($user, $forum['fid'], $msg, $_POST)) {
     // Handle email followups
     if (isset($_POST['EmailFollowup'])) {
       email_followup($msg, $forum);
@@ -325,10 +326,11 @@ if (!$accepted || $preview) {
       } while ($track = $sth->fetch());
     }
     $sth->closeCursor();
-
-    $content_block = "accept";
-  } else {
-    $content_block = "duplicate";
+  } else  {
+    $content_tpl->parse("post_content.accept.duplicate");
+  }
+  if (can_upload_images()) {
+    $content_tpl->parse('post_content.accept.image_browser');
   }
 
   // After successful post, update image metadata with message reference
@@ -337,12 +339,12 @@ if (!$accepted || $preview) {
     if ($error) {
       $content_tpl->set("UPLOAD_ERROR", $error);
     }
-  } else {
   }
 
   $content_tpl->set("MSG_MID", $msg['mid']);
 } // accepted and not preview
 
+// We can't do this until we have a $msg['mid']
 $content_tpl->parse("post_content.$content_block");
 
 // Parse the main container block
