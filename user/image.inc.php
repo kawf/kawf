@@ -268,7 +268,7 @@ function show_images(Upload $uploader, array $forum, ForumUser $user, bool $skip
     $title = 'Your images in ' . $forum['name'];
     $showimages->set('TITLE', $title);
 
-    $namespace = "{$forum['fid']}/{$user->aid}";
+    $namespace = "{$user->aid}/{$forum['fid']}";
     $images = $uploader->readdir($namespace);
     if (empty($images)) {
         if ($skip_empty) {
