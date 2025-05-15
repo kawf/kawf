@@ -264,6 +264,7 @@ if (!$accepted || $preview) {
 
   // After successful post, update image metadata with message reference
   if (empty($error) && !$preview && !empty($msg['imageurl']) && !empty($msg['metadatapath'])) {
+    $upload_config = get_upload_config();
     $error = update_image_metadata($upload_config, $msg['metadatapath'], $forum['shortname'], $msg['mid']);
     if ($error) {
       $content_tpl->set("UPLOAD_ERROR", $error);
