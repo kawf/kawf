@@ -16,9 +16,7 @@
       <table class="tools">
       <tr>
        <td class="toolsleft">
-          <a href="/tips/?%[PAGE]" target="_blank">Tips</a>
-        | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;%[PAGE]" target="_blank">Search</a>
-        | <a href="/%[FORUM_SHORTNAME]"><b>Go to %[FORUM_NAME]</b></a>
+          <a href="/%[FORUM_SHORTNAME]"><b>Go to %[FORUM_NAME]</b></a>
         </td>
         <td class="toolsright">
           <a href="/%[FORUM_SHORTNAME]/tracking.phtml"><b>Tracked threads</b></a>
@@ -57,13 +55,4 @@
   %begin [no_threads]
     <span style="font-size: larger;">No updated threads</span><br>
   %end [no_threads]
-
-  %[#] Common footer tools - Always shown? Assume parsed by PHP outside the main conditional
-  %begin [footer_tools]
-    <div class="tools">
-        <a href="/tips/?%[PAGE]" target="_blank">Tips</a>
-      | <a href="/search/?%[PAGE]" target="_blank">Search</a>
-    </div>
-  %end [footer_tools]
-
 %end [tracking]

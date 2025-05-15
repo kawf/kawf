@@ -127,9 +127,6 @@ if ($numshown == 0) {
   } // End foreach forum_data
 } // End if numshown > 0
 
-// Always parse the footer tools?
-$content_tpl->parse('tracking.footer_tools');
-
 // Parse the main tracking block which acts as the root for content
 $content_tpl->parse('tracking');
 

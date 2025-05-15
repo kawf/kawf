@@ -16,9 +16,12 @@ $forum = get_forum();
 // Get uploader instance
 $uploader = get_uploader();
 
+// returns a new_yatt('showimages.yatt', $forum);
 $tpl = show_images($uploader, $forum, $user);
 $tpl->set('js_image_action_href', js_href("image-action.js"));
-$tpl->parse('script'); // parse script once
-echo generate_page('Image Browser', $tpl->output());
+$tpl->parse('header');
+
+$title = 'Your images in ' . $forum['name'];
+echo generate_page($title, $tpl->output());
 
 // vim: set ts=8 sw=4 et:

@@ -1,8 +1,22 @@
-%begin [script]
+%begin [header]
+<!-- begin showimages.yatt header -->
 <script src="%[js_image_action_href]"></script>
-%end [script]
+<table class="tools">
+<tr>
+  <td class="toolsleft">
+    <a href="../"><b>Return to %[FORUM_NAME]</b></a>
+  </td>
+  <td class="toolsright">
+    <a href="/images.phtml"><b>All your images</b></a>
+  </td>
+</tr>
+</table>
+<script src="%[js_image_action_href]"></script>
+<!-- end showimages.yatt header -->
+%end [header]
+
 %begin [images_page]
-<p><b>Your images in <a href="/%[FORUM_SHORTNAME]/">%[FORUM_NAME]</a></b></p>
+<p><b>%[TITLE]</b></p>
 %begin [no_images]
 <p>No images found in this forum.</p>
 %end [no_images]

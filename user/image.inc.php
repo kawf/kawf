@@ -263,30 +263,35 @@ function delete_image_by_url(Upload $uploader, string $delete_url): bool {
     return $uploader->deleteByUrl($delete_url);
 }
 
-function show_images(Upload $uploader, array $forum, ForumUser $user) {
-    $yatt = new_yatt('showimages.yatt', $forum);
+function show_images(Upload $uploader, array $forum, ForumUser $user, bool $skip_empty = false) {
+    $showimages = new_yatt('showimages.yatt', $forum);
+    $title = 'Your images in ' . $forum['name'];
+    $showimages->set('TITLE', $title);
 
     $namespace = "{$forum['fid']}/{$user->aid}";
     $images = $uploader->readdir($namespace);
     if (empty($images)) {
-        $yatt->parse('images_page.no_images');
+        if ($skip_empty) {
+            return null;
+        }
+        $showimages->parse('images_page.no_images');
     } else {
         foreach ($images as $img) {
             $md = $img['metadata'];
-            $yatt->set('IMAGE_URL', htmlspecialchars($img['url']));
-            $yatt->set('IMAGE_ORIGINAL_NAME', $md ? htmlspecialchars($md->original_name) : '');
-            $yatt->set('IMAGE_UPLOAD_TIME', $md ? date('Y-m-d H:i:s', strtotime($md->upload_time)) : '');
-            $yatt->set('IMAGE_FILE_SIZE', $md ? format_bytes($md->file_size) : '');
+            $showimages->set('IMAGE_URL', htmlspecialchars($img['url']));
+            $showimages->set('IMAGE_ORIGINAL_NAME', $md ? htmlspecialchars($md->original_name) : '');
+            $showimages->set('IMAGE_UPLOAD_TIME', $md ? date('Y-m-d H:i:s', strtotime($md->upload_time)) : '');
+            $showimages->set('IMAGE_FILE_SIZE', $md ? format_bytes($md->file_size) : '');
 
             // Set delete path - ensure it includes the full namespace (userId/forumId/filename)
-            $yatt->set('DELETE_PATH', htmlspecialchars($img['path']));
+            $showimages->set('DELETE_PATH', htmlspecialchars($img['path']));
 
-            $yatt->parse('images_page.images_list.image');
+            $showimages->parse('images_page.images_list.image');
         }
-        $yatt->parse('images_page.images_list');
+        $showimages->parse('images_page.images_list');
     }
-    $yatt->parse('images_page');
-    return $yatt;
+    $showimages->parse('images_page');
+    return $showimages;
 }
 
 
