@@ -67,6 +67,7 @@ if(array_key_exists('noob', $_GET)) {
 	if($u) {
 	  echo "<h2>Accounts created from ".$uuser->createip."</h2>\n";
 	  print_header();
+	  $count = 0;
 	  do {
 	    $bgcolor = ($count % 2) ? "#F7F7F7" : "#ECECFF";
 	    $uu = new ForumUser($u['aid'], false);

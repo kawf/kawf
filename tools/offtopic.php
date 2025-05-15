@@ -4,7 +4,7 @@
 require_once("../config/setup.inc");
 
 /* First setup the path */
-$include_path = "$srcroot/include:$srcroot/config";
+$include_path = "$srcroot/include:$srcroot/lib:$srcroot/config";
 $old_include_path = ini_get("include_path");
 if (!empty($old_include_path))
   $include_path .= ":" . $old_include_path;

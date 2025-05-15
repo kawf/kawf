@@ -1,7 +1,7 @@
 <?php
 
 /* First setup the path */
-$include_path = "$srcroot:$srcroot/include:$srcroot/admin";
+$include_path = "$srcroot:$srcroot/include:$srcroot/lib:$srcroot/admin";
 if (isset($include_append))
   $include_path .= ":" . $include_append;
 if (!isset($dont_use_account))
