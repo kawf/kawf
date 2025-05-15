@@ -24,7 +24,7 @@
 <div class="image-grid">
 %begin [image]
   <div class="image-card">
-    <a href="%[IMAGE_URL]" target="_blank">
+    <a href="%[IMAGE_LINK_URL]" target="_blank">
       <img src="%[IMAGE_URL]" alt="%[IMAGE_ORIGINAL_NAME]" loading="lazy">
     </a>
     <div class="image-info">

@@ -283,6 +283,13 @@ function show_images(Upload $uploader, array $forum, ForumUser $user, bool $skip
             $showimages->set('IMAGE_UPLOAD_TIME', $md ? date('Y-m-d H:i:s', strtotime($md->upload_time)) : '');
             $showimages->set('IMAGE_FILE_SIZE', $md ? format_bytes($md->file_size) : '');
 
+            // Set the link URL to the last message if available, otherwise use the image URL
+            $link_url = $img['url'];
+            if ($md && !empty($md->messages)) {
+                $link_url = end($md->messages);
+            }
+            $showimages->set('IMAGE_LINK_URL', htmlspecialchars($link_url));
+
             // Set delete path - ensure it includes the full namespace (userId/forumId/filename)
             $showimages->set('DELETE_PATH', htmlspecialchars($img['path']));
 
