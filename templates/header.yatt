@@ -1,14 +1,14 @@
 <!-- message.yatt -->
 <div class="navigate">
 <form method="get" action="/redirect.phtml" style="display: inline; margin: 0;">
-<select name="url" onChange="if (this.selectedIndex) { location = this.options[this.selectedIndex].value; }">
+<select name="url" onChange="if (this.selectedIndex) { window.location.href = this.options[this.selectedIndex].value + '?%[PAGE_PARAM]'; }">
 <option value="">Choose Discussion Forum</option>
 %begin [forums]
 %begin [category]
 <option value="/%[shortname]/">%[name]</option>
 %end [category]
 %end [forums]
-<option value="">---</option>
+<option value=""> ─ </option>
 <option value="/tracking.phtml">Your tracked threads</option>
 %begin [images]
 <option value="/images.phtml">Your images</option>

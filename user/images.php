@@ -3,7 +3,7 @@
 $user->req();
 
 require_once("page-yatt.inc.php");
-require_once("image.inc.php");
+require_once("showimages.inc.php");
 
 if (!can_upload_images()) {
     header('Location: ' . get_page_context(false));
@@ -13,7 +13,7 @@ if (!can_upload_images()) {
 // Instantiate YATT for the content template
 // Note: No forum context needed yet as this page shows images across all forums
 $images_tpl = new_yatt('images.yatt');
-$images_tpl->set("PAGE", format_page_param());
+$images_tpl->set("PAGE_VALUE", get_page_context());
 $images_tpl->set('js_image_action_href', js_href("image-action.js"));
 
 $sql = "select * from f_forums order by fid";
@@ -27,7 +27,7 @@ while ($forum = $sth->fetch(PDO::FETCH_ASSOC)) {
   set_forum($forum['fid']);
 
   // will parse showimages.yatt no_images and return actual content
-  $showimages = show_images($uploader, $forum, $user, true);
+  $showimages = showimages($uploader, $forum, $user, true);
   if ($showimages) {
     $content = $showimages->output();
     if ($content) {

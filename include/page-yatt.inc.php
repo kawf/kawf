@@ -107,6 +107,7 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
     }
 
     if (!$skip_header) {
+        $page->set('PAGE_PARAM', format_page_param());
         // Set forum navigation
         $nav = get_forum_navigation();
 

@@ -3,7 +3,12 @@
 %end [header]
 %begin [images]
   %[#] Outer container: Either the 'forums' block or 'no_images' block will be parsed by PHP
-  <p><b>%[TITLE]</b></p>
+  <p><b>%[TITLE]</b><p>
+  <table class="tools"><tr>
+  <td class="toolsleft">
+  <a href="%[PAGE_VALUE]"><b>Click here to return</b></a>
+  </td>
+  </tr></table>
   %begin [forum]
     <hr class="images">
     <table class="forumheader">
