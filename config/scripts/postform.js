@@ -30,6 +30,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const resizer = new ImageResizer({ maxWidth, quality: 0.8 });
         const result = await resizer.resize(file);
 
+        // Check resized file size against maximum allowed
+        if (result.file.size > maxImageBytes) {
+            uploadInfo.textContent = `Error: Resized file size (${(result.file.size / 1024).toFixed(2)} KB) exceeds maximum allowed size (${(maxImageBytes / 1024).toFixed(2)} KB)`;
+            fileInput.value = ''; // Clear the file input
+            return;
+        }
+
         if (file.size !== result.file.size) {
             uploadInfo.textContent += ` | Resized size: ${(result.file.size / 1024).toFixed(2)} KB`;
         }
