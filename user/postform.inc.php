@@ -15,10 +15,10 @@ function hidden($name, $value)
  * @param string $action The form action target (e.g., 'post', 'edit').
  * @param ForumUser $user The current user object.
  * @param array|null $msg Optional message array (for editing).
- * @param bool $imgpreview Optional flag for image preview state.
+ * @param bool $seen_preview Optional flag for image preview state.
  * @return string Rendered HTML for the form.
  */
-function render_postform($template_dir, $action, $user, $msg = null, $imgpreview = false)
+function render_postform($template_dir, $action, $user, $msg = null, $seen_preview = false)
 {
     global $Debug;
     global $thread;
@@ -65,7 +65,7 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
 
     // --- Debug Info (Optional) ---
     $debug = "\naction = $action\n";
-    $debug .= "imgpreview = $imgpreview\n";
+    $debug .= "seen_preview = $seen_preview\n";
     $debug .= "_REQUEST:\n";
     foreach ($_REQUEST as $k => $v) {
       if (!is_numeric($k)) {
@@ -105,7 +105,7 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
         $hidden .= hidden("forumname", $forum['shortname']);
         // Use get_page_context() for form hidden fields
         $hidden .= hidden("page", get_page_context());
-        if ($imgpreview) $hidden .= hidden("imgpreview", 'true');
+        if ($seen_preview) $hidden .= hidden("seen_preview", 'true');
         if (isset($msg['mid'])) {
              $hidden .= hidden("mid", $msg['mid']);
             $form_tpl->set("SUBMITTEXT", "Update Message");
@@ -140,7 +140,7 @@ function render_postform($template_dir, $action, $user, $msg = null, $imgpreview
         $form_tpl->set("token", $user->token());
 
         // Determine Checkbox States
-        if (isset($_REQUEST['preview']) || isset($_REQUEST['post'])) {
+        if (isset($_REQUEST['show_preview']) || isset($_REQUEST['post'])) {
             $offtopic = isset($_REQUEST['OffTopic']);
             $expose_email = isset($_REQUEST['ExposeEmail']);
             $email_followup = isset($_REQUEST['EmailFollowup']);

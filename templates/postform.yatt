@@ -92,7 +92,7 @@ This thread is locked. No replies are allowed.<br>
 <tr>
   <th class="top">Post Message:</th>
   <td class="button">
-  <input type="submit" name="preview" value="Preview Message">
+  <input type="submit" name="show_preview" value="Preview Message">
   <input type="submit" name="post" value="%[SUBMITTEXT]"><br>
   <div class="checkbox">
   %begin [offtopic]
