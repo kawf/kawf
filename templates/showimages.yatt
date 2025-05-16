@@ -24,9 +24,11 @@
 %begin [image]
   <div class="image-card">
     <div class="image-overlay">
-      <button class="copy-btn" onclick="copyImageLink('%[IMAGE_URL]')" title="Copy image link">⎘</button>
-      <div class="right-buttons">
+      <div class="left-buttons">
+        <button class="copy-btn" onclick="copyImageLink('%[IMAGE_URL]')" title="Copy image link">⎘</button>
         <button class="open-btn" onclick="window.open('%[IMAGE_URL]', '_blank')" title="Open image in new window">↗</button>
+      </div>
+      <div class="right-buttons">
         <button class="delete-btn" onclick="deleteImage('%[FORUM_SHORTNAME]', '%[DELETE_PATH]', '%[IMAGE_ORIGINAL_NAME]')" title="Delete image">×</button>
       </div>
     </div>
