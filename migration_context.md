@@ -112,8 +112,6 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
    - Cookie handling:
      - Can save cookies from curl using `-c` or `--cookie-jar`
      - Can reuse cookies in subsequent requests using `-b` or `--cookie`
-     - Example: `curl -c cookies.txt https://forums-git.wayot.org/login.phtml`
-     - Then: `curl -b cookies.txt https://forums-git.wayot.org/other-page.phtml`
 
 5. **Cookie Format:**
    - Name: `KawfAccount`

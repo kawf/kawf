@@ -137,19 +137,19 @@ if (!$result) {
 ```
 
 ## Path and Namespace Conventions
-- **Namespace**: A logical grouping, often used as a directory prefix (e.g., `forumid/userid` or `wayot/1/1`). Used to organize files on the server.
-- **Path**: The full relative path to a file, including the namespace and filename (e.g., `wayot/1/1/0430-175430.jpg`).
-- **Metadata Path**: The full relative path to the metadata file, which is the image path with `.json` appended (e.g., `wayot/1/1/0430-175430.jpg.json`).
+- **Namespace**: A logical grouping, often used as a directory prefix (e.g., `forumid/userid` or `kawf/1/1`). Used to organize files on the server.
+- **Path**: The full relative path to a file, including the namespace and filename (e.g., `kawf/1/1/0430-175430.jpg`).
+- **Metadata Path**: The full relative path to the metadata file, which is the image path with `.json` appended (e.g., `kawf/1/1/0430-175430.jpg.json`).
 
 **Best Practice:**
 - Always pass the full relative path (namespace + filename) to all uploader methods that operate on files or metadata (e.g., `load_metadata`, `save_metadata`, `delete`).
 - The uploader will handle appending `.json` for metadata and constructing the full URL as needed.
 
 **Example:**
-- Namespace: `wayot/1/1`
+- Namespace: `kawf/1/1`
 - Filename: `0430-175430.jpg`
-- Full path: `wayot/1/1/0430-175430.jpg`
-- Metadata path: `wayot/1/1/0430-175430.jpg.json`
+- Full path: `kawf/1/1/0430-175430.jpg`
+- Metadata path: `kawf/1/1/0430-175430.jpg.json`
 
 ## Image Deletion
 - **Authenticated User Deletion:**
