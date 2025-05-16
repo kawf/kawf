@@ -24,9 +24,9 @@ class Imgur extends Upload {
      * @param string $filename Path to the file to upload
      * @param string $path The path where the file should be uploaded
      * @param ImageMetadata $metadata The metadata for the upload
-     * @return bool True if the upload was successful
+     * @return string|null The url of the uploaded file, or null if the upload failed
      */
-    protected function doUpload(string $filename, string $path, ImageMetadata $metadata): bool {
+    public function doUpload(string $filename, string $path, ImageMetadata $metadata): ?string {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, 'https://api.imgur.com/3/image');
         curl_setopt($ch, CURLOPT_POST, true);
@@ -51,29 +51,21 @@ class Imgur extends Upload {
 
         if ($response === false) {
             $this->setError("CURL error ($curl_errno): $curl_error");
-            return false;
+            return null;
         }
 
         $data = json_decode($response, true);
         if (!$data || !isset($data['data']['link'])) {
             $this->setError("Failed to upload to Imgur: " . ($data['data']['error'] ?? 'Unknown error'));
-            return false;
+            return null;
         }
 
         if ($http_code < 200 || $http_code >= 300) {
             $this->setError("Imgur upload failed with status $http_code: " . ($data['data']['error'] ?? 'Unknown error'));
-            return false;
+            return null;
         }
 
-        // Set the image URL in metadata
-        $metadata->image_url = $data['data']['link'];
-
-        if (!$this->save_metadata($path, $metadata)) {
-            $this->setError("Failed to save metadata");
-            return false;
-        }
-
-        return true;
+        return $data['data']['link'];
     }
 
     /**

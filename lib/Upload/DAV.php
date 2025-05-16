@@ -22,6 +22,47 @@ class DAV extends Upload {
     }
 
     /**
+     * Construct a URL with proper path encoding
+     *
+     * Examples:
+     * Input: base_url="http://localhost:8080", path="/1", config[path]="path"
+     * Output: "http://localhost:8080/path/1"
+     *
+     * Input: base_url="http://localhost:8080", path="1/1/foo.png", config[path]="path"
+     * Output: "http://localhost:8080/path/1/1/foo.png"
+     *
+     * Input: base_url="https://images.path.org", path="1/1/foo.png", config[path]="path"
+     * Output: "https://images.path.org/path/1/1/foo.png"
+     *
+     * @param string $base_url The base URL to prepend
+     * @param string $path The path to encode and append
+     * @return string The complete URL with encoded path
+     */
+    protected function getUrl(string $base_url, string $path): string {
+        // Normalize path by removing leading/trailing slashes
+        // Example: "/1" -> "1", "1/1/foo.png" -> "1/1/foo.png"
+        $path = trim($path, '/');
+
+        // Split path into segments and encode each one
+        // Example: "1/1/foo.png" -> ["1", "1", "foo.png"] -> ["1", "1", "foo%bar.png"]
+        $segments = explode('/', $path);
+        $encoded_segments = array_map('rawurlencode', $segments);
+
+        // Prepend config path if it exists
+        // Example: config[path]="path" -> ["path"] -> ["path", "1", "1", "foo%bar.png"]
+        if (!empty($this->config['path'])) {
+            $config_segments = explode('/', $this->config['path']);
+            $encoded_config = array_map('rawurlencode', $config_segments);
+            $encoded_segments = array_merge($encoded_config, $encoded_segments);
+        }
+
+        // Join everything together with slashes
+        // Example: "http://localhost:8080" + "/" + "path/1/1/foo%bar.png"
+        $result = rtrim($base_url, '/') . '/' . implode('/', $encoded_segments);
+        return $result;
+    }
+
+    /**
      * Ensure all parent directories exist for a path
      * @param string $path The path to ensure directories for
      * Example: "1/1/foo bar.png" -> creates directories "1" and "1/1"
@@ -67,11 +108,11 @@ class DAV extends Upload {
     }
 
     /**
-     * Private utility method to perform the actual deletion
-     * This method assumes the path is already in the correct format
+     * Perform the actual deletion
+     * This method assumes the path is already in the correct format (e.g. already includes config['path'])
      */
-    private function performDelete(string $remote_path): bool {
-        $url = $this->getUrl($this->config['url'], $remote_path);
+    public function delete(string $path): bool {
+        $url = $this->getUrl($this->config['url'], $path);
         // Delete the main file
         $result = $this->makeCurlRequest($url, [
             CURLOPT_CUSTOMREQUEST => 'DELETE',
@@ -79,7 +120,7 @@ class DAV extends Upload {
         ]);
 
         if (isset($result['error'])) {
-            $this->setError("Failed to delete file '$remote_path': " . $result['error']);
+            $this->setError("Failed to delete file '$path': " . $result['error']);
             return false;
         }
 
@@ -90,16 +131,6 @@ class DAV extends Upload {
             CURLOPT_USERPWD => $this->config['username'] . ':' . $this->config['password']
         ]);
         return true;
-    }
-
-    /**
-     * Delete a file by its path
-     * @param string $path The path of the file to delete
-     * Example: "1/1/foo bar.png" -> deletes "/path/1/1/foo bar.png"
-     */
-    public function delete(string $path): bool {
-        $remote_path = $this->config['path'] . '/' . $path;
-        return $this->performDelete($remote_path);
     }
 
     /**
@@ -142,7 +173,7 @@ class DAV extends Upload {
 
         // For URL-based deletion, we need to prepend the config path
         $remote_path = $this->config['path'] . '/' . $path;
-        return $this->performDelete($remote_path);
+        return $this->delete($remote_path);
     }
 
     public function supports_metadata(): bool {
@@ -227,12 +258,13 @@ class DAV extends Upload {
      * @param string $path The path where the file should be uploaded
      * Example: $path="1/1/foo bar.png" -> uploads to "/path/1/1/foo bar.png"
      * @param ImageMetadata $metadata The metadata for the upload
+     * @return string|null The path of the uploaded file, or null if the upload failed
      */
-    protected function doUpload(string $filename, string $path, ImageMetadata $metadata): bool {
+    public function doUpload(string $filename, string $path, ImageMetadata $metadata): ?string {
         // Ensure all parent directories exist
         if (!$this->ensureRemoteDirectories($path)) {
             $this->setError("Failed to ensure remote directories for $path");
-            return false;
+            return null;
         }
 
         // Upload the image file
@@ -247,12 +279,12 @@ class DAV extends Upload {
 
         if (isset($result['error'])) {
             $this->setError("Failed to upload to DAV: " . $result['error']);
-            return false;
+            return null;
         }
 
         if ($result['http_code'] < 200 || $result['http_code'] >= 300) {
             $this->setError("WebDAV upload failed with status " . $result['http_code'] . ": " . $result['response']);
-            return false;
+            return null;
         }
 
         // Set the image URL in metadata
@@ -260,10 +292,10 @@ class DAV extends Upload {
 
         if (!$this->save_metadata($path, $metadata)) {
             $this->setError("Failed to save metadata");
-            return false;
+            return null;
         }
 
-        return true;
+        return $this->getUrl($this->config['public_url'], $path);
     }
 
     /**
