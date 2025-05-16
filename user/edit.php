@@ -85,14 +85,14 @@ if (!empty($msg['flags'])) {
     $flags[$flag] = true;
 }
 $error = array(); // Make sure this starts empty
-$preview = false;
-$imgpreview = false;
+$show_preview = false;
+$seen_preview = false;
 
-if (isset($_REQUEST['preview']))
-  $preview = true;
+if (isset($_REQUEST['show_preview']))
+  $show_preview = true;
 
-if (isset($_REQUEST['imgpreview']))
-  $imgpreview = true;
+if (isset($_REQUEST['seen_preview']))
+  $seen_preview = true;
 
 // Get server properties
 $s = get_server();
@@ -102,7 +102,7 @@ $nmsg['ip'] = $s->remoteAddr;
 // Determine state based on POST or initial load
 if (!isset($_POST['message'])) {
   /* hit "edit" link, prefill postform (step 1) */
-  $preview = true;
+  $show_preview = true;
 
   /* Synthesize state based on the state of the existing message. */
   $offtopic = ($msg['state'] == 'OffTopic');
@@ -142,18 +142,18 @@ $nmsg = handle_image_upload($user, $nmsg, $forum, $error, $content_tpl);
 // Validate message
 validate_message($user, $nmsg, $error);
 
-// Handle preview state
-handle_preview_state($user, $nmsg, $error, $preview, $imgpreview);
+// Handle preview state -- modifies $show_preview and $seen_preview
+handle_preview_state($user, $nmsg, $error, $show_preview, $seen_preview);
 
 // We show the preview even on accept
 $preview_html = render_message($template_dir, $nmsg, $user);
 $content_tpl->set("PREVIEW", $preview_html);
 
-if (!empty($error) || $preview) {
+if (!empty($error) || $show_preview) {
   /* PREVIEW - edit */
 
   /* generate post form for new message */
-  $form_html = render_postform($template_dir, "edit", $user, $nmsg, $imgpreview);
+  $form_html = render_postform($template_dir, "edit", $user, $nmsg, $seen_preview);
   $content_tpl->set("FORM_HTML", $form_html);
   $content_tpl->parse("edit_content.form");
 

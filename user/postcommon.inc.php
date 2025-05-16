@@ -1,7 +1,7 @@
 <?php
 // Common functionality for post.php and edit.php
 
-function handle_image_upload($user, $msg, $forum, &$error, &$content_tpl) {
+function handle_image_upload($user, $msg, $forum, $error, $content_tpl) {
     $upload_config = get_upload_config();
     if (empty($error) && can_upload_images($upload_config) && !empty($_POST['fileData']) && !empty($_POST['fileMetadata'])) {
         // Get filename information from the hidden input
@@ -41,7 +41,7 @@ function handle_image_upload($user, $msg, $forum, &$error, &$content_tpl) {
     return $msg;
 }
 
-function validate_message($user, &$msg, &$error, $parent = null) {
+function validate_message($user, $msg, $error, $parent = null) {
     // Subject validation
     if (empty($msg['subject'])) {
         $error["subject_req"] = true;
@@ -64,14 +64,22 @@ function validate_message($user, &$msg, &$error, $parent = null) {
     }
 }
 
-function handle_preview_state($user, &$msg, &$error, &$preview, &$imgpreview) {
-    // Force preview if image/video exists but wasn't explicitly previewed
-    if ((!empty($msg['imageurl']) || !empty($msg['video'])) && !$imgpreview) {
-        $preview = true;
+// Handle preview state -- modifies $show_preview and $seen_preview
+function handle_preview_state($user, $msg, $error, &$show_preview, &$seen_preview) {
+    // $show_preview: Controls whether to show the preview block in the UI
+    // $seen_preview: Tracks whether the user has seen the image/video preview
+
+    // If there's an image or video but the user hasn't seen it yet ($seen_preview=false),
+    // force them to see a preview by setting $show_preview=true
+    if ((!empty($msg['imageurl']) || !empty($msg['video'])) && !$seen_preview) {
+        $show_preview = true;
     }
 
-    if ((!empty($error) || $preview)) {
-        $imgpreview = true;
+    // If there are validation errors or we're showing a preview,
+    // ensure the image preview state is properly set
+    if ((!empty($error) || $show_preview)) {
+        $seen_preview = true;  // User has acknowledged seeing the image/video preview
+        // Set flags to show image/video in the preview form
         if(!empty($msg['imageurl'])) $error["image"] = true;
         if(!empty($msg['video'])) $error["video"] = true;
     }

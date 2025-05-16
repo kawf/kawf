@@ -89,19 +89,19 @@ $msg['name'] = stripcrap($user->name); // Use current user name
 
 $error = array(); // Holds validation error flags, start EMPTY!
 
-$imgpreview = false;
-$preview = false;
+$seen_preview = false;
+$show_preview = false;
 $accepted = false;
 
 // --- Main Logic: Handle POST or GET ---
 if (isset($_POST['postcookie'])) {
   // --- POST Submission ---
-  if (isset($_POST['imgpreview'])) $imgpreview = true; // the user posted an image or video but didn't preview yet
-  if (isset($_POST['preview'])) $preview = true; // show the preview block
+  if (isset($_POST['seen_preview'])) $seen_preview = true; // Changed from imgpreview
+  if (isset($_POST['show_preview'])) $show_preview = true; // Changed from preview
   if (isset($_POST['imagedeleteurl'])) $msg['imagedeleteurl'] = $_POST['imagedeleteurl']; // propogate the delete url to the message from preview
   if (isset($_POST['metadatapath'])) $msg['metadatapath'] = $_POST['metadatapath']; // propogate the metadata url to the message from preview
 
-  //debug_log("postcookie set, imgpreview=" . var_export($imgpreview, true) . ", preview=" . var_export($preview, true));
+  //debug_log("postcookie set, seen_preview=" . var_export($seen_preview, true) . ", show_preview=" . var_export($show_preview, true));
 
   // Populate $msg from _POST (sanitize/validate below)
   if (array_key_exists('mid', $_POST) && is_numeric($_POST['mid'])) $msg['mid'] = $_POST['mid'];
@@ -132,10 +132,10 @@ if (isset($_POST['postcookie'])) {
 
   //debug_log("error=" . implode(", ", $error) .  " isset(error)=" . var_export(isset($error), true) .  " empty(error)=" . var_export(empty($error), true));
 
-  // Handle preview state
-  handle_preview_state($user, $msg, $error, $preview, $imgpreview);
+  // Handle preview state - modifies $show_preview and $seen_preview
+  handle_preview_state($user, $msg, $error, $show_preview, $seen_preview);
 
-  //debug_log("Setting imgpreview true: user saw preview because preview=" . $preview?"true":"false" . " or error [" . implode(", ", $error) . "]");
+  //debug_log("Setting seen_preview true: user saw preview because show_preview=" . $show_preview?"true":"false" . " or error [" . implode(", ", $error) . "]");
 
   $preview_html = render_message($content_tpl, $msg, $user);
   $content_tpl->set("PREVIEW", $preview_html);
@@ -204,21 +204,21 @@ if (!empty($error)) {
 /*
 debug_log("post.php: error=" . implode(", ", $error) .
           ", accepted=" . ($accepted ? "true" : "false") .
-          ", preview=" . ($preview ? "true" : "false") .
-          ", imgpreview=" . ($imgpreview ? "true" : "false"));
+          ", show_preview=" . ($show_preview ? "true" : "false") .
+          ", seen_preview=" . ($seen_preview ? "true" : "false"));
 */
 
 $content_block = "preview";
-if (!$accepted || $preview) {
-  //debug_log("Step 1: accepted=" . var_export($accepted, true) . " preview=" . var_export($preview, true) . ", rendering form with imgpreview=" . var_export($imgpreview, true));
+if (!$accepted || $show_preview) {
+  //debug_log("Step 1: accepted=" . var_export($accepted, true) . " show_preview=" . var_export($show_preview, true) . ", rendering form with seen_preview=" . var_export($seen_preview, true));
   // Step 1
   // We're showing the form, nothing else to parse
-  $form_html = render_postform($content_tpl, "post", $user, $msg, $imgpreview);
+  $form_html = render_postform($content_tpl, "post", $user, $msg, $seen_preview);
   $content_tpl->set("FORM_HTML", $form_html);
   $content_tpl->parse("post_content.form");
 } else {
   $content_block = "accept";
-  //debug_log("Step 2: accepted=" . var_export($accepted, true) . " preview=" . var_export($preview, true));
+  //debug_log("Step 2: accepted=" . var_export($accepted, true) . " show_preview=" . var_export($show_preview, true));
 
  // Step 2
   // Message was accepted, parse the accept block
@@ -263,7 +263,7 @@ if (!$accepted || $preview) {
   }
 
   // After successful post, update image metadata with message reference
-  if (empty($error) && !$preview && !empty($msg['imageurl']) && !empty($msg['metadatapath'])) {
+  if (empty($error) && !$show_preview && !empty($msg['imageurl']) && !empty($msg['metadatapath'])) {
     $upload_config = get_upload_config();
     $error = update_image_metadata($upload_config, $msg['metadatapath'], $forum['shortname'], $msg['mid']);
     if ($error) {
