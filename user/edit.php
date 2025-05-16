@@ -145,14 +145,29 @@ validate_message($nmsg, $error);
 // Handle preview state -- returns tuple of (show_preview, seen_preview)
 list($show_preview, $seen_preview) = handle_preview_state($nmsg, $error, $show_preview, $seen_preview);
 
+// Calculate flags
+$nmsg['flags'] = calculate_message_flags($user, $nmsg);
+
+// Calculate diff for both preview and accept
+// IMAGEURL HACK - extract imageurl from old msg into imgurl field for diff
+$msg = image_url_hack_extract($msg);
+$diff = calculate_message_diff($user, $msg, $nmsg);
+
+// Build the changes string with proper formatting
+if ($diff) {
+  $diff = "Edited by $user->name/$user->aid at " . date('Y-m-d H:i:s') . " from $s->remoteAddr\n" . $diff;
+  // Add \n between old and new changes if needed
+  $nmsg['changes'] = $msg['changes'] . ($msg['changes'] ? "\n" : "") . $diff;
+}
+
 // We show the preview even on accept
 $preview_html = render_message($template_dir, $nmsg, $user);
 $content_tpl->set("PREVIEW", $preview_html);
 
 if (!empty($error) || $show_preview) {
-  /* PREVIEW - edit */
+  // --- State: Preview Changes (Errors or force Preview) ---
 
-  /* generate post form for new message */
+  // generate post form for new message
   $form_html = render_postform($template_dir, "edit", $user, $nmsg, $seen_preview);
   $content_tpl->set("FORM_HTML", $form_html);
   $content_tpl->parse("edit_content.form");
@@ -161,29 +176,11 @@ if (!empty($error) || $show_preview) {
 } else {
   // --- State: Accept Changes (No Errors, Not Preview) ---
 
-  // Calculate flags
-  $nmsg['flags'] = calculate_message_flags($user, $nmsg);
-
-  /* IMAGEURL HACK - extract imageurl from old msg */
-  /* for diffing */
-  $msg = image_url_hack_extract($msg);
-
-  // Calculate diff
-  $diff = calculate_message_diff($user, $msg, $nmsg);
-
-  /* IMAGEURL HACK - prepend before insert */
-  /* for diffing and for entry into the db */
+  // IMAGEURL HACK - move imgurl field to message body before insert for entry into the db
   $nmsg = image_url_hack_insert($nmsg);
 
-  // Build the changes string with proper formatting
-  if ($diff) {
-    $diff = "Edited by $user->name/$user->aid at " . date('Y-m-d H:i:s') . " from $s->remoteAddr\n" . $diff;
-    // Add \n between old and new changes if needed
-    $msg['changes'] = $msg['changes'] .  ($msg['changes'] ? "\n" : "") . $diff;
-  }
-
   // DEBUG: Clear the changes field
-  //$msg['changes'] = '';
+  //$nmsg['changes'] = '';
 
   // Update Database
   $iid = mid_to_iid($forum['fid'], $mid);
@@ -197,7 +194,7 @@ if (!empty($error) || $show_preview) {
   db_exec($sql, array(
     $nmsg['name'], $nmsg['email'], $nmsg['flags'], $nmsg['subject'],
     $nmsg['message'], $nmsg['url'], $nmsg['urltext'], $nmsg['video'],
-    $nmsg['state'], $msg['changes'],
+    $nmsg['state'], $nmsg['changes'],
     $mid
   ));
 
