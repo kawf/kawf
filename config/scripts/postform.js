@@ -34,12 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
             uploadInfo.textContent += ` | Resized size: ${(result.file.size / 1024).toFixed(2)} KB`;
         }
 
-        // Store the resized file data
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            fileInput.form.fileData.value = e.target.result;
-        };
-        reader.readAsDataURL(result.file);
+        // Store the resized file in the file input
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(result.file);
+        fileInput.files = dataTransfer.files;
 
         // Set metadata
         const metadata = {
