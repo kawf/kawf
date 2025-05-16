@@ -128,12 +128,12 @@ if (isset($_POST['postcookie'])) {
   $msg = handle_image_upload($user, $msg, $forum, $error, $content_tpl);
 
   // Validate message
-  validate_message($user, $msg, $error, $parent ?? null);
+  validate_message($msg, $error, $parent ?? null);
 
   //debug_log("error=" . implode(", ", $error) .  " isset(error)=" . var_export(isset($error), true) .  " empty(error)=" . var_export(empty($error), true));
 
-  // Handle preview state - modifies $show_preview and $seen_preview
-  handle_preview_state($user, $msg, $error, $show_preview, $seen_preview);
+  // Handle preview state - returns tuple of (show_preview, seen_preview)
+  list($show_preview, $seen_preview) = handle_preview_state($msg, $error, $show_preview, $seen_preview);
 
   //debug_log("Setting seen_preview true: user saw preview because show_preview=" . $show_preview?"true":"false" . " or error [" . implode(", ", $error) . "]");
 
