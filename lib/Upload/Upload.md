@@ -78,22 +78,10 @@ Verification checks:
 2. User clicks delete URL
 3. `deleteimage.php` receives the URL and passes it to the uploader
 4. Uploader handles the URL:
-   - Determines if it's a full URL or path fragment
    - Extracts necessary parameters (url, hash, timestamp)
    - Verifies hash/credentials
    - Performs deletion
 5. Uploader returns success/failure
-
-### URL Handling
-Uploaders must handle both full URLs and path fragments:
-- Full URLs: "https://server.com/path?params"
-- Path fragments: "path?params"
-
-Each uploader is responsible for:
-1. Detecting URL format
-2. Extracting required parameters
-3. Constructing the correct deletion request
-4. Performing proper verification
 
 ## Configuration
 
@@ -103,7 +91,7 @@ $config = [
     'url' => 'https://dav.example.com',  // WebDAV server URL
     'username' => 'user',
     'password' => 'pass',
-    'path' => 'uploads',                 // Base path for uploads
+    'path' => 'uploads',                 // DAV-specific base path for uploads
     'public_url' => 'https://images.example.com',  // Public URL for images
     'delete_salt' => 'your-secret-salt'  // For hash generation and verification
 ];
@@ -143,7 +131,8 @@ if (!$result) {
 
 **Best Practice:**
 - Always pass the full relative path (namespace + filename) to all uploader methods that operate on files or metadata (e.g., `load_metadata`, `save_metadata`, `delete`).
-- The uploader will handle appending `.json` for metadata and constructing the full URL as needed.
+- The uploader will handle constructing the full URL as needed.
+- For DAV, the uploader will handle prepending `config['path']` internally.
 
 **Example:**
 - Namespace: `kawf/1/1`
@@ -238,6 +227,8 @@ Returns true if deletion was successful, false otherwise. Use `getError()` to ge
 - Managing the upload form and file selection
 - Client-side image resizing before upload
 - Displaying upload progress and results
+- Managing file paths and namespaces
+- Constructing full paths for all operations
 
 ### Upload Class
 - Implementing the upload interface for specific backends
@@ -247,11 +238,11 @@ Returns true if deletion was successful, false otherwise. Use `getError()` to ge
 - Managing metadata storage and retrieval
 - Implementing backend-specific error handling
 - Ensuring secure file operations
-- Managing file paths and namespaces
 - Handling backend authentication
 - Implementing retry logic for failed operations
+- For DAV: Handling `config['path']` internally
 
-The upload class is designed to be backend-agnostic, focusing on file operations and security. The application layer handles user interaction, authentication, and URL management. This separation allows for:
+The upload class is designed to be backend-agnostic, focusing on file operations and security. The application layer handles user interaction, authentication, and path management. This separation allows for:
 - Easy addition of new storage backends
 - Consistent security model across backends
 - Flexible URL handling for different forum setups

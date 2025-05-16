@@ -13,14 +13,14 @@ interface ImageUploader {
     public function getMaxUploadSize(): int;
 
     /**
-     * Upload a file and return the public URL
-     *
+     * Perform the actual upload operation
+     * This must be implemented by each uploader
      * @param string $filename Path to the file to upload
-     * @param string|null $namespace Optional namespace for the upload (e.g. "fid/aid")
-     * @param ImageMetadata|null $metadata Optional metadata for the upload
-     * @return array|null Array containing 'url' and optionally 'delete_url', or null on failure
+     * @param string $path The path where the file should be uploaded
+     * @param ImageMetadata $metadata The metadata for the upload
+     * @return string|null The url of the uploaded file, or null if the upload failed
      */
-    public function upload(string $filename, ?string $namespace = null, ?ImageMetadata $metadata = null): ?array;
+    public function doUpload(string $filename, string $path, ImageMetadata $metadata): ?string;
 
     /**
      * Delete an image by its path
@@ -118,47 +118,6 @@ abstract class Upload implements ImageUploader {
     }
 
     /**
-     * Construct a URL with proper path encoding
-     *
-     * Examples:
-     * Input: base_url="http://localhost:8080", path="/1", config[path]="path"
-     * Output: "http://localhost:8080/path/1"
-     *
-     * Input: base_url="http://localhost:8080", path="1/1/foo.png", config[path]="path"
-     * Output: "http://localhost:8080/path/1/1/foo.png"
-     *
-     * Input: base_url="https://images.path.org", path="1/1/foo.png", config[path]="path"
-     * Output: "https://images.path.org/path/1/1/foo.png"
-     *
-     * @param string $base_url The base URL to prepend
-     * @param string $path The path to encode and append
-     * @return string The complete URL with encoded path
-     */
-    protected function getUrl(string $base_url, string $path): string {
-        // Normalize path by removing leading/trailing slashes
-        // Example: "/1" -> "1", "1/1/foo.png" -> "1/1/foo.png"
-        $path = trim($path, '/');
-
-        // Split path into segments and encode each one
-        // Example: "1/1/foo.png" -> ["1", "1", "foo.png"] -> ["1", "1", "foo%bar.png"]
-        $segments = explode('/', $path);
-        $encoded_segments = array_map('rawurlencode', $segments);
-
-        // Prepend config path if it exists
-        // Example: config[path]="path" -> ["path"] -> ["path", "1", "1", "foo%bar.png"]
-        if (!empty($this->config['path'])) {
-            $config_segments = explode('/', $this->config['path']);
-            $encoded_config = array_map('rawurlencode', $config_segments);
-            $encoded_segments = array_merge($encoded_config, $encoded_segments);
-        }
-
-        // Join everything together with slashes
-        // Example: "http://localhost:8080" + "/" + "path/1/1/foo%bar.png"
-        $result = rtrim($base_url, '/') . '/' . implode('/', $encoded_segments);
-        return $result;
-    }
-
-    /**
      * Base upload method that handles URL encoding
      * @param string $filename Path to the file to upload
      * @param string|null $namespace Optional namespace for the upload
@@ -179,8 +138,8 @@ abstract class Upload implements ImageUploader {
         $path = $this->generateUniqueFilename($namespace, $metadata->original_name);
 
         // Perform the actual upload
-        $result = $this->doUpload($filename, $path, $metadata);
-        if (!$result) {
+        $url = $this->doUpload($filename, $path, $metadata);
+        if (!$url) {
             return null;
         }
 
@@ -191,21 +150,11 @@ abstract class Upload implements ImageUploader {
 
         // Return URLs with proper encoding
         return [
-            'url' => $this->getUrl($this->config['public_url'], $path),
+            'url' => $url,
             'delete_url' => $delete_url,
             'metadata_path' => $path
         ];
     }
-
-    /**
-     * Perform the actual upload operation
-     * This must be implemented by each uploader
-     * @param string $filename Path to the file to upload
-     * @param string $path The path where the file should be uploaded
-     * @param ImageMetadata $metadata The metadata for the upload
-     * @return bool True if the upload was successful
-     */
-    abstract protected function doUpload(string $filename, string $path, ImageMetadata $metadata): bool;
 
     /**
      * Generate a unique filename for the upload
