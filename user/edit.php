@@ -166,16 +166,13 @@ $content_tpl->set("PREVIEW", $preview_html);
 
 if (!empty($error) || $show_preview) {
   // --- State: Preview Changes (Errors or force Preview) ---
-
   // generate post form for new message
   $form_html = render_postform($template_dir, "edit", $user, $nmsg, $seen_preview);
   $content_tpl->set("FORM_HTML", $form_html);
   $content_tpl->parse("edit_content.form");
-
-  $content_block = "preview";
+  $content_tpl->parse("edit_content.preview");
 } else {
   // --- State: Accept Changes (No Errors, Not Preview) ---
-
   // IMAGEURL HACK - move imgurl field to message body before insert for entry into the db
   $nmsg = image_url_hack_insert($nmsg);
 
@@ -217,12 +214,8 @@ if (!empty($error) || $show_preview) {
   if (can_upload_images()) {
     $content_tpl->parse('edit_content.accept.image_browser');
   }
-
-  $content_block = "accept";
+  $content_tpl->parse("edit_content.accept");
 }
-
-// Parse the appropriate content block
-$content_tpl->parse("edit_content.$content_block");
 
 // Generate the final page
 print generate_page('Edit Message', $content_tpl->output('edit_content'));

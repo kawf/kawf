@@ -40,3 +40,20 @@ function deleteImage(forum, path, imageName) {
     });
   }
 }
+
+function copyImageLink(imageUrl) {
+  navigator.clipboard.writeText(imageUrl).then(() => {
+    // Show a temporary success message
+    const btn = document.activeElement;
+    const originalText = btn.textContent;
+    btn.textContent = '✓';
+    btn.style.backgroundColor = '#fff';
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.backgroundColor = '';
+    }, 1000);
+  }).catch(err => {
+    console.error('Failed to copy image URL:', err);
+    alert('Failed to copy image URL. Please try again.');
+  });
+}
