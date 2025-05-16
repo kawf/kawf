@@ -24,6 +24,13 @@
 <div class="image-grid">
 %begin [image]
   <div class="image-card">
+    <div class="image-overlay">
+      <button class="copy-btn" onclick="copyImageLink('%[IMAGE_URL]')" title="Copy image link">⎘</button>
+      <div class="right-buttons">
+        <button class="open-btn" onclick="window.open('%[IMAGE_URL]', '_blank')" title="Open image in new window">↗</button>
+        <button class="delete-btn" onclick="deleteImage('%[FORUM_SHORTNAME]', '%[DELETE_PATH]', '%[IMAGE_ORIGINAL_NAME]')" title="Delete image">×</button>
+      </div>
+    </div>
     <a href="%[IMAGE_LINK_URL]" target="_blank">
       <img src="%[IMAGE_URL]" alt="%[IMAGE_ORIGINAL_NAME]" loading="lazy">
     </a>
@@ -32,9 +39,6 @@
       <div class="image-meta">
         <span class="upload-time">%[IMAGE_UPLOAD_TIME]</span>
         <span class="file-size">%[IMAGE_FILE_SIZE]</span>
-      </div>
-      <div class="image-actions">
-        <button class="delete-btn" onclick="deleteImage('%[FORUM_SHORTNAME]', '%[DELETE_PATH]', '%[IMAGE_ORIGINAL_NAME]')">Delete</button>
       </div>
     </div>
   </div>
