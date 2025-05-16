@@ -238,7 +238,8 @@ function _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $mo
   if ($can_edit || $can_delete) {
     // Delete/Undelete sub-blocks (inside owner block)
     if ($can_delete && !$state_locked) {
-        if ($msg['state'] == 'Deleted') {
+        // New posts wont have a state field?
+        if (isset($msg['state']) && $msg['state'] == 'Deleted') {
             $message_tpl->parse('message_block.owner.undelete');
         } else {
             $message_tpl->parse('message_block.owner.delete');
