@@ -91,6 +91,11 @@ function postprocess($msg, $noembed=false)
 function render_message($template_dir, $msg, $viewer, $owner=null)
 {
   global $Debug, $viewer_aid_key;
+
+  if (!isset($owner)) {
+    $owner=$viewer;
+  }
+
   $forum = get_forum();
 
   // Instantiate YATT for this message
@@ -111,12 +116,6 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
   if (!$expose_email && isset($owner))
       $msg['email'] = stripcrap($owner->email);
 
-  $extras=true;
-  if (!isset($owner)) {
-    $extras=false;
-    $owner=$viewer;
-  }
-
   if ($Debug) {
     $debug = "\nmsg:\n";
     foreach ($msg as $k => $v) {
@@ -125,6 +124,8 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
     }
     $debug.="viewer=".$viewer->aid."\n";
     $debug.="owner=".$owner->aid."\n";
+    $debug.="moderator=".$moderator."\n";
+    $debug.="expose_email=".$expose_email."\n";
     $debug = str_replace("--","- -", $debug);
     $message_tpl->set("MSG_DEBUG", "<!-- $debug -->");
   } else {
@@ -190,9 +191,7 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
   }
 
   // Handle extra blocks (moderator info, tools)
-  if ($extras)
-    _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $moderator);
-  // else: extra blocks are just not parsed, no need for _message_unset_block_extras
+  _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $moderator);
 
   // Parse the main container block
   $message_tpl->parse('message_block');
@@ -265,7 +264,7 @@ function _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $mo
   }
 
   // Changes Block
-  if ($moderator && !empty($msg['changes'])) { // Or: if (isset($msg['changes']) && !empty($msg['changes'])) { ... depends on HEAD state
+  if (($moderator || $owner->aid == $viewer->aid) && !empty($msg['changes'])) {
       $message_tpl->set('MSG_CHANGES', nl2brPre::out($msg['changes'])); // Assumes nl2brPre::out is safe
       $message_tpl->parse('message_block.changes');
   }
