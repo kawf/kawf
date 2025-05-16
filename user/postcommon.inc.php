@@ -3,16 +3,12 @@
 
 function handle_image_upload($user, $msg, $forum, $error, $content_tpl) {
     $upload_config = get_upload_config();
-    if (empty($error) && can_upload_images($upload_config) && !empty($_POST['fileData']) && !empty($_POST['fileMetadata'])) {
+    if (empty($error) && can_upload_images($upload_config) && !empty($_FILES['imagefile']) && !empty($_POST['fileMetadata'])) {
         // Get filename information from the hidden input
         $fileMetadata = json_decode($_POST['fileMetadata'], true);
 
-        // Create a temporary file from the data URL
-        $tempFile = tempnam(sys_get_temp_dir(), 'kawf_');
-        $data = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $_POST['fileData']));
-        file_put_contents($tempFile, $data);
-
-        // Rename the temp file to use the correct filename from metadata
+        // Use the uploaded file but rename it to avoid collisions
+        $tempFile = $_FILES['imagefile']['tmp_name'];
         $finalTempFile = dirname($tempFile) . '/' . $fileMetadata['resized'];
         rename($tempFile, $finalTempFile);
 
