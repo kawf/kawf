@@ -175,10 +175,15 @@ if (!empty($error) || $preview) {
   /* for diffing and for entry into the db */
   $nmsg = image_url_hack_insert($nmsg);
 
-  /* Modern safety: Ensure changes field exists before SQL update.
-     Original code relied on MySQL's CONCAT to handle null values,
-     but explicitly handling it in PHP is more robust. */
-  $nmsg['changes'] = ($msg['changes'] ?? '') . $diff;
+  // Build the changes string with proper formatting
+  if ($diff) {
+    $diff = "Edited by $user->name/$user->aid at " . date('Y-m-d H:i:s') . " from $s->remoteAddr\n" . $diff;
+    // Add \n between old and new changes if needed
+    $msg['changes'] = $msg['changes'] .  ($msg['changes'] ? "\n" : "") . $diff;
+  }
+
+  // DEBUG: Clear the changes field
+  //$msg['changes'] = '';
 
   // Update Database
   $iid = mid_to_iid($forum['fid'], $mid);
@@ -187,14 +192,12 @@ if (!empty($error) || $preview) {
     exit;
   }
   $sql = "update f_messages$iid set name = ?, email = ?, flags = ?, subject = ?, " .
-    "message = ?, url = ?, urltext = ?, video = ?, state = ?, " .
-    "changes = CONCAT(IFNULL(changes,''), 'Edited by ', ?, '/', ?, ' at ', NOW(), ' from ', ?, '\n', ?, '\n') " .
+    "message = ?, url = ?, urltext = ?, video = ?, state = ?, changes = ? " .
     "where mid = ?";
   db_exec($sql, array(
     $nmsg['name'], $nmsg['email'], $nmsg['flags'], $nmsg['subject'],
     $nmsg['message'], $nmsg['url'], $nmsg['urltext'], $nmsg['video'],
-    $nmsg['state'],
-    $user->name, $user->aid, $s->remoteAddr, $nmsg['changes'],
+    $nmsg['state'], $msg['changes'],
     $mid
   ));
 
