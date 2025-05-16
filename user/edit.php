@@ -140,10 +140,10 @@ else if ($user->capable($forum['fid'], 'OffTopic') &&
 $nmsg = handle_image_upload($user, $nmsg, $forum, $error, $content_tpl);
 
 // Validate message
-validate_message($user, $nmsg, $error);
+validate_message($nmsg, $error);
 
-// Handle preview state -- modifies $show_preview and $seen_preview
-handle_preview_state($user, $nmsg, $error, $show_preview, $seen_preview);
+// Handle preview state -- returns tuple of (show_preview, seen_preview)
+list($show_preview, $seen_preview) = handle_preview_state($nmsg, $error, $show_preview, $seen_preview);
 
 // We show the preview even on accept
 $preview_html = render_message($template_dir, $nmsg, $user);

@@ -41,7 +41,7 @@ function handle_image_upload($user, $msg, $forum, $error, $content_tpl) {
     return $msg;
 }
 
-function validate_message($user, $msg, $error, $parent = null) {
+function validate_message($msg, $error, $parent = null) {
     // Subject validation
     if (empty($msg['subject'])) {
         $error["subject_req"] = true;
@@ -64,8 +64,8 @@ function validate_message($user, $msg, $error, $parent = null) {
     }
 }
 
-// Handle preview state -- modifies $show_preview and $seen_preview
-function handle_preview_state($user, $msg, $error, &$show_preview, &$seen_preview) {
+// Handle preview state -- returns tuple of (show_preview, seen_preview)
+function handle_preview_state($msg, $error, $show_preview, $seen_preview) {
     // $show_preview: Controls whether to show the preview block in the UI
     // $seen_preview: Tracks whether the user has seen the image/video preview
 
@@ -83,6 +83,8 @@ function handle_preview_state($user, $msg, $error, &$show_preview, &$seen_previe
         if(!empty($msg['imageurl'])) $error["image"] = true;
         if(!empty($msg['video'])) $error["video"] = true;
     }
+
+    return [$show_preview, $seen_preview];
 }
 
 function calculate_message_flags($user, $msg) {
