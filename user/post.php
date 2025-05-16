@@ -69,7 +69,7 @@ if (!isset($_POST['tid'])) { // Posting new thread
 if ($Debug) {
   $debug = "<!--\n_POST:\n";
   foreach ($_POST as $k => $v) {
-    if (!is_numeric($k) && strlen($v)>0)
+    if (!is_numeric($k) && strlen($v)>0 && $k != 'fileData')
       $debug.=" $k => " . htmlspecialchars($v) . "\n";
   }
   $debug .= "-->";
