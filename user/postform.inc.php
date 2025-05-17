@@ -63,32 +63,28 @@ function render_postform($template_dir, $action, $user, $msg = null, $seen_previ
     $form_tpl->set("PAGE_VALUE", get_page_context());
     $form_tpl->set("PAGE", format_page_param());
 
-    // --- Debug Info (Optional) ---
-    $debug = "\naction = $action\n";
-    $debug .= "seen_preview = $seen_preview\n";
-    $debug .= "_REQUEST:\n";
-    foreach ($_REQUEST as $k => $v) {
-      if (!is_numeric($k)) {
-        if(is_scalar($v))
-          $debug.=" $k => $v\n";
-        else {
-          trigger_error("$k's v is not a scalar");
-          if (is_array($v)) foreach ($v as $kk => $vv)
-            trigger_error("$kk => $vv");
-          $_REQUEST[$k]="I like cock";
+    if ($Debug) {
+      // --- Debug Info (Optional) ---
+      $debug = "\naction = $action\n";
+      $debug .= "seen_preview = $seen_preview\n";
+      $debug .= "_REQUEST:\n";
+      foreach ($_REQUEST as $k => $v) {
+        if (!is_numeric($k)) {
+          if(is_scalar($v))
+            $debug.=" $k => " . htmlspecialchars($v, ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8') . "\n";
+          else {
+            $debug.=" $k => " . htmlspecialchars(print_r($v, true), ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8') . "\n";
+          }
         }
       }
-    }
 
-    if ($Debug) {
       if (isset($msg)) {
         $debug .= "msg:\n";
         foreach ($msg as $k => $v) {
           if (!is_numeric($k) && is_scalar($v))
-            $debug.=" $k => $v\n";
+            $debug.=" $k => " . htmlspecialchars($v, ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8') . "\n";
         }
       }
-      $debug = str_replace("--","- -", $debug);
       $form_tpl->set("POSTFORM_DEBUG", "<!-- $debug -->");
     } else {
       $form_tpl->set("POSTFORM_DEBUG", "");

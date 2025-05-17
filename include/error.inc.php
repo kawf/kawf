@@ -80,7 +80,7 @@ function err_not_found($description = "") {
 }
 
 function debug_log($msg) {
-    kawfError::$debug_log[] = $msg;
+    kawfError::$debug_log[] = htmlspecialchars($msg, ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
 }
 
 function get_debug_log() {
