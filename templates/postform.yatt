@@ -65,17 +65,20 @@ This thread is locked. No replies are allowed.<br>
         </select>
       </td>
       <td>
-        <input type="file" name="imagefile" id="imagefile" accept="image/*">
+        <input type="file" name="imagefile" id="imagefile" accept="image/*;capture=camera">
         <!-- <small class="form-text text-muted">Maximum file size: %[MAXIMAGEFILEBYTES] MB</small> -->
         <input type="hidden" name="fileMetadata" id="fileMetadata" value="">
         <input type="hidden" name="fileData" id="fileData" value="">
         <input type="hidden" name="imagedeleteurl" id="imagedeleteurl" value="%[IMAGEDELETEURL]">
         <input type="hidden" name="metadatapath" id="metadatapath" value="%[METADATAPATH]">
       </td>
+      %[#] DISABLED for now
+      %begin [camera]
       <td class="checkbox">
         <input type="checkbox" id="useCamera" name="useCamera">
         <label for="useCamera">📷</label>
       </td>
+      %end [camera]
      </tr></table>
      <div id="uploadInfo" class="upload-info"></div>
     </td>

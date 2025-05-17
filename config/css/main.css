@@ -265,7 +265,8 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
   /* looks ok in android, need to test on iphone */
   margin-top: -0.1em; /* adjust for the emoji being visually not centered */
 }
-.postform td.button table td:last-child { width: 100%; text-align: right; padding-right: 1em; }
+/* camera toggle is disabled for now */
+/* .postform td.button table td:last-child { width: 100%; text-align: right; padding-right: 1em; } */
 
 /***************/
 /* preferences */

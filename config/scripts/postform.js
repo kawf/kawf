@@ -3,12 +3,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadInfo = document.getElementById('uploadInfo');
     const widthSelect = document.getElementById('imageWidth');
     const messageTextarea = document.querySelector('textarea[name="message"]');
-    const useCameraCheckbox = document.getElementById('useCamera');
-    const cameraLabel = useCameraCheckbox.parentElement;
+    //const useCameraCheckbox = document.getElementById('useCamera');
+    //const cameraLabel = useCameraCheckbox.parentElement;
 
     if (!fileInput || !fileInput.form) return;
 
     // Check if device has rear camera
+    // FIXME: disabled for now
+    /*
     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         navigator.mediaDevices.getUserMedia({
             video: { facingMode: { exact: 'environment' } }
@@ -34,6 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fileInput.removeAttribute('capture');
         }
     });
+    */
 
     function generateTimestampFilename(originalName) {
         const now = new Date();
