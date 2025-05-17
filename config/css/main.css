@@ -203,7 +203,17 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 }
 
 /* url tag below media */
-.media { font-size: 75%; color: #999; }
+.media { margin: 1em 0; }
+.media .imageurl { margin-bottom: 0.5em; }
+.media .imageurl img {
+  max-width: 100%;
+  border: none;
+  display: block;
+}
+.media .media-link {
+  font-size: 75%;
+  color: #999;
+}
 
 /* no image borders */
 .imageurl img { border-style: none; }

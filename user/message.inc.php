@@ -49,6 +49,7 @@ function postprocess($msg, $noembed=false)
   $out = '';
   $indent = '   ';
 
+  // Build embbeded media content
   /* Order: image, video, message, url */
 
   if (!empty($msg['imageurl'])) {
@@ -67,7 +68,8 @@ function postprocess($msg, $noembed=false)
     // Apply text wrapping to message content
     // breaks things like embeded urls. Don't do it.
     //$message = softbreaklongwords($msg['message'], 78);
-    $out .= nl2brPre::out($msg['message'])."\n";
+    // By popular demand, we're putting the media content at the bottom of the message
+    $out = nl2brPre::out($msg['message'])."\n" . $out;
   }
 
   if (!empty($msg['url']) && validate_url($msg['url'])) {
