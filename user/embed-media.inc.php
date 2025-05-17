@@ -13,6 +13,31 @@ function explode_query($query) {
     return $params;
 }
 
+// Format a media element with a link to the media
+// If $redirect is true, the link goes through redirect.phtml
+// Note that $media already generally has a \n at the end of the string
+function tag_media($media, $prefix, $url, $text, $class, $redirect=false)
+{
+  $indent = '    ';
+  $link = $redirect
+    ? sprintf("<a href=\"/redirect.phtml?refresh&amp;url=%s\" target=\"_blank\">%s</a>", urlencode($url), $text)
+    : sprintf("<a href=\"%s\" target=\"_blank\">%s</a>", $url, $text);
+
+  if (trim($media) != "") {
+    // Videos have a media tag, so add the media and the link in separate divs
+    $lines[] = $indent . sprintf("<div class=\"%s\">", $class);
+    $lines[] = $indent . " " . trim($media);
+    $lines[] = $indent . "</div>";
+    $lines[] = $indent . "<div class=\"media-link\">". $prefix . $link . "</div>";
+  } else {
+    // Images don't have a media tag, so just add the link
+    $lines[] = $indent . sprintf("<div class=\"%s\">", $class);
+    $lines[] = $indent . " " . $prefix . $link;
+    $lines[] = $indent . "</div>";
+  }
+  return implode("\n", $lines);
+}
+
 function embed_redtube_video($url)
 {
   if (preg_match("#^http://(\w+\.)*redtube\.com/([0-9]+)#", $url, $regs)) {
@@ -27,7 +52,7 @@ function embed_redtube_video($url)
     "<param name=\"FlashVars\" value=\"id=$tag\"></param>\n".
     "<embed src=\"http://embed.redtube.com/player/?id=$tag\"".
 	" type=\"application/x-shockwave-flash\" width=\"600\" height=\"360\"></embed>\n".
-    "</object><br>\n";
+    "</object>\n";
 
   return tag_media($out, "RedTube ", $url, $tag, "redtube");
 }
@@ -43,7 +68,7 @@ function embed_vimeo_video($url)
   $out = "<iframe src=\"https://player.vimeo.com/video/$tag\"\n".
     "\twidth=\"640\" height=\"360\" frameborder=\"0\"\n".
     "\twebkitAllowFullScreen mozallowfullscreen allowFullScreen>\n".
-    "</iframe><br>\n";
+    "</iframe>\n";
 
   return tag_media($out, "Vimeo ", $url, $tag, "vimeo");
 }
@@ -92,7 +117,7 @@ function embed_youtube_video($url)
     "$indent width=\"$width\"  height=\"$height\"\n".
     "$indent src=\"https://www.youtube.com/embed/$tag\"\n".
     "$indent frameborder=\"0\" allowfullscreen=\"1\">\n".
-    "$indent</iframe><br>\n";
+    "$indent</iframe>\n";
   /* AS3 */
   /*
     $url = "https://youtube.googleapis.com/v/$tag?version=2&fs=1";
@@ -107,7 +132,7 @@ function embed_youtube_video($url)
 	  " allowfullscreen=\"true\"\n".
 	  " allowscriptaccess=\"always\"\n>".
       "</embed>\n".
-      "</object><br>\n";
+      "</object>\n";
   */
 
   return tag_media($out, "YouTube ", "http://youtu.be/$tag", $tag, "youtube");
@@ -138,10 +163,9 @@ function embed_vine_video($url)
 
   $src = getVineVideoFromUrl("http://vine.co/v/$tag");
 
-  $out = "<iframe src=\"https://vine.co/v/$tag/embed/simple\" width=\"600\" height=\"600\" frameborder=\"0\"></iframe>\n<script src=\"https://platform.vine.co/static/scripts/embed.js\" type=\"text/javascript\"></script><br>\n";
+  $out = "<iframe src=\"https://vine.co/v/$tag/embed/simple\" width=\"600\" height=\"600\" frameborder=\"0\"></iframe>\n<script src=\"https://platform.vine.co/static/scripts/embed.js\" type=\"text/javascript\"></script>\n";
 
   return tag_media($out, "Vine ", "https://vine.co/v/$tag", $tag, "vine");
-
 }
 
 function embed_html5_video($url)
@@ -156,20 +180,9 @@ function embed_html5_video($url)
   $out =
     "<video src=\"$url\" controls=\"controls\">\n" .
     "Your browser <a href=\"http://en.wikipedia.org/wiki/HTML5_video#Browser_support\">does not support HTML5 and/or this codec</a>.\n" .
-    "</video><br>\n";
+    "</video>\n";
 
   return tag_media($out, "", $url, "HTML5", "html5");
-}
-
-function tag_media($out, $prefix, $url, $text, $class, $redirect=false)
-{
-  $indent = '    ';
-  if ($redirect)
-    $out .= "$indent $prefix<a href=\"/redirect.phtml?refresh&amp;url=".urlencode($url)."\" target=\"_blank\">$text</a>";
-  else
-    $out .= "$indent $prefix<a href=\"$url\" target=\"_blank\">$text</a>";
-
-  return "$indent<div class=\"$class\">\n$out<br>\n$indent</div>";
 }
 
 function embed_video($url)
@@ -189,7 +202,7 @@ function embed_video($url)
 
 function embed_image($url)
 {
-  $out = "<img src=\"$url\" alt=\"$url\">\n";
+  $out = "<img src=\"$url\" alt=\"$url\">";
   return tag_media("", "", $url, $out, "imageurl", true /* hide referer */);
 }
 ?>
