@@ -244,6 +244,7 @@ function validate_null()
   return true;
 }
 
+// Things allowed in the subject line
 $subject_tags = array(
 /*
   "b" => array(array(), "/b"),
@@ -254,6 +255,7 @@ $subject_tags = array(
   "sup" => array(array(), "/sup"),
 );
 
+// Things allowed in the message body
 $standard_tags = array(
   "b" => array(array(), "/b"),
   "i" => array(array(), "/i"),
@@ -261,7 +263,7 @@ $standard_tags = array(
   "a" => array(array("href=", true, 'validate_url', "target=", false, 'validate_target'), "/a"),
   "img" => array(array("src=", true, 'validate_url', "alt=", false, 'validate_null', "width=", false, 'validate_number', "height=", false, 'validate_number')),
   "br" => array(array(), ""),
-  "p" => array(array(), "/p"),
+  //"p" => array(array(), "/p"), // Don't allow this so user can't fool image_url_hack_extract()
   "pre" => array(array(), "/pre"),
   "code" => array(array(), "/code"),
   "blockquote" => array(array(), "/blockquote"),
