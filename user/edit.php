@@ -14,8 +14,7 @@ require_once("thread.inc.php");       // For get_thread
 require_once("message.inc.php");      // For fetch_message, render_message, preprocess etc.
 require_once("postform.inc.php");     // For render_postform
 require_once("image.inc.php");        // For image upload support
-require_once("postcommon.inc.php");   // For shared functionality
-require_once("postmessage.inc.php");  // For updatemessage
+require_once("postmessage.inc.php");  // For updatemessage, calculate_message_diff etc.
 require_once("page-yatt.inc.php");    // For YATT class and generate_page
 
 $mid = isset($_REQUEST['mid']) ? $_REQUEST['mid'] : null;
