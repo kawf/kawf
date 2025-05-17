@@ -463,3 +463,39 @@ hr.images { height: 1px; }
     background-color: #fff;
     color: #666;
 }
+
+/* Dark mode support for image browser */
+html.night-mode .image-grid {
+    background: #1a1a1d;
+}
+
+html.night-mode .image-card {
+    border-color: #242426;
+    background: #242426;
+}
+
+html.night-mode .image-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+html.night-mode .image-name {
+    color: #ccc;
+}
+
+html.night-mode .image-meta {
+    color: #888;
+}
+
+html.night-mode .copy-btn,
+html.night-mode .delete-btn,
+html.night-mode .open-btn {
+    background-color: rgba(36, 36, 38, 0.95);
+    color: #888;
+}
+
+html.night-mode .copy-btn:hover,
+html.night-mode .delete-btn:hover,
+html.night-mode .open-btn:hover {
+    background-color: #2a2a2d;
+    color: #ccc;
+}
