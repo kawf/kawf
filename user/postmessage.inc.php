@@ -40,9 +40,8 @@ function postmessage($user, $fid, &$msg, $request): bool
 
   $msg['flags'] = implode(",", $flags);
 
-  /* IMAGEURL HACK - prepend before insert */
-  /* for entry into the db */
-  $msg = image_url_hack_insert($msg);
+  // IMAGEURL HACK - move imgurl field to message body before insert for entry into the db
+  $msg = image_url_hack_insert($msg); // Note that this clears $msg['imageurl']
 
   /* Add it into the database */
   /* Check to make sure this isn't a duplicate */
@@ -222,6 +221,31 @@ function postmessage($user, $fid, &$msg, $request): bool
     untrack_thread($fid, $msg['tid']);
 
   return $newmessage;
+}
+
+function updatemessage($fid, $msg)
+{
+  // IMAGEURL HACK - move imgurl field to message body before insert for entry into the db
+  $msg = image_url_hack_insert($msg); // Note that this clears $msg['imageurl']
+
+  // Update Database
+  $iid = mid_to_iid($fid, $msg['mid']);
+  if (!isset($iid)) {
+    err_not_found("message " . $msg['mid'] . " has no iid");
+    exit;
+  }
+  $sql = "update f_messages$iid set name = ?, email = ?, flags = ?, subject = ?, " .
+    "message = ?, url = ?, urltext = ?, video = ?, state = ?, changes = ? " .
+    "where mid = ?";
+  db_exec($sql, array(
+    $msg['name'], $msg['email'], $msg['flags'], $msg['subject'],
+    $msg['message'], $msg['url'], $msg['urltext'], $msg['video'],
+    $msg['state'], $msg['changes'],
+    $msg['mid']
+  ));
+
+  $sql = "replace into f_updates ( fid, mid ) values ( ?, ? )";
+  db_exec($sql, array($fid, $msg['mid']));
 }
 // vim: ts=8 sw=2 et
 ?>

@@ -25,6 +25,7 @@ $content_tpl->set("USER_TOKEN", $user->token());
 $content_tpl->set("PAGE", format_page_param());
 $content_tpl->set("TIME", time());
 
+// fetch_message does image_url_hack_extract() for us
 $msg = fetch_message($forum['fid'], $user, $mid);
 
 $content_tpl->set("MSG_TID", $msg['tid']);
@@ -47,6 +48,7 @@ mark_thread_read($forum['fid'], $msg, $user);
 
 $thread = get_thread($forum['fid'], $msg['tid']);
 
+//$msg = image_url_hack_extract($msg);
 $message = render_message($template_dir, $msg, $user, $uuser);
 $content_tpl->set("MESSAGE", $message);
 
@@ -83,6 +85,7 @@ $nmsg['tid'] = $msg['tid'];
 $nmsg['ip'] = get_server()->remoteAddr;
 
 if ($msg['pmid'] != 0) {
+  // fetch_message does image_url_hack_extract() for us
   $pmsg = fetch_message($fid, $user, $msg['pmid'], 'mid, subject, name, date');
 }
 

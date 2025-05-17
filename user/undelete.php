@@ -36,6 +36,7 @@ if (!isset($iid)) {
   err_not_found("Invalid message ID mapping for $mid");
   exit;
 }
+// fetch_message does image_url_hack_extract() for us
 $msg = fetch_message($forum['fid'], $user, $mid);
 if (!isset($msg)) {
   err_not_found("No message with mid $mid");
@@ -56,6 +57,7 @@ if (!isset($forum['option']['PostEdit'])) {
 // --- Prepare Content for Template ---
 
 // Render message preview
+//$msg = image_url_hack_extract($msg); // fetch_message() does this for us
 $preview_html = render_message($template_dir, $msg, $user);
 $content_tpl->set("PREVIEW", $preview_html);
 

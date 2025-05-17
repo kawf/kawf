@@ -43,6 +43,7 @@ if (!isset($messages) || empty($messages)) {
 /* It needs access to $template_dir, $user, $forum globals */
 
 /* print_message refactored to return HTML */
+/* ONLY called as a callback for list_thread() */
 function print_message($thread, $msg)
 {
   global $user, $template_dir; // Assume $template_dir is global

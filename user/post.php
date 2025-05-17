@@ -219,6 +219,7 @@ if (!$accepted || $show_preview) {
 
  // Step 2
   // Message was accepted, parse the accept block
+  // postmessage() calls image_url_hack_insert()
   if (postmessage($user, $forum['fid'], $msg, $_POST)) {
     // Handle email followups
     if (isset($_POST['EmailFollowup'])) {
@@ -269,10 +270,12 @@ if (!$accepted || $show_preview) {
   }
 
   $content_tpl->set("MSG_MID", $msg['mid']);
+  $msg = image_url_hack_extract($msg); // undo image_url_hack_insert() done in post_message
 } // accepted and not preview
 
 // Delay all rendering until we have a $msg['mid']
 // This way we know whether to display the tools block, and if we do, they have the right $msg['mid']
+//$msg = image_url_hack_extract($msg); // only need to do this after post_message()
 $preview_html = render_message($content_tpl, $msg, $user);
 $content_tpl->set("PREVIEW", $preview_html);
 

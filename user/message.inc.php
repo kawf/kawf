@@ -122,14 +122,13 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
     $debug = "\nmsg:\n";
     foreach ($msg as $k => $v) {
       if (!is_numeric($k) && strlen($v)>0)
-        $debug.=" $k => $v\n";
+        $debug.=" $k => " . htmlspecialchars($v, ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8') . "\n";
     }
     $debug.="viewer=".$viewer->aid."\n";
     $debug.="owner=".$owner->aid."\n";
     $debug.="moderator=".$moderator."\n";
     $debug.="expose_email=".$expose_email."\n";
-    $debug = str_replace("--","- -", $debug);
-    $message_tpl->set("MSG_DEBUG", "<!-- $debug -->");
+    $message_tpl->set("MSG_DEBUG", "<!--\n" . $debug . "\n-->");
   } else {
     $message_tpl->set("MSG_DEBUG", "");
   }
@@ -287,28 +286,33 @@ function image_url_hack_insert($msg)
     escapequotes($msg['imageurl']) . "\"></center><p>\n" .
     $msg['message'];
 
+  // Clear the imageurl field so we know we've done this
+  $msg['imageurl'] = '';
+
   return $msg;
 }
 
 /* strip imageurl from message and fill in $msg['imageurl'] */
 function image_url_hack_extract($msg)
 {
+    // Note that fetch_message() may call us with an empty message if the caller
+    // didn't need the message body
     if (empty($msg['message'])) {
       return $msg;
     }
 
-    /* Strip from existing (old) message if it doesn't already have an
-       imageurl. Theoretically, users shouldn't be able to add <p>'s to their
-       message, so this should ONLY be in messages that were prepended with
-       images automatcially by post/edit */
-    if (array_key_exists('message', $msg) &&
-        preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>\s*(.*)$/s", $msg['message'], $regs)) {
-      if (empty($msg['imageurl'])) {
-        $msg['imageurl'] = unescapequotes($regs[1]);
-        $msg['message'] = $regs[2];
-      } else {
-        error_log("image_url_hack_extract: imgurl AND center imgurl found in msg->message: " . $msg['message']);
+    /* Strip <center> image from message body if it matches the patter than
+       insert uses. Theoretically, users shouldn't be able to add <p>'s to their
+       message (see strip.inc.php), so this should ONLY be in messages that were
+       prepended with images automatcially by post/edit.
+       Note that we cannot change this pattern because it's all over the
+       database now.  */
+    if (preg_match("/^<center><img src=\"([^\"]+)\"><\/center><p>\s*(.*)$/s", $msg['message'], $regs)) {
+      if (!empty($msg['imageurl'])) {
+        error_log("image_url_hack_extract: imgurl AND center imgurl found in msg->message:\n" . htmlspecialchars($msg['message']));
       }
+      $msg['imageurl'] = unescapequotes($regs[1]);
+      $msg['message'] = $regs[2];
     }
 
     return $msg;

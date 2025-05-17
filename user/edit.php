@@ -15,6 +15,7 @@ require_once("message.inc.php");      // For fetch_message, render_message, prep
 require_once("postform.inc.php");     // For render_postform
 require_once("image.inc.php");        // For image upload support
 require_once("postcommon.inc.php");   // For shared functionality
+require_once("postmessage.inc.php");  // For updatemessage
 require_once("page-yatt.inc.php");    // For YATT class and generate_page
 
 $mid = isset($_REQUEST['mid']) ? $_REQUEST['mid'] : null;
@@ -47,6 +48,7 @@ $content_tpl->set("PAGE", format_page_param());
 $content_tpl->set("MSG_MID", $mid); // For accept page link
 
 // Fetch original message
+// fetch_message does image_url_hack_extract() for us
 $nmsg = $msg = fetch_message($forum['fid'], $user, $mid); // $nmsg will hold the potentially modified version
 
 // Basic Validation
@@ -156,10 +158,11 @@ $diff = calculate_message_diff($user, $msg, $nmsg);
 if ($diff) {
   $diff = "Edited by $user->name/$user->aid at " . date('Y-m-d H:i:s') . " from $s->remoteAddr\n" . $diff;
   // Add \n between old and new changes if needed
-  $nmsg['changes'] = $msg['changes'] . ($msg['changes'] ? "\n" : "") . $diff;
+  $nmsg['changes'] = $msg['changes'] . ($msg['changes'] ? "\n" : "") . htmlspecialchars($diff, ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8');
 }
 
 // We show the preview even on accept
+//$nmsg = image_url_hack_extract($nmsg); (was done above for diff)
 $preview_html = render_message($template_dir, $nmsg, $user);
 $content_tpl->set("PREVIEW", $preview_html);
 
@@ -172,31 +175,10 @@ if (!empty($error) || $show_preview) {
   $content_tpl->parse("edit_content.preview");
 } else {
   // --- State: Accept Changes (No Errors, Not Preview) ---
-  // IMAGEURL HACK - move imgurl field to message body before insert for entry into the db
-  $nmsg = image_url_hack_insert($nmsg);
 
   // DEBUG: Clear the changes field
   //$nmsg['changes'] = '';
-
-  // Update Database
-  $iid = mid_to_iid($forum['fid'], $mid);
-  if (!isset($iid)) {
-    err_not_found("message $mid has no iid");
-    exit;
-  }
-  $sql = "update f_messages$iid set name = ?, email = ?, flags = ?, subject = ?, " .
-    "message = ?, url = ?, urltext = ?, video = ?, state = ?, changes = ? " .
-    "where mid = ?";
-  db_exec($sql, array(
-    $nmsg['name'], $nmsg['email'], $nmsg['flags'], $nmsg['subject'],
-    $nmsg['message'], $nmsg['url'], $nmsg['urltext'], $nmsg['video'],
-    $nmsg['state'], $nmsg['changes'],
-    $mid
-  ));
-
-  // Restore f_updates query
-  $sql = "replace into f_updates ( fid, mid ) values ( ?, ? )";
-  db_exec($sql, array($forum['fid'], $mid));
+  updatemessage($forum['fid'], $nmsg);
 
   // Handle state changes
   if ($msg['state'] != $nmsg['state']) {
