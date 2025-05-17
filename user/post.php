@@ -137,9 +137,6 @@ if (isset($_POST['postcookie'])) {
 
   //debug_log("Setting seen_preview true: user saw preview because show_preview=" . $show_preview?"true":"false" . " or error [" . implode(", ", $error) . "]");
 
-  $preview_html = render_message($content_tpl, $msg, $user);
-  $content_tpl->set("PREVIEW", $preview_html);
-
   if (isset($_POST['OffTopic']))
     $status = "OffTopic";
   else
@@ -274,7 +271,12 @@ if (!$accepted || $show_preview) {
   $content_tpl->set("MSG_MID", $msg['mid']);
 } // accepted and not preview
 
-// We can't do this until we have a $msg['mid']
+// Delay all rendering until we have a $msg['mid']
+// This way we know whether to display the tools block, and if we do, they have the right $msg['mid']
+$preview_html = render_message($content_tpl, $msg, $user);
+$content_tpl->set("PREVIEW", $preview_html);
+
+// We also can't do this until we have a $msg['mid']
 $content_tpl->parse("post_content.$content_block");
 
 // Parse the main container block

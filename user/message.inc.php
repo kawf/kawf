@@ -192,8 +192,10 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
     }
   }
 
-  // Handle extra blocks (moderator info, tools)
-  _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $moderator);
+  // Handle extra blocks (moderator info, tools) if this is not a message being previewed
+  if (!empty($msg['mid'])) {
+    _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $moderator);
+  }
 
   // Parse the main container block
   $message_tpl->parse('message_block');
@@ -207,6 +209,9 @@ function _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $mo
 {
   global $p2f_address, $config_sponsor; // Need forum for permissions check
   $forum = get_forum();
+
+  // Is viewer the owner of this message?
+  $is_me = ($viewer->aid == $owner->aid); // it's a me mario
 
   // Moderator Info Block
   if ($moderator) {
@@ -233,8 +238,8 @@ function _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $mo
   }
 
   // Owner Tools Block
-  $can_edit = $viewer->aid == $owner->aid || $moderator;
-  $can_delete = $viewer->aid == $owner->aid || $viewer->capable($forum['fid'], 'Delete');
+  $can_edit = $is_me || $moderator;
+  $can_delete = $is_me || $viewer->capable($forum['fid'], 'Delete');
   $state_locked = isset($flags['StateLocked']);
 
   if ($can_edit || $can_delete) {
@@ -267,7 +272,7 @@ function _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $mo
   }
 
   // Changes Block
-  if (($moderator || $owner->aid == $viewer->aid) && !empty($msg['changes'])) {
+  if (($moderator || $is_me) && !empty($msg['changes'])) {
       $message_tpl->set('MSG_CHANGES', nl2brPre::out($msg['changes'])); // Assumes nl2brPre::out is safe
       $message_tpl->parse('message_block.changes');
   }
