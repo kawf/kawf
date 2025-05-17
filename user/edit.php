@@ -88,11 +88,10 @@ $error = array(); // Make sure this starts empty
 $show_preview = false;
 $seen_preview = false;
 
-if (isset($_REQUEST['show_preview']))
-  $show_preview = true;
-
-if (isset($_REQUEST['seen_preview']))
-  $seen_preview = true;
+if (isset($_POST['show_preview'])) $show_preview = true;
+if (isset($_POST['seen_preview'])) $seen_preview = true;
+if (isset($_POST['imagedeleteurl'])) $nmsg['imagedeleteurl'] = $_POST['imagedeleteurl'];
+if (isset($_POST['metadatapath'])) $nmsg['metadatapath'] = $_POST['metadatapath'];
 
 // Get server properties
 $s = get_server();
@@ -215,6 +214,15 @@ if (!empty($error) || $show_preview) {
     $content_tpl->parse('edit_content.accept.image_browser');
   }
   $content_tpl->parse("edit_content.accept");
+
+  // After successful edit, update image metadata with new message reference
+  if (!empty($nmsg['imageurl']) && !empty($nmsg['metadatapath'])) {
+    $upload_config = get_upload_config();
+    $error = update_image_metadata($upload_config, $nmsg['metadatapath'], $forum['shortname'], $nmsg['mid']);
+    if ($error) {
+      $content_tpl->set("UPLOAD_ERROR", $error);
+    }
+  }
 }
 
 // Generate the final page
