@@ -3,8 +3,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadInfo = document.getElementById('uploadInfo');
     const widthSelect = document.getElementById('imageWidth');
     const messageTextarea = document.querySelector('textarea[name="message"]');
+    const useCameraCheckbox = document.getElementById('useCamera');
+    const cameraLabel = useCameraCheckbox.parentElement;
 
     if (!fileInput || !fileInput.form) return;
+
+    // Check if device has rear camera
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { exact: 'environment' } }
+        })
+        .then(stream => {
+            stream.getTracks().forEach(track => track.stop());
+            cameraLabel.style.display = 'table-cell';
+        })
+        .catch(() => {
+            // hide camera label if rear camera is not available
+            cameraLabel.style.display = 'none';
+        });
+    } else {
+        // hide camera label if no camera is available
+        cameraLabel.style.display = 'none';
+    }
+
+    // Handle camera mode toggle
+    useCameraCheckbox.addEventListener('change', (e) => {
+        if (e.target.checked) {
+            fileInput.setAttribute('capture', 'environment');
+        } else {
+            fileInput.removeAttribute('capture');
+        }
+    });
 
     function generateTimestampFilename(originalName) {
         const now = new Date();
@@ -21,10 +50,24 @@ document.addEventListener('DOMContentLoaded', () => {
         return `pasted-${timestamp}${ext}`;
     }
 
+    // Format bytes to human readable size
+    function formatBytes(bytes) {
+        const units = ['B', 'KB', 'MB', 'GB'];
+        let size = bytes;
+        let unitIndex = 0;
+
+        while (size >= 1024 && unitIndex < units.length - 1) {
+            size /= 1024;
+            unitIndex++;
+        }
+
+        return `${size.toFixed(2)} ${units[unitIndex]}`;
+    }
+
     async function handleImage(file) {
         if (!file || !file.type.startsWith('image/')) return;
 
-        uploadInfo.textContent = `Original size: ${(file.size / 1024).toFixed(2)} KB`;
+        uploadInfo.textContent = `Size: ${formatBytes(file.size)}`;
 
         const maxWidth = parseInt(widthSelect.value);
         const resizer = new ImageResizer({ maxWidth, quality: 0.8 });
@@ -32,13 +75,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Check resized file size against maximum allowed
         if (result.file.size > maxImageBytes) {
-            uploadInfo.textContent = `Error: Resized file size (${(result.file.size / 1024).toFixed(2)} KB) exceeds maximum allowed size (${(maxImageBytes / 1024).toFixed(2)} KB)`;
+            uploadInfo.textContent = `Error: Resized file size (${formatBytes(result.file.size)}) exceeds maximum allowed size (${formatBytes(maxImageBytes)})`;
             fileInput.value = ''; // Clear the file input
             return;
         }
 
         if (file.size !== result.file.size) {
-            uploadInfo.textContent += ` | Resized size: ${(result.file.size / 1024).toFixed(2)} KB`;
+            uploadInfo.textContent += ` | Resized: ${formatBytes(result.file.size)}`;
         }
 
         // Store the resized file in the file input

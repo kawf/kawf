@@ -247,13 +247,25 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 .postform th.top { vertical-align: top; }
 .postform td { padding: 0.5em; }
 .postform td.input { padding: 0; }
+
 /* "Image Upload" and "Post Message" buttons/checkboxes */
-.postform td.button { padding: 0.3em 0px 0px 0px; }
-.postform td.button input[type="submit"] { margin-left: 4px; }
-.postform td.button input[type="submit"] + input[type="submit"] { margin-left: 0; }
-.postform td.button select { margin-left: 4px; } /* "Image Upload" size dropdown  */
-/* .postform td.button input[type="file"] { margin-left: 4px; } */ /* "Image Upload" "Browse" file input button */
-.postform td.button .upload-info { margin-left: 4px; font-size: 80%; }
+.postform td.button { padding: 0; }
+.postform td.button table { border-collapse: collapse; }
+
+/* add 4px between size dropdown and Browse button */
+.postform td.button td { padding: 0 4px 0 0; } /* top right bottom left */
+.postform td.button .upload-info { margin: 1px 6px; font-size: 80%; color: #666; }
+/* camera toggle */
+.postform td.button #useCamera { width: 1.8em; height: 1.8em; }
+.postform td.button label[for="useCamera"] {
+  font-size: 1.8em;
+  line-height: 1;
+  vertical-align: top;
+  display: inline-block;
+  /* looks ok in android, need to test on iphone */
+  margin-top: -0.1em; /* adjust for the emoji being visually not centered */
+}
+.postform td.button table td:last-child { width: 100%; text-align: right; padding-right: 1em; }
 
 /***************/
 /* preferences */
@@ -364,6 +376,8 @@ div.changes.night-mode { background: #2c0d0d !important; }
 .messageblock .subject.night-mode { color: #ccc !important; }
 .vmid.night-mode { color: #d99 !important; font-weight: bold !important; }
 .postform tr.night-mode { background: #242426 !important; }
+/* make select look like a button in night mode */
+.postform select.night-mode { color: black !important; background: #e9e9ed !important; }
 .postform .text.night-mode { background: #1a1a1d !important; border: 1px solid #131315 !important; margin: 1px !important; color: #ccc  !important; }
 .preferences tr.night-mode { color: #242426 !important; }
 td.signaturepreview.night-mode { background-color: #1a1a1d !important; border: 5px solid #242426 !important; }
