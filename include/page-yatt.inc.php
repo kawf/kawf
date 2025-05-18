@@ -73,7 +73,7 @@ function generate_page($title, $contents, $skip_header=false, $meta_robots=false
     $page->set('css_href', css_href());
     $page->set('skin_css_href', skin_css_href());
     $page->set('js_href', js_href());
-    $page->set('js_jquery_href', js_href($filename="jquery-3.5.0.slim.min.js", $cache_buster=false));
+    $page->set('js_jquery_href', js_href($filename="jquery-3.7.1.slim.min.js", $cache_buster=false));
     $bch = browser_css_href();
     if ($bch) {
         $page->set('browser_css_href', $bch);
