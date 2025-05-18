@@ -3,6 +3,26 @@ var adminModeActive  = false;
 var nightModeActive  = false;
 var showingAllImages = false;
 var imageData        = [];
+var isChrome         = false;
+var isFirefox        = false;
+var isSafari         = false;
+
+// Browser detection
+function detectBrowser() {
+    const userAgent = navigator.userAgent;
+    isChrome = /Chrome/.test(userAgent) && !/Edge/.test(userAgent);
+    isFirefox = /Firefox/.test(userAgent);
+    isSafari = /^((?!chrome|android).)*safari/i.test(userAgent);
+
+    // Apply browser-specific classes
+    if (isChrome) {
+        $('html').addClass('browser-chrome');
+    } else if (isFirefox) {
+        $('html').addClass('browser-firefox');
+    } else if (isSafari) {
+        $('html').addClass('browser-safari');
+    }
+}
 
 // admin mode initialization
 var adminModeConfig   = getLocalStorage('admin-mode', { 'active' : false });
@@ -18,6 +38,9 @@ var adminHTML = ' | <a href="#" id="admin-mode">Admin Mode: <span id="admin-mode
 
 // Startup Script
 $(document).ready(function() {
+  // Detect browser first
+  detectBrowser();
+
   $('#view-all-images').click(viewAllImages);
   $('#night-mode').click(toggleNightMode);
 

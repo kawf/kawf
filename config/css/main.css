@@ -284,9 +284,9 @@ table.basic th, table.basic td { border: 1px solid #999; padding: 1px 10px; }
 table.basic th { background-color: #d0dce0; }
 
 
-/*********/
-/* hacks */
-/*********/
+/******************/
+/* postform hacks */
+/******************/
 /* IE doesn't like 100% (referenced to largest input/textara.
    Have to use fixed size */
 /*.postform .text { width: 600px; }*/
@@ -301,9 +301,93 @@ table.basic th { background-color: #d0dce0; }
   box-sizing: border-box;
 }
 
-/* hack to workaround mobile chrome calculating the textarea height wrong, then
-   later growing it and overlapping the content below the textarea */
-/* .postform textarea { min-height: 400px; } */
+/* Browser-specific fixes */
+.browser-chrome .postform select {
+  /* Reset browser defaults */
+  -webkit-appearance: none;
+  appearance: none;
+
+  /* Consistent sizing */
+  height: 20px;
+  padding: 0px 6px; /* text padding */
+  padding-right: 24px;
+  box-sizing: border-box;
+
+  /* Base colors */
+  color: black;
+  background-color: #efefef;
+  border: 1px solid #767676;
+  border-radius: 2.5px;
+
+  /* Force border color in Chrome */
+  outline: none;
+}
+
+/* Android Chrome specific fixes */
+@media screen and (max-width: 768px) {
+  .browser-chrome .postform select {
+    height: 15.5px;
+    padding: 0px 6px;
+    padding-right: 20px;
+  }
+
+  /* Add spacing between Preview and Post buttons */
+  .browser-chrome .postform input[type="submit"] + input[type="submit"] {
+    margin-left: 1.5px !important;
+  }
+}
+
+/* iPhone specific fixes */
+@media screen and (max-width: 768px) {
+  /* Style the size select dropdown */
+  .browser-safari .postform select {
+    color: black !important;
+    border: 1px solid #767676 !important;
+    font-size: 12px !important;
+    -webkit-padding-start: 12px !important; /* left padding for text */
+  }
+
+  /* Style the filename text */
+  .browser-safari .postform input[type="file"] {
+    font-size: 11px !important;
+  }
+
+  /* Style the buttons */
+  .browser-safari .postform input[type="file"]::-webkit-file-upload-button, /* "Choose File" button */
+  .browser-safari .postform input[type="submit"] { /* Preview and Post buttons*/
+    height: 20px;
+    color: black !important;
+    background-color: #e5e5e5 !important;
+    border: 1px solid #767676 !important;
+    border-radius: 5px !important;
+    font-weight: normal !important;
+    font-size: 12px !important;
+  }
+
+  /* Add spacing between Preview and Post buttons */
+  .browser-safari .postform input[type="submit"] + input[type="submit"] {
+    margin-left: 1px !important;
+  }
+}
+
+.browser-safari .postform select {
+  /* Reset browser defaults */
+  -webkit-appearance: none;
+  appearance: none;
+
+  /* Consistent sizing */
+  height: 20px;
+  padding: 0px 6px; /* text padding */
+  padding-right: 24px;
+  box-sizing: border-box;
+
+  /* Base colors */
+  border: 0.3px solid #ccc;
+  border-radius: 5px;
+
+  /* Force border color in Chrome */
+  outline: none;
+}
 
 /* IE wants inline for it to pack right */
 .postform { display: inline; }
@@ -320,25 +404,24 @@ table.basic th { background-color: #d0dce0; }
 /* enhancements */
 /****************/
 .navigate select {
-   background: transparent;
-   width: 248px;
-   padding: 0px;
-   line-height: 1;
-/* simulate font-weight, which doesn't work in select */
-   text-shadow: 0px 0px 1px #666;
-   border: 0;
-   border-radius: 0;
-   height: 20px;
-   appearance: none;
-   -webkit-appearance: none;
+  background: transparent;
+  width: 248px;
+  line-height: 1;
+  /* simulate font-weight, which doesn't work in select */
+  text-shadow: 0px 0px 1px #666;
+  border: 0;
+  border-radius: 0;
+  height: 20px;
+  appearance: none;
+  -webkit-appearance: none;
 }
 
 .navigate {
-   width: 220px;
-   height: 20px;
-   overflow: hidden;
-   background: url(/pics/down_arrow_select.png) no-repeat right #fff;
-   border: 1px solid #ccc;
+  width: 220px;
+  height: 20px;
+  overflow: hidden;
+  background: url(/pics/down_arrow_select.png) no-repeat right #fff;
+  border: 1px solid #ccc;
 }
 
 /* View All Images */
@@ -347,9 +430,7 @@ table.basic th { background-color: #d0dce0; }
 /* Night Mode */
 html.night-mode, body.night-mode { background: #1a1a1d !important; color: #888 !important; }
 .navigate.night-mode { background: url(/pics/down_arrow_select-night.png) no-repeat right #1a1a1d !important; color: #888 !important; }
-/* simulate font-weight, which doesn't work in select */
-.navigate.night-mode select { text-shadow: 0px 0px 1px #555 !important; }
-select.night-mode { background: #1a1a1d !important; color: #888 !important; }
+.navigate.night-mode select { text-shadow: 0px 0px 1px #555 !important; background: #1a1a1d !important; color: #888 !important; }
 /* .thread > li > a.night-mode { color: #ccd  !important; } */
 a.night-mode { color: #999 !important; text-decoration: none !important; }
 em.night-mode a.night-mode { color: #aac !important; font-style: italic !important; }
@@ -377,8 +458,6 @@ div.changes.night-mode { background: #2c0d0d !important; }
 .messageblock .subject.night-mode { color: #ccc !important; }
 .vmid.night-mode { color: #d99 !important; font-weight: bold !important; }
 .postform tr.night-mode { background: #242426 !important; }
-/* make select look like a button in night mode */
-.postform select.night-mode { color: black !important; background: #e9e9ed !important; }
 .postform .text.night-mode { background: #1a1a1d !important; border: 1px solid #131315 !important; margin: 1px !important; color: #ccc  !important; }
 .preferences tr.night-mode { color: #242426 !important; }
 td.signaturepreview.night-mode { background-color: #1a1a1d !important; border: 5px solid #242426 !important; }
