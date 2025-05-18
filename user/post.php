@@ -72,7 +72,9 @@ if ($Debug) {
       $debug.=" $k => " . htmlspecialchars($v) . "\n";
   }
   $debug .= "-->";
-  $content_tpl->set("DEBUG", $debug);
+  $content_tpl->set("DEBUG_POST", $debug);
+} else {
+  $content_tpl->set("DEBUG_POST", "");
 }
 
 // Get server properties

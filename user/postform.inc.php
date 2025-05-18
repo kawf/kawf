@@ -85,9 +85,9 @@ function render_postform($template_dir, $action, $user, $msg = null, $seen_previ
             $debug.=" $k => " . htmlspecialchars($v, ENT_SUBSTITUTE | ENT_HTML5, 'UTF-8') . "\n";
         }
       }
-      $form_tpl->set("POSTFORM_DEBUG", "<!-- $debug -->");
+      $form_tpl->set("DEBUG_POSTFORM", "<!-- $debug -->");
     } else {
-      $form_tpl->set("POSTFORM_DEBUG", "");
+      $form_tpl->set("DEBUG_POSTFORM", "");
     }
 
     // --- Set variables based on login status and form state ---

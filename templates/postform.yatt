@@ -1,5 +1,5 @@
 %begin [post_form_content]
-%[POSTFORM_DEBUG]
+%[DEBUG_POSTFORM]
 %begin [disabled]
 %begin [nonewthreads]
 Posting new threads has been disabled on this forum.<br>

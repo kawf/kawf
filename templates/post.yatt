@@ -1,5 +1,5 @@
 %begin [post_content]
-%[DEBUG]
+%[DEBUG_POST]
 
 %begin [disabled]
   %[#] Displayed if posting is disabled
