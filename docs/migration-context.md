@@ -134,7 +134,7 @@ The application uses a routing system in `user/main.php` that maps `.phtml` URLs
    - PHP errors include stack traces and file locations
 
 2. **Testing Approaches:**
-   - Must test through actual URLs (forums-git.wayot.org)
+   - Must test through actual URLs
    - Can use curl with cookie handling:
      - Save cookies: `curl -c cookies.txt [url]`
      - Use cookies: `curl -b cookies.txt [url]`
