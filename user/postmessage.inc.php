@@ -353,17 +353,21 @@ function calculate_message_diff($user, $old_msg, $new_msg) {
   else if (!empty($old_msg['email']) && empty($new_msg['email']))
     $diff .= "Hid e-mail address\n";
 
-  // Email notification changes
-  if (isset($_POST['EmailFollowup']) && !is_msg_etracked($old_msg))
-    $diff .= "Requested e-mail notification\n";
-  else if (!isset($_POST['EmailFollowup']) && is_msg_etracked($old_msg))
-    $diff .= "Cancelled e-mail notification\n";
+  // only do flags if we actually got a post, otherwise,
+  // post.phtml got hit with no message, so assume no changes.
+  if (isset($_POST['message'])) {
+    // Email notification changes
+    if (isset($_POST['EmailFollowup']) && !is_msg_etracked($old_msg))
+      $diff .= "Requested e-mail notification\n";
+    else if (!isset($_POST['EmailFollowup']) && is_msg_etracked($old_msg))
+      $diff .= "Cancelled e-mail notification\n";
 
-  // Thread tracking changes
-  if (isset($_POST['TrackThread']) && !is_msg_tracked($old_msg))
-    $diff .= "Tracked message\n";
-  else if (!isset($_POST['TrackThread']) && is_msg_tracked($old_msg))
-    $diff .= "Untracked message\n";
+    // Thread tracking changes
+    if (isset($_POST['TrackThread']) && !is_msg_tracked($old_msg))
+      $diff .= "Tracked message\n";
+    else if (!isset($_POST['TrackThread']) && is_msg_tracked($old_msg))
+      $diff .= "Untracked message\n";
+  }
 
   // Content changes
   $old = ["Subject: " . $old_msg['subject']];

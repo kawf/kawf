@@ -1,5 +1,6 @@
 %begin [edit_content]
-%[DEBUG]
+<!-- edit.yatt -->
+%[DEBUG_EDIT]
 
 %begin [disabled]
 <h2>Editing posts on this forum has been temporarily disabled, please try again later</h2><br>

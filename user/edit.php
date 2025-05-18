@@ -37,9 +37,9 @@ if ($Debug) {
       $debug.=" $k => " . htmlspecialchars($v) . "\n";
   }
   $debug = str_replace("--","- -", $debug);
-  $content_tpl->set("DEBUG", "<!-- $debug -->");
+  $content_tpl->set("DEBUG_EDIT", "<!-- $debug -->");
 } else {
-  $content_tpl->set("DEBUG", "");
+  $content_tpl->set("DEBUG_EDIT", "");
 }
 
 // Set common variables
@@ -207,7 +207,8 @@ if (!empty($error) || $show_preview) {
 }
 
 // Generate the final page
-print generate_page('Edit Message', $content_tpl->output('edit_content'));
+$content_tpl->parse("edit_content");
+print generate_page('Edit Message', $content_tpl->output());
 
 // vim: set ts=8 sw=2 et:
 ?>
