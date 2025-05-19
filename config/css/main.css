@@ -412,6 +412,7 @@ table.basic th { background-color: #d0dce0; }
   border: 0;
   border-radius: 0;
   height: 20px;
+  padding-left: 4px;
   appearance: none;
   -webkit-appearance: none;
 }
