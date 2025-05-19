@@ -13,28 +13,24 @@
 
 <h2>Inserting images, video and links</h2>
 <h3>Images</h3>
-<p>There are theee ways to add a picture to a Forum posting:</p>
+<p>There are three ways to add a picture to a Forum posting:</p>
 
 <h4>Direct URL</h4>
 <p>Use the box in the posting dialogue labeled "<b>Image URL</b>". If you put
 the URL to a picture in this box then it will appear within your post.</p>
 
-<h4>Image hosting on imgur</h4>
+<h4>Image hosting on the forum</h4>
 <p>Use the "Browse.." button in the posting dialogue labeled "<b>Image
 Upload</b>".  You will be prompted to select a file on your local computer to
-upload. It will be posted to imgur.com, and a link will automatically be
-inserted into the <b>Image URL</b>.
+upload. It will be posted to the forum image album storage, and a link will
+automatically be inserted into the <b>Image URL</b>.
 
-<p>You are responsible for making sure the image is the appropriate size. There
-are also size limitations on both this site and imgur.</p>
+<p>You can select the size of the image to be posted to the forum. Note that you
+must select the size before uploading, or you may get unexpected results.</p>
 
-<p>During preview, you can append imgur's
-<a href="https://api.imgur.com/models/image">"thumbnail suffix"</a> to the
-resulting image url after upload to get a different size, e.g. "l" for 640 and
-"h" for 1024.</p>
-
-<p>Note that imgur is a public image hosting service: <b>your image will be
-visible to everyone on the internet, not just on this forum.</b></p>
+<p>Note that the forum image album storage is a public image hosting service:
+<b>your image will be visible to everyone on the internet, not just on this
+forum.</b></p>
 
 <h4>Manually embed &lt;img&gt; tags in your post</h4>
 <p>Embed the appropriate HTML within the body of the message itself.  This can
