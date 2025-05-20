@@ -3,8 +3,7 @@
 <table class="tools">
   <tr>
     <td> <!-- Added TD for layout -->
-      <a href="/tips/?%[PAGE]" target="_blank">Tips</a> <!-- Changed Forum link to Tips -->
-      | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;%[PAGE]" target="_blank">Search</a>
+        <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;%[PAGE]" target="_blank">Search</a>
       | <a href="../"><b>Return to %[FORUM_NAME]</b></a>
     </td>
   </tr>
@@ -21,8 +20,7 @@
 <table class="tools">
   <tr>
     <td> <!-- Added TD for layout -->
-      <a href="/tips/?%[PAGE]" target="_blank">Tips</a> <!-- Changed Forum link to Tips -->
-      | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;%[PAGE]" target="_blank">Search</a>
+        <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;%[PAGE]" target="_blank">Search</a>
       | <a href="../"><b>Return to %[FORUM_NAME]</b></a>
     </td>
   </tr>

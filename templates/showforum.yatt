@@ -3,8 +3,7 @@
 <table class="tools">
 <tr>
   <td class="toolsleft">
-    <a href="/tips/?%[PAGE]" target="_blank">Tips</a>
-  | <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;%[PAGE]" target="_blank">Search</a>
+    <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;%[PAGE]" target="_blank">Search</a>
   | <a href="#post"><b>Post New Thread</b></a>
   %[#] View All Images/Night Mode links appear static in tpl, keep them here for now
   | <a href="#" id="view-all-images">View All Images</a>
