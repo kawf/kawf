@@ -1,7 +1,7 @@
 <!-- message.yatt -->
 <div class="navigate">
 <form method="get" action="/redirect.phtml" style="display: inline; margin: 0;">
-<select name="url" onChange="if (this.selectedIndex) { window.location.href = this.options[this.selectedIndex].value + '?%[PAGE_PARAM]'; }">
+<select name="url" onChange="if (this.selectedIndex) { window.location.href = this.options[this.selectedIndex].value; }">
 <option value="">Choose Discussion Forum</option>
 %begin [forums]
 %begin [category]
