@@ -44,6 +44,15 @@ $(document).ready(function() {
   $('#view-all-images').click(viewAllImages);
   $('#night-mode').click(toggleNightMode);
 
+  // Initialize changes section toggles
+  $('.changes-header').click(function() {
+    const changesDiv = $(this).next('.changes');
+    const toggle = $(this).find('.changes-toggle');
+
+    changesDiv.toggleClass('expanded');
+    toggle.toggleClass('expanded');
+  });
+
   if($("a[title|='Unstick thread']").length || $("a[title|='Sticky thread']").length){
     $("#night-mode").after(adminHTML);
     $('#admin-mode').click(toggleAdminMode);

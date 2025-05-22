@@ -69,7 +69,10 @@
   </div>
 %end [signature]
 %begin [changes]
-  <b>Changes:</b><br>
+  <div class="changes-header">
+    <b>Changes:</b>
+    <span class="changes-toggle" title="Click to toggle changes">▼</span>
+  </div>
   <div class="changes">
 %[MSG_CHANGES]
   </div>

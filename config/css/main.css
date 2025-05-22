@@ -239,7 +239,46 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 .changes {
   background: #ffeeee;
   font-family: monospace;
+  padding: 0;
+  margin: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: all 0.3s ease-out;
+}
+
+.changes.expanded {
+  max-height: 500px;
   padding: 5px;
+  margin: 5px 0;
+  overflow-y: auto;
+}
+
+.changes-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.changes-toggle {
+  font-size: 0.8em;
+  color: #666;
+  transition: transform 0.3s ease;
+  transform: rotate(-90deg);
+}
+
+.changes-toggle.expanded {
+  transform: rotate(0deg);
+}
+
+/* Dark mode support for changes section */
+html.night-mode .changes {
+  background: #2c0d0d;
+}
+
+html.night-mode .changes-toggle {
+  color: #888;
 }
 
 .postform tr { background: #dfdfdf; }
