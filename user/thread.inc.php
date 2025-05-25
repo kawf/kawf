@@ -6,6 +6,11 @@ require_once("listthread.inc.php");
 function get_thread_messages($fid, $thread, $vmid = 0)
 {
   global $user;
+
+  if (!isset($thread) || !isset($thread['tid'])) {
+    return null;
+  }
+
   $indexes = get_forum_indexes();
 
   /* find my messages and later */
@@ -93,6 +98,10 @@ function gen_thread($fid, $thread, $collapse, $vmid = null)
 {
   global $user;
 
+  if (!isset($thread) || !isset($thread['tid'])) {
+    return null;
+  }
+
   list($messages, $tree) = get_thread_messages($fid, $thread, $vmid);
   if (!isset($messages) || !count($messages))
     return null;
@@ -119,43 +128,48 @@ function gen_thread($fid, $thread, $collapse, $vmid = null)
 
 function gen_threadlinks($thread, $collapse = false)
 {
-    global $user;
-    global $debug_f_tracking;
-    $forum = get_forum();
+  global $user;
+  global $debug_f_tracking;
 
-    /* not logged in, dont generate anything */
-    if (!$user->valid()) return '';
-    $tthread = get_tthread_by_thread($thread);
+  if (!isset($thread) || !isset($thread['tid'])) {
+    return 'NO THREAD';
+  }
 
-    /* is thread tracked by user? */
-    if (isset($tthread))  {
-      $tl = " <a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] .
-	"&amp;" . format_page_param() .
-	"&amp;token=" . $user->token() .
-	"\" class=\"ut\" title=\"Untrack thread\">ut</a>";
-      if ($debug_f_tracking) {
-        $tl .= sprintf("<br> %s", gen_date($user, $thread['unixtime'], $tthread['unixtime']));
-      }
-    } else {
-      $tl = " <a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] .
-	"&amp;" . format_page_param() .
-	"&amp;token=" . $user->token() .
-	"&amp;time=" . time() .	/* fix bug 2971483 - use page view time stamp for tracking */
-	"\" class=\"tt\" title=\"Track thread\">tt</a>";
+  $forum = get_forum();
+
+  /* not logged in, dont generate anything */
+  if (!$user->valid()) return '';
+  $tthread = get_tthread_by_thread($thread);
+
+  /* is thread tracked by user? */
+  if (isset($tthread))  {
+    $tl = " <a href=\"/" . $forum['shortname'] . "/untrack.phtml?tid=" . $thread['tid'] .
+      "&amp;" . format_page_param() .
+      "&amp;token=" . $user->token() .
+      "\" class=\"ut\" title=\"Untrack thread\">ut</a>";
+    if ($debug_f_tracking) {
+      $tl .= sprintf("<br> %s", gen_date($user, $thread['unixtime'], $tthread['unixtime']));
     }
+  } else {
+    $tl = " <a href=\"/" . $forum['shortname'] . "/track.phtml?tid=" . $thread['tid'] .
+      "&amp;" . format_page_param() .
+      "&amp;token=" . $user->token() .
+      "&amp;time=" . time() .	/* fix bug 2971483 - use page view time stamp for tracking */
+      "\" class=\"tt\" title=\"Track thread\">tt</a>";
+  }
 
-    if (isset($user->pref['Collapsed']) || $collapse) $tl .= " ";
-    else $tl .= "<br>";
+  if (isset($user->pref['Collapsed']) || $collapse) $tl .= " ";
+  else $tl .= "<br>";
 
-    if (is_thread_bumped($thread)) {
-      $tl .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] .
-	"&amp;" . format_page_param() .
-	"&amp;token=" . $user->token() .
-	"&amp;time=" . time() .
-	"\" class=\"up\" title=\"Update thread\">up</a>";
-    }
+  if (is_thread_bumped($thread)) {
+    $tl .= "<a href=\"/" . $forum['shortname'] . "/markuptodate.phtml?tid=" . $thread['tid'] .
+      "&amp;" . format_page_param() .
+      "&amp;token=" . $user->token() .
+      "&amp;time=" . time() .
+      "\" class=\"up\" title=\"Update thread\">up</a>";
+  }
 
-    return $tl;
+  return $tl;
 }
 
 function process_tthreads($fid, $just_count = false)

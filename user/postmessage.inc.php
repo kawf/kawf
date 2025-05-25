@@ -175,6 +175,19 @@ function postmessage($user, $fid, &$msg, $request): bool
 
       $tid = addslashes($msg['tid']);
 
+      /* Validate that the TID matches the parent's thread */
+      $sql = "SELECT tid FROM $mtable WHERE mid = ?";
+      $row = db_query_first($sql, array($msg['pmid']));
+      if (!$row) {
+        throw new RuntimeException('parent message ' . $msg['pmid'] . ' not found for ' . $request['postcookie']);
+      }
+      $parent_tid = $row[0];
+      if ($parent_tid != $tid) {
+        /* If TID doesn't match parent, use parent's TID */
+        $tid = $parent_tid;
+        $msg['tid'] = $parent_tid;
+      }
+
       /* check to make sure we're not already tracking, or we're already not tracking */
       $row = db_query_first(
         "select count(*) from f_tracking where fid = ? and aid = ? and tid = ?",
