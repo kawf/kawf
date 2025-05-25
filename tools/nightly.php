@@ -48,8 +48,11 @@ function check_orphaned_messages($forum) {
 
     // Case 1: Messages with non-zero tid but no thread
     $sql = "SELECT COUNT(*) FROM f_messages$iid m
-            LEFT JOIN f_threads$iid t ON m.tid = t.tid
-            WHERE t.tid IS NULL AND m.tid != 0";
+            WHERE m.tid != 0
+            AND NOT EXISTS (
+                SELECT 1 FROM f_threads$iid t
+                WHERE t.tid = m.tid
+            )";
     $row = db_query_first($sql);
     if ($row[0] > 0) {
         echo "\n    Found " . $row[0] . " messages with missing threads";
@@ -58,8 +61,11 @@ function check_orphaned_messages($forum) {
         $sql = "SELECT m.mid, m.tid, m.pid, m.subject, m.message,
                 (SELECT COUNT(*) FROM f_messages$iid m2 WHERE m2.tid = m.tid) as thread_size
                 FROM f_messages$iid m
-                LEFT JOIN f_threads$iid t ON m.tid = t.tid
-                WHERE t.tid IS NULL AND m.tid != 0
+                WHERE m.tid != 0
+                AND NOT EXISTS (
+                    SELECT 1 FROM f_threads$iid t
+                    WHERE t.tid = m.tid
+                )
                 LIMIT 5";
         $sth = db_query($sql);
         echo "\n    Sample orphaned messages:";
