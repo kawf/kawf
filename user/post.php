@@ -128,8 +128,8 @@ if (isset($_POST['postcookie'])) {
   // Handle image upload
   $msg = handle_image_upload($user, $msg, $forum, $error, $content_tpl);
 
-  // Validate message
-  validate_message($msg, $error, $parent ?? null);
+  // Validate message - modfies message, returns modified error array
+  $error = validate_message($msg, $error, $parent ?? null);
 
   //debug_log("error=" . implode(", ", $error) .  " isset(error)=" . var_export(isset($error), true) .  " empty(error)=" . var_export(empty($error), true));
 

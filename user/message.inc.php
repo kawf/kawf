@@ -23,25 +23,24 @@ function blank_extra($tpl, $tag, $bool)
     $tpl->set_var($tag, "");
 }
 
+// Modifies msg in place
 function preprocess(&$msg, $req)
 {
   global $subject_tags, $standard_tags;
 
+  // Basic sanitization
+  // IMPORTANT: preprocess() should never increase field lengths
+  // All operations here should only sanitize/clean input, not expand it
+  // Any operations that might increase length (like URL normalization)
+  // should be done in validate_message() instead
   $msg['subject'] = @stripcrap($req['subject'], $subject_tags);
   $msg['message'] = @stripcrap($req['message'], $standard_tags);
   $msg['urltext'] = @stripcrap($req['urltext']);
 
+  // URL sanitization
   $msg['url'] = @stripcrapurl($req['url']);
-  if (!empty($msg['url']))
-    $msg['url'] = normalize_url_scheme($msg['url']);
-
   $msg['imageurl'] = @stripcrapurl($req['imageurl']);
-  if (!empty($msg['imageurl']))
-    $msg['imageurl'] = normalize_url_scheme($msg['imageurl']);
-
   $msg['video'] = @stripcrapurl($req['video']);
-  if (!empty($msg['video']))
-    $msg['video'] = normalize_url_scheme($msg['video']);
 }
 
 function postprocess($msg, $noembed=false)

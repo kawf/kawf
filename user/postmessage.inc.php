@@ -284,7 +284,6 @@ function handle_image_upload($user, $msg, $forum, $error, $content_tpl) {
     // Get the image URLs
     $result = upload_image($context);
     if (isset($result['error'])) {
-      $error["image_upload_failed"] = true;
       $content_tpl->set("UPLOAD_ERROR", $result['error']);
     } else {
       $msg["imageurl"] = $result['url'];
@@ -297,7 +296,8 @@ function handle_image_upload($user, $msg, $forum, $error, $content_tpl) {
   return $msg;
 }
 
-function validate_message($msg, $error, $parent = null) {
+// Can modify msg in place, returns modified error array
+function validate_message(&$msg, $error, $parent = null) {
   // Subject validation
   if (empty($msg['subject'])) {
     $error["subject_req"] = true;
@@ -318,6 +318,7 @@ function validate_message($msg, $error, $parent = null) {
       $msg[$item] = mb_strcut($msg[$item], 0, $max_item_len);
     }
   }
+  return $error;
 }
 
 // Handle preview state -- returns tuple of (show_preview, seen_preview)
@@ -335,9 +336,6 @@ function handle_preview_state($msg, $error, $show_preview, $seen_preview) {
   // ensure the image preview state is properly set
   if ((!empty($error) || $show_preview)) {
     $seen_preview = true;  // User has acknowledged seeing the image/video preview
-    // Set flags to show image/video in the preview form
-    if(!empty($msg['imageurl'])) $error["image"] = true;
-    if(!empty($msg['video'])) $error["video"] = true;
   }
 
   return [$show_preview, $seen_preview];

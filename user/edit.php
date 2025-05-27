@@ -139,8 +139,8 @@ else if ($user->capable($forum['fid'], 'OffTopic') &&
 // Handle image upload
 $nmsg = handle_image_upload($user, $nmsg, $forum, $error, $content_tpl);
 
-// Validate message
-validate_message($nmsg, $error);
+// Validate message - modfies message, returns modified error array
+$error = validate_message($nmsg, $error);
 
 // Handle preview state -- returns tuple of (show_preview, seen_preview)
 list($show_preview, $seen_preview) = handle_preview_state($nmsg, $error, $show_preview, $seen_preview);
