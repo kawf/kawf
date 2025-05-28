@@ -2,21 +2,19 @@
 require_once('setup.inc');
 require_once("$srcroot/include/util.inc.php");
 
-$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-
 function getMimeType( $filename ) {
     $realpath = realpath( $filename );
     if ( $realpath
-	&& function_exists( 'finfo_file' )
-	&& function_exists( 'finfo_open' )
-	&& defined( 'FILEINFO_MIME_TYPE' )
-    ) {
-	// Use the Fileinfo PECL extension (PHP 5.3+)
-	return finfo_file( finfo_open( FILEINFO_MIME_TYPE ), $realpath );
+        && function_exists( 'finfo_file' )
+        && function_exists( 'finfo_open' )
+        && defined( 'FILEINFO_MIME_TYPE' )
+        ) {
+        // Use the Fileinfo PECL extension (PHP 5.3+)
+        return finfo_file( finfo_open( FILEINFO_MIME_TYPE ), $realpath );
     }
     if ( function_exists( 'mime_content_type' ) ) {
-	// Deprecated in PHP 5.3
-	return mime_content_type( $realpath );
+        // Deprecated in PHP 5.3
+        return mime_content_type( $realpath );
     }
     return false;
 }
@@ -46,37 +44,45 @@ function readfile_header($file)
 function read_file($file, $type=null)
 {
     if (is_dir($file)) {
-	if (is_readable("$file/index.php")) {
-	    /* parse as php */
-	    require("$file/index.php");
-	    return;
-	}
+        if (is_readable("$file/index.php")) {
+            /* parse as php */
+            require("$file/index.php");
+            return;
+        }
 
-	if (is_readable("$file/index.html")) {
-	    $file = "$file/index.html";
-	    /* output directly */
-	    header("Content-Type: text/html");
-	    readfile_header($file);
-	    return;
-	}
+        if (is_readable("$file/index.html")) {
+            $file = "$file/index.html";
+            /* output directly */
+            header("Content-Type: text/html");
+            readfile_header($file);
+            return;
+        }
 
-	return err_not_found();
+        return err_not_found();
     }
 
     if (!is_readable($file)) return err_not_found();
 
     if ($type==null) {
-	$type=getMimeType($file);
-	if (!$type)
-	    return err_not_found("\"$file\": Unknown type");
+        $type=getMimeType($file);
+        if (!$type)
+            return err_not_found("\"$file\": Unknown type");
     }
 
     header("Content-Type: $type");
     if ($type == 'text/x-php') {
-	require($file);
+        require($file);
     } else {
-	readfile_header($file);
+        readfile_header($file);
     }
+}
+
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+if (empty($path)) {
+    /* fallback to main.php */
+    error_log("empty path fallback to main.php");
+    include("$srcroot/user/main.php");
+    return;
 }
 
 /* emulate RewriteRule  ^/(pics/.*|css/.*|scripts/.*|robots.txt|favicon.ico|apple-touch-icon.png)$ /$1 */
@@ -104,4 +110,5 @@ if (preg_match('@^/(account|admin|tips)/.*$@', $path, $matches)) {
 
 /* fallthrough to main.php */
 include("$srcroot/user/main.php");
+/* vim: set ts=8 sw=4 et: */
 ?>
