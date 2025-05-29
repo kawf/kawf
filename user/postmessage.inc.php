@@ -16,8 +16,8 @@ function postmessage($user, $fid, &$msg, $request): bool
   $mtable = "f_messages" . $iid;
   $ttable = "f_threads" . $iid;
 
-  $track_thread = (isset($request['TrackThread']));
-  $untrack_thread = (!isset($request['TrackThread']));
+  $track_thread = (isset($request['TrackThread'])) || (isset($request['EmailFollowup'])); // No way to get an email followup without tracking
+  $untrack_thread = !($track_thread); // If neither thread tracking nor email followup, then untrack
 
   if (isset($request['OffTopic']))
     $msg['state'] = "OffTopic";

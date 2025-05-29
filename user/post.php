@@ -6,7 +6,7 @@ require_once("message.inc.php");        // For preprocess, render_message, mid_t
 require_once("image.inc.php");          // For upload_image, can_upload_images, create_upload_context, update_image_metadata
 require_once("postform.inc.php");       // For render_postform
 require_once("postmessage.inc.php");    // For postmessage etc.
-require_once("mailfrom.inc.php");       // For email_followup, db_exec
+require_once("mailfrom.inc.php");       // For mailfrom
 require_once("page-yatt.inc.php");      // For YATT class, generate_page
 
 $user->req(); // This now relies on user.inc.php being loaded before this script
@@ -222,11 +222,6 @@ if (!$accepted || $show_preview) {
   // Message was accepted, parse the accept block
   // postmessage() calls image_url_hack_insert()
   if (postmessage($user, $forum['fid'], $msg, $_POST)) {
-    // Handle email followups
-    if (isset($_POST['EmailFollowup'])) {
-      email_followup($msg, $forum);
-    }
-
     // Handle thread tracking and email notifications
     $sql = "select * from f_tracking where fid = ? and tid = ? and options = 'SendEmail' and aid != ?";
     $sth = db_query($sql, array($forum['fid'], isset($msg['tid']) ? $msg['tid'] : 0, $user->aid));
@@ -247,10 +242,39 @@ if (!$accepted || $show_preview) {
         $e_message .= "...\n\nMessage continues for another $bytes byte$plural\n";
       }
 
+      // new_yatt sets FORUM_NAME and FORUM_SHORTNAME for us
+      $followup_tpl = new_yatt('mail/followup.yatt', $forum);
+
+      $followup_tpl->set([
+        "THREAD_SUBJECT" => $t_subject,
+        "PHPVERSION" => phpversion(),
+        "USER_NAME" => $user->name,
+        "BASE_URL" => get_base_url(), // includes forum shortname
+        "MSG_MID" => $msg['mid'],
+        "MSG_SUBJECT" => $msg['subject'],
+        "MSG_MESSAGE" => $e_message,
+        "DOMAIN" => $domain, // global variable set in setup.inc.php
+      ]);
+
+      // Send followup email to each user who has tracking enabled
       do {
-        $uuser = new ForumUser($track['aid']);
-        mailfrom("followup-" . $track['aid'] . "@" . $bounce_host,
-          $uuser->email, $e_message);
+        $aid = $track['aid']; // grab aid of the user who is tracking this thread
+        $uuser = new ForumUser($aid);
+
+        $fromaddr = "followup-" . $aid . "@" . $bounce_host;
+        $toaddress = $uuser->email;
+
+        $followup_tpl->set("FROM", $fromaddr);
+        $followup_tpl->set("TO", $toaddress);
+        $followup_tpl->parse('email');
+
+        $e_message = $followup_tpl->output();
+
+        // Wrap the message at 78 characters, and clean up any leading/trailing whitespace
+        $e_message = ltrim(textwrap($e_message, 78, "\n"));
+
+        // note: mailfrom() throws away $fromaddr and $toddress parameters and parses them from the headers instead
+        mailfrom($fromaddr, $toaddress, $e_message);
       } while ($track = $sth->fetch());
     }
     $sth->closeCursor();

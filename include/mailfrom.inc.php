@@ -24,7 +24,7 @@ function mailfrom($fromaddress, $toaddress, $message) {
   foreach(explode("\n", $oheader) as $line) {
     $parts = explode(": ", $line, 2);
     if (count($parts) !== 2) {
-      error_log("Invalid header format - each header must be in format 'Name: value': " . $line);
+      error_log("Invalid header format - each header must be in format 'Name: value': Got '" . $line . "'");
       return false;
     }
     $oheadermap[$parts[0]] = $parts[1];
