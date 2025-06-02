@@ -56,16 +56,18 @@ $vmid = $msg['mid'];
 
 list($messages, $tree, $path) = get_thread_messages($forum['fid'], $thread, $vmid);
 
-$threadmsg = "";
+// Call list_thread() directly, avoiding collapse thread logic
+$threadmsg = "<ul class=\"thread\">\n";
 if(isset($messages)) {
-    $threadmsg = gen_thread($forum['fid'], $thread, false, $vmid);
+  $threadmsg .= list_thread('print_subject', $messages, $tree, reset($tree), $thread, $vmid);
 } else {
-    /* FIXME: Issue #24 */
-    //$threadmsg .= "Thread missing, creating new thread";
-    //$ttable = "f_threads" . $iid;
-    //$sql = "insert into $ttable ( tid, mid, tstamp, flags ) values ( ?, ?, ?, '' )";
-    //db_exec($sql, array($msg['tid'], $vmid, $msg['date']));
+  /* FIXME: Issue #24 */
+  //$threadmsg .= "Thread missing, creating new thread";
+  //$ttable = "f_threads" . $iid;
+  //$sql = "insert into $ttable ( tid, mid, tstamp, flags ) values ( ?, ?, ?, '' )";
+  //db_exec($sql, array($msg['tid'], $vmid, $msg['date']));
 }
+$threadmsg .= "</ul>\n";
 
 $threadlinks = gen_threadlinks($thread);
 
