@@ -26,8 +26,7 @@ if (is_file($template_dir . "/account/tou.yatt")) {
 
 $content_tpl = new YATT($template_dir, 'account/create.yatt');
 
-$error = "";
-$form_parsed = false;
+$errors = array();
 $success_parsed = false;
 
 if (isset($create_disabled) && $create_disabled) {
@@ -39,7 +38,7 @@ if (isset($create_disabled) && $create_disabled) {
   }
 
   if ($banned_ip) {
-    $error = "Account creation is banned from this IP\\n";
+    $errors[] = "Account creation is banned from this IP";
   } else {
     // Use get_page_context() to get the raw page value for the template
     // This value will be used in the hidden form field to return to the correct page after account creation
@@ -64,18 +63,18 @@ if (isset($create_disabled) && $create_disabled) {
       $name = preg_replace("/>/", "&gt;", $name);
 
       if (empty($name))
-        $error .= "Name is required\\n";
+        $errors[] = "Name is required";
       else {
         if (!$user->name($name))
-          $error .= "Name '$name' is invalid or already taken\\n";
+          $errors[] = "Name '$name' is invalid or already taken";
       }
 
       $email = trim($email);
       if (empty($email))
-        $error .= "Email address is required\\n";
+        $errors[] = "Email address is required";
       else {
         if (!$user->email($email))
-          $error .= "Email address '$email' is invalid or already taken\\n";
+          $errors[] = "Email address '$email' is invalid or already taken";
       }
 
       if (isset($_POST['password1']))
@@ -88,31 +87,34 @@ if (isset($create_disabled) && $create_disabled) {
         $password2 = "";
 
       if (empty($password) || empty($password2))
-        $error .= "Please fill in both passwords\\n";
+        $errors[] = "Please fill in both passwords";
       else {
         if ($password !== $password2)
-          $error .= "Passwords do not match, please check and try again\\n";
+          $errors[] = "Passwords do not match, please check and try again";
         elseif (!$user->password($password, $password2))
-          $error .= "Password is invalid\\n";
+          $errors[] = "Password is invalid";
       }
 
       $user->createip($_SERVER["REMOTE_ADDR"]);
 
       if ($tou_available && (!isset($_POST["tou_agree"]) || !$_POST["tou_agree"])) {
-        $error .= "You must agree to the Terms Of Use\\n";
+        $errors[] = "You must agree to the Terms Of Use";
       }
     }
 
-    if (empty($error) && isset($_POST['submit'])) {
-      if (!$user->create()) {
-        $error .= "Account creation failed. ";
+    if (empty($errors) && isset($_POST['submit'])) {
+      // global $create_key;
+      if ($create_key && $_POST['key'] != $create_key) {
+        $errors[] = "Please supply a valid secret key";
+      } else if (!$user->create()) {
+        $error = "Account creation failed. ";
         if (!$user->email)
           $error .= "The email address '$email' might already be taken. Perhaps you forgot your password?";
         elseif (!$user->name)
           $error .= "The name '$name' might already be taken.";
         else
           $error .= "Please try again later or contact support.";
-        $error .= "\\n";
+        $errors[] = $error;
       } else {
         $content_tpl->parse('create_content.success');
         $success_parsed = true;
@@ -122,24 +124,25 @@ if (isset($create_disabled) && $create_disabled) {
     $content_tpl->set("NAME", $name);
     $content_tpl->set("EMAIL", $email);
 
-    if (!empty($error)) {
-      $content_tpl->set("ERROR", nl2br(trim($error)));
-      $content_tpl->parse('create_content.error');
-      if (!$banned_ip) {
-         $content_tpl->parse('create_content.form');
-         $form_parsed = true;
+    if (!$success_parsed) {
+      // global $create_key;
+      if ($create_key) {
+        $content_tpl->parse('create_content.form.create_key');
       }
-    } elseif (!$success_parsed) {
-       if (!$form_parsed) {
-         $content_tpl->parse('create_content.form');
-         $form_parsed = true;
-       }
-    }
 
-    if ($form_parsed && $tou_available) {
-      $content_tpl->set("TOU", $tou_content);
-      $content_tpl->parse('create_content.form.tou_agreement');
+      // global $tou_available;
+      if ($tou_available) {
+        $content_tpl->set("TOU", $tou_content);
+        $content_tpl->parse('create_content.form.tou_agreement');
+      }
+
+      $content_tpl->parse('create_content.form');
     }
+  }
+
+  if (!empty($errors)) {
+    $content_tpl->set("ERROR", trim(implode("<br>\n", $errors)));
+    $content_tpl->parse('create_content.error');
   }
 }
 
