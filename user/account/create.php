@@ -55,7 +55,7 @@ if (isset($create_disabled) && $create_disabled) {
       $email = "";
 
     if (isset($_POST['submit'])) {
-      $name = striptag($name, isset($no_tags) ? $no_tags : []);
+      $name = striptag($name);
       $name = trim($name);
 
       $name = preg_replace("/&/", "&#" . ord('&') . ";", $name);

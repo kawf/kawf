@@ -124,11 +124,6 @@ function utf8ize($string)
 /* For text strings */
 function stripcrap($string, $tags=null)
 {
-  global $no_tags;
-
-  if(!isset($tags))
-    $tags = $no_tags;
-
   $string = demoronize($string);
   // $string = utf8ize($string); // Removed call to problematic function
   $string = striptag($string, $tags);
@@ -140,9 +135,7 @@ function stripcrap($string, $tags=null)
 /* For URL's */
 function stripcrapurl($string)
 {
-  global $no_tags;
-
-  $string = striptag($string, $no_tags);
+  $string = striptag($string);
   $string = trim($string);
   $string = preg_replace("/ /", "%20", $string);
 
@@ -508,10 +501,15 @@ function entity_decode($message)
   return $message;
 }
 
-function striptag($message, $allowed_tags)
+function striptag($message, $allowed_tags = null)
 {
   /* Make sure people dont try to trick striptag() with &#xx; constructions. */
   $message = entity_decode($message);
+
+  // If no allowed_tags specified, use no tags (strip all tags)
+  if ($allowed_tags === null) {
+    $allowed_tags = array(array());
+  }
 
   /*
    * Each element in the allowed_tags array is the tag body, without the <>

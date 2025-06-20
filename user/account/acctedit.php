@@ -38,7 +38,7 @@ function handle_acctedit($user, $tpl) {
       err_not_found('Invalid token');
 
     if (!empty($name)) {
-      $name = striptag($name, $no_tags);
+      $name = striptag($name);
       $name = trim($name);
 
       /* Filter out bad characters. Do the & first to catch SGML entities */
