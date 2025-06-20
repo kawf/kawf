@@ -31,6 +31,7 @@ class Horde_Text_Diff_Engine_Native
     var $xv, $yv;
     var $xind, $yind;
     var $xchanged, $ychanged;
+    var $seq, $in_seq, $lcs;
 
     public function diff($from_lines, $to_lines)
     {
