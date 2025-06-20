@@ -29,6 +29,6 @@ Your password has been changed<p>
 <tr><td align="center" colspan="2"><input type="submit" name="submit" value="Update"></td></tr>
 </table>
 <input type="hidden" name="page" value="%[PAGE_VALUE]">
-<input type="hidden" name="token" value="%[token]">
+<input type="hidden" name="token" value="%[TOKEN]">
 </form>
 %end [form]

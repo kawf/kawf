@@ -51,14 +51,14 @@ if (isset($_POST['login']) && isset($_POST['email'])) {
   $password = $_POST['password'];
   $content_tpl->set('EMAIL', $email);
 
-  $user = new AccountUser;
-  $user->find_by_email($email);
-  if (!$user->valid() || !$user->checkpassword($password)) {
+  $account_user = new AccountUser;
+  $account_user->find_by_email($email);
+  if (!$account_user->valid() || !$account_user->checkpassword($password)) {
     $message = "Invalid password for $email\n";
   } else if($tou_available && !$_REQUEST["tou_agree"]) {
     $message = "You must agree to the Terms Of Use\n";
   } else {
-    $user->setcookie();
+    $account_user->setcookie();
     header("Location: $page");
     exit;
   }

@@ -9,14 +9,14 @@ $email = $_POST['email'];
 $password = $_POST['password'];
 
 if (isset($_POST['submit'])) {
-  $user = new AdminUser;
-  $user->find_by_email($email);
-  if (!$user->valid())
+  $admin_user = new AdminUser;
+  $admin_user->find_by_email($email);
+  if (!$admin_user->valid())
     $message = "Invalid email address '$email'\n";
-  else if (!$user->checkpassword($password))
+  else if (!$admin_user->checkpassword($password))
     $message = "Invalid password for $email\n";
   else {
-    $user->setcookie();
+    $admin_user->setcookie();
     header("Location: http://$url");
     exit;
   }

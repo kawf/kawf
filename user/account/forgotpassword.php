@@ -13,10 +13,10 @@ if (isset($_REQUEST['email'])) {
     $email = $_REQUEST['email'];
     $content_tpl->set('EMAIL', $email);
 
-    $user = new AccountUser;
-    $user->find_by_email($email);
+    $account_user = new AccountUser;
+    $account_user->find_by_email($email);
 
-    if (!$user->valid()) {
+    if (!$account_user->valid()) {
         // Show unknown email message
         $content_tpl->parse('unknown');
         $content_tpl->parse('form');

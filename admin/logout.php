@@ -1,12 +1,11 @@
 <?php
 
 $aid = $user->aid;
+$account_user = new AccountUser;
+$account_user->find_by_aid((int)$aid);
 
-$user = new AccountUser;
-$user->find_by_aid((int)$aid);
-
-if (!$user->unsetcookie())
-    err_not_found();
+if (!$account_user->unsetcookie())
+  err_not_found('unsetcookie() failed');
 
 header("Location: login.phtml?message=" . urlencode("You have been logged out"));
 

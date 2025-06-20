@@ -2,10 +2,10 @@
 
 $aid = $user->aid;
 
-$user = new AccountUser;
-$user->find_by_aid((int)$aid);
+$account_user = new AccountUser;
+$account_user->find_by_aid((int)$aid);
 
-if (!$user->unsetcookie())
+if (!$account_user->unsetcookie())
     err_not_found('unsetcookie() failed');
 
 // Get the page context for the redirect back to login
