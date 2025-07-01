@@ -40,7 +40,7 @@ function tag_media($media, $prefix, $url, $text, $class, $redirect=false)
 
 function embed_redtube_video($url)
 {
-  if (preg_match("#^http://(\w+\.)*redtube\.com/([0-9]+)#", $url, $regs)) {
+  if (preg_match("#^https://(\w+\.)*redtube\.com/([0-9]+)#", $url, $regs)) {
     $tag = $regs[2];
   } else {
     return null;
@@ -48,9 +48,9 @@ function embed_redtube_video($url)
 
   $out =
     "<object width=\"600\" height=\"360\">\n".
-    "<param name=\"movie\" value=\"http://embed.redtube.com/player/></param>\n".
+    "<param name=\"movie\" value=\"https://embed.redtube.com/player/></param>\n".
     "<param name=\"FlashVars\" value=\"id=$tag\"></param>\n".
-    "<embed src=\"http://embed.redtube.com/player/?id=$tag\"".
+    "<embed src=\"https://embed.redtube.com/player/?id=$tag\"".
 	" type=\"application/x-shockwave-flash\" width=\"600\" height=\"360\"></embed>\n".
     "</object>\n";
 
@@ -83,14 +83,14 @@ function embed_youtube_video($url)
   if (preg_match("#(\w+\.)*youtube\.com#", $u["host"])) {
     $p = explode("/", $u["path"]);
     if (array_key_exists('v', $q)) {
-      $tag = $q["v"];	# http://youtube.com/?v=tag
+      $tag = $q["v"];	# https://youtube.com/?v=tag
     } else if (count($p) == 3 && ($p[1]=="v" || $p[1]=="embed" || $p[1]=="shorts")) {
-      $tag = $p[2];	# http://youtube.com/(v|embed|shorts)/tag
+      $tag = $p[2];	# https://youtube.com/(v|embed|shorts)/tag
     }
   } else if (preg_match("#(\w+\.)*youtu\.be#", $u["host"])) {
     $p = explode("/", $u["path"]);
     if (count($p) == 2) {
-      $tag = $p[1];	# http://youtu.be/tag
+      $tag = $p[1];	# https://youtu.be/tag
     }
   }
 
@@ -135,7 +135,7 @@ function embed_youtube_video($url)
       "</object>\n";
   */
 
-  return tag_media($out, "YouTube ", "http://youtu.be/$tag", $tag, "youtube");
+  return tag_media($out, "YouTube ", "https://youtu.be/$tag", $tag, "youtube");
 }
 
 function getVineVideoFromUrl($url)
@@ -155,13 +155,13 @@ function embed_vine_video($url)
   if (preg_match("#(\w+\.)*vine\.co#", $u["host"])) {
     $p = explode("/", $u["path"]);
     if (count($p) == 3 && $p[1]=="v") {
-      $tag = $p[2];	# http://vine.co/v/tag
+      $tag = $p[2];	# https://vine.co/v/tag
     }
   } else {
     return null;
   }
 
-  $src = getVineVideoFromUrl("http://vine.co/v/$tag");
+  $src = getVineVideoFromUrl("https://vine.co/v/$tag");
 
   $out = "<iframe src=\"https://vine.co/v/$tag/embed/simple\" width=\"600\" height=\"600\" frameborder=\"0\"></iframe>\n<script src=\"https://platform.vine.co/static/scripts/embed.js\" type=\"text/javascript\"></script>\n";
 
@@ -179,7 +179,7 @@ function embed_html5_video($url)
 
   $out =
     "<video src=\"$url\" controls=\"controls\">\n" .
-    "Your browser <a href=\"http://en.wikipedia.org/wiki/HTML5_video#Browser_support\">does not support HTML5 and/or this codec</a>.\n" .
+    "Your browser <a href=\"https://en.wikipedia.org/wiki/HTML5_video#Browser_support\">does not support HTML5 and/or this codec</a>.\n" .
     "</video>\n";
 
   return tag_media($out, "", $url, "HTML5", "html5");
