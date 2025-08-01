@@ -4,14 +4,14 @@
 <tr>
   <td class="toolsleft">
     <a href="/search/?forum=%[FORUM_SHORTNAME]&amp;%[PAGE]" target="_blank">Search</a>
-  | <a href="#post"><b>Post New Thread</b></a>
+  | <a href="#post"><b>Post New</b></a>
   %[#] View All Images/Night Mode links appear static in tpl, keep them here for now
   | <a href="#" id="view-all-images">View All Images</a>
   | <a href="#" id="night-mode">Night Mode: <span id="night-mode-status">Off</span></a>
   </td>
   <td class="toolsright">
 %begin [tracked_threads]
-    <a href="/%[FORUM_SHORTNAME]/tracking.phtml"><b>Tracked threads</b></a>
+    <a href="/%[FORUM_SHORTNAME]/tracking.phtml"><b>All tracked</b></a>
 %end [tracked_threads]
 %begin [image_browser]
   | <a href="/%[FORUM_SHORTNAME]/images.phtml"><b>Your images</b></a>

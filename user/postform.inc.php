@@ -108,8 +108,8 @@ function render_postform($template_dir, $action, $user, $msg = null, $seen_previ
         } else {
             // Must use empty() here for button text. A new thread passes pmid=0 (as string "0").
             // !isset($msg['pmid']) would be false, showing "Post Reply" incorrectly.
-            // empty() correctly evaluates "0" as true, showing "Post New Thread".
-            if (empty($msg['pmid'])) $form_tpl->set("SUBMITTEXT", "Post New Thread"); // Correctly handles pmid=0
+            // empty() correctly evaluates "0" as true, showing "Post New".
+            if (empty($msg['pmid'])) $form_tpl->set("SUBMITTEXT", "Post New"); // Correctly handles pmid=0
             else $form_tpl->set("SUBMITTEXT", "Post Reply");
         }
         if (isset($msg['pmid'])) $hidden .= hidden("pmid", $msg['pmid']);

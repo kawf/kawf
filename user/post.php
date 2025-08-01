@@ -311,7 +311,7 @@ $content_tpl->parse("post_content.$content_block");
 $content_tpl->parse("post_content");
 
 // Determine page title
-$page_title = isset($msg['tid']) ? 'Post Reply' : 'Post New Thread';
+$page_title = isset($msg['tid']) ? 'Post Reply' : 'Post New';
 
 // Generate the page
 print generate_page($page_title, $content_tpl->output());
