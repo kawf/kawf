@@ -11,7 +11,7 @@ $bounce_host = "bounce.kawf.org";
  * for several domains at once: */
 /* $cookie_host = array(".kawf.org",".kawf.net"); */
 
-$cookie_host = ".kawf.org";
+$cookie_host = "kawf.org";
 
 // Image uploading. Pick one.
 // imgur configuration
