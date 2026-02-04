@@ -205,6 +205,10 @@ ul.thread li .threadinfo { font-size: smaller; color: #6e6e6e;}
 /* url tag below media */
 .media { margin: 1em 0; }
 .media .imageurl { margin-bottom: 0.5em; }
+/* Limit clickable area to the image only (issue #118) */
+.media .imageurl a {
+  display: inline-block;
+}
 .media .imageurl img {
   max-width: 100%;
   border: none;
