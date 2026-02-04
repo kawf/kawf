@@ -65,10 +65,13 @@ function print_message($thread, $msg)
   /* Inject this back into the rendered HTML. */
   $subject_link = "<a href=\"../msgs/" . $msg['mid'] . ".phtml\" name=\"" . $msg['mid'] . "\">" . htmlspecialchars($msg['subject']) . "</a>";
 
-  // Replace the subject content within the rendered message HTML
+  // Replace the subject content within the rendered message HTML.
+  // Use preg_replace_callback so $ in the subject (e.g. "Price: $50") is not
+  // interpreted as preg backreferences (see issue #117).
   $placeholder_pattern = '#(<td class="subject" colspan=2>)(.*?)(</td>)#';
-  $replacement_html = '${1}' . $subject_link . '${3}';
-  $message_html_with_link = preg_replace($placeholder_pattern, $replacement_html, $message_html, 1);
+  $message_html_with_link = preg_replace_callback($placeholder_pattern, function ($m) use ($subject_link) {
+    return $m[1] . $subject_link . $m[3];
+  }, $message_html, 1);
 
   if ($message_html_with_link === null || $message_html_with_link === $message_html) {
     error_log("Failed to replace subject link in showthread.php/print_message for mid: " . $msg['mid']);
