@@ -59,13 +59,20 @@ function embed_redtube_video($url)
 
 function embed_vimeo_video($url)
 {
-  if (preg_match("#^https?://(\w+\.)*vimeo\.com/([0-9]+)#", $url, $regs)) {
+  // Standard: https://vimeo.com/123 — private/unlisted: https://vimeo.com/123/abc... (hash → ?h= for player)
+  if (preg_match("#^https?://(\w+\.)*vimeo\.com/([0-9]+)(?:/([a-zA-Z0-9]+))?#", $url, $regs)) {
     $tag = $regs[2];
+    $privacy_hash = !empty($regs[3]) ? $regs[3] : null;
   } else {
     return null;
   }
 
-  $out = "<iframe src=\"https://player.vimeo.com/video/$tag\"\n".
+  $src = "https://player.vimeo.com/video/$tag";
+  if ($privacy_hash !== null) {
+    $src .= "?h=" . rawurlencode($privacy_hash);
+  }
+
+  $out = "<iframe src=\"$src\"\n".
     "\twidth=\"640\" height=\"360\" frameborder=\"0\"\n".
     "\twebkitAllowFullScreen mozallowfullscreen allowFullScreen>\n".
     "</iframe>\n";
