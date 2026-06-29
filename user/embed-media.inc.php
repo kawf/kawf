@@ -120,10 +120,13 @@ function embed_youtube_video($url)
   $height = 480;
   /* IFrame */
   $out =
-    "$indent<iframe id=\"ytplayer\" type=\"text/html\"\n".
-    "$indent width=\"$width\"  height=\"$height\"\n".
+    "$indent<iframe id=\"ytplayer\"\n".
+    "$indent width=\"$width\" height=\"$height\"\n".
     "$indent src=\"https://www.youtube.com/embed/$tag\"\n".
-    "$indent frameborder=\"0\" allowfullscreen=\"1\">\n".
+    "$indent frameborder=\"0\"\n".
+    "$indent allow=\"encrypted-media; picture-in-picture; fullscreen\"\n".
+    "$indent referrerpolicy=\"strict-origin-when-cross-origin\"\n".
+    "$indent allowfullscreen>\n".
     "$indent</iframe>\n";
   /* AS3 */
   /*
