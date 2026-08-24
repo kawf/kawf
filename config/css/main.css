@@ -83,6 +83,18 @@ ul.thread { margin-left: 1.4em; }
 .toolsright { text-align: right; }
 div.tools { margin-left: 2px; }  /* hack to match table indent */
 
+/* Mobile: wrap toolbar so extra admin links don't outgrow the thread list.
+   Must follow the nowrap rule above. */
+@media (max-width: 640px) {
+  table.tools {
+    white-space: normal;
+    max-width: 100%;
+  }
+  table.tools td {
+    vertical-align: top;
+  }
+}
+
 /* post/edit informational text */
 .info {
   text-align: center;

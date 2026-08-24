@@ -34,7 +34,7 @@ var nightModeConfig   = getLocalStorage('night-mode', { 'active' : false });
 nightModeActive       = nightModeConfig.active;
 applyNightMode();
 
-var adminHTML = ' | <a href="#" id="admin-mode">Admin: <span id="admin-mode-status">Disabled</span></a>';
+var adminHTML = ' | <a href="#" id="admin-mode">Admin: <span id="admin-mode-status">Off</span></a>';
 
 // Startup Script
 $(document).ready(function() {
@@ -91,7 +91,7 @@ function applyAdminMode(){
     $("a[title|='Sticky thread']").hide();
     $("a[title|='Unstick thread']").hide();
     $("a[title|='Lock']").hide();
-    $('#admin-mode-status').text('Disabled');
+    $('#admin-mode-status').text('Off');
   } else {
     $("a[title|='Mark offtopic']").show();
     $("a[title|='Mark on-topic']").show();
