@@ -255,7 +255,7 @@ $standard_tags = array(
   "u" => array(array(), "/u"),
   "a" => array(array("href=", true, 'validate_url', "target=", false, 'validate_target'), "/a"),
   "img" => array(array("src=", true, 'validate_url', "alt=", false, 'validate_null', "width=", false, 'validate_number', "height=", false, 'validate_number')),
-  "br" => array(array(), ""),
+  "br" => array(array()),
   //"p" => array(array(), "/p"), // Don't allow this so user can't fool image_url_hack_extract()
   "pre" => array(array(), "/pre"),
   "code" => array(array(), "/code"),
@@ -278,6 +278,20 @@ $standard_tags = array(
 $no_tags = array(
   array()
 );
+
+/* Allowed tags that are kept without a closing tag. Everything else in
+   $standard_tags must have a matching closer or the tag is escaped. */
+$void_tags = array(
+  "br" => true,
+  "img" => true,
+  "embed" => true,
+);
+
+function is_void_tag($tag)
+{
+  global $void_tags;
+  return isset($void_tags[strtolower($tag)]);
+}
 
 function parse_tag($str)
 {
@@ -389,6 +403,22 @@ function convert_brackets($string)
   return $string;
 }
 
+/* True when some later element is the closing tag for $tag.
+   Unclosed tags used to recurse into every following tag before giving
+   up, which is exponential in the number of tags. */
+function closing_tag_exists($elements, $curpos, $tag)
+{
+  $close = "/" . strtolower($tag);
+  $n = count($elements);
+  for ($i = $curpos + 1; $i < $n; $i++) {
+    if (!is_array($elements[$i]) || !isset($elements[$i]['attr'][0]))
+      continue;
+    if (strtolower($elements[$i]['attr'][0]) == $close)
+      return true;
+  }
+  return false;
+}
+
 function validate_tag($elements, $curpos, $allowed_tags)
 {
   $element = $elements[$curpos];
@@ -400,6 +430,7 @@ function validate_tag($elements, $curpos, $allowed_tags)
     return array(convert_brackets($element['str']), 0);
 
   $tags = $allowed_tags[strtolower($element['attr'][0])];
+  $is_void = is_void_tag($element['attr'][0]);
 
   $message = "<";
   $message .= $element['attr'][0];
@@ -457,11 +488,16 @@ function validate_tag($elements, $curpos, $allowed_tags)
   //  $val = $oval;
   $val = end($element['attr']);
 
-  if ($val == "/" && !isset($tags[1]))
+  if ($val == "/" && is_void_tag($element['attr'][0]))
     $message .= " /";
   $message .= ">";
 
-  if (isset($tags[1])) {
+  if (!$is_void && isset($tags[1]) && $tags[1] !== "") {
+    /* No matching closer: keep the tag escaped and do not walk the tail.
+       Walking it recursively is exponential for a run of unclosed tags. */
+    if (!closing_tag_exists($elements, $curpos, $element['attr'][0]))
+      return array(convert_brackets($element['str']), 0);
+
     /* Find the closing tag */
     for ($i = $curpos + 1; $i < count($elements); $i++) {
       if (is_array($elements[$i])) {
