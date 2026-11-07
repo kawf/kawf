@@ -497,17 +497,21 @@ class AccountUser extends ForumUser {
     if ($this->status != "Active")
       return false;
 
-    if(strlen($this->password) < 60) {
-      // Old password, uses MD5.
-      if($this->password == md5($password))
-        return true;
-    } else {
-      // New password, uses BCrypt.
-      if($this->password == crypt($password, $this->password))
-        return true;
+    $rehash = false;
+    if (password_verify($password, $this->password)) {
+      // $2a$ hashes verify, but this PHP reports them as needing a rehash.
+      $rehash = password_needs_rehash($this->password, PASSWORD_BCRYPT, array('cost' => 10));
+    } else if (strlen($this->password) == 32 && hash_equals($this->password, md5($password))) {
+      $rehash = true;
+    } else
+      return false;
+
+    if ($rehash) {
+      $this->password($password);
+      $this->update();
     }
 
-    return false;
+    return true;
   }
 
   function forgotpassword()
@@ -577,18 +581,10 @@ class AccountUser extends ForumUser {
     return true;
   }
 
-  /* Change the status of the user */
-  function password($password)
+  /* Set the password hash. create.php also passes the confirmation. */
+  function password($password, $confirm = null)
   {
-    // Generate a random 22 character salt.
-    $salt_alphabet = './0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
-    $salt_alphabet_length = strlen($salt_alphabet);
-    $salt = '';
-    for($i = 0; $i < 22; $i++) {
-      $salt .= $salt_alphabet[mt_rand(0, $salt_alphabet_length - 1)];
-    }
-    // BCrypt the password with salt.
-    $pwhash = crypt($password, '$2a$10$' . $salt);
+    $pwhash = password_hash($password, PASSWORD_BCRYPT, array('cost' => 10));
 
     if ($this->password != $pwhash)
       $this->update['password'] = $pwhash;
