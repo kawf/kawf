@@ -41,15 +41,6 @@ function get_base_url($use_forwarded_host = false)
     return $base;
 }
 
-function getmicrotime()
-{
-  $mtime = explode(" ", microtime());
-  return intval($mtime[0] * 1000000);
-}
-
-/* Seed the random number generator */
-mt_srand(getmicrotime());
-
 function css_href($filename="main.css")
 {
     global $css_dir, $css_href_dir;

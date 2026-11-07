@@ -1,9 +1,6 @@
 <?php
 
-require_once("util.inc.php");	/* for getmicrotime() */
-/* Seed the random number generator */
-mt_srand(getmicrotime());
-
+require_once("util.inc.php");
 require_once("sql.inc.php");
 require_once("validate.inc.php");
 require_once("mailfrom.inc.php");
@@ -27,13 +24,13 @@ class ForumUser {
   }
 
   /* You shouldn't call this directly */
-  function find($where, $req = true)
+  function find($where, $req = true, $args = array())
   {
     global $tz_to_name;
 
     $this->tzoff = 0;
 
-    $user = db_query_first("select * from u_users where $where");
+    $user = db_query_first("select * from u_users where $where", $args);
     if ($user) {
       foreach ($user as $type => $value) {
         $this->$type = $value;
@@ -85,16 +82,16 @@ class ForumUser {
 
   function find_by_email($email)
   {
-    return $this->find("email = '" . addslashes($email) . "'");
+    return $this->find("email = ?", true, array($email));
   }
 
   function find_by_cookie()
   {
     global $_COOKIE;
 
-    if (!isset($_COOKIE['KawfAccount']) || $_COOKIE['KawfAccount']=='') return $this->find('0');
+    if (!isset($_COOKIE['KawfAccount']) || !is_string($_COOKIE['KawfAccount']) || $_COOKIE['KawfAccount']=='') return $this->find('0');
 
-    return $this->find("cookie = '" . addslashes($_COOKIE['KawfAccount']) . "'");
+    return $this->find("cookie = ?", true, array($_COOKIE['KawfAccount']));
   }
 
   /* Returns true if this variable is a valid user */
@@ -291,6 +288,26 @@ function new_pending_cookie()
   return substr(bin2hex(random_bytes(8)), 0, 15);
 }
 
+/* 43 chars: u_users.cookie is varchar(50). base64url keeps all 32 bytes; hex does not fit. */
+function new_session_cookie()
+{
+  return rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
+}
+
+function session_cookie_options($host, $expires)
+{
+  $secure = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+      || (isset($_SERVER['SERVER_PORT']) && (string)$_SERVER['SERVER_PORT'] === '443');
+  return array(
+    'expires' => $expires,
+    'path' => '/',
+    'domain' => $host,
+    'secure' => $secure,
+    'httponly' => true,
+    'samesite' => 'Lax',
+  );
+}
+
 /* This is the class to change the user stuff */
 class AccountUser extends ForumUser {
   function add_pending($type, $data = "")
@@ -385,7 +402,7 @@ class AccountUser extends ForumUser {
   {
     global $bounce_host;
 
-    $cookie = md5("cookie" . $this->email . microtime());
+    $cookie = new_session_cookie();
 
     $sql = "insert into u_users (name,shortname,email,password,status,cookie,createdate,createip,signature) " .
            "values ( ?, ?, ?, ?, 'Create', ?, NOW(), ?, '' )";
@@ -423,19 +440,29 @@ class AccountUser extends ForumUser {
     global $cookie_host;
 
     if(!isset($this->cookie) || $this->cookie=='') {
-        $this->cookie = md5("cookie" . $this->email . microtime());
-	$sql = "update u_users set cookie = ? where aid = ?";
-        try {
-          db_exec($sql, array($this->cookie, $this->aid));
-        } catch(PDODuplicateKey $e) {
-	}
+        $this->assign_session_cookie();
     }
+    $expires = time() + (60 * 60 * 24 * 365 * 5);
     if(is_array($cookie_host)) {
       foreach ($cookie_host as $host)
-	setcookie("KawfAccount", $this->cookie, time() + (60 * 60 * 24 * 365 * 5), "/", $host);
+	setcookie("KawfAccount", $this->cookie, session_cookie_options($host, $expires));
     } else {
-	setcookie("KawfAccount", $this->cookie, time() + (60 * 60 * 24 * 365 * 5), "/", $cookie_host);
+	setcookie("KawfAccount", $this->cookie, session_cookie_options($cookie_host, $expires));
     }
+  }
+
+  function assign_session_cookie()
+  {
+    do {
+      $this->cookie = new_session_cookie();
+      $sql = "update u_users set cookie = ? where aid = ?";
+      try {
+        db_exec($sql, array($this->cookie, $this->aid));
+      } catch(PDODuplicateKey $e) {
+        continue;
+      }
+      break;
+    } while (TRUE);
   }
 
   function unsetcookie()
@@ -450,18 +477,14 @@ class AccountUser extends ForumUser {
     if(isset($_GET['all'])) {
         /* generate a new random cookie but dont store it client side.
 	   also, DO NOT store a blank cookie in the db */
-        $this->cookie = md5("cookie" . $this->email . microtime());
-	$sql = "update u_users set cookie = ? where aid = ?";
-        try {
-          db_exec($sql, array($this->cookie, $this->aid));
-        } catch(PDODuplicateKey $e) {
-	}
+        $this->assign_session_cookie();
     }
+    $expires = time() - (60 * 60 * 24 * 365);
     if(is_array($cookie_host)) {
       foreach ($cookie_host as $host)
-	  setcookie("KawfAccount", "", time() - (60 * 60 * 24 * 365), "/", $host);
+	  setcookie("KawfAccount", "", session_cookie_options($host, $expires));
     } else {
-	  setcookie("KawfAccount", "", time() - (60 * 60 * 24 * 365), "/", $cookie_host);
+	  setcookie("KawfAccount", "", session_cookie_options($cookie_host, $expires));
     }
 
     return true;
