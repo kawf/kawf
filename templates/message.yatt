@@ -12,7 +12,7 @@
 %begin [forum_mod]
       Source: %[MSG_IP] %[MSG_EMAIL]
 %begin [admin]
-      (<a href="/admin/su.phtml?token=%[USER_TOKEN]&amp;aid=%[MSG_AID]&amp;%[PAGE]" title="Become AID %[MSG_AID] (USE WITH CAUTION)">su</a>)
+      (<form class="inline" method="post" action="/admin/su.phtml"><input type="hidden" name="aid" value="%[MSG_AID]"><input type="hidden" name="page" value="%[SU_PAGE]"><input type="hidden" name="token" value="%[USER_TOKEN]"><button type="submit" class="link" title="Become AID %[MSG_AID] (USE WITH CAUTION)">su</button></form>)
 %end [admin]
       <br>
 %end [forum_mod]

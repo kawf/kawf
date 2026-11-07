@@ -2,7 +2,7 @@
 
 $user->req("ForumAdmin");
 
-if (!isset($_GET['aid']) && !is_valid_integer($_GET['aid'])) {
+if (!isset($_GET['aid']) || !is_valid_integer($_GET['aid'])) {
     Header("Location: /admin/?message=" . urlencode("No AID!"));
     exit();
 }
@@ -31,8 +31,8 @@ if (isset($_GET['undo'])) {
     }
 }
 
-if (!isset($_GET['page']))
-    Header("Location: /account/$aid.phtml");
+if (isset($_GET['page']) && is_string($_GET['page']) && safe_local_url($_GET['page']) === $_GET['page'])
+    Header("Location: " . $_GET['page']);
 else
-    Header("Location: ".$_GET['page']);
+    Header("Location: /account/$aid.phtml");
 ?>

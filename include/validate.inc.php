@@ -29,6 +29,7 @@ function strip_filename($filename)
 
 function is_valid_signed_integer($integer)
 {
+    if (!is_string($integer) && !is_int($integer)) return 0;
     if(!is_numeric($integer)) return 0;
     if($integer!=floor($integer)) return 0;
     return 1;

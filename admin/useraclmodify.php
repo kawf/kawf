@@ -50,7 +50,8 @@ page_header("Modify User ACL $aid");
 ?>
 
 <form method="post" action="<?php echo basename($_SERVER['PHP_SELF']);?>">
-<input type="hidden" name="aid" value="<?php echo $aid;?>">
+<input type="hidden" name="aid" value="<?php echo h($aid);?>">
+<input type="hidden" name="token" value="<?php echo h($user->token()); ?>">
 <table>
 
 <?php
@@ -68,17 +69,7 @@ while ($acl = $sth->fetch()) {
 <input type="hidden" name="opts[<?php echo $count; ?>][fid]" value="<?php echo $acl['fid']; ?>">
 
  <tr bgcolor="#D0D0D0">
-<?php
-  if ($acl['fid'] == -1) {
-?>
-  <td>All Forums [<a href="useracldelete.phtml?aid=<?php echo $aid; ?>&fid=<?php echo $acl['fid']; ?>">delete</a>]</td>
-<?php
-  } else {
-?>
-  <td>Forum <?php echo $acl['fid']; ?> [<a href="useracldelete.phtml?aid=<?php echo $aid; ?>&fid=<?php echo $acl['fid']; ?>">delete</a>]</td>
-<?php
-  }
-?>
+  <td><?php echo ($acl['fid'] == -1) ? "All Forums" : "Forum " . h($acl['fid']); ?> [<button type="submit" formaction="useracldelete.phtml" name="fid" value="<?php echo h($acl['fid']); ?>">delete</button>]</td>
  </tr>
  <tr>
   <td>

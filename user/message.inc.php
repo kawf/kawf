@@ -105,7 +105,7 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
   // Set variables that are always needed
   $message_tpl->set('FORUM_SHORTNAME', $forum['shortname']);
   $message_tpl->set('PAGE', format_page_param());
-  $message_tpl->set('USER_TOKEN', $viewer->token()); // Use viewer's token
+  $message_tpl->set('USER_TOKEN', h($viewer->token())); // Use viewer's token
 
   // Add encrypted viewer ID
   $message_tpl->set("VIEWER_AID", isset($viewer) ? dechex(Skip32::encrypt($viewer_aid_key, $viewer->aid)) : '');
@@ -174,7 +174,7 @@ function render_message($template_dir, $msg, $viewer, $owner=null)
     "MSG_SUBJECT" => softbreaklongwords($msg['subject'], 40), // stripcrap already sanitizes
     "MSG_DATE" => $msg['date'], // Assumes gen_date is safe
     "MSG_MID" => isset($msg['mid']) ? $msg['mid'] : '', // Check if mid exists
-    "MSG_AID" => isset($msg['aid']) ? $msg['aid'] : '' // Check if aid exists
+    "MSG_AID" => h(isset($msg['aid']) ? (string)$msg['aid'] : '') // Check if aid exists
     // MSG_TID is not used in message.yatt, removed
   ));
 
@@ -217,6 +217,7 @@ function _message_render_extras($message_tpl, $msg, $viewer, $owner, $flags, $mo
     $message_tpl->set('MSG_EMAIL', htmlspecialchars($msg['email']));
     // Admin sub-block
     if ($viewer->admin()) {
+      $message_tpl->set('SU_PAGE', h(get_page_context()));
       $message_tpl->parse('message_block.forum_mod.admin');
     }
     $message_tpl->parse('message_block.forum_mod');
