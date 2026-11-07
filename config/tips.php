@@ -45,11 +45,15 @@ code:</p>
 <h3>Videos</h3>
 <p>You can add video as well. If you use the posting dialog labeled "<b>Video
 URL:</b>",
-you can enter a YouTube or Vimeo link:</p>
+you can enter a YouTube, Vimeo, Instagram, or Facebook link:</p>
 <ul>
 <li>http://www.youtube.com/watch?v=XXXXXXXXXXX</li>
 <li>http://www.youtube.com/v/XXXXXXXXXX</li>
 <li>http://vimeo.com/XXXXXXXX</li>
+<li>https://www.instagram.com/p/XXXXXXXXXXX/</li>
+<li>https://www.instagram.com/reel/XXXXXXXXXXX/</li>
+<li>https://www.facebook.com/watch/?v=XXXXXXXXXXX</li>
+<li>https://fb.watch/XXXXXXXX/</li>
 </ul>
 <p>or a .ogv (Theora), .mp4 (h.264), .WebM (vp8) video:</p>
 <ul>

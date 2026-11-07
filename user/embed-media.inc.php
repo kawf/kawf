@@ -1,5 +1,5 @@
 <?php
-$video_embedders = array ('redtube', 'vimeo', 'youtube', 'html5', 'vine');
+$video_embedders = array ('redtube', 'vimeo', 'youtube', 'instagram', 'facebook', 'html5');
 
 function explode_query($query) {
     $queryParts = explode('&', $query);
@@ -101,16 +101,17 @@ function embed_youtube_video($url)
     }
   }
 
-  if ($tag==null) return null;
+  if ($tag==null || !preg_match('/^[A-Za-z0-9_-]+$/', $tag))
+    return null;
 
   /* turn off "related" videos */
   $tag .= "?rel=0";
 
   /* Allow user to specify start time */
   if (count($q)) {
-    if (array_key_exists('t', $q)) {
+    if (array_key_exists('t', $q) && is_string($q['t']) && preg_match('/^[0-9]+$/', $q['t'])) {
       $tag .= "&start=".$q['t'];
-    } else if (array_key_exists('start', $q)) {
+    } else if (array_key_exists('start', $q) && is_string($q['start']) && preg_match('/^[0-9]+$/', $q['start'])) {
       $tag .= "&start=".$q['start'];
     }
   }
@@ -146,6 +147,89 @@ function embed_youtube_video($url)
   */
 
   return tag_media($out, "YouTube ", "https://youtu.be/$tag", $tag, "youtube");
+}
+
+function embed_instagram_video($url)
+{
+  $u = parse_url($url);
+  if ($u == null || empty($u['host']) || empty($u['path']))
+    return null;
+  if (!preg_match('/^(?:[\w-]+\.)*instagram\.com$/i', $u['host']))
+    return null;
+  if (!preg_match('#/(p|reel|reels|tv)/([A-Za-z0-9_-]+)#', $u['path'], $regs))
+    return null;
+
+  $kind = $regs[1] == 'reels' ? 'reel' : $regs[1];
+  $tag = $regs[2];
+  $src = "https://www.instagram.com/$kind/$tag/embed";
+  $width = $kind == 'reel' ? 400 : 540;
+  $height = 700;
+
+  $out = "<iframe src=\"$src\"\n".
+    "\twidth=\"$width\" height=\"$height\" frameborder=\"0\"\n".
+    "\tscrolling=\"no\" allowtransparency=\"true\">\n".
+    "</iframe>\n";
+
+  return tag_media($out, "Instagram ", "https://www.instagram.com/$kind/$tag/", $tag, "instagram");
+}
+
+function embed_facebook_video($url)
+{
+  $u = parse_url($url);
+  if ($u == null || empty($u['host']))
+    return null;
+
+  $tag = null;
+  $canonical = null;
+  $width = 560;
+  $height = 315;
+  $path = isset($u['path']) ? $u['path'] : '';
+
+  if (preg_match('/^(?:[\w-]+\.)*fb\.watch$/i', $u['host'])) {
+    if (preg_match('#^/([A-Za-z0-9_-]+)#', $path, $regs)) {
+      $tag = $regs[1];
+      $canonical = "https://fb.watch/$tag/";
+    }
+  } else if (preg_match('/^(?:[\w-]+\.)*(?:facebook|fb)\.com$/i', $u['host'])) {
+    $v = null;
+    if (!empty($u['query'])) {
+      foreach (explode('&', $u['query']) as $param) {
+        $item = explode('=', $param, 2);
+        if ($item[0] == 'v' && isset($item[1]))
+          $v = $item[1];
+      }
+    }
+    if ($v !== null && preg_match('/^[0-9]+$/', $v)) {
+      $tag = $v;
+      $canonical = "https://www.facebook.com/watch/?v=$tag";
+    } else if (preg_match('#/(videos|reel|reels)/([0-9]+)#', $path, $regs)) {
+      $tag = $regs[2];
+      $canonical = "https://www.facebook.com/watch/?v=$tag";
+      if ($regs[1] != 'videos') {
+        $width = 400;
+        $height = 700;
+      }
+    } else if (preg_match('#/share/([vr])/([A-Za-z0-9_-]+)#', $path, $regs)) {
+      $tag = $regs[2];
+      $canonical = "https://www.facebook.com/share/" . $regs[1] . "/$tag/";
+      if ($regs[1] == 'r') {
+        $width = 400;
+        $height = 700;
+      }
+    }
+  }
+
+  if ($tag === null)
+    return null;
+
+  $src = "https://www.facebook.com/plugins/video.php?href=" . rawurlencode($canonical) . "&show_text=false&width=$width";
+  $out = "<iframe src=\"$src\"\n".
+    "\twidth=\"$width\" height=\"$height\" frameborder=\"0\"\n".
+    "\tallow=\"autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share\"\n".
+    "\tallowfullscreen>\n".
+    "</iframe>\n";
+
+  return tag_media($out, "Facebook ", $canonical, $tag, "facebook");
 }
 
 function getVineVideoFromUrl($url)
@@ -207,7 +291,7 @@ function embed_video($url)
       if (!is_null($out)) return $out;
   }
 
-  return "'$url' is not a supported video type. Must be YouTube/Vimeo link or ogg/mp4/WebM<p>\n";
+  return "'" . htmlspecialchars($url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "' is not a supported video type. Must be a YouTube, Vimeo, Instagram, or Facebook link, or ogg/mp4/WebM<p>\n";
 }
 
 function embed_image($url)

@@ -271,8 +271,6 @@ $standard_tags = array(
   "sup" => array(array(), "/sup"),
   "center" => array(array(), "/center"),
   "small" => array(array(), "/small"),
-  "embed" => array(array("src=", true, 'validate_url', "type=", false, 'validate_null', "width=", false, 'validate_number', "height=", false, 'validate_number')),
-  "object" => array(array("data=", true, 'validate_url', "type=", false, 'validate_null', "width=", false, 'validate_number', "height=", false, 'validate_number'), "/object"),
 );
 
 $no_tags = array(
@@ -284,8 +282,13 @@ $no_tags = array(
 $void_tags = array(
   "br" => true,
   "img" => true,
-  "embed" => true,
 );
+
+/* These are read with global. Keep them global when this file is included
+   from inside a function. */
+$GLOBALS['valid_transports'] = $valid_transports;
+$GLOBALS['standard_tags'] = $standard_tags;
+$GLOBALS['void_tags'] = $void_tags;
 
 function is_void_tag($tag)
 {
@@ -460,7 +463,7 @@ function validate_tag($elements, $curpos, $allowed_tags)
             break;
 
           $message .= " $val=\"";
-          $message .= $element['val'][$key];
+          $message .= htmlspecialchars($element['val'][$key], ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
           $message .= "\"";
           $accepted = 1;
           break;
