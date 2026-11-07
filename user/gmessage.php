@@ -56,8 +56,8 @@ if (isset($_REQUEST['hide'])) {
 
 if (isset($_REQUEST['page'])) {
     header("Location: " . get_page_context(false));
-} elseif (strlen($gmsg['url'])>0) {
-    header("Location: " . $gmsg['url']);
+} elseif (is_array($gmsg) && ($url = safe_external_url($gmsg['url'])) !== '') {
+    header("Location: " . $url);
 } else {
     err_not_found();
 }
