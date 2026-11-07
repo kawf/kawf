@@ -57,6 +57,27 @@ function embed_redtube_video($url)
   return tag_media($out, "RedTube ", $url, $tag, "redtube");
 }
 
+/* $suffix is the host, already escaped for a regex. Subdomains are allowed. */
+function embed_host($url, $suffix)
+{
+  $u = parse_url($url);
+  if (!is_array($u) || empty($u['host']))
+    return null;
+  if (!preg_match('/^(?:[\w-]+\.)*(?:' . $suffix . ')$/i', $u['host']))
+    return null;
+  if (!isset($u['path']))
+    $u['path'] = '';
+  return $u;
+}
+
+function embed_iframe($src, $width, $height, $attrs)
+{
+  return "<iframe src=\"$src\"\n".
+    "\twidth=\"$width\" height=\"$height\" frameborder=\"0\"\n".
+    "\t$attrs>\n".
+    "</iframe>\n";
+}
+
 function embed_vimeo_video($url)
 {
   // Standard: https://vimeo.com/123 — private/unlisted: https://vimeo.com/123/abc... (hash → ?h= for player)
@@ -72,10 +93,7 @@ function embed_vimeo_video($url)
     $src .= "?h=" . rawurlencode($privacy_hash);
   }
 
-  $out = "<iframe src=\"$src\"\n".
-    "\twidth=\"640\" height=\"360\" frameborder=\"0\"\n".
-    "\twebkitAllowFullScreen mozallowfullscreen allowFullScreen>\n".
-    "</iframe>\n";
+  $out = embed_iframe($src, 640, 360, "webkitAllowFullScreen mozallowfullscreen allowFullScreen");
 
   return tag_media($out, "Vimeo ", $url, $tag, "vimeo");
 }
@@ -151,83 +169,52 @@ function embed_youtube_video($url)
 
 function embed_instagram_video($url)
 {
-  $u = parse_url($url);
-  if ($u == null || empty($u['host']) || empty($u['path']))
-    return null;
-  if (!preg_match('/^(?:[\w-]+\.)*instagram\.com$/i', $u['host']))
-    return null;
-  if (!preg_match('#/(p|reel|reels|tv)/([A-Za-z0-9_-]+)#', $u['path'], $regs))
+  $u = embed_host($url, 'instagram\.com');
+  if ($u == null || !preg_match('#/(p|reel|reels|tv)/([A-Za-z0-9_-]+)#', $u['path'], $regs))
     return null;
 
   $kind = $regs[1] == 'reels' ? 'reel' : $regs[1];
   $tag = $regs[2];
-  $src = "https://www.instagram.com/$kind/$tag/embed";
   $width = $kind == 'reel' ? 400 : 540;
-  $height = 700;
-
-  $out = "<iframe src=\"$src\"\n".
-    "\twidth=\"$width\" height=\"$height\" frameborder=\"0\"\n".
-    "\tscrolling=\"no\" allowtransparency=\"true\">\n".
-    "</iframe>\n";
+  $out = embed_iframe("https://www.instagram.com/$kind/$tag/embed", $width, 700, 'scrolling="no" allowtransparency="true"');
 
   return tag_media($out, "Instagram ", "https://www.instagram.com/$kind/$tag/", $tag, "instagram");
 }
 
 function embed_facebook_video($url)
 {
-  $u = parse_url($url);
-  if ($u == null || empty($u['host']))
-    return null;
-
   $tag = null;
   $canonical = null;
-  $width = 560;
-  $height = 315;
-  $path = isset($u['path']) ? $u['path'] : '';
+  $vertical = false;
 
-  if (preg_match('/^(?:[\w-]+\.)*fb\.watch$/i', $u['host'])) {
-    if (preg_match('#^/([A-Za-z0-9_-]+)#', $path, $regs)) {
-      $tag = $regs[1];
-      $canonical = "https://fb.watch/$tag/";
-    }
-  } else if (preg_match('/^(?:[\w-]+\.)*(?:facebook|fb)\.com$/i', $u['host'])) {
-    $v = null;
-    if (!empty($u['query'])) {
-      foreach (explode('&', $u['query']) as $param) {
-        $item = explode('=', $param, 2);
-        if ($item[0] == 'v' && isset($item[1]))
-          $v = $item[1];
-      }
-    }
-    if ($v !== null && preg_match('/^[0-9]+$/', $v)) {
-      $tag = $v;
-      $canonical = "https://www.facebook.com/watch/?v=$tag";
-    } else if (preg_match('#/(videos|reel|reels)/([0-9]+)#', $path, $regs)) {
-      $tag = $regs[2];
-      $canonical = "https://www.facebook.com/watch/?v=$tag";
-      if ($regs[1] != 'videos') {
-        $width = 400;
-        $height = 700;
-      }
-    } else if (preg_match('#/share/([vr])/([A-Za-z0-9_-]+)#', $path, $regs)) {
-      $tag = $regs[2];
-      $canonical = "https://www.facebook.com/share/" . $regs[1] . "/$tag/";
-      if ($regs[1] == 'r') {
-        $width = 400;
-        $height = 700;
-      }
-    }
+  $watch = embed_host($url, 'fb\.watch');
+  if ($watch && preg_match('#^/([A-Za-z0-9_-]+)#', $watch['path'], $regs)) {
+    $tag = $regs[1];
+    $canonical = "https://fb.watch/$tag/";
+  }
+
+  $fb = $tag ? null : embed_host($url, 'facebook\.com|fb\.com');
+  if ($fb && !empty($fb['query']) && preg_match('/(?:^|&)v=([0-9]+)(?:&|$)/', $fb['query'], $regs)) {
+    $tag = $regs[1];
+    $canonical = "https://www.facebook.com/watch/?v=$tag";
+  } else if ($fb && preg_match('#/(videos|reel|reels)/([0-9]+)#', $fb['path'], $regs)) {
+    $tag = $regs[2];
+    $canonical = "https://www.facebook.com/watch/?v=$tag";
+    $vertical = $regs[1] != 'videos';
+  } else if ($fb && preg_match('#/share/([vr])/([A-Za-z0-9_-]+)#', $fb['path'], $regs)) {
+    $tag = $regs[2];
+    $canonical = "https://www.facebook.com/share/$regs[1]/$tag/";
+    $vertical = $regs[1] == 'r';
   }
 
   if ($tag === null)
     return null;
 
+  $width = $vertical ? 400 : 560;
+  $height = $vertical ? 700 : 315;
   $src = "https://www.facebook.com/plugins/video.php?href=" . rawurlencode($canonical) . "&show_text=false&width=$width";
-  $out = "<iframe src=\"$src\"\n".
-    "\twidth=\"$width\" height=\"$height\" frameborder=\"0\"\n".
-    "\tallow=\"autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share\"\n".
-    "\tallowfullscreen>\n".
-    "</iframe>\n";
+  $attrs = "allow=\"autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share\"\n\tallowfullscreen";
+  $out = embed_iframe($src, $width, $height, $attrs);
 
   return tag_media($out, "Facebook ", $canonical, $tag, "facebook");
 }
