@@ -43,6 +43,9 @@ function readfile_header($file)
 
 function read_file($file, $type=null)
 {
+    if (!is_string($file) || safe_local_url($file) !== $file)
+        return err_not_found();
+
     if (is_dir($file)) {
         if (is_readable("$file/index.php")) {
             /* parse as php */
@@ -66,7 +69,7 @@ function read_file($file, $type=null)
     if ($type==null) {
         $type=getMimeType($file);
         if (!$type)
-            return err_not_found("\"$file\": Unknown type");
+            $type = 'application/octet-stream';
     }
 
     header("Content-Type: $type");
