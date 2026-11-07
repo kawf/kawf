@@ -81,7 +81,7 @@ $pending = db_query_first("select * from u_pending where cookie = ? and status =
 if (!$pending) {
   if (isset($cookie) && !empty($cookie)) {
     $error = "unknown";
-    $content_tpl->set("COOKIE", $cookie);
+    $content_tpl->set("COOKIE", h($cookie));
   } else
     err_not_found('No cookie');
 } else {

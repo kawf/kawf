@@ -13,7 +13,7 @@ if (!can_upload_images()) {
 // Instantiate YATT for the content template
 // Note: No forum context needed yet as this page shows images across all forums
 $images_tpl = new_yatt('images.yatt');
-$images_tpl->set("PAGE_VALUE", get_page_context());
+$images_tpl->set("PAGE_VALUE", h(get_page_context()));
 $images_tpl->set('js_image_action_href', js_href("image-action.js"));
 
 $sql = "select * from f_forums order by fid";

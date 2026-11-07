@@ -60,7 +60,7 @@ $content_tpl->set("PREVIEW", $preview_html);
 
 // Set variables needed by the confirmation form
 $content_tpl->set("MSG_MID", $mid);
-$content_tpl->set("PAGE_VALUE", get_page_context(false));
+$content_tpl->set("PAGE_VALUE", h(get_page_context(false)));
 
 // --- Parse Final Blocks ---
 $content_tpl->parse("delete_content.confirmation");

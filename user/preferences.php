@@ -126,7 +126,7 @@ $content_tpl->set("THREADSPERPAGE", $user->threadsperpage);
 $content_tpl->set("TEXT", $text);
 // Get the page parameter in the correct format
 $content_tpl->set("PAGE", format_page_param());
-$content_tpl->set("PAGE_VALUE", get_page_context());
+$content_tpl->set("PAGE_VALUE", h(get_page_context()));
 $content_tpl->set("USER_TOKEN", $user->token());
 
 foreach($tz_to_name as $tz) {

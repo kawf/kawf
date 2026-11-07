@@ -60,7 +60,7 @@ function render_postform($template_dir, $action, $user, $msg = null, $seen_previ
     }
 
     // Set page context variables - needed in both enabled and disabled states
-    $form_tpl->set("PAGE_VALUE", get_page_context());
+    $form_tpl->set("PAGE_VALUE", h(get_page_context()));
     $form_tpl->set("PAGE", format_page_param());
 
     if ($Debug) {
@@ -128,8 +128,8 @@ function render_postform($template_dir, $action, $user, $msg = null, $seen_previ
         // Set User Details & Context
         $form_tpl->set("USER_NAME", $user->name);
         $form_tpl->set("USER_EMAIL", $user->email);
-        // Use get_page_context() for form fields that need raw value
-        $form_tpl->set("PAGE_VALUE", get_page_context());
+        // The template prints this path. hidden() encodes the field above.
+        $form_tpl->set("PAGE_VALUE", h(get_page_context()));
         // Use format_page_param() for navigation links that need page=value format
         $form_tpl->set("PAGE", format_page_param());
         $form_tpl->set("FORUM_SHORTNAME", $forum['shortname']); // Needed for form action
