@@ -183,6 +183,55 @@ function get_forum_navigation()
 }
 
 /**
+ * A relative or rooted path with no scheme. A leading slash is optional.
+ * Reject schemes, backslashes, protocol-relative hosts, controls, and .. segments.
+ * On rejection, return "/".
+ */
+function safe_local_url($url) {
+    if (!is_string($url) || $url === '') {
+        return '/';
+    }
+    if (preg_match('/[\x00-\x1F\x7F]/', $url)) {
+        return '/';
+    }
+    if (strpos($url, ':') !== false || strpos($url, '\\') !== false || strpos($url, '//') !== false) {
+        return '/';
+    }
+    foreach (explode('/', $url) as $segment) {
+        if (rawurldecode($segment) === '..') {
+            return '/';
+        }
+    }
+    return $url;
+}
+
+/**
+ * An http or https URL with a non-empty host and no ASCII control character.
+ * On rejection, return an empty string.
+ */
+function safe_external_url($url) {
+    if (!is_string($url) || $url === '') {
+        return '';
+    }
+    if (preg_match('/[\x00-\x1F\x7F]/', $url)) {
+        return '';
+    }
+    $parts = parse_url($url);
+    if (!is_array($parts)) {
+        return '';
+    }
+    $scheme = isset($parts['scheme']) ? strtolower($parts['scheme']) : '';
+    if (($scheme !== 'http' && $scheme !== 'https') || empty($parts['host'])) {
+        return '';
+    }
+    return $url;
+}
+
+function h($s) {
+    return htmlspecialchars($s, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+}
+
+/**
  * Get the current page context from request parameters and format it as a URL parameter
  * @return string The formatted URL parameter string (e.g. "page=value")
  */
@@ -192,13 +241,18 @@ function format_page_param() {
 }
 
 /**
- * Get the current page context from request parameters without the page= prefix
- * @param bool $use_fallback Whether to fall back to current URL if no page parameter exists
- * @return string The page context value, URL encoded for safe use in forms and URLs
+ * Get the current page context from request parameters without the page= prefix.
+ * A request page is passed through safe_local_url(). The value is not URL-encoded;
+ * format_page_param() encodes it.
+ * @param bool $use_fallback Whether to fall back to the current path if no page parameter exists
+ * @return string The page context value
  */
 function get_page_context($use_fallback = true) {
     $s=get_server();
-    return $_REQUEST['page'] ?? ($use_fallback ? ($s->scriptName . $s->pathInfo) : '');
+    if (isset($_REQUEST['page'])) {
+        return safe_local_url($_REQUEST['page']);
+    }
+    return $use_fallback ? ($s->scriptName . $s->pathInfo) : '';
 }
 
 if (!function_exists('format_bytes')) {
