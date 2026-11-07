@@ -43,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // If we get here, deletion failed - get error from uploader
     http_response_code(500);
-    echo json_encode(['error' => $uploader->getError() ?? 'Failed to delete image']);
+    echo json_encode(['error' => 'Failed to delete image']);
     exit;
 } else {
     // Hash-based API deletion path
@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // If we get here, deletion failed - get error from uploader
     http_response_code(500);
-    echo json_encode(['error' => $uploader->getError() ?? 'Failed to delete image']);
+    echo json_encode(['error' => 'Failed to delete image']);
     exit;
 }
 

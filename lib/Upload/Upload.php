@@ -137,6 +137,14 @@ abstract class Upload implements ImageUploader {
         // Generate path using namespace and original filename
         $path = $this->generateUniqueFilename($namespace, $metadata->original_name);
 
+        // Refuse to store a file that cannot be given a delete hash.
+        $timestamp = time();
+        $deletehash = $this->generateDeleteHash($path, $timestamp);
+        if ($deletehash === '') {
+            $this->setError('Delete link is not valid');
+            return null;
+        }
+
         // Perform the actual upload
         $url = $this->doUpload($filename, $path, $metadata);
         if (!$url) {
@@ -144,8 +152,6 @@ abstract class Upload implements ImageUploader {
         }
 
         // Create a structured delete URL that can be used in changes
-        $timestamp = time();
-        $deletehash = $this->generateDeleteHash($path, $timestamp);
         $delete_url = 'deleteimage.phtml?url=' . urlencode($path) . '&hash=' . $deletehash . '&t=' . $timestamp;
 
         // Return URLs with proper encoding
@@ -261,22 +267,18 @@ abstract class Upload implements ImageUploader {
         // Check if the hash has expired
         $now = time();
         $elapsed = $now - $timestamp;
-        if ($elapsed > 86400) { // 24 hours
-            $this->setError(sprintf(
-                "Hash expired: path=%s, elapsed=%d seconds",
-                $path, $elapsed));
-            return false;
-        }
 
-        // Generate the expected hash
+        // Generate the expected hash. An empty result means the salt is unusable.
         $expectedHash = $this->generateDeleteHash($path, $timestamp);
 
-        // Compare hashes using hash_equals for timing attack prevention
-        if (!hash_equals($expectedHash, $hash)) {
-            $this->setError(sprintf(
-                "Hash mismatch: path=%s, expected=%s, got=%s, timestamp=%d",
-                $path, $expectedHash, $hash, $timestamp
+        // Compare hashes using hash_equals for timing attack prevention.
+        // Skip the compare when there is no expected hash: hash_equals('', '') is true.
+        if ($elapsed > 86400 || $expectedHash === '' || !hash_equals($expectedHash, $hash)) {
+            error_log(sprintf(
+                "[%s] Delete hash rejected: path=%s, expected=%s, got=%s, timestamp=%d, elapsed=%d",
+                get_class($this), $path, $expectedHash, $hash, $timestamp, $elapsed
             ));
+            $this->setError('Delete link is not valid', false);
             return false;
         }
 
@@ -291,17 +293,16 @@ abstract class Upload implements ImageUploader {
      * @return string A secure hash that can be used for deletion
      */
     protected function generateDeleteHash(string $path, int $timestamp): string {
+        $salt = $this->config['delete_salt'] ?? '';
+        if (!is_string($salt) || $salt === '' || $salt === 'default_salt_change_me' || $salt === 'your_delete_salt') {
+            return '';
+        }
+
         // Create a data string that includes all verification info
-        $data = sprintf(
-            "%s|%d|%s",
-            $path,
-            $timestamp,
-            $this->config['delete_salt'] ?? 'default_salt_change_me'
-        );
+        $data = sprintf("%s|%d|%s", $path, $timestamp, $salt);
 
         // Generate SHA-256 hash of the data
-        $hash = hash('sha256', $data);
-        return $hash;
+        return hash('sha256', $data);
     }
 }
 
