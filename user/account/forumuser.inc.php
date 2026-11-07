@@ -128,8 +128,8 @@ class ForumUser {
     if ($s->scriptName . $s->pathInfo == '/forgotpassword.phtml')
       return true;
 
-    $url = url_origin($_SERVER) . $s->scriptName . $s->pathInfo;
-    header("Location: /login.phtml?url=$url");
+    $url = $s->scriptName . $s->pathInfo;
+    header("Location: /login.phtml?url=" . rawurlencode($url));
     exit;
   }
 

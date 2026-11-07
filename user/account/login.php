@@ -2,8 +2,8 @@
 require_once('page-yatt.inc.php');
 
 if (isset($_POST['forgotpassword'])) {
-  if (isset($_POST['email']) && !empty($_POST['email']))
-    header("Location: forgotpassword.phtml?email=" . $_POST['email']);
+  if (isset($_POST['email']) && is_string($_POST['email']) && $_POST['email'] !== '')
+    header("Location: forgotpassword.phtml?email=" . rawurlencode($_POST['email']));
   else
     header("Location: forgotpassword.phtml");
 
@@ -31,25 +31,23 @@ if($tou_available) {
 $page = get_page_context();
 
 // Override with _REQUEST['url'] if it exists
-if (isset($_REQUEST['url'])) {
-  $page = $_REQUEST['url'];
+if (isset($_REQUEST['url']) && is_string($_REQUEST['url'])) {
+  $page = safe_local_url($_REQUEST['url']);
 }
 
-if (!isset($page)) {
+if (!is_string($page) || $page === '') {
   // nothing left, fallback to /
   $page = "/";
 }
 
 // Set the final page value in the template
-$content_tpl->set('PAGE_VALUE', $page);
-
 // This is different from how we usually set the page value in a form's hidden field
-$content_tpl->set('PAGE_VALUE', $page);
+$content_tpl->set('PAGE_VALUE', h($page));
 
-if (isset($_POST['login']) && isset($_POST['email'])) {
+if (isset($_POST['login']) && isset($_POST['email']) && is_string($_POST['email'])) {
   $email = $_POST['email'];
-  $password = $_POST['password'];
-  $content_tpl->set('EMAIL', $email);
+  $password = (isset($_POST['password']) && is_string($_POST['password'])) ? $_POST['password'] : '';
+  $content_tpl->set('EMAIL', h($email));
 
   $account_user = new AccountUser;
   $account_user->find_by_email($email);
@@ -66,7 +64,7 @@ if (isset($_POST['login']) && isset($_POST['email'])) {
   $content_tpl->set('EMAIL', "");
 
 if (isset($message) && !empty($message)) {
-  $content_tpl->set('MESSAGE', $message);
+  $content_tpl->set('MESSAGE', h($message));
   $content_tpl->parse('message');
 }
 
