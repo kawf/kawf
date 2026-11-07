@@ -1,0 +1,5 @@
+%begin[test]
+Line 1
+%[invalid-var]
+Line 3
+%end[test]
