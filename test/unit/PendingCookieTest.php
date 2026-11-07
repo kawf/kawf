@@ -9,15 +9,17 @@ ini_set("include_path", $include_path);
 
 require_once($kawf_base . "/user/account/forumuser.inc.php");
 
-class PendingCookieTest extends PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class PendingCookieTest extends TestCase {
   public function testNewPendingCookie() {
     $a = new_pending_cookie();
     $b = new_pending_cookie();
 
     $this->assertEquals(15, strlen($a));
     $this->assertEquals(15, strlen($b));
-    $this->assertRegExp('/^[0-9a-f]{15}$/', $a);
-    $this->assertRegExp('/^[0-9a-f]{15}$/', $b);
+    $this->assertMatchesRegularExpression('/^[0-9a-f]{15}$/', $a);
+    $this->assertMatchesRegularExpression('/^[0-9a-f]{15}$/', $b);
     $this->assertNotEquals($a, $b);
   }
 }

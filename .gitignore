@@ -1,4 +1,5 @@
 *.swp
+.phpunit.cache
 config/envvars
 **/.vagrant
 **/custom.json

@@ -1,8 +1,11 @@
 BUILD_TYPE?=kawf
 
-.PHONY: all docker-build docker-init docker-update
+.PHONY: all test docker-build docker-init docker-update
 all:
-	@echo "usage: 'make docker-build,' 'make docker-init,' or 'make docker-update'"
+	@echo "usage: 'make test', 'make docker-build,' 'make docker-init,' or 'make docker-update'"
+
+test:
+	phpunit --cache-directory .phpunit.cache test/unit
 
 docker-build:
 	BUILD_TYPE=${BUILD_TYPE} docker-compose -f docker-compose.yaml -f docker/docker-compose-tasks.yaml build

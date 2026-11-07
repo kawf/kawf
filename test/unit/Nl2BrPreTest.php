@@ -3,7 +3,9 @@
 $kawf_base = realpath(dirname(__FILE__) . "/../..");
 require_once($kawf_base . "/include/nl2brPre.inc.php");
 
-class Nl2BrPreTest extends PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class Nl2BrPreTest extends TestCase {
   public function testNl2BrPre() {
     $this->assertEquals("a", nl2brPre::out("a", true));
     $this->assertEquals("a", nl2brPre::out("a", false));

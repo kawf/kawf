@@ -26,7 +26,9 @@ class DeleteHashProbe extends Upload {
   }
 }
 
-class DeleteHashTest extends PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class DeleteHashTest extends TestCase {
   public function testWrongHashDoesNotRevealDigest() {
     $uploader = new DeleteHashProbe(array('delete_salt' => 'site-secret'));
     $ok = $uploader->exposeVerify('1/2/a.png', 'wrong', time());
@@ -55,7 +57,7 @@ class DeleteHashTest extends PHPUnit_Framework_TestCase {
     $timestamp = time();
     $hash = $uploader->exposeGenerate('1/2/a.png', $timestamp);
 
-    $this->assertRegExp('/^[0-9a-f]{64}$/', $hash);
+    $this->assertMatchesRegularExpression('/^[0-9a-f]{64}$/', $hash);
     $this->assertTrue($uploader->exposeVerify('1/2/a.png', $hash, $timestamp));
   }
 }

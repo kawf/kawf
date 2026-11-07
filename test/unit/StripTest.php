@@ -3,7 +3,9 @@
 $kawf_base = realpath(dirname(__FILE__) . "/../..");
 require_once($kawf_base . "/include/strip.inc.php");
 
-class StripTest extends PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class StripTest extends TestCase {
   public function testEntityDecode() {
     $this->assertEquals('A test', entity_decode('A test'));
     $this->assertEquals('hello  ? bar', entity_decode('hello &#x20&#x3F bar'));
