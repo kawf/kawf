@@ -1,5 +1,5 @@
 <?php
-$video_embedders = array ('redtube', 'vimeo', 'youtube', 'instagram', 'facebook', 'html5');
+$video_embedders = array ('redtube', 'vimeo', 'youtube', 'instagram', 'facebook', 'x', 'threads', 'reddit', 'html5');
 
 function explode_query($query) {
     $queryParts = explode('&', $query);
@@ -219,6 +219,65 @@ function embed_facebook_video($url)
   return tag_media($out, "Facebook ", $canonical, $tag, "facebook");
 }
 
+function embed_x_video($url)
+{
+  $u = embed_host($url, 'twitter\.com|x\.com');
+  // /{user}/status/{id}, /i/status/{id}, /i/web/status/{id}; optional /photo/N or /video/N
+  if ($u == null || !preg_match('#/(?:i/web|i|[A-Za-z0-9_]{1,15})/status/([0-9]+)(?:/|$)#', $u['path'], $regs))
+    return null;
+
+  $tag = $regs[1];
+  $out = embed_iframe("https://platform.twitter.com/embed/Tweet.html?id=$tag", 550, 700, 'scrolling="no" allowtransparency="true"');
+
+  return tag_media($out, "X ", "https://x.com/i/status/$tag", $tag, "x");
+}
+
+function embed_threads_video($url)
+{
+  $u = embed_host($url, 'threads\.(?:com|net)');
+  if ($u == null)
+    return null;
+
+  if (preg_match('#/@([A-Za-z0-9._]{1,30})/post/([A-Za-z0-9_-]+)(?:/|$)#', $u['path'], $regs)) {
+    $tag = $regs[2];
+    $src = "https://www.threads.com/@$regs[1]/post/$tag/embed";
+    $canonical = "https://www.threads.com/@$regs[1]/post/$tag";
+  } else if (preg_match('#/t/([A-Za-z0-9_-]+)(?:/|$)#', $u['path'], $regs)) {
+    $tag = $regs[1];
+    $src = "https://www.threads.com/t/$tag/embed";
+    $canonical = "https://www.threads.com/t/$tag";
+  } else {
+    return null;
+  }
+
+  $out = embed_iframe($src, 540, 700, 'scrolling="no" allowtransparency="true"');
+
+  return tag_media($out, "Threads ", $canonical, $tag, "threads");
+}
+
+function embed_reddit_video($url)
+{
+  $u = embed_host($url, 'reddit\.com');
+  // Slug is skipped. A second base36 id after it is a comment permalink.
+  if ($u == null || !preg_match('#/r/([A-Za-z0-9_]{2,21})/comments/([a-z0-9]{3,12})(?:/[^/]+/([a-z0-9]{3,12}))?(?:/|$)#i', $u['path'], $regs))
+    return null;
+
+  $sub = $regs[1];
+  $tag = strtolower($regs[2]);
+  $comment = !empty($regs[3]) ? strtolower($regs[3]) : null;
+  if ($comment !== null) {
+    $src = "https://www.redditmedia.com/r/$sub/comments/$tag/_/$comment?embed=true&depth=1&showmore=false";
+    $canonical = "https://www.reddit.com/r/$sub/comments/$tag/_/$comment/";
+  } else {
+    $src = "https://www.redditmedia.com/r/$sub/comments/$tag/?ref_source=embed&ref=share&embed=true";
+    $canonical = "https://www.reddit.com/r/$sub/comments/$tag/";
+  }
+
+  $out = embed_iframe($src, 640, 500, 'scrolling="no" allowtransparency="true"');
+
+  return tag_media($out, "Reddit ", $canonical, $comment !== null ? $comment : $tag, "reddit");
+}
+
 function getVineVideoFromUrl($url)
 {
     $ch = curl_init($url);
@@ -278,7 +337,7 @@ function embed_video($url)
       if (!is_null($out)) return $out;
   }
 
-  return "'" . htmlspecialchars($url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "' is not a supported video type. Must be a YouTube, Vimeo, Instagram, or Facebook link, or ogg/mp4/WebM<p>\n";
+  return "'" . htmlspecialchars($url, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8') . "' is not a supported video type. Must be a YouTube, Vimeo, Instagram, Facebook, X, Threads, or Reddit link, or ogg/mp4/WebM<p>\n";
 }
 
 function embed_image($url)
