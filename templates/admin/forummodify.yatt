@@ -4,6 +4,7 @@
 %begin [forummodify_content]
 
 <form method="post" action="%[SCRIPT_NAME]">
+<input type="hidden" name="token" value="%[TOKEN]">
 <input type="hidden" name="fid" value="%[fid]">
 
 <table>

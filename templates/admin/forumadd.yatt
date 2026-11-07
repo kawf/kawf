@@ -1,6 +1,7 @@
 %begin [forumadd_content]
 
 <form method="post" action="%[FORM_ACTION]">
+<input type="hidden" name="token" value="%[TOKEN]">
 <table>
  <tr>
   <td>Long Name:</td>

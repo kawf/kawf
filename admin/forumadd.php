@@ -8,6 +8,8 @@ require_once('lib/YATT/YATT.class.php'); // Use include path
 
 // --- POST Handler ---
 if (isset($_POST['submit'])) {
+  $user->require_token($_POST['token'] ?? null);
+
   $options = []; // Use array
   if (isset($_POST['read']))       $options[] = "Read";
   if (isset($_POST['postthread'])) $options[] = "PostThread";
@@ -56,6 +58,7 @@ if (isset($_POST['submit'])) {
 // Render Content using YATT
 $content_tpl = new YATT($template_dir, 'admin/forumadd.yatt');
 $content_tpl->set("FORM_ACTION", basename($_SERVER['PHP_SELF']));
+$content_tpl->set("TOKEN", h($user->token()));
 $content_tpl->parse("forumadd_content");
 $page_content_html = $content_tpl->output("forumadd_content");
 

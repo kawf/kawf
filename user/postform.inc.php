@@ -101,6 +101,7 @@ function render_postform($template_dir, $action, $user, $msg = null, $seen_previ
         $hidden .= hidden("forumname", $forum['shortname']);
         // Use get_page_context() for form hidden fields
         $hidden .= hidden("page", get_page_context());
+        $hidden .= hidden("token", $user->token());
         if ($seen_preview) $hidden .= hidden("seen_preview", 'true');
         if (isset($msg['mid'])) {
              $hidden .= hidden("mid", $msg['mid']);

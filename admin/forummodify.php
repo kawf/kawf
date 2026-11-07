@@ -7,6 +7,8 @@ require_once('lib/YATT/YATT.class.php'); // Ensure YATT is included
 /* If submit is set, shove the data into the database (well, after some */
 /* error checking) */
 if (isset($_POST['submit'])) {
+  $user->require_token($_POST['token'] ?? null);
+
   if(!is_valid_integer($_POST['fid']))
       err_not_found("Invalid fid");
   $fid = (int)$_POST['fid'];
@@ -65,6 +67,7 @@ $content_tpl = new YATT($template_dir, 'admin/forummodify.yatt');
 
 // Set variables for the content template
 $content_tpl->set("SCRIPT_NAME", basename($_SERVER['PHP_SELF']));
+$content_tpl->set("TOKEN", h($user->token()));
 $content_tpl->set("fid", $forum['fid']);
 $content_tpl->set("name", htmlspecialchars($forum['name'] ?? ''));
 $content_tpl->set("shortname", htmlspecialchars($forum['shortname'] ?? ''));

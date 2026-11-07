@@ -20,8 +20,7 @@ if (!$account_user->valid()) {
 $page = (isset($src['page']) && is_string($src['page']) && safe_local_url($src['page']) === $src['page']) ? $src['page'] : '';
 
 if ($posted) {
-  if (!isset($src['token']) || !is_string($src['token']) || !$user->is_valid_token($src['token']))
-    err_not_found('Invalid token');
+  $user->require_token($src['token'] ?? null);
   $account_user->setcookie();
 }
 

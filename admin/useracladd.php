@@ -6,6 +6,8 @@ $user->req("ForumAdmin");
 /* error checking) */
 if (isset($_POST['submit'])) {
 
+  $user->require_token($_POST['token'] ?? null);
+
   if(is_valid_integer($_POST['aid']) && is_valid_signed_integer($_POST['fid'])) {
       $aid=$_POST['aid'];
       $fid=$_POST['fid'];
@@ -44,6 +46,7 @@ page_header("Add User ACL");
 ?>
 
 <form method="post" action="<?php echo basename($_SERVER['PHP_SELF']);?>">
+<input type="hidden" name="token" value="<?php echo h($user->token()); ?>">
 <table>
  <tr>
   <td>aid:</td>

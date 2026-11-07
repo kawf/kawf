@@ -8,6 +8,7 @@
 %end [error]
 
 <form action="preferences.phtml?%[PAGE]" method="post">
+<input type="hidden" name="token" value="%[USER_TOKEN]">
 
 <table class="preferences">
   <tr>

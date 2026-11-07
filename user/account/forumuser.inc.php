@@ -275,6 +275,12 @@ class ForumUser {
     return false;
   }
 
+  function require_token($token)
+  {
+    if (!is_string($token) || !$this->is_valid_token($token))
+      err_not_found('Invalid token');
+  }
+
   function admin()
   {
     if ($this->aid == 1) return true;

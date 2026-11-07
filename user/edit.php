@@ -111,6 +111,8 @@ if (!isset($_POST['message'])) {
   $track_thread = is_msg_tracked($msg);
 } else {
   // --- Form Submission (POST request) ---
+  $user->require_token($_POST['token'] ?? null);
+
   preprocess($nmsg, $_POST);
 
   $offtopic = isset($_POST['OffTopic']);

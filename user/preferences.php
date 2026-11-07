@@ -38,6 +38,8 @@ function do_option($name)
 }
 
 if (isset($_POST['submit'])) {
+  $user->require_token($_POST['token'] ?? null);
+
   option_changed('ShowOffTopic', "showing of off-topic posts");
 #  option_changed('ShowModerated', "showing of moderated posts");
   option_changed('Collapsed', "collapsed view of threads");

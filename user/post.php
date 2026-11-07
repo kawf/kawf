@@ -96,6 +96,8 @@ $accepted = false;
 
 // --- Main Logic: Handle POST or GET ---
 if (isset($_POST['postcookie'])) {
+  $user->require_token($_POST['token'] ?? null);
+
   // --- POST Submission ---
   if (isset($_POST['seen_preview'])) $seen_preview = true; // Changed from imgpreview
   if (isset($_POST['show_preview'])) $show_preview = true; // Changed from preview

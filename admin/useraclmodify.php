@@ -11,6 +11,8 @@ if(is_valid_integer($_REQUEST['aid'])) {
 /* If submit is set, shove the data into the database (well, after some */
 /* error checking) */
 if (isset($_POST['submit'])) {
+  $user->require_token($_POST['token'] ?? null);
+
   $opts=$_POST['opts'];
   for ($i = 0; $i < count($opts); $i++) {
     $capabilities = Array();
