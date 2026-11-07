@@ -2,54 +2,58 @@
 
 require_once("page-yatt.inc.php");
 
-function handle_finish($user, $cookie, $tpl) {
+function handle_finish($user, $pending, $tpl) {
   if (!$user->valid()) {
     return "invalid_aid";
-  } else {
-    db_exec("update u_pending set status = 'Done' where cookie = ?", array($cookie));
-    switch ($pending['type']) {
-    case "NewAccount":
-      if ($user->status == 'Create') {
-        $user->status("Active");
-        if (!$user->update())
-          return "activate_failed";
-        else
-          $success = "create";
-      } else
-        $success = "create";
-
-      $user->setcookie();
-      break;
-    case "ChangeEmail":
-      $old_email = $user->email;
-      $user->email($pending['data']);
-      if (!$user->update()) {
-        $tpl->set("EMAIL", $pending['data']);
-        return "dup_email";
-      } else {
-        $tpl->set("OLD_EMAIL", $old_email);
-        $tpl->set("EMAIL", $user->email);
-        $success = "email";
-      }
-
-      break;
-    case "ForgotPassword":
-      /*
-       * Some users for some reason try to get a new password even if the
-       * message specifically says the account needs to be validated.
-       * Silently fix them up since this does validate that their email
-       * address works.
-       */
-      if ($user->status == 'Create') {
-        $user->status("Active");
-        $user->update();
-      }
-
-      $user->setcookie();
-      $success = "forgot_password";
-    }
-    return $success;
   }
+
+  switch ($pending['type']) {
+  case "NewAccount":
+    if ($user->status == 'Create') {
+      $user->status("Active");
+      if (!$user->update())
+        return "activate_failed";
+      else
+        $success = "create";
+    } else
+      $success = "create";
+
+    $user->setcookie();
+    break;
+  case "ChangeEmail":
+    $old_email = $user->email;
+    $user->email($pending['data']);
+    if (!$user->update()) {
+      $tpl->set("EMAIL", $pending['data']);
+      return "dup_email";
+    } else {
+      $tpl->set("OLD_EMAIL", $old_email);
+      $tpl->set("EMAIL", $user->email);
+      $success = "email";
+    }
+
+    break;
+  case "ForgotPassword":
+    /*
+     * Some users for some reason try to get a new password even if the
+     * message specifically says the account needs to be validated.
+     * Silently fix them up since this does validate that their email
+     * address works.
+     */
+    if ($user->status == 'Create') {
+      $user->status("Active");
+      $user->update();
+    }
+
+    $user->setcookie();
+    $success = "forgot_password";
+    break;
+  default:
+    return null;
+  }
+
+  db_exec("update u_pending set status = 'Done' where cookie = ? and status = 'Sent'", array($pending['cookie']));
+  return $success;
 }
 
 // Instantiate YATT for the content template
@@ -73,7 +77,7 @@ if (!isset($_REQUEST['cookie']))
 
 $cookie = $_REQUEST['cookie'];
 
-$pending = db_query_first("select * from u_pending where cookie = ?", array($cookie));
+$pending = db_query_first("select * from u_pending where cookie = ? and status = 'Sent'", array($cookie));
 if (!$pending) {
   if (isset($cookie) && !empty($cookie)) {
     $error = "unknown";
@@ -84,7 +88,7 @@ if (!$pending) {
     $content_tpl->set("DOMAIN", isset($domain) ? $domain : '');
     $account_user = new AccountUser;
     $account_user->find_by_aid((int)$pending['aid']);
-    $result = handle_finish($account_user, $cookie, $content_tpl);
+    $result = handle_finish($account_user, $pending, $content_tpl);
     if (in_array($result, $errors)) {
         $error = $result;
     } else {

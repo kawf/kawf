@@ -285,6 +285,12 @@ class ForumUser {
   }
 }
 
+/* 15 hex chars: u_pending.cookie is varchar(15). Cut in PHP so the insert matches the column. */
+function new_pending_cookie()
+{
+  return substr(bin2hex(random_bytes(8)), 0, 15);
+}
+
 /* This is the class to change the user stuff */
 class AccountUser extends ForumUser {
   function add_pending($type, $data = "")
@@ -292,7 +298,7 @@ class AccountUser extends ForumUser {
     do {
       /* We want a 6 digit number */
       $tid = mt_rand(100000, 999999);
-      $cookie = substr(md5("pending" . $this->aid . mt_rand()), 0, 15);
+      $cookie = new_pending_cookie();
 
       $sql = "insert into u_pending " .
                 "( tid, cookie, aid, type, data, status, tstamp ) values " .
