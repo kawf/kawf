@@ -24,9 +24,14 @@ function tag_media($media, $prefix, $url, $text, $class, $redirect=false)
     : sprintf("<a href=\"%s\" target=\"_blank\">%s</a>", $url, $text);
 
   if (trim($media) != "") {
-    // Videos have a media tag, so add the media and the link in separate divs
+    // Videos have a media tag, so add the media and the link in separate divs.
+    // Indent every line so a closing tag lines up with its opening tag.
+    $pad = $indent . ' ';
+    $body = array();
+    foreach (explode("\n", trim($media)) as $line)
+      $body[] = $pad . $line;
     $lines[] = $indent . sprintf("<div class=\"%s\">", $class);
-    $lines[] = $indent . " " . trim($media);
+    $lines[] = implode("\n", $body);
     $lines[] = $indent . "</div>";
     $lines[] = $indent . "<div class=\"media-link\">". $prefix . $link . "</div>";
   } else {
@@ -290,11 +295,70 @@ function embed_instagram_video($url, $follow=true)
   return tag_media($out, "Instagram ", "https://www.instagram.com/$kind/$tag/", $tag, "instagram");
 }
 
+/* Scale a video into 560x700 without changing its aspect ratio. */
+function embed_facebook_fit($width, $height)
+{
+  $width = (int)$width;
+  $height = (int)$height;
+  if ($width < 1 || $height < 1)
+    return array(560, 315);
+
+  $frame_w = 560;
+  $frame_h = (int) round($frame_w * $height / $width);
+  if ($frame_h > 700) {
+    $frame_h = 700;
+    $frame_w = (int) max(1, round($frame_h * $width / $height));
+  }
+  if ($frame_h < 1)
+    $frame_h = 1;
+  return array($frame_w, $frame_h);
+}
+
+function embed_facebook_fetch_ratio($canonical)
+{
+  if (!function_exists('curl_init'))
+    return null;
+
+  $src = "https://www.facebook.com/plugins/video.php?href=" . rawurlencode($canonical) . "&show_text=false&width=560";
+  $buf = '';
+  $ch = curl_init($src);
+  curl_setopt($ch, CURLOPT_FOLLOWLOCATION, false);
+  curl_setopt($ch, CURLOPT_TIMEOUT, 4);
+  curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+  curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36');
+  if (defined('CURLOPT_PROTOCOLS'))
+    curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTPS);
+  curl_setopt($ch, CURLOPT_WRITEFUNCTION, function ($ch, $data) use (&$buf) {
+    $buf .= $data;
+    $have_both = preg_match('/"original_width":\d+/', $buf) && preg_match('/"original_height":\d+/', $buf);
+    if (strlen($buf) > 262144 || $have_both)
+      return 0;
+    return strlen($data);
+  });
+  curl_exec($ch);
+  curl_close($ch);
+
+  if (!preg_match('/"original_width":(\d+)/', $buf, $w) || !preg_match('/"original_height":(\d+)/', $buf, $h))
+    return null;
+  return array((int)$w[1], (int)$h[1]);
+}
+
+function embed_facebook_frame($canonical)
+{
+  if (array_key_exists('embed_facebook_ratio', $GLOBALS))
+    $ratio = $GLOBALS['embed_facebook_ratio'];
+  else
+    $ratio = embed_facebook_fetch_ratio($canonical);
+  if (!is_array($ratio) || count($ratio) < 2)
+    return embed_facebook_fit(0, 0);
+  return embed_facebook_fit($ratio[0], $ratio[1]);
+}
+
 function embed_facebook_video($url)
 {
   $tag = null;
   $canonical = null;
-  $vertical = false;
+  $probe = false;
   $post = false;
 
   $watch = embed_host($url, 'fb\.watch');
@@ -309,23 +373,32 @@ function embed_facebook_video($url)
     $canonical = "https://www.facebook.com/watch/?v=$tag";
   } else if ($fb && preg_match('#/(videos|video|reels|reel|watch)/([0-9]+)(?:/|$)#', $fb['path'], $regs)) {
     $tag = $regs[2];
-    $canonical = "https://www.facebook.com/watch/?v=$tag";
-    $vertical = $regs[1] == 'reel' || $regs[1] == 'reels';
+    $probe = $regs[1] == 'reel' || $regs[1] == 'reels';
+    $canonical = $probe
+      ? "https://www.facebook.com/reel/$tag/"
+      : "https://www.facebook.com/watch/?v=$tag";
   } else if ($fb && preg_match('#/share/([vrp])/([A-Za-z0-9_-]+)(?:/|$)#', $fb['path'], $regs)) {
     $tag = $regs[2];
     $canonical = "https://www.facebook.com/share/$regs[1]/$tag/";
-    $vertical = $regs[1] == 'r';
+    $probe = $regs[1] == 'r';
     $post = $regs[1] == 'p';
   }
 
   if ($tag === null)
     return null;
 
-  $width = $post ? 500 : ($vertical ? 400 : 560);
-  $height = ($post || $vertical) ? 700 : 315;
+  if ($post) {
+    $width = 500;
+    $height = 700;
+  } else if ($probe) {
+    list($width, $height) = embed_facebook_frame($canonical);
+  } else {
+    $width = 560;
+    $height = 315;
+  }
   $plugin = $post ? 'post' : 'video';
   $show_text = $post ? 'true' : 'false';
-  $src = "https://www.facebook.com/plugins/$plugin.php?href=" . rawurlencode($canonical) . "&show_text=$show_text&width=$width";
+  $src = "https://www.facebook.com/plugins/$plugin.php?href=" . rawurlencode($canonical) . "&show_text=$show_text&width=$width&height=$height";
   $attrs = "allow=\"autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share\"\n\tallowfullscreen";
   $out = embed_iframe($src, $width, $height, $attrs);
 

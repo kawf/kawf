@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 class EmbedMediaTest extends TestCase {
   protected function tearDown(): void {
     unset($GLOBALS['embed_follow_override']);
+    unset($GLOBALS['embed_facebook_ratio']);
   }
 
   protected function follow($url) {
@@ -77,6 +78,7 @@ class EmbedMediaTest extends TestCase {
   public function testFacebookPathAndPostShare() {
     $videos = embed_facebook_video('https://www.facebook.com/some.page/videos/1234567890/');
     $this->assertStringContainsString('plugins/video.php', $videos);
+    $this->assertStringContainsString('width="560" height="315"', $videos);
     $this->assertStringContainsString(rawurlencode('https://www.facebook.com/watch/?v=1234567890'), $videos);
 
     $watch = embed_facebook_video('https://m.facebook.com/watch/1234567890');
@@ -86,6 +88,24 @@ class EmbedMediaTest extends TestCase {
     $this->assertStringContainsString('plugins/post.php', $post);
     $this->assertStringContainsString(rawurlencode('https://www.facebook.com/share/p/AbCd1234/'), $post);
     $this->assertStringNotContainsString('mibextid', $post);
+  }
+
+  public function testFacebookReelKeepsItsAspect() {
+    $GLOBALS['embed_facebook_ratio'] = array(1280, 720);
+    $out = embed_facebook_video('https://www.facebook.com/reel/3020015265008151/');
+    $this->assertStringContainsString('width="560" height="315"', $out);
+    $this->assertStringContainsString('&width=560&height=315', $out);
+    $this->assertStringContainsString(rawurlencode('https://www.facebook.com/reel/3020015265008151/'), $out);
+    $this->assertStringNotContainsString('watch/?v=', $out);
+    $this->assertMatchesRegularExpression('/\n     <iframe src=".*\n     <\/iframe>/s', $out);
+
+    $GLOBALS['embed_facebook_ratio'] = array(720, 1280);
+    $portrait = embed_facebook_video('https://www.facebook.com/reel/3020015265008151/');
+    $this->assertStringContainsString('width="394" height="700"', $portrait);
+
+    $GLOBALS['embed_facebook_ratio'] = null;
+    $fallback = embed_facebook_video('https://www.facebook.com/reels/3020015265008151/');
+    $this->assertStringContainsString('width="560" height="315"', $fallback);
   }
 
   public function testXStatusUsesTheIdOnly() {
