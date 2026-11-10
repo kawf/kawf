@@ -486,7 +486,13 @@ function embed_reddit_video($url, $follow=true)
     $canonical = "https://www.reddit.com/comments/$tag/";
   }
 
-  $out = embed_iframe($src, 640, 500, 'scrolling="no" allowtransparency="true"');
+  static $script = false;
+  $out = '';
+  if (!$script && function_exists('js_href') && ($js = js_href('reddit-embed.js'))) {
+    $script = true;
+    $out = '<script src="' . htmlspecialchars($js, ENT_QUOTES) . '"></script>' . "\n";
+  }
+  $out .= embed_iframe($src, 640, 500, 'scrolling="no" allowtransparency="true"');
 
   return tag_media($out, "Reddit ", $canonical, $comment !== null ? $comment : $tag, "reddit");
 }
